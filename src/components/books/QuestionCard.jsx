@@ -1,0 +1,65 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+import { cn } from "@/lib/utils";
+
+export default function QuestionCard({ 
+  question, 
+  options, 
+  onSelect, 
+  selectedValue,
+  questionNumber,
+  totalQuestions 
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="w-full max-w-xl mx-auto"
+    >
+      {/* Progress indicator */}
+      <div className="mb-8">
+        <div className="flex justify-between text-sm text-stone-400 mb-2">
+          <span>Frage {questionNumber}</span>
+          <span>{questionNumber} von {totalQuestions}</span>
+        </div>
+        <div className="h-1 bg-stone-100 rounded-full overflow-hidden">
+          <motion.div
+            className="h-full bg-stone-800"
+            initial={{ width: 0 }}
+            animate={{ width: `${(questionNumber / totalQuestions) * 100}%` }}
+            transition={{ duration: 0.5 }}
+          />
+        </div>
+      </div>
+
+      {/* Question */}
+      <h2 className="text-2xl md:text-3xl font-light text-stone-800 mb-8 leading-relaxed">
+        {question}
+      </h2>
+
+      {/* Options */}
+      <div className="space-y-3">
+        {options.map((option, index) => (
+          <motion.button
+            key={option.value}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: index * 0.1 }}
+            onClick={() => onSelect(option.value)}
+            className={cn(
+              "w-full text-left px-6 py-4 rounded-xl border transition-all duration-300",
+              "hover:border-stone-400 hover:bg-stone-50",
+              selectedValue === option.value
+                ? "border-stone-800 bg-stone-50"
+                : "border-stone-200 bg-white"
+            )}
+          >
+            <span className="text-stone-700 font-light">{option.label}</span>
+          </motion.button>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
