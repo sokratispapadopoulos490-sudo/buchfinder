@@ -214,9 +214,17 @@ export default function Home() {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showBookOpen, setShowBookOpen] = useState(true);
+  const [recommendationCount, setRecommendationCount] = useState(0);
+  const [isPremium, setIsPremium] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    checkAuth();
+    const init = async () => {
+      await checkAuth();
+      await loadRecommendationCount();
+    };
+    init();
+    
     // Buch-Animation nach 2 Sekunden ausblenden
     const timer = setTimeout(() => {
       setShowBookOpen(false);
@@ -227,13 +235,28 @@ export default function Home() {
   const checkAuth = async () => {
     try {
       const isAuth = await base44.auth.isAuthenticated();
-      setIsAuthenticated(isAuth);
       if (isAuth) {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
+        setIsAuthenticated(true);
+        setIsPremium(currentUser.is_premium || false);
+      } else {
+        setIsAuthenticated(false);
       }
     } catch (error) {
       setIsAuthenticated(false);
+    }
+  };
+
+  const loadRecommendationCount = async () => {
+    try {
+      const isAuth = await base44.auth.isAuthenticated();
+      if (isAuth) {
+        const recommendations = await base44.entities.Recommendation.list();
+        setRecommendationCount(recommendations.length);
+      }
+    } catch (error) {
+      console.error('Fehler beim Laden der Empfehlungen:', error);
     }
   };
 
@@ -316,10 +339,31 @@ export default function Home() {
     };
   };
 
-  const handleShowBooks = () => {
+  const handleShowBooks = async () => {
+    setLoading(true);
     const results = getMatchingBooks(profile);
+    
+    // Prüfe ob Freemium-Limit erreicht
+    const freeLimit = 3;
+    const canView = isPremium || recommendationCount < freeLimit;
+    
+    if (canView && isAuthenticated) {
+      try {
+        // Speichere Empfehlung
+        await base44.entities.Recommendation.create({
+          books: results.recommendations,
+          profile: profile,
+          is_premium: isPremium
+        });
+        setRecommendationCount(recommendationCount + 1);
+      } catch (error) {
+        console.error('Fehler beim Speichern:', error);
+      }
+    }
+    
     setRecommendations(results);
     setPhase('results');
+    setLoading(false);
   };
 
   const handleBack = () => {
@@ -350,6 +394,11 @@ export default function Home() {
     setRecommendations(null);
     setAgeGroup('erwachsene');
     setQuestions(questionSets.erwachsene);
+  };
+
+  const handleUpgrade = () => {
+    // Hier später Stripe-Integration
+    alert('Premium-Upgrade kommt bald! Du kannst dann unbegrenzt Empfehlungen erhalten.');
   };
 
   return (
@@ -569,9 +618,10 @@ export default function Home() {
                 <Button
                   onClick={handleShowBooks}
                   size="lg"
+                  disabled={loading}
                   className="bg-stone-800 hover:bg-stone-700 text-white px-8 py-6 text-lg rounded-xl gap-2"
                 >
-                  Meine Buchempfehlungen
+                  {loading ? 'Wird geladen...' : 'Meine Buchempfehlungen'}
                   <ArrowRight className="w-5 h-5" />
                 </Button>
               </motion.div>
@@ -608,10 +658,31 @@ export default function Home() {
                 <p className="text-stone-500 font-light">
                   Ausgewählt nach deinen Bedürfnissen und deinem Lesestil
                 </p>
+                
+                {/* Freemium-Hinweis */}
+                {!isPremium && isAuthenticated && (
+                  <div className="mt-6 inline-block">
+                    <div className="bg-amber-50 border border-amber-200 rounded-lg px-6 py-4">
+                      <p className="text-sm text-amber-800 mb-2">
+                        <strong>Kostenlose Version:</strong> {recommendationCount} von 3 Empfehlungen genutzt
+                      </p>
+                      {recommendationCount >= 3 && (
+                        <Button
+                          onClick={handleUpgrade}
+                          size="sm"
+                          className="bg-amber-600 hover:bg-amber-700 text-white"
+                        >
+                          Auf Premium upgraden
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                )}
               </motion.div>
 
               <div className="space-y-6">
-                {recommendations.recommendations.map((book, index) => (
+                {/* Zeige erste 3 Bücher kostenlos, Rest nur für Premium */}
+                {recommendations.recommendations.slice(0, isPremium ? undefined : 3).map((book, index) => (
                   <BookCard
                     key={book.id}
                     book={book}
@@ -621,7 +692,35 @@ export default function Home() {
                   />
                 ))}
 
-                {recommendations.contrastBook && (
+                {/* Premium-Sperre für weitere Bücher */}
+                {!isPremium && recommendations.recommendations.length > 3 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 }}
+                    className="bg-gradient-to-br from-amber-50 to-amber-100 border-2 border-amber-300 rounded-2xl p-8 text-center"
+                  >
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-600 flex items-center justify-center">
+                      <Compass className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="text-2xl font-light text-stone-800 mb-3">
+                      Noch mehr passende Bücher
+                    </h3>
+                    <p className="text-stone-600 mb-6 max-w-md mx-auto">
+                      Mit Premium erhältst du {recommendations.recommendations.length - 3} weitere personalisierte Empfehlungen 
+                      und unbegrenzten Zugang zu allen Funktionen.
+                    </p>
+                    <Button
+                      onClick={handleUpgrade}
+                      size="lg"
+                      className="bg-amber-600 hover:bg-amber-700 text-white"
+                    >
+                      Premium freischalten
+                    </Button>
+                  </motion.div>
+                )}
+
+                {(isPremium || recommendations.recommendations.length <= 3) && recommendations.contrastBook && (
                   <BookCard
                     book={recommendations.contrastBook}
                     reasons={generateReasons(recommendations.contrastBook, profile)}
