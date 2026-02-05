@@ -409,15 +409,14 @@ export default function Home() {
       <div className="fixed top-0 right-0 p-6 z-40">
         {isAuthenticated && user ? (
           <div className="flex items-center gap-3">
-            <span className="text-sm text-stone-600">Hallo, {user.full_name}</span>
             <Button
-              onClick={handleLogout}
-              variant="ghost"
+              onClick={() => navigate('/Account')}
+              variant="outline"
               size="sm"
-              className="gap-2 text-stone-600 hover:text-stone-800"
+              className="gap-2 border-stone-300 hover:bg-stone-50"
             >
-              <LogOut className="w-4 h-4" />
-              Abmelden
+              <User className="w-4 h-4" />
+              Mein Account
             </Button>
           </div>
         ) : (
