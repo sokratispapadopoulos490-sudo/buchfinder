@@ -452,15 +452,16 @@ export default function Home() {
     setLoading(true);
     const results = getMatchingBooks(profile);
     
-    // Prüfe ob Freemium-Limit erreicht
-    const freeLimit = 3;
-    const canView = isPremium || recommendationCount < freeLimit;
-    
-    if (canView && isAuthenticated) {
+    // Speichere Empfehlung immer (wenn authentifiziert)
+    if (isAuthenticated) {
       try {
-        // Speichere Empfehlung
+        const allBooks = [...results.recommendations];
+        if (results.contrastBook) {
+          allBooks.push(results.contrastBook);
+        }
+        
         await base44.entities.Recommendation.create({
-          books: results.recommendations,
+          books: allBooks,
           profile: profile,
           is_premium: isPremium
         });
