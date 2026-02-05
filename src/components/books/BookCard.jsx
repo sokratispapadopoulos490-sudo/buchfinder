@@ -38,6 +38,9 @@ export default function BookCard({ book, reasons, index, isContrast }) {
   const [isSaved, setIsSaved] = useState(false);
   const [saving, setSaving] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [editingNotes, setEditingNotes] = useState(false);
+  const [notes, setNotes] = useState('');
+  const [savedBookId, setSavedBookId] = useState(null);
   const buyLinks = generateBuyLinks(book);
 
   useEffect(() => {
@@ -51,7 +54,11 @@ export default function BookCard({ book, reasons, index, isContrast }) {
       
       if (isAuth) {
         const saved = await base44.entities.SavedBook.filter({ book_id: book.id });
-        setIsSaved(saved.length > 0);
+        if (saved.length > 0) {
+          setIsSaved(true);
+          setSavedBookId(saved[0].id);
+          setNotes(saved[0].notes || '');
+        }
       }
     } catch (error) {
       console.error('Error checking saved status:', error);
@@ -67,23 +74,37 @@ export default function BookCard({ book, reasons, index, isContrast }) {
     setSaving(true);
     try {
       if (isSaved) {
-        const saved = await base44.entities.SavedBook.filter({ book_id: book.id });
-        if (saved.length > 0) {
-          await base44.entities.SavedBook.delete(saved[0].id);
+        if (savedBookId) {
+          await base44.entities.SavedBook.delete(savedBookId);
           setIsSaved(false);
+          setSavedBookId(null);
+          setNotes('');
         }
       } else {
-        await base44.entities.SavedBook.create({
+        const created = await base44.entities.SavedBook.create({
           book_id: book.id,
           book_data: book,
-          recommendation_reason: reasons
+          recommendation_reason: reasons,
+          notes: notes
         });
         setIsSaved(true);
+        setSavedBookId(created.id);
       }
     } catch (error) {
       console.error('Error saving book:', error);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleSaveNotes = async () => {
+    if (!savedBookId) return;
+    
+    try {
+      await base44.entities.SavedBook.update(savedBookId, { notes });
+      setEditingNotes(false);
+    } catch (error) {
+      console.error('Error saving notes:', error);
     }
   };
 
@@ -146,6 +167,42 @@ export default function BookCard({ book, reasons, index, isContrast }) {
           </ul>
 
           <div className="space-y-3">
+            {isSaved && (
+              <div className="bg-stone-50 rounded-lg p-4 space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-medium text-stone-700">Meine Notizen</label>
+                  {!editingNotes ? (
+                    <button
+                      onClick={() => setEditingNotes(true)}
+                      className="text-xs text-amber-600 hover:text-amber-700"
+                    >
+                      Bearbeiten
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleSaveNotes}
+                      className="text-xs text-green-600 hover:text-green-700 font-medium"
+                    >
+                      Speichern
+                    </button>
+                  )}
+                </div>
+                {editingNotes ? (
+                  <textarea
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    placeholder="Z.B. Seite 42 ist interessant..."
+                    className="w-full px-3 py-2 border border-stone-200 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    rows={3}
+                  />
+                ) : (
+                  <p className="text-sm text-stone-600">
+                    {notes || 'Noch keine Notizen hinzugefügt'}
+                  </p>
+                )}
+              </div>
+            )}
+
             <div className="flex gap-3">
               <Button
                 onClick={handleSaveBook}

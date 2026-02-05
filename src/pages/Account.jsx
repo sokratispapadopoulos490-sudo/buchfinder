@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { Compass, Crown, ArrowRight, BookOpen, Sparkles, Clock, User as UserIcon, Bookmark } from 'lucide-react';
+import { Compass, Crown, ArrowRight, BookOpen, Sparkles, Clock, User as UserIcon, Bookmark, Search, Trash2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
@@ -14,6 +14,7 @@ export default function Account() {
   const [savedBooks, setSavedBooks] = useState([]);
   const [activeTab, setActiveTab] = useState('overview');
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,6 +50,22 @@ export default function Account() {
   const isPremium = user?.is_premium || false;
   const freeLimit = 3;
   const usedRecommendations = recommendations.length;
+
+  const filteredBooks = savedBooks.filter(book => 
+    book.book_data.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    book.book_data.author.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleDeleteRecommendation = async (recId) => {
+    if (confirm('Möchtest du diese Empfehlung wirklich löschen?')) {
+      try {
+        await base44.entities.Recommendation.delete(recId);
+        setRecommendations(recommendations.filter(r => r.id !== recId));
+      } catch (error) {
+        console.error('Error deleting recommendation:', error);
+      }
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50 px-6 py-12">
@@ -218,6 +235,19 @@ export default function Account() {
               <div className="text-sm text-stone-500">{savedBooks.length} Bücher</div>
             </div>
 
+            {savedBooks.length > 0 && (
+              <div className="mb-6 relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+                <input
+                  type="text"
+                  placeholder="Bücher durchsuchen..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-stone-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                />
+              </div>
+            )}
+
             {savedBooks.length === 0 ? (
               <div className="text-center py-12">
                 <Bookmark className="w-12 h-12 text-stone-300 mx-auto mb-4" />
@@ -229,9 +259,14 @@ export default function Account() {
                   Bücher entdecken
                 </Button>
               </div>
+            ) : filteredBooks.length === 0 ? (
+              <div className="text-center py-12">
+                <Search className="w-12 h-12 text-stone-300 mx-auto mb-4" />
+                <p className="text-stone-500">Keine Bücher gefunden</p>
+              </div>
             ) : (
               <div className="space-y-6">
-                {savedBooks.map((saved, index) => (
+                {filteredBooks.map((saved, index) => (
                   <BookCard
                     key={saved.id}
                     book={saved.book_data}
@@ -285,12 +320,21 @@ export default function Account() {
                       <Clock className="w-4 h-4" />
                       {formatDistanceToNow(new Date(rec.created_date), { addSuffix: true, locale: de })}
                     </div>
-                    {rec.is_premium && (
-                      <div className="flex items-center gap-1 text-amber-600 text-xs">
-                        <Crown className="w-3 h-3" />
-                        Premium
-                      </div>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {rec.is_premium && (
+                        <div className="flex items-center gap-1 text-amber-600 text-xs">
+                          <Crown className="w-3 h-3" />
+                          Premium
+                        </div>
+                      )}
+                      <button
+                        onClick={() => handleDeleteRecommendation(rec.id)}
+                        className="text-red-500 hover:text-red-600 transition-colors"
+                        title="Löschen"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
 
                   <div className="space-y-3">
