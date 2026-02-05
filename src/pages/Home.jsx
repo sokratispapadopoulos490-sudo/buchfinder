@@ -7,17 +7,20 @@ import ProfileCard from '@/components/books/ProfileCard';
 import BookCard from '@/components/books/BookCard';
 import { getMatchingBooks } from '@/components/books/BookDatabase';
 
+// Erste Frage für alle - Altersgruppe ermitteln
+const ageQuestion = {
+  id: 'age',
+  question: "Für wen suchst du ein Buch?",
+  options: [
+    { value: "kinder", label: "Für Kinder (6-12 Jahre)" },
+    { value: "jugendliche", label: "Für Jugendliche (13-17 Jahre)" },
+    { value: "erwachsene", label: "Für Erwachsene (18+ Jahre)" }
+  ]
+};
+
 const questionSets = {
   kinder: [
-    {
-      id: 'age',
-      question: "Wie alt bist du?",
-      options: [
-        { value: "kinder", label: "6-12 Jahre" },
-        { value: "jugendliche", label: "13-17 Jahre" },
-        { value: "erwachsene", label: "18+ Jahre" }
-      ]
-    },
+    ageQuestion,
     {
       id: 'topic',
       question: "Was interessiert dich gerade am meisten?",
@@ -26,149 +29,133 @@ const questionSets = {
         { value: "freundschaft", label: "🤝 Freundschaft und Zusammenhalt" },
         { value: "magie", label: "✨ Magie und Fantasie" },
         { value: "lustiges", label: "😄 Lustige Geschichten" },
-        { value: "mut", label: "💪 Mutig sein und Herausforderungen" },
+        { value: "mut", label: "💪 Mutig sein" },
         { value: "schule", label: "🎒 Schule und Lernen" }
       ]
     },
     {
-      id: 'situation',
+      id: 'mood',
       question: "Wie fühlst du dich gerade?",
       options: [
         { value: "neugierig", label: "Ich möchte etwas Neues entdecken" },
-        { value: "aufgeregt", label: "Ich will ein spannendes Abenteuer" },
-        { value: "entspannt", label: "Ich möchte mich entspannen" },
-        { value: "mutig", label: "Ich suche inspirierende Geschichten" }
+        { value: "aufgeregt", label: "Ich will Action und Spannung" },
+        { value: "ruhig", label: "Ich möchte mich entspannen" },
+        { value: "mutig", label: "Ich suche Inspiration" }
       ]
     },
     {
       id: 'style',
-      question: "Welche Art von Geschichten magst du?",
+      question: "Welche Geschichten magst du am liebsten?",
       options: [
-        { value: "story", label: "Spannende Abenteuergeschichten" },
-        { value: "reflektierend", label: "Geschichten zum Nachdenken" },
-        { value: "praktisch", label: "Geschichten mit Tipps und Ideen" }
+        { value: "story", label: "Abenteuergeschichten" },
+        { value: "reflektierend", label: "Geschichten zum Nachdenken" }
       ]
     },
     {
-      id: 'effort',
+      id: 'length',
       question: "Wie lange möchtest du lesen?",
       options: [
-        { value: "kurz", label: "Kurze Geschichten (10-20 Minuten)" },
+        { value: "kurz", label: "Kurze Geschichten (10-20 Min.)" },
         { value: "mittel", label: "Ein Kapitel am Tag" },
-        { value: "lang", label: "Längere Bücher, die spannend sind" }
+        { value: "lang", label: "Längere, spannende Bücher" }
       ]
     }
   ],
   jugendliche: [
-    {
-      id: 'age',
-      question: "Wie alt bist du?",
-      options: [
-        { value: "kinder", label: "6-12 Jahre" },
-        { value: "jugendliche", label: "13-17 Jahre" },
-        { value: "erwachsene", label: "18+ Jahre" }
-      ]
-    },
+    ageQuestion,
     {
       id: 'topic',
       question: "Was interessiert dich gerade am meisten?",
       options: [
         { value: "selbstfindung", label: "Mich selbst besser verstehen" },
         { value: "freundschaft", label: "Freundschaft und Beziehungen" },
-        { value: "abenteuer", label: "Spannende Abenteuer und Fantasy" },
+        { value: "abenteuer", label: "Abenteuer und Fantasy" },
         { value: "liebe", label: "Liebe und erste Beziehungen" },
-        { value: "gesellschaft", label: "Die Welt und Gesellschaft verstehen" },
-        { value: "mut", label: "Mut und persönliche Stärke" }
+        { value: "gesellschaft", label: "Die Welt verstehen" },
+        { value: "mut", label: "Mut und innere Stärke" }
       ]
     },
     {
-      id: 'situation',
-      question: "Wie würdest du deine aktuelle Situation beschreiben?",
+      id: 'mood',
+      question: "Was beschreibt deine Situation am besten?",
       options: [
         { value: "suchend", label: "Ich suche nach Orientierung" },
-        { value: "neugierig", label: "Ich will neue Perspektiven entdecken" },
+        { value: "neugierig", label: "Ich will neue Perspektiven" },
         { value: "herausfordernd", label: "Ich stehe vor Herausforderungen" },
-        { value: "abenteuerlustig", label: "Ich brauche Inspiration und Action" }
+        { value: "inspiriert", label: "Ich will inspiriert werden" }
       ]
     },
     {
       id: 'style',
-      question: "Welche Art von Büchern bevorzugst du?",
+      question: "Welche Bücher bevorzugst du?",
       options: [
-        { value: "story", label: "Spannende Geschichten und Romane" },
-        { value: "reflektierend", label: "Bücher, die zum Nachdenken anregen" },
-        { value: "praktisch", label: "Mit praktischen Tipps fürs Leben" }
+        { value: "story", label: "Spannende Geschichten" },
+        { value: "reflektierend", label: "Zum Nachdenken" },
+        { value: "praktisch", label: "Mit Tipps fürs Leben" }
       ]
     },
     {
-      id: 'effort',
+      id: 'length',
       question: "Wie viel Zeit hast du zum Lesen?",
       options: [
-        { value: "kurz", label: "Kurze Sessions (15-30 Minuten)" },
-        { value: "mittel", label: "Ein paar Kapitel am Tag" },
-        { value: "lang", label: "Ich nehme mir Zeit für längere Bücher" }
+        { value: "kurz", label: "15-30 Minuten am Tag" },
+        { value: "mittel", label: "Ein paar Kapitel täglich" },
+        { value: "lang", label: "Ich tauche gerne tief ein" }
       ]
     }
   ],
   erwachsene: [
-    {
-      id: 'age',
-      question: "Wie alt bist du?",
-      options: [
-        { value: "kinder", label: "6-12 Jahre" },
-        { value: "jugendliche", label: "13-17 Jahre" },
-        { value: "erwachsene", label: "18+ Jahre" }
-      ]
-    },
+    ageQuestion,
     {
       id: 'topic',
       question: "Was beschäftigt dich gerade am meisten?",
       options: [
-        { value: "persoenliche_entwicklung", label: "Mich selbst besser verstehen & entwickeln" },
-        { value: "stress_ruhe", label: "Mehr Ruhe und weniger Stress finden" },
-        { value: "fokus_produktivitaet", label: "Fokussierter und produktiver werden" },
-        { value: "beziehung_kommunikation", label: "Bessere Beziehungen & Kommunikation" },
-        { value: "sinn_philosophie", label: "Sinn, Werte und die großen Fragen" },
-        { value: "kreativitaet", label: "Kreativität & Selbstausdruck" }
+        { value: "persoenliche_entwicklung", label: "Persönliche Entwicklung" },
+        { value: "stress_ruhe", label: "Ruhe und Gelassenheit" },
+        { value: "fokus_produktivitaet", label: "Fokus & Produktivität" },
+        { value: "beziehung_kommunikation", label: "Beziehungen & Kommunikation" },
+        { value: "sinn_philosophie", label: "Sinn & Lebensphilosophie" },
+        { value: "kreativitaet", label: "Kreativität" },
+        { value: "lernen_wissen", label: "Lernen & Wissenserweiterung" },
+        { value: "koerper_gesundheit", label: "Körper & Gesundheit" }
       ]
     },
     {
-      id: 'situation',
-      question: "Wie würdest du deine aktuelle Situation beschreiben?",
+      id: 'mood',
+      question: "Wie würdest du deine Situation beschreiben?",
       options: [
-        { value: "ueberfordert", label: "Etwas überfordert – ich suche Orientierung" },
-        { value: "neugierig", label: "Neugierig – ich will etwas Neues entdecken" },
-        { value: "antriebslos", label: "Antriebslos – ich brauche frische Impulse" },
-        { value: "stabil", label: "Stabil – ich will mich weiterentwickeln" },
-        { value: "konkret", label: "Ich habe ein konkretes Thema vor Augen" }
+        { value: "ueberfordert", label: "Ich suche Orientierung" },
+        { value: "neugierig", label: "Ich will Neues entdecken" },
+        { value: "antriebslos", label: "Ich brauche frische Impulse" },
+        { value: "wachsend", label: "Ich will mich weiterentwickeln" }
       ]
     },
     {
       id: 'style',
-      question: "Wie liest du am liebsten?",
+      question: "Welcher Lesestil passt zu dir?",
       options: [
-        { value: "praktisch", label: "Praktisch – mit Übungen und konkreten Tipps" },
-        { value: "wissenschaftlich", label: "Wissenschaftlich – fundiert und sachlich" },
-        { value: "story", label: "Erzählerisch – Geschichten & Biografien" },
-        { value: "reflektierend", label: "Philosophisch – zum Nachdenken und Innehalten" }
+        { value: "praktisch", label: "Praktisch & umsetzbar" },
+        { value: "wissenschaftlich", label: "Wissenschaftlich fundiert" },
+        { value: "story", label: "Erzählerisch & biografisch" },
+        { value: "reflektierend", label: "Philosophisch & tiefgründig" }
       ]
     },
     {
-      id: 'effort',
+      id: 'length',
       question: "Wie viel Zeit möchtest du investieren?",
       options: [
-        { value: "kurz", label: "Kurze Sessions (5–15 Minuten am Tag)" },
-        { value: "mittel", label: "Kapitelweise, in meinem eigenen Tempo" },
-        { value: "lang", label: "Intensiv – ich nehme mir Zeit für längere Werke" }
+        { value: "kurz", label: "Kurze Sessions (5-15 Min.)" },
+        { value: "mittel", label: "In meinem eigenen Tempo" },
+        { value: "lang", label: "Intensiv & umfassend" }
       ]
     },
     {
-      id: 'experience',
-      question: "Wie erfahren bist du mit Sachbüchern & Ratgebern?",
+      id: 'level',
+      question: "Wie tief möchtest du eintauchen?",
       options: [
-        { value: "einsteiger", label: "Einsteiger – ich lese selten solche Bücher" },
-        { value: "fortgeschritten", label: "Fortgeschritten – ich habe einige gelesen" },
-        { value: "erfahren", label: "Sehr erfahren – ich suche tiefere Impulse" }
+        { value: "einsteiger", label: "Einsteigerfreundlich" },
+        { value: "fortgeschritten", label: "Mit Tiefgang" },
+        { value: "erfahren", label: "Sehr tiefgehend" }
       ]
     }
   ]
@@ -254,44 +241,43 @@ export default function Home() {
     const mainTopics = [ans.topic];
     const secondaryTopics = [];
     
-    // Situation zu Themen mappen - altersabhängig
+    // Stimmung/Situation zu Themen mappen - altersabhängig
     if (ageGroup === 'erwachsene') {
-      const situationTopics = {
+      const moodTopics = {
         ueberfordert: ["stress_ruhe"],
         neugierig: ["lernen_wissen"],
         antriebslos: ["persoenliche_entwicklung"],
-        stabil: ["sinn_philosophie"],
-        konkret: []
+        wachsend: ["sinn_philosophie"]
       };
-      secondaryTopics.push(...(situationTopics[ans.situation] || []));
+      secondaryTopics.push(...(moodTopics[ans.mood] || []));
     } else if (ageGroup === 'jugendliche') {
-      const situationTopics = {
+      const moodTopics = {
         suchend: ["selbstfindung"],
-        neugierig: ["lernen_wissen"],
+        neugierig: ["abenteuer"],
         herausfordernd: ["mut"],
-        abenteuerlustig: ["abenteuer"]
+        inspiriert: ["leben"]
       };
-      secondaryTopics.push(...(situationTopics[ans.situation] || []));
+      secondaryTopics.push(...(moodTopics[ans.mood] || []));
     } else if (ageGroup === 'kinder') {
-      const situationTopics = {
-        neugierig: ["geschichte"],
+      const moodTopics = {
+        neugierig: ["magie"],
         aufgeregt: ["abenteuer"],
-        entspannt: ["freundschaft"],
+        ruhig: ["freundschaft"],
         mutig: ["mut"]
       };
-      secondaryTopics.push(...(situationTopics[ans.situation] || []));
+      secondaryTopics.push(...(moodTopics[ans.mood] || []));
     }
 
     const style = [ans.style];
-    if (ans.effort === "kurz") style.push("kurz");
-    if (ans.effort === "lang") style.push("anspruchsvoll");
+    if (ans.length === "kurz") style.push("kurz");
+    if (ans.length === "lang") style.push("anspruchsvoll");
 
     return {
       mainTopics,
       secondaryTopics,
       style,
-      difficulty: ans.experience || "einsteiger",
-      timeEffort: ans.effort,
+      difficulty: ans.level || "einsteiger",
+      timeEffort: ans.length,
       ageGroup: ageGroup
     };
   };
@@ -354,9 +340,9 @@ export default function Home() {
               transition={{ delay: 0.4 }}
               className="text-stone-500 text-center max-w-md mb-12 text-lg font-light"
             >
-              Fünf kurze Fragen. Passende Empfehlungen.
+              Wenige einfache Fragen. Passende Empfehlungen.
               <br />
-              Für genau das, was dich gerade bewegt.
+              Für Kinder, Jugendliche und Erwachsene.
             </motion.p>
 
             <motion.div
