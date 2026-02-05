@@ -10,7 +10,8 @@ export const books = [
     timeEffort: "mittel",
     style: ["praktisch", "wissenschaftlich"],
     description: "Wie kleine Gewohnheiten große Veränderungen bewirken.",
-    coverColor: "bg-amber-100"
+    coverColor: "bg-amber-100",
+    ageGroup: "erwachsene"
   },
   {
     id: 2,
@@ -22,7 +23,8 @@ export const books = [
     timeEffort: "kurz",
     style: ["praktisch", "kurz"],
     description: "52 Denkfehler, die man besser anderen überlässt.",
-    coverColor: "bg-slate-100"
+    coverColor: "bg-slate-100",
+    ageGroup: "erwachsene"
   },
   {
     id: 3,
@@ -34,7 +36,8 @@ export const books = [
     timeEffort: "mittel",
     style: ["praktisch", "reflektierend"],
     description: "Ein 12-Wochen-Programm zur Entfaltung der kreativen Kräfte.",
-    coverColor: "bg-violet-100"
+    coverColor: "bg-violet-100",
+    ageGroup: "erwachsene"
   },
   {
     id: 4,
@@ -46,7 +49,8 @@ export const books = [
     timeEffort: "kurz",
     style: ["reflektierend", "kurz"],
     description: "Ein Entdecker über die Stille in einer lauten Welt.",
-    coverColor: "bg-sky-100"
+    coverColor: "bg-sky-100",
+    ageGroup: "erwachsene"
   },
   {
     id: 5,
@@ -58,7 +62,8 @@ export const books = [
     timeEffort: "mittel",
     style: ["wissenschaftlich", "praktisch"],
     description: "Regeln für konzentriertes Arbeiten in einer zerstreuten Welt.",
-    coverColor: "bg-indigo-100"
+    coverColor: "bg-indigo-100",
+    ageGroup: "erwachsene"
   },
   {
     id: 6,
@@ -358,7 +363,205 @@ export const books = [
     timeEffort: "kurz",
     style: ["praktisch", "kurz"],
     description: "Gewinne den inneren kreativen Kampf.",
-    coverColor: "bg-violet-100"
+    coverColor: "bg-violet-100",
+    ageGroup: "erwachsene"
+  },
+  // Bücher für Kinder (6-12 Jahre)
+  {
+    id: 31,
+    title: "Der kleine Prinz",
+    author: "Antoine de Saint-Exupéry",
+    isbn: "9783792000168",
+    tags: ["freundschaft", "abenteuer", "philosophie"],
+    difficulty: "einsteiger",
+    timeEffort: "kurz",
+    style: ["story", "reflektierend"],
+    description: "Die Geschichte eines kleinen Prinzen und seiner Reise durch die Galaxie.",
+    coverColor: "bg-yellow-100",
+    ageGroup: "kinder"
+  },
+  {
+    id: 32,
+    title: "Das magische Baumhaus",
+    author: "Mary Pope Osborne",
+    isbn: "9783785558003",
+    tags: ["abenteuer", "geschichte", "magie"],
+    difficulty: "einsteiger",
+    timeEffort: "kurz",
+    style: ["story"],
+    description: "Zeitreise-Abenteuer von Anne und Philipp mit einem magischen Baumhaus.",
+    coverColor: "bg-green-100",
+    ageGroup: "kinder"
+  },
+  {
+    id: 33,
+    title: "Greg's Tagebuch",
+    author: "Jeff Kinney",
+    isbn: "9783843200080",
+    tags: ["freundschaft", "schule", "lustiges"],
+    difficulty: "einsteiger",
+    timeEffort: "kurz",
+    style: ["story", "kurz"],
+    description: "Die lustigen Alltagsabenteuer von Greg Heffley.",
+    coverColor: "bg-orange-100",
+    ageGroup: "kinder"
+  },
+  {
+    id: 34,
+    title: "Die Schule der magischen Tiere",
+    author: "Margit Auer",
+    isbn: "9783551652003",
+    tags: ["freundschaft", "magie", "schule"],
+    difficulty: "einsteiger",
+    timeEffort: "kurz",
+    style: ["story"],
+    description: "Kinder bekommen magische Tiere als beste Freunde.",
+    coverColor: "bg-pink-100",
+    ageGroup: "kinder"
+  },
+  {
+    id: 35,
+    title: "Harry Potter und der Stein der Weisen",
+    author: "J.K. Rowling",
+    isbn: "9783551551672",
+    tags: ["abenteuer", "magie", "freundschaft"],
+    difficulty: "einsteiger",
+    timeEffort: "mittel",
+    style: ["story"],
+    description: "Harry entdeckt, dass er ein Zauberer ist und besucht Hogwarts.",
+    coverColor: "bg-purple-100",
+    ageGroup: "kinder"
+  },
+  {
+    id: 36,
+    title: "Matilda",
+    author: "Roald Dahl",
+    isbn: "9783499217364",
+    tags: ["schule", "magie", "mut"],
+    difficulty: "einsteiger",
+    timeEffort: "kurz",
+    style: ["story"],
+    description: "Ein Mädchen mit besonderen Fähigkeiten und einer großen Liebe zu Büchern.",
+    coverColor: "bg-blue-100",
+    ageGroup: "kinder"
+  },
+  {
+    id: 37,
+    title: "Der Räuber Hotzenplotz",
+    author: "Otfried Preußler",
+    isbn: "9783522101509",
+    tags: ["abenteuer", "lustiges", "mut"],
+    difficulty: "einsteiger",
+    timeEffort: "kurz",
+    style: ["story"],
+    description: "Kasperl und Seppel auf der Jagd nach dem berüchtigten Räuber.",
+    coverColor: "bg-red-100",
+    ageGroup: "kinder"
+  },
+  {
+    id: 38,
+    title: "Paddington",
+    author: "Michael Bond",
+    isbn: "9783570175415",
+    tags: ["abenteuer", "freundschaft", "lustiges"],
+    difficulty: "einsteiger",
+    timeEffort: "kurz",
+    style: ["story"],
+    description: "Ein Bär aus Peru erlebt Abenteuer in London.",
+    coverColor: "bg-amber-100",
+    ageGroup: "kinder"
+  },
+  // Bücher für Jugendliche (13-17 Jahre)
+  {
+    id: 39,
+    title: "Die Tribute von Panem",
+    author: "Suzanne Collins",
+    isbn: "9783789132313",
+    tags: ["abenteuer", "mut", "gesellschaft"],
+    difficulty: "fortgeschritten",
+    timeEffort: "mittel",
+    style: ["story"],
+    description: "Katniss kämpft ums Überleben in einem brutalen Wettbewerb.",
+    coverColor: "bg-slate-100",
+    ageGroup: "jugendliche"
+  },
+  {
+    id: 40,
+    title: "Das Schicksal ist ein mieser Verräter",
+    author: "John Green",
+    isbn: "9783446240094",
+    tags: ["freundschaft", "liebe", "leben"],
+    difficulty: "einsteiger",
+    timeEffort: "mittel",
+    style: ["story", "reflektierend"],
+    description: "Eine berührende Geschichte über Liebe und das Leben.",
+    coverColor: "bg-cyan-100",
+    ageGroup: "jugendliche"
+  },
+  {
+    id: 41,
+    title: "Tschick",
+    author: "Wolfgang Herrndorf",
+    isbn: "9783499256356",
+    tags: ["freundschaft", "abenteuer", "selbstfindung"],
+    difficulty: "einsteiger",
+    timeEffort: "mittel",
+    style: ["story"],
+    description: "Zwei Außenseiter auf einem unvergesslichen Roadtrip.",
+    coverColor: "bg-teal-100",
+    ageGroup: "jugendliche"
+  },
+  {
+    id: 42,
+    title: "Percy Jackson - Diebe im Olymp",
+    author: "Rick Riordan",
+    isbn: "9783551313010",
+    tags: ["abenteuer", "magie", "geschichte"],
+    difficulty: "einsteiger",
+    timeEffort: "mittel",
+    style: ["story"],
+    description: "Percy entdeckt, dass er der Sohn eines griechischen Gottes ist.",
+    coverColor: "bg-indigo-100",
+    ageGroup: "jugendliche"
+  },
+  {
+    id: 43,
+    title: "Die Outsider",
+    author: "S.E. Hinton",
+    isbn: "9783423781305",
+    tags: ["freundschaft", "gesellschaft", "mut"],
+    difficulty: "einsteiger",
+    timeEffort: "mittel",
+    style: ["story"],
+    description: "Klassischer Roman über Jugendliche und soziale Konflikte.",
+    coverColor: "bg-stone-100",
+    ageGroup: "jugendliche"
+  },
+  {
+    id: 44,
+    title: "Eleanor & Park",
+    author: "Rainbow Rowell",
+    isbn: "9783446247130",
+    tags: ["liebe", "freundschaft", "selbstfindung"],
+    difficulty: "einsteiger",
+    timeEffort: "mittel",
+    style: ["story"],
+    description: "Eine zarte Liebesgeschichte zweier Außenseiter.",
+    coverColor: "bg-rose-100",
+    ageGroup: "jugendliche"
+  },
+  {
+    id: 45,
+    title: "Selection",
+    author: "Kiera Cass",
+    isbn: "9783596196944",
+    tags: ["liebe", "abenteuer", "selbstfindung"],
+    difficulty: "einsteiger",
+    timeEffort: "mittel",
+    style: ["story"],
+    description: "35 Mädchen wetteifern um das Herz des Prinzen.",
+    coverColor: "bg-pink-100",
+    ageGroup: "jugendliche"
   }
 ];
 
