@@ -7,6 +7,7 @@ import ProfileCard from '@/components/books/ProfileCard';
 import BookCard from '@/components/books/BookCard';
 import { getMatchingBooks } from '@/components/books/BookDatabase';
 import { base44 } from '@/api/base44Client';
+import { useNavigate } from 'react-router-dom';
 
 // Erste Frage für alle - Altersgruppe ermitteln
 const ageQuestion = {
@@ -396,9 +397,10 @@ export default function Home() {
     setQuestions(questionSets.erwachsene);
   };
 
+  const navigate = useNavigate();
+
   const handleUpgrade = () => {
-    // Hier später Stripe-Integration
-    alert('Premium-Upgrade kommt bald! Du kannst dann unbegrenzt Empfehlungen erhalten.');
+    navigate('/Premium');
   };
 
   return (
@@ -548,7 +550,7 @@ export default function Home() {
                   <div className="flex items-start gap-3 text-sm text-stone-600">
                     <Compass className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-medium text-stone-800 mb-1">Premium Upgrade</p>
+                      <p className="font-medium text-stone-800 mb-1">Premium für 4,99€/Monat</p>
                       <p className="text-xs leading-relaxed">
                         Unbegrenzte Empfehlungen, erweiterte Profile und regelmäßig neue Bücher
                       </p>
