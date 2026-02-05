@@ -146,13 +146,37 @@ export default function BookCard({ book, reasons, index, isContrast }) {
           </ul>
 
           <div className="space-y-3">
-            <Button 
-              onClick={() => setShowBuyOptions(!showBuyOptions)}
-              className="w-full gap-2 bg-stone-800 hover:bg-stone-700"
-            >
-              <ShoppingCart className="w-4 h-4" />
-              Kaufoptionen anzeigen
-            </Button>
+            <div className="flex gap-3">
+              <Button
+                onClick={handleSaveBook}
+                disabled={saving}
+                variant={isSaved ? "default" : "outline"}
+                className={cn(
+                  "flex-1 gap-2",
+                  isSaved && "bg-amber-600 hover:bg-amber-700 text-white"
+                )}
+              >
+                {isSaved ? (
+                  <>
+                    <BookmarkCheck className="w-4 h-4" />
+                    Gespeichert
+                  </>
+                ) : (
+                  <>
+                    <Bookmark className="w-4 h-4" />
+                    Speichern
+                  </>
+                )}
+              </Button>
+
+              <Button 
+                onClick={() => setShowBuyOptions(!showBuyOptions)}
+                className="flex-1 gap-2 bg-stone-800 hover:bg-stone-700"
+              >
+                <ShoppingCart className="w-4 h-4" />
+                Kaufen
+              </Button>
+            </div>
 
             {showBuyOptions && (
               <motion.div
