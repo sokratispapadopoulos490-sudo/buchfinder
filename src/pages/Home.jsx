@@ -166,36 +166,76 @@ const questionSets = {
 const generateReasons = (book, profile) => {
   const topicMatch = profile.mainTopics.find(t => book.tags.includes(t));
   const styleMatch = profile.style.find(s => book.style.includes(s));
-  
+
   const topicReasons = {
     persoenliche_entwicklung: "Spricht dein Bedürfnis nach Selbstentwicklung an",
     stress_ruhe: "Hilft dir, mehr Ruhe zu finden",
     fokus_produktivitaet: "Unterstützt dich bei Fokus und Produktivität",
     beziehung_kommunikation: "Stärkt deine Beziehungskompetenz",
     sinn_philosophie: "Berührt die großen Lebensfragen",
-    kreativitaet: "Fördert deine kreative Seite"
+    kreativitaet: "Fördert deine kreative Seite",
+    lernen_wissen: "Erweitert dein Wissen",
+    koerper_gesundheit: "Unterstützt deine Gesundheit",
+    abenteuer: "Nimmt dich mit auf spannende Reisen",
+    freundschaft: "Zeigt die Kraft von Freundschaft",
+    magie: "Entführt dich in magische Welten",
+    lustiges: "Bringt dich zum Lachen",
+    mut: "Inspiriert zu mutigen Schritten",
+    schule: "Begleitet durch den Schulalltag",
+    selbstfindung: "Hilft dir, dich selbst zu verstehen",
+    liebe: "Berührt das Herz"
   };
-  
+
   const styleReasons = {
     praktisch: "Der praktische Stil passt zu deiner Vorliebe für Umsetzbarkeit",
     wissenschaftlich: "Wissenschaftlich fundiert – genau wie du es magst",
     story: "Erzählerisch geschrieben – für deinen bevorzugten Lesestil",
-    reflektierend: "Lädt zum Nachdenken ein – passend zu deinem Stil"
+    reflektierend: "Lädt zum Nachdenken ein – passend zu deinem Stil",
+    kurz: "Kompakt und prägnant – ideal für deine Lesezeit",
+    anspruchsvoll: "Mit Tiefgang – genau richtig für dich"
   };
-  
+
+  // Individuelle Gründe basierend auf Buchtitel und Autor
+  const bookSpecificReasons = {
+    "Atomic Habits": "Dieses Buch zeigt dir, wie kleinste Veränderungen große Wirkung haben – perfekt für nachhaltigen Wandel.",
+    "Die Kunst des klaren Denkens": "52 kompakte Denkfehler-Analysen – jede für sich ein Aha-Moment.",
+    "Der Weg des Künstlers": "Ein bewährtes 12-Wochen-Programm, das schon Tausende kreativer gemacht hat.",
+    "Stille": "Kagges Polarerfahrungen machen Stille greifbar – ein Gegenpol zur lauten Welt.",
+    "Deep Work": "Newport zeigt wissenschaftlich, wie du in einer Ablenkungswelt fokussiert bleibst.",
+    "Gewaltfreie Kommunikation": "Rosenbergs Methode hat Beziehungen weltweit verändert – auch deine?",
+    "Der Mönch, der seinen Ferrari verkaufte": "Eine inspirierende Parabel über das Wesentliche im Leben.",
+    "Thinking, Fast and Slow": "Kahnemans Forschung erklärt, warum wir denken, wie wir denken.",
+    "Ikigai": "Das japanische Konzept des Lebenszwecks – kurz und einprägsam erklärt.",
+    "Essentialism": "McKeown zeigt, wie 'weniger aber besser' dein Leben vereinfacht.",
+    "Der kleine Prinz": "Die zeitlose Geschichte über Freundschaft, die Generationen berührt.",
+    "Das magische Baumhaus": "Zeitreisen machen Geschichte lebendig und spannend.",
+    "Greg's Tagebuch": "Comics und Text perfekt kombiniert – Lesespaß garantiert.",
+    "Die Schule der magischen Tiere": "Jeder bekommt sein perfektes Tier – welches wäre deins?",
+    "Harry Potter und der Stein der Weisen": "Der Beginn einer Saga, die Millionen verzaubert hat.",
+    "Matilda": "Dahls Geschichte über ein kluges Mädchen, das sich behauptet.",
+    "Die Tribute von Panem": "Katniss' Mut inspiriert – eine Geschichte über Widerstand.",
+    "Das Schicksal ist ein mieser Verräter": "John Green berührt mit seiner ehrlichen Erzählweise.",
+    "Tschick": "Ein deutscher Klassiker über Freundschaft und Freiheit."
+  };
+
+  const bookSpecificReason = bookSpecificReasons[book.title] || book.description;
+
   const practicalGains = {
     persoenliche_entwicklung: "Konkrete Werkzeuge für persönliches Wachstum",
     stress_ruhe: "Praktische Methoden für mehr Gelassenheit im Alltag",
     fokus_produktivitaet: "Umsetzbare Strategien für mehr Klarheit",
     beziehung_kommunikation: "Direkt anwendbare Kommunikationstechniken",
     sinn_philosophie: "Neue Perspektiven für eigene Reflexion",
-    kreativitaet: "Impulse, die du sofort ausprobieren kannst"
+    kreativitaet: "Impulse, die du sofort ausprobieren kannst",
+    lernen_wissen: "Wissen, das dich weiterbringt",
+    abenteuer: "Spannung, die dich fesselt",
+    freundschaft: "Geschichten, die ans Herz gehen"
   };
 
   return {
     mainReason: book.isContrast 
-      ? "Dieses Buch erweitert deinen Horizont mit einem anderen Blickwinkel."
-      : `Dieses Buch passt jetzt zu dir – es verbindet ${topicReasons[topicMatch]?.toLowerCase() || 'deine Interessen'} mit einem Stil, der dir liegt.`,
+      ? `"${book.title}" erweitert deinen Horizont mit einem anderen Blickwinkel – ${book.author} bietet eine frische Perspektive.`
+      : bookSpecificReason,
     bullets: [
       topicReasons[topicMatch] || "Passt thematisch zu deinen Interessen",
       styleReasons[styleMatch] || "Angenehm zu lesen",
@@ -671,13 +711,25 @@ export default function Home() {
             className="min-h-screen px-6 py-12"
           >
             <div className="max-w-2xl mx-auto">
-              <button
-                onClick={handleBackFromResults}
-                className="flex items-center gap-2 text-stone-500 hover:text-stone-700 mb-8 transition-colors"
-              >
-                <ChevronLeft className="w-4 h-4" />
-                <span className="text-sm">Zurück zum Profil</span>
-              </button>
+              <div className="flex items-center justify-between mb-8">
+                <button
+                  onClick={handleBackFromResults}
+                  className="flex items-center gap-2 text-stone-500 hover:text-stone-700 transition-colors"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  <span className="text-sm">Zurück zum Profil</span>
+                </button>
+
+                {isAuthenticated && (
+                  <button
+                    onClick={() => navigate('/Account')}
+                    className="flex items-center gap-2 text-stone-500 hover:text-stone-700 transition-colors"
+                  >
+                    <User className="w-4 h-4" />
+                    <span className="text-sm">Mein Account</span>
+                  </button>
+                )}
+              </div>
 
               <motion.div
                 initial={{ y: -20, opacity: 0 }}

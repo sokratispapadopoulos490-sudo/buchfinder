@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Sparkles, ShoppingCart } from 'lucide-react';
+import { ExternalLink, Sparkles, ShoppingCart, Bookmark, BookmarkCheck } from 'lucide-react';
 import { cn } from "@/lib/utils";
+import { base44 } from '@/api/base44Client';
 
 const generateBuyLinks = (book) => {
   const encodedTitle = encodeURIComponent(`${book.title} ${book.author}`);
@@ -34,7 +35,58 @@ const generateBuyLinks = (book) => {
 
 export default function BookCard({ book, reasons, index, isContrast }) {
   const [showBuyOptions, setShowBuyOptions] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const buyLinks = generateBuyLinks(book);
+
+  useEffect(() => {
+    checkIfSaved();
+  }, [book.id]);
+
+  const checkIfSaved = async () => {
+    try {
+      const isAuth = await base44.auth.isAuthenticated();
+      setIsAuthenticated(isAuth);
+      
+      if (isAuth) {
+        const saved = await base44.entities.SavedBook.filter({ book_id: book.id });
+        setIsSaved(saved.length > 0);
+      }
+    } catch (error) {
+      console.error('Error checking saved status:', error);
+    }
+  };
+
+  const handleSaveBook = async () => {
+    if (!isAuthenticated) {
+      base44.auth.redirectToLogin();
+      return;
+    }
+
+    setSaving(true);
+    try {
+      if (isSaved) {
+        const saved = await base44.entities.SavedBook.filter({ book_id: book.id });
+        if (saved.length > 0) {
+          await base44.entities.SavedBook.delete(saved[0].id);
+          setIsSaved(false);
+        }
+      } else {
+        await base44.entities.SavedBook.create({
+          book_id: book.id,
+          book_data: book,
+          recommendation_reason: reasons
+        });
+        setIsSaved(true);
+      }
+    } catch (error) {
+      console.error('Error saving book:', error);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}

@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { Compass, Crown, ArrowRight, BookOpen, Sparkles, Clock, User as UserIcon } from 'lucide-react';
+import { Compass, Crown, ArrowRight, BookOpen, Sparkles, Clock, User as UserIcon, Bookmark } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import { de } from 'date-fns/locale';
+import BookCard from '@/components/books/BookCard';
 
 export default function Account() {
   const [user, setUser] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
+  const [savedBooks, setSavedBooks] = useState([]);
+  const [activeTab, setActiveTab] = useState('overview');
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -24,6 +27,9 @@ export default function Account() {
 
       const recs = await base44.entities.Recommendation.list('-created_date');
       setRecommendations(recs);
+
+      const books = await base44.entities.SavedBook.list('-created_date');
+      setSavedBooks(books);
     } catch (error) {
       console.error('Error loading account:', error);
       base44.auth.redirectToLogin();
@@ -106,11 +112,11 @@ export default function Account() {
 
             <div className="bg-stone-50 rounded-xl p-4">
               <div className="flex items-center gap-2 text-stone-500 text-sm mb-2">
-                <BookOpen className="w-4 h-4" />
-                Bücher entdeckt
+                <Bookmark className="w-4 h-4" />
+                Gespeicherte Bücher
               </div>
               <div className="text-2xl font-light text-stone-800">
-                {recommendations.reduce((sum, rec) => sum + (rec.books?.length || 0), 0)}
+                {savedBooks.length}
               </div>
             </div>
 
@@ -156,8 +162,81 @@ export default function Account() {
           </motion.div>
         )}
 
-        {/* Empfehlungsverlauf */}
-        <div className="bg-white rounded-2xl border border-stone-200 p-8">
+        {/* Navigation Tabs */}
+        <div className="bg-white rounded-xl border border-stone-200 p-2 mb-8 flex gap-2">
+          <button
+            onClick={() => setActiveTab('overview')}
+            className={`flex-1 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+              activeTab === 'overview'
+                ? 'bg-stone-800 text-white'
+                : 'text-stone-600 hover:bg-stone-50'
+            }`}
+          >
+            Übersicht
+          </button>
+          <button
+            onClick={() => setActiveTab('saved')}
+            className={`flex-1 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+              activeTab === 'saved'
+                ? 'bg-stone-800 text-white'
+                : 'text-stone-600 hover:bg-stone-50'
+            }`}
+          >
+            <div className="flex items-center justify-center gap-2">
+              <Bookmark className="w-4 h-4" />
+              Gespeicherte Bücher ({savedBooks.length})
+            </div>
+          </button>
+          <button
+            onClick={() => setActiveTab('history')}
+            className={`flex-1 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+              activeTab === 'history'
+                ? 'bg-stone-800 text-white'
+                : 'text-stone-600 hover:bg-stone-50'
+            }`}
+          >
+            Verlauf
+          </button>
+        </div>
+
+        {/* Gespeicherte Bücher Tab */}
+        {activeTab === 'saved' && (
+          <div className="bg-white rounded-2xl border border-stone-200 p-8">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-light text-stone-800">Deine gespeicherten Bücher</h2>
+              <div className="text-sm text-stone-500">{savedBooks.length} Bücher</div>
+            </div>
+
+            {savedBooks.length === 0 ? (
+              <div className="text-center py-12">
+                <Bookmark className="w-12 h-12 text-stone-300 mx-auto mb-4" />
+                <p className="text-stone-500 mb-4">Noch keine Bücher gespeichert</p>
+                <Button
+                  onClick={() => navigate('/')}
+                  className="bg-stone-800 hover:bg-stone-700 text-white"
+                >
+                  Bücher entdecken
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {savedBooks.map((saved, index) => (
+                  <BookCard
+                    key={saved.id}
+                    book={saved.book_data}
+                    reasons={saved.recommendation_reason}
+                    index={index}
+                    isContrast={false}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Verlauf Tab */}
+        {activeTab === 'history' && (
+          <div className="bg-white rounded-2xl border border-stone-200 p-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-light text-stone-800">
               {isPremium ? 'Dein Empfehlungsverlauf' : 'Deine Empfehlungen'}
@@ -253,7 +332,44 @@ export default function Account() {
               )}
             </div>
           )}
-        </div>
+          </div>
+        )}
+
+        {/* Übersicht Tab - bleibt wie vorher */}
+        {activeTab === 'overview' && (
+          <div className="bg-white rounded-2xl border border-stone-200 p-8">
+            <h2 className="text-xl font-light text-stone-800 mb-6">Schnellzugriff</h2>
+            <div className="grid gap-4">
+              <button
+                onClick={() => navigate('/')}
+                className="flex items-center justify-between p-4 border border-stone-200 rounded-xl hover:border-stone-300 hover:bg-stone-50 transition-all text-left"
+              >
+                <div className="flex items-center gap-3">
+                  <Compass className="w-5 h-5 text-amber-600" />
+                  <div>
+                    <div className="font-medium text-stone-800">Neue Empfehlung</div>
+                    <div className="text-sm text-stone-500">Starte eine neue Büchersuche</div>
+                  </div>
+                </div>
+                <ArrowRight className="w-5 h-5 text-stone-400" />
+              </button>
+
+              <button
+                onClick={() => setActiveTab('saved')}
+                className="flex items-center justify-between p-4 border border-stone-200 rounded-xl hover:border-stone-300 hover:bg-stone-50 transition-all text-left"
+              >
+                <div className="flex items-center gap-3">
+                  <Bookmark className="w-5 h-5 text-amber-600" />
+                  <div>
+                    <div className="font-medium text-stone-800">Gespeicherte Bücher</div>
+                    <div className="text-sm text-stone-500">{savedBooks.length} Bücher markiert</div>
+                  </div>
+                </div>
+                <ArrowRight className="w-5 h-5 text-stone-400" />
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Account Actions */}
         <div className="mt-8 text-center">
