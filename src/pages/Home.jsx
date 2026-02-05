@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { BookOpen, ArrowRight, ChevronLeft, User, LogOut } from 'lucide-react';
+import { Compass, ArrowRight, ChevronLeft, User, LogOut } from 'lucide-react';
 import QuestionCard from '@/components/books/QuestionCard';
 import ProfileCard from '@/components/books/ProfileCard';
 import BookCard from '@/components/books/BookCard';
@@ -213,9 +213,15 @@ export default function Home() {
   const [questions, setQuestions] = useState(questionSets.erwachsene);
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showBookOpen, setShowBookOpen] = useState(true);
 
   useEffect(() => {
     checkAuth();
+    // Buch-Animation nach 2 Sekunden ausblenden
+    const timer = setTimeout(() => {
+      setShowBookOpen(false);
+    }, 2000);
+    return () => clearTimeout(timer);
   }, []);
 
   const checkAuth = async () => {
@@ -347,9 +353,9 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50">
       {/* Header mit Login/Logout */}
-      <div className="fixed top-0 right-0 p-6 z-50">
+      <div className="fixed top-0 right-0 p-6 z-40">
         {isAuthenticated && user ? (
           <div className="flex items-center gap-3">
             <span className="text-sm text-stone-600">Hallo, {user.full_name}</span>
@@ -368,7 +374,7 @@ export default function Home() {
             onClick={handleLogin}
             variant="outline"
             size="sm"
-            className="gap-2 border-stone-300 hover:bg-stone-100"
+            className="gap-2 border-amber-300 hover:bg-amber-50 text-amber-900"
           >
             <User className="w-4 h-4" />
             Anmelden
@@ -384,51 +390,112 @@ export default function Home() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="min-h-screen flex flex-col items-center justify-center px-6 py-12"
+            className="min-h-screen flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden"
           >
+            {/* Buch-Aufklapp-Animation */}
+            <AnimatePresence>
+              {showBookOpen && (
+                <>
+                  {/* Linke Buchseite */}
+                  <motion.div
+                    initial={{ scaleX: 1 }}
+                    animate={{ scaleX: 0 }}
+                    exit={{ scaleX: 0 }}
+                    transition={{ duration: 1, ease: "easeInOut" }}
+                    className="fixed inset-0 bg-amber-50 origin-right z-50 border-r-2 border-amber-200"
+                    style={{ transformOrigin: "right center" }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-l from-amber-100/50 to-transparent" />
+                  </motion.div>
+                  
+                  {/* Rechte Buchseite */}
+                  <motion.div
+                    initial={{ scaleX: 1 }}
+                    animate={{ scaleX: 0 }}
+                    exit={{ scaleX: 0 }}
+                    transition={{ duration: 1, ease: "easeInOut" }}
+                    className="fixed inset-0 bg-amber-50 origin-left z-50 border-l-2 border-amber-200"
+                    style={{ transformOrigin: "left center" }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-amber-100/50 to-transparent" />
+                  </motion.div>
+
+                  {/* Buch-Mitte (Buchrücken) */}
+                  <motion.div
+                    initial={{ opacity: 1 }}
+                    animate={{ opacity: 0 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.5, delay: 0.5 }}
+                    className="fixed inset-y-0 left-1/2 w-2 bg-amber-800 z-50 -ml-1"
+                  />
+                </>
+              )}
+            </AnimatePresence>
+
+            {/* Kompass-Icon mit Logo */}
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="w-16 h-16 rounded-2xl bg-stone-800 flex items-center justify-center mb-8"
+              transition={{ delay: showBookOpen ? 1.5 : 0.2 }}
+              className="relative mb-8"
             >
-              <BookOpen className="w-8 h-8 text-white" />
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center shadow-lg">
+                <Compass className="w-10 h-10 text-white" />
+              </div>
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-0 rounded-full border-2 border-amber-300 opacity-30"
+              />
             </motion.div>
 
             <motion.h1
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="text-4xl md:text-5xl font-light text-stone-800 text-center mb-4"
+              transition={{ delay: showBookOpen ? 1.6 : 0.3 }}
+              className="text-4xl md:text-5xl font-light text-stone-800 text-center mb-2"
             >
-              Finde dein nächstes Buch
+              Book Compass
             </motion.h1>
 
             <motion.p
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.4 }}
-              className="text-stone-500 text-center max-w-md mb-12 text-lg font-light"
+              transition={{ delay: showBookOpen ? 1.7 : 0.4 }}
+              className="text-amber-700 text-center text-sm uppercase tracking-wider mb-8 font-medium"
             >
-              Wenige einfache Fragen. Passende Empfehlungen.
+              Dein Wegweiser zum perfekten Buch
+            </motion.p>
+
+            <motion.p
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: showBookOpen ? 1.8 : 0.5 }}
+              className="text-stone-500 text-center max-w-md mb-12 text-base font-light"
+            >
+              Wenige einfache Fragen führen dich zu Büchern,
               <br />
-              Für Kinder, Jugendliche und Erwachsene.
+              die genau zu dir passen – für jedes Alter.
             </motion.p>
 
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.5 }}
+              transition={{ delay: showBookOpen ? 1.9 : 0.6 }}
             >
               <Button
                 onClick={handleStart}
                 size="lg"
-                className="bg-stone-800 hover:bg-stone-700 text-white px-8 py-6 text-lg rounded-xl gap-2 transition-all"
+                className="bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white px-8 py-6 text-lg rounded-xl gap-2 transition-all shadow-lg"
               >
-                Starten
+                Entdeckungsreise starten
                 <ArrowRight className="w-5 h-5" />
               </Button>
             </motion.div>
+
+            {/* Dekorative Elemente */}
+            <div className="absolute top-20 left-10 w-32 h-32 bg-amber-100 rounded-full blur-3xl opacity-30" />
+            <div className="absolute bottom-20 right-10 w-40 h-40 bg-amber-200 rounded-full blur-3xl opacity-20" />
           </motion.div>
         )}
 
