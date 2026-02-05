@@ -75,7 +75,8 @@ export const books = [
     timeEffort: "lang",
     style: ["praktisch", "wissenschaftlich"],
     description: "Eine Sprache des Lebens für tiefere Verbindungen.",
-    coverColor: "bg-rose-100"
+    coverColor: "bg-rose-100",
+    ageGroup: "erwachsene"
   },
   {
     id: 7,
@@ -87,7 +88,8 @@ export const books = [
     timeEffort: "mittel",
     style: ["story", "reflektierend"],
     description: "Eine Parabel über die Erfüllung von Träumen.",
-    coverColor: "bg-orange-100"
+    coverColor: "bg-orange-100",
+    ageGroup: "erwachsene"
   },
   {
     id: 8,
@@ -99,7 +101,8 @@ export const books = [
     timeEffort: "lang",
     style: ["wissenschaftlich", "anspruchsvoll"],
     description: "Wie wir denken: schnell, intuitiv, langsam, rational.",
-    coverColor: "bg-emerald-100"
+    coverColor: "bg-emerald-100",
+    ageGroup: "erwachsene"
   },
   {
     id: 9,
@@ -111,7 +114,8 @@ export const books = [
     timeEffort: "kurz",
     style: ["reflektierend", "kurz"],
     description: "Das japanische Geheimnis für ein langes, glückliches Leben.",
-    coverColor: "bg-pink-100"
+    coverColor: "bg-pink-100",
+    ageGroup: "erwachsene"
   },
   {
     id: 10,
@@ -123,7 +127,8 @@ export const books = [
     timeEffort: "mittel",
     style: ["praktisch", "kurz"],
     description: "Weniger, aber besser: Die disziplinierte Verfolgung des Wesentlichen.",
-    coverColor: "bg-teal-100"
+    coverColor: "bg-teal-100",
+    ageGroup: "erwachsene"
   },
   {
     id: 11,
@@ -135,7 +140,8 @@ export const books = [
     timeEffort: "mittel",
     style: ["story", "reflektierend", "anspruchsvoll"],
     description: "Ein Überlebender des Holocaust über den Sinn des Lebens.",
-    coverColor: "bg-stone-100"
+    coverColor: "bg-stone-100",
+    ageGroup: "erwachsene"
   },
   {
     id: 12,
@@ -147,7 +153,8 @@ export const books = [
     timeEffort: "lang",
     style: ["wissenschaftlich", "anspruchsvoll"],
     description: "Wie Trauma im Körper gespeichert wird und wie Heilung gelingt.",
-    coverColor: "bg-red-100"
+    coverColor: "bg-red-100",
+    ageGroup: "erwachsene"
   },
   {
     id: 13,
@@ -159,7 +166,8 @@ export const books = [
     timeEffort: "mittel",
     style: ["praktisch"],
     description: "Mehr Zeit, mehr Geld, mehr Leben.",
-    coverColor: "bg-yellow-100"
+    coverColor: "bg-yellow-100",
+    ageGroup: "erwachsene"
   },
   {
     id: 14,
@@ -171,7 +179,8 @@ export const books = [
     timeEffort: "mittel",
     style: ["reflektierend", "anspruchsvoll"],
     description: "Zeitlose Weisheit eines römischen Kaisers.",
-    coverColor: "bg-amber-100"
+    coverColor: "bg-amber-100",
+    ageGroup: "erwachsene"
   },
   {
     id: 15,
@@ -183,7 +192,8 @@ export const books = [
     timeEffort: "mittel",
     style: ["story", "praktisch"],
     description: "Wie sie uns mutiger, glücklicher und stärker macht.",
-    coverColor: "bg-fuchsia-100"
+    coverColor: "bg-fuchsia-100",
+    ageGroup: "erwachsene"
   },
   {
     id: 16,
@@ -195,7 +205,8 @@ export const books = [
     timeEffort: "lang",
     style: ["wissenschaftlich", "anspruchsvoll"],
     description: "Eine kurze Geschichte der Menschheit.",
-    coverColor: "bg-blue-100"
+    coverColor: "bg-blue-100",
+    ageGroup: "erwachsene"
   },
   {
     id: 17,
@@ -207,7 +218,8 @@ export const books = [
     timeEffort: "mittel",
     style: ["reflektierend", "praktisch"],
     description: "Ein Leitfaden zum spirituellen Erwachen.",
-    coverColor: "bg-purple-100"
+    coverColor: "bg-purple-100",
+    ageGroup: "erwachsene"
   },
   {
     id: 18,
@@ -219,7 +231,8 @@ export const books = [
     timeEffort: "mittel",
     style: ["wissenschaftlich", "story"],
     description: "Wie der Mut zur Verletzlichkeit unser Leben verändert.",
-    coverColor: "bg-rose-100"
+    coverColor: "bg-rose-100",
+    ageGroup: "erwachsene"
   },
   {
     id: 19,
@@ -231,7 +244,8 @@ export const books = [
     timeEffort: "lang",
     style: ["praktisch"],
     description: "Zeitlose Prinzipien für persönlichen und beruflichen Erfolg.",
-    coverColor: "bg-green-100"
+    coverColor: "bg-green-100",
+    ageGroup: "erwachsene"
   },
   {
     id: 20,
@@ -243,7 +257,8 @@ export const books = [
     timeEffort: "mittel",
     style: ["wissenschaftlich", "praktisch"],
     description: "Die neue Psychologie des Erfolgs.",
-    coverColor: "bg-indigo-100"
+    coverColor: "bg-indigo-100",
+    ageGroup: "erwachsene"
   },
   {
     id: 21,
@@ -255,7 +270,8 @@ export const books = [
     timeEffort: "mittel",
     style: ["story", "praktisch"],
     description: "Nimm dein Leben in die Hand und es wird dir gelingen.",
-    coverColor: "bg-pink-100"
+    coverColor: "bg-pink-100",
+    ageGroup: "erwachsene"
   },
   {
     id: 22,
@@ -267,7 +283,8 @@ export const books = [
     timeEffort: "kurz",
     style: ["praktisch", "kurz"],
     description: "Ein kontraintuitiver Ansatz für ein gutes Leben.",
-    coverColor: "bg-orange-100"
+    coverColor: "bg-orange-100",
+    ageGroup: "erwachsene"
   },
   {
     id: 23,
@@ -279,7 +296,8 @@ export const books = [
     timeEffort: "mittel",
     style: ["wissenschaftlich"],
     description: "Warum Generalisten in einer spezialisierten Welt erfolgreicher sind.",
-    coverColor: "bg-teal-100"
+    coverColor: "bg-teal-100",
+    ageGroup: "erwachsene"
   },
   {
     id: 24,
@@ -291,7 +309,8 @@ export const books = [
     timeEffort: "mittel",
     style: ["praktisch"],
     description: "Der Klassiker über zwischenmenschliche Beziehungen.",
-    coverColor: "bg-amber-100"
+    coverColor: "bg-amber-100",
+    ageGroup: "erwachsene"
   },
   {
     id: 25,
@@ -303,7 +322,8 @@ export const books = [
     timeEffort: "lang",
     style: ["wissenschaftlich", "anspruchsvoll"],
     description: "Die neue Wissenschaft vom Schlaf und Träumen.",
-    coverColor: "bg-blue-100"
+    coverColor: "bg-blue-100",
+    ageGroup: "erwachsene"
   },
   {
     id: 26,
@@ -315,7 +335,8 @@ export const books = [
     timeEffort: "mittel",
     style: ["wissenschaftlich", "praktisch"],
     description: "Die Kraft der Leidenschaft und Ausdauer.",
-    coverColor: "bg-red-100"
+    coverColor: "bg-red-100",
+    ageGroup: "erwachsene"
   },
   {
     id: 27,
@@ -327,7 +348,8 @@ export const books = [
     timeEffort: "lang",
     style: ["wissenschaftlich", "anspruchsvoll"],
     description: "Das Geheimnis des Glücks.",
-    coverColor: "bg-cyan-100"
+    coverColor: "bg-cyan-100",
+    ageGroup: "erwachsene"
   },
   {
     id: 28,
@@ -339,7 +361,8 @@ export const books = [
     timeEffort: "kurz",
     style: ["story", "reflektierend"],
     description: "Eine zeitlose Parabel über das Verfolgen der eigenen Träume.",
-    coverColor: "bg-yellow-100"
+    coverColor: "bg-yellow-100",
+    ageGroup: "erwachsene"
   },
   {
     id: 29,
@@ -351,7 +374,8 @@ export const books = [
     timeEffort: "mittel",
     style: ["story"],
     description: "Eine wahre Geschichte über Bildung und Selbstfindung.",
-    coverColor: "bg-stone-100"
+    coverColor: "bg-stone-100",
+    ageGroup: "erwachsene"
   },
   {
     id: 30,
@@ -566,9 +590,12 @@ export const books = [
 ];
 
 export const getMatchingBooks = (profile) => {
-  const { mainTopics, secondaryTopics, style, difficulty } = profile;
+  const { mainTopics, secondaryTopics, style, difficulty, ageGroup } = profile;
   
-  const scoredBooks = books.map(book => {
+  // Zuerst nach Altersgruppe filtern
+  const ageFilteredBooks = books.filter(book => book.ageGroup === ageGroup);
+  
+  const scoredBooks = ageFilteredBooks.map(book => {
     let score = 0;
     
     // Hauptthemen (höchste Gewichtung)

@@ -7,59 +7,172 @@ import ProfileCard from '@/components/books/ProfileCard';
 import BookCard from '@/components/books/BookCard';
 import { getMatchingBooks } from '@/components/books/BookDatabase';
 
-const questions = [
-  {
-    id: 'topic',
-    question: "Was beschäftigt dich gerade am meisten?",
-    options: [
-      { value: "persoenliche_entwicklung", label: "Mich selbst besser verstehen & entwickeln" },
-      { value: "stress_ruhe", label: "Mehr Ruhe und weniger Stress finden" },
-      { value: "fokus_produktivitaet", label: "Fokussierter und produktiver werden" },
-      { value: "beziehung_kommunikation", label: "Bessere Beziehungen & Kommunikation" },
-      { value: "sinn_philosophie", label: "Sinn, Werte und die großen Fragen" },
-      { value: "kreativitaet", label: "Kreativität & Selbstausdruck" }
-    ]
-  },
-  {
-    id: 'situation',
-    question: "Wie würdest du deine aktuelle Situation beschreiben?",
-    options: [
-      { value: "ueberfordert", label: "Etwas überfordert – ich suche Orientierung" },
-      { value: "neugierig", label: "Neugierig – ich will etwas Neues entdecken" },
-      { value: "antriebslos", label: "Antriebslos – ich brauche frische Impulse" },
-      { value: "stabil", label: "Stabil – ich will mich weiterentwickeln" },
-      { value: "konkret", label: "Ich habe ein konkretes Thema vor Augen" }
-    ]
-  },
-  {
-    id: 'style',
-    question: "Wie liest du am liebsten?",
-    options: [
-      { value: "praktisch", label: "Praktisch – mit Übungen und konkreten Tipps" },
-      { value: "wissenschaftlich", label: "Wissenschaftlich – fundiert und sachlich" },
-      { value: "story", label: "Erzählerisch – Geschichten & Biografien" },
-      { value: "reflektierend", label: "Philosophisch – zum Nachdenken und Innehalten" }
-    ]
-  },
-  {
-    id: 'effort',
-    question: "Wie viel Zeit möchtest du investieren?",
-    options: [
-      { value: "kurz", label: "Kurze Sessions (5–15 Minuten am Tag)" },
-      { value: "mittel", label: "Kapitelweise, in meinem eigenen Tempo" },
-      { value: "lang", label: "Intensiv – ich nehme mir Zeit für längere Werke" }
-    ]
-  },
-  {
-    id: 'experience',
-    question: "Wie erfahren bist du mit Sachbüchern & Ratgebern?",
-    options: [
-      { value: "einsteiger", label: "Einsteiger – ich lese selten solche Bücher" },
-      { value: "fortgeschritten", label: "Fortgeschritten – ich habe einige gelesen" },
-      { value: "erfahren", label: "Sehr erfahren – ich suche tiefere Impulse" }
-    ]
-  }
-];
+const questionSets = {
+  kinder: [
+    {
+      id: 'age',
+      question: "Wie alt bist du?",
+      options: [
+        { value: "kinder", label: "6-12 Jahre" },
+        { value: "jugendliche", label: "13-17 Jahre" },
+        { value: "erwachsene", label: "18+ Jahre" }
+      ]
+    },
+    {
+      id: 'topic',
+      question: "Was interessiert dich gerade am meisten?",
+      options: [
+        { value: "abenteuer", label: "🗺️ Spannende Abenteuer" },
+        { value: "freundschaft", label: "🤝 Freundschaft und Zusammenhalt" },
+        { value: "magie", label: "✨ Magie und Fantasie" },
+        { value: "lustiges", label: "😄 Lustige Geschichten" },
+        { value: "mut", label: "💪 Mutig sein und Herausforderungen" },
+        { value: "schule", label: "🎒 Schule und Lernen" }
+      ]
+    },
+    {
+      id: 'situation',
+      question: "Wie fühlst du dich gerade?",
+      options: [
+        { value: "neugierig", label: "Ich möchte etwas Neues entdecken" },
+        { value: "aufgeregt", label: "Ich will ein spannendes Abenteuer" },
+        { value: "entspannt", label: "Ich möchte mich entspannen" },
+        { value: "mutig", label: "Ich suche inspirierende Geschichten" }
+      ]
+    },
+    {
+      id: 'style',
+      question: "Welche Art von Geschichten magst du?",
+      options: [
+        { value: "story", label: "Spannende Abenteuergeschichten" },
+        { value: "reflektierend", label: "Geschichten zum Nachdenken" },
+        { value: "praktisch", label: "Geschichten mit Tipps und Ideen" }
+      ]
+    },
+    {
+      id: 'effort',
+      question: "Wie lange möchtest du lesen?",
+      options: [
+        { value: "kurz", label: "Kurze Geschichten (10-20 Minuten)" },
+        { value: "mittel", label: "Ein Kapitel am Tag" },
+        { value: "lang", label: "Längere Bücher, die spannend sind" }
+      ]
+    }
+  ],
+  jugendliche: [
+    {
+      id: 'age',
+      question: "Wie alt bist du?",
+      options: [
+        { value: "kinder", label: "6-12 Jahre" },
+        { value: "jugendliche", label: "13-17 Jahre" },
+        { value: "erwachsene", label: "18+ Jahre" }
+      ]
+    },
+    {
+      id: 'topic',
+      question: "Was interessiert dich gerade am meisten?",
+      options: [
+        { value: "selbstfindung", label: "Mich selbst besser verstehen" },
+        { value: "freundschaft", label: "Freundschaft und Beziehungen" },
+        { value: "abenteuer", label: "Spannende Abenteuer und Fantasy" },
+        { value: "liebe", label: "Liebe und erste Beziehungen" },
+        { value: "gesellschaft", label: "Die Welt und Gesellschaft verstehen" },
+        { value: "mut", label: "Mut und persönliche Stärke" }
+      ]
+    },
+    {
+      id: 'situation',
+      question: "Wie würdest du deine aktuelle Situation beschreiben?",
+      options: [
+        { value: "suchend", label: "Ich suche nach Orientierung" },
+        { value: "neugierig", label: "Ich will neue Perspektiven entdecken" },
+        { value: "herausfordernd", label: "Ich stehe vor Herausforderungen" },
+        { value: "abenteuerlustig", label: "Ich brauche Inspiration und Action" }
+      ]
+    },
+    {
+      id: 'style',
+      question: "Welche Art von Büchern bevorzugst du?",
+      options: [
+        { value: "story", label: "Spannende Geschichten und Romane" },
+        { value: "reflektierend", label: "Bücher, die zum Nachdenken anregen" },
+        { value: "praktisch", label: "Mit praktischen Tipps fürs Leben" }
+      ]
+    },
+    {
+      id: 'effort',
+      question: "Wie viel Zeit hast du zum Lesen?",
+      options: [
+        { value: "kurz", label: "Kurze Sessions (15-30 Minuten)" },
+        { value: "mittel", label: "Ein paar Kapitel am Tag" },
+        { value: "lang", label: "Ich nehme mir Zeit für längere Bücher" }
+      ]
+    }
+  ],
+  erwachsene: [
+    {
+      id: 'age',
+      question: "Wie alt bist du?",
+      options: [
+        { value: "kinder", label: "6-12 Jahre" },
+        { value: "jugendliche", label: "13-17 Jahre" },
+        { value: "erwachsene", label: "18+ Jahre" }
+      ]
+    },
+    {
+      id: 'topic',
+      question: "Was beschäftigt dich gerade am meisten?",
+      options: [
+        { value: "persoenliche_entwicklung", label: "Mich selbst besser verstehen & entwickeln" },
+        { value: "stress_ruhe", label: "Mehr Ruhe und weniger Stress finden" },
+        { value: "fokus_produktivitaet", label: "Fokussierter und produktiver werden" },
+        { value: "beziehung_kommunikation", label: "Bessere Beziehungen & Kommunikation" },
+        { value: "sinn_philosophie", label: "Sinn, Werte und die großen Fragen" },
+        { value: "kreativitaet", label: "Kreativität & Selbstausdruck" }
+      ]
+    },
+    {
+      id: 'situation',
+      question: "Wie würdest du deine aktuelle Situation beschreiben?",
+      options: [
+        { value: "ueberfordert", label: "Etwas überfordert – ich suche Orientierung" },
+        { value: "neugierig", label: "Neugierig – ich will etwas Neues entdecken" },
+        { value: "antriebslos", label: "Antriebslos – ich brauche frische Impulse" },
+        { value: "stabil", label: "Stabil – ich will mich weiterentwickeln" },
+        { value: "konkret", label: "Ich habe ein konkretes Thema vor Augen" }
+      ]
+    },
+    {
+      id: 'style',
+      question: "Wie liest du am liebsten?",
+      options: [
+        { value: "praktisch", label: "Praktisch – mit Übungen und konkreten Tipps" },
+        { value: "wissenschaftlich", label: "Wissenschaftlich – fundiert und sachlich" },
+        { value: "story", label: "Erzählerisch – Geschichten & Biografien" },
+        { value: "reflektierend", label: "Philosophisch – zum Nachdenken und Innehalten" }
+      ]
+    },
+    {
+      id: 'effort',
+      question: "Wie viel Zeit möchtest du investieren?",
+      options: [
+        { value: "kurz", label: "Kurze Sessions (5–15 Minuten am Tag)" },
+        { value: "mittel", label: "Kapitelweise, in meinem eigenen Tempo" },
+        { value: "lang", label: "Intensiv – ich nehme mir Zeit für längere Werke" }
+      ]
+    },
+    {
+      id: 'experience',
+      question: "Wie erfahren bist du mit Sachbüchern & Ratgebern?",
+      options: [
+        { value: "einsteiger", label: "Einsteiger – ich lese selten solche Bücher" },
+        { value: "fortgeschritten", label: "Fortgeschritten – ich habe einige gelesen" },
+        { value: "erfahren", label: "Sehr erfahren – ich suche tiefere Impulse" }
+      ]
+    }
+  ]
+};
 
 const generateReasons = (book, profile) => {
   const topicMatch = profile.mainTopics.find(t => book.tags.includes(t));
@@ -108,6 +221,8 @@ export default function Home() {
   const [answers, setAnswers] = useState({});
   const [profile, setProfile] = useState(null);
   const [recommendations, setRecommendations] = useState(null);
+  const [ageGroup, setAgeGroup] = useState('erwachsene');
+  const [questions, setQuestions] = useState(questionSets.erwachsene);
 
   const handleStart = () => {
     setPhase('questions');
@@ -116,6 +231,12 @@ export default function Home() {
   const handleAnswer = (value) => {
     const newAnswers = { ...answers, [questions[currentQuestion].id]: value };
     setAnswers(newAnswers);
+
+    // Wenn die Altersfrage beantwortet wird, Fragenset aktualisieren
+    if (questions[currentQuestion].id === 'age') {
+      setAgeGroup(value);
+      setQuestions(questionSets[value]);
+    }
 
     setTimeout(() => {
       if (currentQuestion < questions.length - 1) {
@@ -133,15 +254,33 @@ export default function Home() {
     const mainTopics = [ans.topic];
     const secondaryTopics = [];
     
-    // Situation zu Themen mappen
-    const situationTopics = {
-      ueberfordert: ["stress_ruhe"],
-      neugierig: ["lernen_wissen"],
-      antriebslos: ["persoenliche_entwicklung"],
-      stabil: ["sinn_philosophie"],
-      konkret: []
-    };
-    secondaryTopics.push(...(situationTopics[ans.situation] || []));
+    // Situation zu Themen mappen - altersabhängig
+    if (ageGroup === 'erwachsene') {
+      const situationTopics = {
+        ueberfordert: ["stress_ruhe"],
+        neugierig: ["lernen_wissen"],
+        antriebslos: ["persoenliche_entwicklung"],
+        stabil: ["sinn_philosophie"],
+        konkret: []
+      };
+      secondaryTopics.push(...(situationTopics[ans.situation] || []));
+    } else if (ageGroup === 'jugendliche') {
+      const situationTopics = {
+        suchend: ["selbstfindung"],
+        neugierig: ["lernen_wissen"],
+        herausfordernd: ["mut"],
+        abenteuerlustig: ["abenteuer"]
+      };
+      secondaryTopics.push(...(situationTopics[ans.situation] || []));
+    } else if (ageGroup === 'kinder') {
+      const situationTopics = {
+        neugierig: ["geschichte"],
+        aufgeregt: ["abenteuer"],
+        entspannt: ["freundschaft"],
+        mutig: ["mut"]
+      };
+      secondaryTopics.push(...(situationTopics[ans.situation] || []));
+    }
 
     const style = [ans.style];
     if (ans.effort === "kurz") style.push("kurz");
@@ -151,8 +290,9 @@ export default function Home() {
       mainTopics,
       secondaryTopics,
       style,
-      difficulty: ans.experience,
-      timeEffort: ans.effort
+      difficulty: ans.experience || "einsteiger",
+      timeEffort: ans.effort,
+      ageGroup: ageGroup
     };
   };
 
@@ -174,6 +314,8 @@ export default function Home() {
     setAnswers({});
     setProfile(null);
     setRecommendations(null);
+    setAgeGroup('erwachsene');
+    setQuestions(questionSets.erwachsene);
   };
 
   return (
