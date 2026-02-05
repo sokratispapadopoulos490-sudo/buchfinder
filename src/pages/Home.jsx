@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { BookOpen, ArrowRight, ChevronLeft } from 'lucide-react';
+import { BookOpen, ArrowRight, ChevronLeft, User, LogOut } from 'lucide-react';
 import QuestionCard from '@/components/books/QuestionCard';
 import ProfileCard from '@/components/books/ProfileCard';
 import BookCard from '@/components/books/BookCard';
 import { getMatchingBooks } from '@/components/books/BookDatabase';
+import { base44 } from '@/api/base44Client';
 
 // Erste Frage für alle - Altersgruppe ermitteln
 const ageQuestion = {
@@ -210,6 +211,33 @@ export default function Home() {
   const [recommendations, setRecommendations] = useState(null);
   const [ageGroup, setAgeGroup] = useState('erwachsene');
   const [questions, setQuestions] = useState(questionSets.erwachsene);
+  const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  const checkAuth = async () => {
+    try {
+      const isAuth = await base44.auth.isAuthenticated();
+      setIsAuthenticated(isAuth);
+      if (isAuth) {
+        const currentUser = await base44.auth.me();
+        setUser(currentUser);
+      }
+    } catch (error) {
+      setIsAuthenticated(false);
+    }
+  };
+
+  const handleLogin = () => {
+    base44.auth.redirectToLogin();
+  };
+
+  const handleLogout = () => {
+    base44.auth.logout();
+  };
 
   const handleStart = () => {
     setPhase('questions');
@@ -291,7 +319,21 @@ export default function Home() {
   const handleBack = () => {
     if (currentQuestion > 0) {
       setCurrentQuestion(currentQuestion - 1);
+    } else {
+      // Wenn wir bei der ersten Frage sind, zurück zum Welcome
+      setPhase('welcome');
+      setCurrentQuestion(0);
+      setAnswers({});
     }
+  };
+
+  const handleBackFromProfile = () => {
+    setPhase('questions');
+    setCurrentQuestion(questions.length - 1);
+  };
+
+  const handleBackFromResults = () => {
+    setPhase('profile');
   };
 
   const handleRestart = () => {
@@ -306,6 +348,34 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-stone-50">
+      {/* Header mit Login/Logout */}
+      <div className="fixed top-0 right-0 p-6 z-50">
+        {isAuthenticated && user ? (
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-stone-600">Hallo, {user.full_name}</span>
+            <Button
+              onClick={handleLogout}
+              variant="ghost"
+              size="sm"
+              className="gap-2 text-stone-600 hover:text-stone-800"
+            >
+              <LogOut className="w-4 h-4" />
+              Abmelden
+            </Button>
+          </div>
+        ) : (
+          <Button
+            onClick={handleLogin}
+            variant="outline"
+            size="sm"
+            className="gap-2 border-stone-300 hover:bg-stone-100"
+          >
+            <User className="w-4 h-4" />
+            Anmelden
+          </Button>
+        )}
+      </div>
+
       <AnimatePresence mode="wait">
         {/* Welcome Phase */}
         {phase === 'welcome' && (
@@ -371,15 +441,13 @@ export default function Home() {
             exit={{ opacity: 0 }}
             className="min-h-screen flex flex-col px-6 py-12"
           >
-            {currentQuestion > 0 && (
-              <button
-                onClick={handleBack}
-                className="flex items-center gap-2 text-stone-500 hover:text-stone-700 mb-8 transition-colors"
-              >
-                <ChevronLeft className="w-4 h-4" />
-                <span className="text-sm">Zurück</span>
-              </button>
-            )}
+            <button
+              onClick={handleBack}
+              className="flex items-center gap-2 text-stone-500 hover:text-stone-700 mb-8 transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              <span className="text-sm">{currentQuestion > 0 ? 'Zurück' : 'Zum Start'}</span>
+            </button>
 
             <div className="flex-1 flex items-center justify-center">
               <AnimatePresence mode="wait">
@@ -404,33 +472,43 @@ export default function Home() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="min-h-screen flex flex-col items-center justify-center px-6 py-12"
+            className="min-h-screen flex flex-col px-6 py-12"
           >
-            <motion.p
-              initial={{ y: -20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              className="text-stone-500 text-sm uppercase tracking-wide mb-6"
+            <button
+              onClick={handleBackFromProfile}
+              className="flex items-center gap-2 text-stone-500 hover:text-stone-700 mb-8 transition-colors"
             >
-              Analyse abgeschlossen
-            </motion.p>
+              <ChevronLeft className="w-4 h-4" />
+              <span className="text-sm">Zurück</span>
+            </button>
 
-            <ProfileCard profile={profile} />
-
-            <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="mt-8"
-            >
-              <Button
-                onClick={handleShowBooks}
-                size="lg"
-                className="bg-stone-800 hover:bg-stone-700 text-white px-8 py-6 text-lg rounded-xl gap-2"
+            <div className="flex-1 flex flex-col items-center justify-center">
+              <motion.p
+                initial={{ y: -20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                className="text-stone-500 text-sm uppercase tracking-wide mb-6"
               >
-                Meine Buchempfehlungen
-                <ArrowRight className="w-5 h-5" />
-              </Button>
-            </motion.div>
+                Analyse abgeschlossen
+              </motion.p>
+
+              <ProfileCard profile={profile} />
+
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className="mt-8"
+              >
+                <Button
+                  onClick={handleShowBooks}
+                  size="lg"
+                  className="bg-stone-800 hover:bg-stone-700 text-white px-8 py-6 text-lg rounded-xl gap-2"
+                >
+                  Meine Buchempfehlungen
+                  <ArrowRight className="w-5 h-5" />
+                </Button>
+              </motion.div>
+            </div>
           </motion.div>
         )}
 
@@ -444,6 +522,14 @@ export default function Home() {
             className="min-h-screen px-6 py-12"
           >
             <div className="max-w-2xl mx-auto">
+              <button
+                onClick={handleBackFromResults}
+                className="flex items-center gap-2 text-stone-500 hover:text-stone-700 mb-8 transition-colors"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                <span className="text-sm">Zurück zum Profil</span>
+              </button>
+
               <motion.div
                 initial={{ y: -20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
