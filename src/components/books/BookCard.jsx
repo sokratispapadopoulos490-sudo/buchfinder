@@ -1,10 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Sparkles } from 'lucide-react';
+import { ExternalLink, Sparkles, ShoppingCart } from 'lucide-react';
 import { cn } from "@/lib/utils";
 
+const generateBuyLinks = (book) => {
+  const encodedTitle = encodeURIComponent(`${book.title} ${book.author}`);
+  const encodedISBN = encodeURIComponent(book.isbn);
+  
+  return [
+    {
+      name: "Idealo",
+      url: `https://www.idealo.de/preisvergleich/ProductCategory/18492.html?q=${encodedTitle}`,
+      description: "Preisvergleich (neu & gebraucht)"
+    },
+    {
+      name: "Amazon",
+      url: `https://www.amazon.de/s?k=${encodedISBN}`,
+      description: "Neu & gebraucht"
+    },
+    {
+      name: "Thalia",
+      url: `https://www.thalia.de/suche?sq=${encodedTitle}`,
+      description: "Online & in Filialen"
+    },
+    {
+      name: "medimops",
+      url: `https://www.medimops.de/produkte-C0/?fcIsSearch=1&searchparam=${encodedTitle}`,
+      description: "Gebrauchte Bücher"
+    }
+  ];
+};
+
 export default function BookCard({ book, reasons, index, isContrast }) {
+  const [showBuyOptions, setShowBuyOptions] = useState(false);
+  const buyLinks = generateBuyLinks(book);
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -63,20 +93,40 @@ export default function BookCard({ book, reasons, index, isContrast }) {
             ))}
           </ul>
 
-          <a 
-            href={book.link} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="inline-block"
-          >
+          <div className="space-y-3">
             <Button 
-              variant="outline"
-              className="gap-2 border-stone-300 hover:bg-stone-50 hover:border-stone-400 transition-all"
+              onClick={() => setShowBuyOptions(!showBuyOptions)}
+              className="w-full gap-2 bg-stone-800 hover:bg-stone-700"
             >
-              Zum Buch
-              <ExternalLink className="w-4 h-4" />
+              <ShoppingCart className="w-4 h-4" />
+              Kaufoptionen anzeigen
             </Button>
-          </a>
+
+            {showBuyOptions && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="grid grid-cols-1 sm:grid-cols-2 gap-2"
+              >
+                {buyLinks.map((link) => (
+                  <a
+                    key={link.name}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block p-3 border border-stone-200 rounded-lg hover:border-stone-400 hover:bg-stone-50 transition-all"
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="font-medium text-stone-800 text-sm">{link.name}</span>
+                      <ExternalLink className="w-3 h-3 text-stone-400" />
+                    </div>
+                    <p className="text-xs text-stone-500">{link.description}</p>
+                  </a>
+                ))}
+              </motion.div>
+            )}
+          </div>
         </div>
       </div>
     </motion.div>
