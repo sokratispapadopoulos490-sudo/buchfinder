@@ -643,6 +643,7 @@ export default function Home() {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: showBookOpen ? 1.9 : 0.6 }}
+              className="relative z-10"
             >
               <Button
                 onClick={handleStart}
