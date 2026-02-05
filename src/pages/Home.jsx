@@ -109,9 +109,19 @@ const questionSets = {
   erwachsene: [
     ageQuestion,
     {
-      id: 'topic',
-      question: "Was beschäftigt dich gerade am meisten?",
+      id: 'reading_goal',
+      question: "Was ist dein Hauptziel beim Lesen?",
       options: [
+        { value: "wachstum", label: "Persönliches Wachstum & Wissen" },
+        { value: "entspannung", label: "Entspannung & Unterhaltung" },
+        { value: "beide", label: "Beides – je nach Stimmung" }
+      ]
+    },
+    {
+      id: 'topic',
+      question: "Was interessiert dich am meisten?",
+      options: [
+        // Sachbuch-Themen
         { value: "persoenliche_entwicklung", label: "Persönliche Entwicklung" },
         { value: "stress_ruhe", label: "Ruhe und Gelassenheit" },
         { value: "fokus_produktivitaet", label: "Fokus & Produktivität" },
@@ -119,7 +129,14 @@ const questionSets = {
         { value: "sinn_philosophie", label: "Sinn & Lebensphilosophie" },
         { value: "kreativitaet", label: "Kreativität" },
         { value: "lernen_wissen", label: "Lernen & Wissenserweiterung" },
-        { value: "koerper_gesundheit", label: "Körper & Gesundheit" }
+        { value: "koerper_gesundheit", label: "Körper & Gesundheit" },
+        // Belletristik-Genres
+        { value: "fantasy_scifi", label: "Fantasy & Science-Fiction" },
+        { value: "thriller_krimi", label: "Thriller & Krimis" },
+        { value: "romance", label: "Romantik & Liebesromane" },
+        { value: "historisch", label: "Historische Romane" },
+        { value: "literatur", label: "Anspruchsvolle Literatur" },
+        { value: "humor", label: "Humor & Leichte Unterhaltung" }
       ]
     },
     {
@@ -159,6 +176,17 @@ const questionSets = {
         { value: "fortgeschritten", label: "Mit Tiefgang" },
         { value: "erfahren", label: "Sehr tiefgehend" }
       ]
+    },
+    {
+      id: 'setting',
+      question: "Welche Welten ziehen dich an?",
+      options: [
+        { value: "real", label: "Realistische, greifbare Geschichten" },
+        { value: "fantastisch", label: "Fantastische, magische Welten" },
+        { value: "historisch", label: "Vergangene Epochen" },
+        { value: "zukunft", label: "Zukunft & Science-Fiction" },
+        { value: "egal", label: "Hauptsache gute Geschichte" }
+      ]
     }
   ]
 };
@@ -176,6 +204,12 @@ const generateReasons = (book, profile) => {
     kreativitaet: "Fördert deine kreative Seite",
     lernen_wissen: "Erweitert dein Wissen",
     koerper_gesundheit: "Unterstützt deine Gesundheit",
+    fantasy_scifi: "Entführt dich in faszinierende Fantasiewelten",
+    thriller_krimi: "Fesselt dich mit Spannung bis zur letzten Seite",
+    romance: "Berührt dein Herz mit emotionalen Geschichten",
+    historisch: "Lässt vergangene Epochen lebendig werden",
+    literatur: "Bietet tiefgründige, kunstvolle Erzählkunst",
+    humor: "Bringt dich zum Lachen und Schmunzeln",
     abenteuer: "Nimmt dich mit auf spannende Reisen",
     freundschaft: "Zeigt die Kraft von Freundschaft",
     magie: "Entführt dich in magische Welten",
@@ -228,6 +262,12 @@ const generateReasons = (book, profile) => {
     sinn_philosophie: "Neue Perspektiven für eigene Reflexion",
     kreativitaet: "Impulse, die du sofort ausprobieren kannst",
     lernen_wissen: "Wissen, das dich weiterbringt",
+    fantasy_scifi: "Vollkommenes Eintauchen in andere Welten",
+    thriller_krimi: "Nervenaufreibende Spannung und clevere Rätsel",
+    romance: "Emotionale Tiefe und hoffnungsvolle Geschichten",
+    historisch: "Faszinierende Einblicke in vergangene Zeiten",
+    literatur: "Sprachliche Schönheit und gedankliche Tiefe",
+    humor: "Leichtigkeit und Unterhaltung pur",
     abenteuer: "Spannung, die dich fesselt",
     freundschaft: "Geschichten, die ans Herz gehen"
   };
