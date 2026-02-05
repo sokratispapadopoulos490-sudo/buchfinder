@@ -15,14 +15,14 @@ export default function Premium() {
       name: 'Monatlich',
       price: '4,99€',
       period: 'pro Monat',
-      priceId: Deno.env.get('STRIPE_PRICE_ID') || 'price_monthly', // Fallback für Development
+      priceId: 'price_monthly', // Ersetze mit deiner Stripe Price ID
       savings: null
     },
     yearly: {
       name: 'Jährlich',
       price: '49,99€',
       period: 'pro Jahr',
-      priceId: 'price_yearly', // Muss in Stripe erstellt werden
+      priceId: 'price_yearly', // Ersetze mit deiner Stripe Price ID
       savings: '17% sparen'
     }
   };
