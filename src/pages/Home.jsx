@@ -520,12 +520,43 @@ export default function Home() {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: showBookOpen ? 1.8 : 0.5 }}
-              className="text-stone-500 text-center max-w-md mb-12 text-base font-light"
+              className="text-stone-500 text-center max-w-md mb-8 text-base font-light"
             >
               Wenige einfache Fragen führen dich zu Büchern,
               <br />
               die genau zu dir passen – für jedes Alter.
             </motion.p>
+
+            {/* Freemium Info */}
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: showBookOpen ? 1.85 : 0.55 }}
+              className="bg-white/80 backdrop-blur-sm border border-amber-200 rounded-xl p-6 max-w-lg mx-auto mb-8 shadow-sm"
+            >
+              <div className="space-y-4">
+                <div className="text-center">
+                  <div className="inline-flex items-center gap-2 bg-amber-100 text-amber-800 px-4 py-2 rounded-full text-sm font-medium mb-3">
+                    ✨ Kostenlos starten
+                  </div>
+                  <p className="text-stone-700 text-sm">
+                    <strong>3 personalisierte Empfehlungen</strong> – komplett kostenlos, keine Kreditkarte nötig
+                  </p>
+                </div>
+                
+                <div className="border-t border-stone-200 pt-4">
+                  <div className="flex items-start gap-3 text-sm text-stone-600">
+                    <Compass className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-medium text-stone-800 mb-1">Premium Upgrade</p>
+                      <p className="text-xs leading-relaxed">
+                        Unbegrenzte Empfehlungen, erweiterte Profile und regelmäßig neue Bücher
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
 
             <motion.div
               initial={{ y: 20, opacity: 0 }}
