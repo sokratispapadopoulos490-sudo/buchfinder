@@ -40,7 +40,7 @@ export default function QuestionCard({
       </h2>
 
       {/* Options */}
-      <div className="space-y-3">
+      <div className="space-y-2.5 pb-6">
         {options.map((option, index) => (
           <motion.button
             key={option.value}
@@ -49,14 +49,14 @@ export default function QuestionCard({
             transition={{ delay: index * 0.1 }}
             onClick={() => onSelect(option.value)}
             className={cn(
-              "w-full text-left px-6 py-4 rounded-xl border transition-all duration-300",
+              "w-full text-left px-5 py-3.5 rounded-xl border transition-all duration-300",
               "hover:border-stone-400 hover:bg-stone-50",
               selectedValue === option.value
                 ? "border-stone-800 bg-stone-50"
                 : "border-stone-200 bg-white"
             )}
           >
-            <span className="text-stone-700 font-light">{option.label}</span>
+            <span className="text-stone-700 font-light text-[15px]">{option.label}</span>
           </motion.button>
         ))}
       </div>
