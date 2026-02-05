@@ -53,12 +53,23 @@ export default function Account() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50 px-6 py-12">
       <div className="max-w-5xl mx-auto">
-        <button
-          onClick={() => navigate('/')}
-          className="text-stone-500 hover:text-stone-700 mb-8 transition-colors"
-        >
-          ← Zurück zur Startseite
-        </button>
+        <div className="flex items-center justify-between mb-8">
+          <button
+            onClick={() => navigate('/')}
+            className="text-stone-500 hover:text-stone-700 transition-colors"
+          >
+            ← Zurück zur Startseite
+          </button>
+
+          {recommendations.length > 0 && (
+            <button
+              onClick={() => navigate('/?showLastRecommendation=true')}
+              className="text-amber-600 hover:text-amber-700 transition-colors font-medium"
+            >
+              Zu den Ergebnissen →
+            </button>
+          )}
+        </div>
 
         {/* Header mit Premium Status */}
         <div className="bg-white rounded-2xl border border-stone-200 p-8 mb-8 shadow-sm">

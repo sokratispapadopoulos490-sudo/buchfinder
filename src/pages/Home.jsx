@@ -303,6 +303,12 @@ export default function Home() {
     const init = async () => {
       await checkAuth();
       await loadRecommendationCount();
+      
+      // Prüfe ob wir die letzte Empfehlung anzeigen sollen
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('showLastRecommendation') === 'true') {
+        await loadLastRecommendation();
+      }
     };
     init();
     
@@ -338,6 +344,28 @@ export default function Home() {
       }
     } catch (error) {
       console.error('Fehler beim Laden der Empfehlungen:', error);
+    }
+  };
+
+  const loadLastRecommendation = async () => {
+    try {
+      const isAuth = await base44.auth.isAuthenticated();
+      if (isAuth) {
+        const recommendations = await base44.entities.Recommendation.list('-created_date', 1);
+        if (recommendations.length > 0) {
+          const lastRec = recommendations[0];
+          setProfile(lastRec.profile);
+          setRecommendations({
+            recommendations: lastRec.books.slice(0, isPremium ? undefined : 3),
+            contrastBook: lastRec.books[lastRec.books.length - 1]?.isContrast 
+              ? lastRec.books[lastRec.books.length - 1] 
+              : null
+          });
+          setPhase('results');
+        }
+      }
+    } catch (error) {
+      console.error('Fehler beim Laden der letzten Empfehlung:', error);
     }
   };
 
