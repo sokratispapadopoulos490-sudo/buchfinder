@@ -656,8 +656,8 @@ export default function Home() {
             </motion.div>
 
             {/* Dekorative Elemente */}
-            <div className="absolute top-20 left-10 w-32 h-32 bg-amber-100 rounded-full blur-3xl opacity-30" />
-            <div className="absolute bottom-20 right-10 w-40 h-40 bg-amber-200 rounded-full blur-3xl opacity-20" />
+            <div className="absolute top-20 left-10 w-32 h-32 bg-amber-100 rounded-full blur-3xl opacity-30 pointer-events-none" />
+            <div className="absolute bottom-20 right-10 w-40 h-40 bg-amber-200 rounded-full blur-3xl opacity-20 pointer-events-none" />
           </motion.div>
         )}
 
