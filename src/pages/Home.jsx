@@ -310,7 +310,7 @@ const generateReasons = (book, profile) => {
 };
 
 function HomeContent() {
-  const [phase, setPhase] = useState('language'); // language, welcome, questions, profile, results
+  const [phase, setPhase] = useState('welcome'); // welcome, questions, profile, results
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState({});
   const [profile, setProfile] = useState(null);
@@ -330,15 +330,6 @@ function HomeContent() {
     const init = async () => {
       await checkAuth();
       await loadRecommendationCount();
-      
-      // Prüfe ob der Nutzer bereits eine Sprache gewählt hat
-      const isAuth = await base44.auth.isAuthenticated();
-      if (isAuth) {
-        const currentUser = await base44.auth.me();
-        if (currentUser?.language) {
-          setPhase('welcome');
-        }
-      }
       
       // Prüfe ob wir die letzte Empfehlung anzeigen sollen
       const urlParams = new URLSearchParams(window.location.search);
@@ -605,9 +596,7 @@ function HomeContent() {
     navigate('/Premium');
   };
 
-  const handleLanguageSelected = () => {
-    setPhase('welcome');
-  };
+
 
   if (langLoading) {
     return (
@@ -619,20 +608,38 @@ function HomeContent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50">
-      {/* Header mit Login/Logout */}
-      <div className="fixed top-0 right-0 p-6 z-40">
-        {isAuthenticated && user ? (
-          <div className="flex items-center gap-3">
-            <Button
-              onClick={() => navigate('/Account')}
-              variant="outline"
-              size="sm"
-              className="gap-2 border-stone-300 hover:bg-stone-50"
-            >
-              <User className="w-4 h-4" />
-              Mein Account
-            </Button>
+      {/* Header mit Login/Logout und Sprachauswahl */}
+      <div className="fixed top-0 right-0 p-6 z-40 flex items-center gap-3">
+        {/* Kompakte Sprachauswahl */}
+        <div className="relative">
+          <select
+            value={language}
+            onChange={(e) => changeLanguage(e.target.value)}
+            className="appearance-none bg-white border border-stone-300 rounded-lg px-3 py-2 pr-8 text-sm text-stone-700 hover:bg-stone-50 focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
+          >
+            {supportedLanguages.map((lang) => (
+              <option key={lang.code} value={lang.code}>
+                {lang.flag} {lang.name}
+              </option>
+            ))}
+          </select>
+          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-stone-500">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
           </div>
+        </div>
+
+        {isAuthenticated && user ? (
+          <Button
+            onClick={() => navigate('/Account')}
+            variant="outline"
+            size="sm"
+            className="gap-2 border-stone-300 hover:bg-stone-50"
+          >
+            <User className="w-4 h-4" />
+            Mein Account
+          </Button>
         ) : (
           <Button
             onClick={handleLogin}
@@ -647,11 +654,6 @@ function HomeContent() {
       </div>
 
       <AnimatePresence mode="wait">
-        {/* Language Selection Phase */}
-        {phase === 'language' && (
-          <LanguageSelector onComplete={handleLanguageSelected} />
-        )}
-
         {/* Welcome Phase */}
         {phase === 'welcome' && (
           <motion.div
