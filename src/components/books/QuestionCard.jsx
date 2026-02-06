@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function QuestionCard({ 
   question, 
@@ -8,8 +10,13 @@ export default function QuestionCard({
   onSelect, 
   selectedValue,
   questionNumber,
-  totalQuestions 
+  totalQuestions,
+  isTextInput,
+  placeholder,
+  description,
+  onTextSubmit
 }) {
+  const [textValue, setTextValue] = useState(selectedValue || '');
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -35,31 +42,56 @@ export default function QuestionCard({
       </div>
 
       {/* Question */}
-      <h2 className="text-2xl md:text-3xl font-light text-stone-800 mb-8 leading-relaxed">
+      <h2 className="text-2xl md:text-3xl font-light text-stone-800 mb-4 leading-relaxed">
         {question}
       </h2>
 
-      {/* Options */}
-      <div className="space-y-2.5 pb-6">
-        {options.map((option, index) => (
-          <motion.button
-            key={option.value}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.1 }}
-            onClick={() => onSelect(option.value)}
-            className={cn(
-              "w-full text-left px-5 py-3.5 rounded-xl border transition-all duration-300",
-              "hover:border-stone-400 hover:bg-stone-50",
-              selectedValue === option.value
-                ? "border-stone-800 bg-stone-50"
-                : "border-stone-200 bg-white"
-            )}
+      {description && (
+        <p className="text-stone-500 text-sm mb-8">{description}</p>
+      )}
+
+      {/* Text Input oder Options */}
+      {isTextInput ? (
+        <div className="space-y-4">
+          <Input
+            value={textValue}
+            onChange={(e) => {
+              setTextValue(e.target.value);
+              onSelect(e.target.value);
+            }}
+            placeholder={placeholder}
+            className="w-full px-4 py-3 text-base"
+          />
+          <Button
+            onClick={() => onTextSubmit && onTextSubmit()}
+            disabled={!textValue.trim()}
+            className="w-full bg-stone-800 hover:bg-stone-700"
           >
-            <span className="text-stone-700 font-light text-[15px]">{option.label}</span>
-          </motion.button>
-        ))}
-      </div>
+            Weiter
+          </Button>
+        </div>
+      ) : (
+        <div className="space-y-2.5 pb-6">
+          {options?.map((option, index) => (
+            <motion.button
+              key={option.value}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.1 }}
+              onClick={() => onSelect(option.value)}
+              className={cn(
+                "w-full text-left px-5 py-3.5 rounded-xl border transition-all duration-300",
+                "hover:border-stone-400 hover:bg-stone-50",
+                selectedValue === option.value
+                  ? "border-stone-800 bg-stone-50"
+                  : "border-stone-200 bg-white"
+              )}
+            >
+              <span className="text-stone-700 font-light text-[15px]">{option.label}</span>
+            </motion.button>
+          ))}
+        </div>
+      )}
     </motion.div>
   );
 }
