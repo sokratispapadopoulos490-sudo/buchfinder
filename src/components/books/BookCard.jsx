@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Sparkles, ShoppingCart, Bookmark, BookmarkCheck, MessageSquare, Users } from 'lucide-react';
+import { ExternalLink, Sparkles, ShoppingCart, Bookmark, BookmarkCheck, MessageSquare, Users, Info } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { base44 } from '@/api/base44Client';
 import StarRating from './StarRating';
+import BookDetailModal from './BookDetailModal';
 
 const generateBuyLinks = (book) => {
   const encodedTitle = encodeURIComponent(`${book.title} ${book.author}`);
@@ -46,6 +47,7 @@ export default function BookCard({ book, reasons, index, isContrast }) {
   const [comment, setComment] = useState('');
   const [editingReview, setEditingReview] = useState(false);
   const [readCount, setReadCount] = useState(0);
+  const [showDetailModal, setShowDetailModal] = useState(false);
   const buyLinks = generateBuyLinks(book);
 
   useEffect(() => {
@@ -160,35 +162,48 @@ export default function BookCard({ book, reasons, index, isContrast }) {
       
       <div className="p-6 md:p-8">
         <div className="flex gap-6">
-          {/* Book cover */}
-          {book.coverUrl ? (
-            <img
-              src={book.coverUrl}
-              alt={`Cover von ${book.title}`}
-              className="w-24 h-36 md:w-28 md:h-42 rounded-lg shadow-md object-cover flex-shrink-0"
-              onError={(e) => {
-                e.target.style.display = 'none';
-                e.target.nextSibling.style.display = 'flex';
-              }}
-            />
-          ) : null}
-          <div 
-            className={cn(
-              "w-24 h-36 md:w-28 md:h-42 rounded-lg flex-shrink-0 flex items-center justify-center shadow-md",
-              book.coverColor || "bg-stone-100",
-              book.coverUrl && "hidden"
-            )}
+          {/* Book cover - clickable */}
+          <button
+            onClick={() => setShowDetailModal(true)}
+            className="group relative"
           >
-            <span className="text-3xl md:text-4xl font-serif text-stone-400">
-              {book.title.charAt(0)}
-            </span>
-          </div>
+            {book.coverUrl ? (
+              <img
+                src={book.coverUrl}
+                alt={`Cover von ${book.title}`}
+                className="w-24 h-36 md:w-28 md:h-42 rounded-lg shadow-md object-cover flex-shrink-0 transition-transform group-hover:scale-105 group-hover:shadow-xl"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  e.target.nextSibling.style.display = 'flex';
+                }}
+              />
+            ) : null}
+            <div 
+              className={cn(
+                "w-24 h-36 md:w-28 md:h-42 rounded-lg flex-shrink-0 flex items-center justify-center shadow-md transition-transform group-hover:scale-105",
+                book.coverColor || "bg-stone-100",
+                book.coverUrl && "hidden"
+              )}
+            >
+              <span className="text-3xl md:text-4xl font-serif text-stone-400">
+                {book.title.charAt(0)}
+              </span>
+            </div>
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 rounded-lg transition-colors flex items-center justify-center">
+              <Info className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+            </div>
+          </button>
 
           {/* Book info */}
           <div className="flex-1 min-w-0">
-            <h3 className="text-xl md:text-2xl font-light text-stone-800 mb-1 leading-tight">
-              {book.title}
-            </h3>
+            <button
+              onClick={() => setShowDetailModal(true)}
+              className="text-left w-full group"
+            >
+              <h3 className="text-xl md:text-2xl font-light text-stone-800 mb-1 leading-tight group-hover:text-amber-700 transition-colors">
+                {book.title}
+              </h3>
+            </button>
             <p className="text-stone-600 text-sm mb-2">{book.author}</p>
             
             {/* Buchdetails */}
@@ -369,6 +384,15 @@ export default function BookCard({ book, reasons, index, isContrast }) {
           </div>
         </div>
       </div>
+
+      {/* Detail Modal */}
+      {showDetailModal && (
+        <BookDetailModal
+          book={book}
+          readCount={readCount}
+          onClose={() => setShowDetailModal(false)}
+        />
+      )}
     </motion.div>
   );
 }
