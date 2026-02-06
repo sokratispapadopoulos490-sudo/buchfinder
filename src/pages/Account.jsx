@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { Compass, Crown, ArrowRight, BookOpen, Sparkles, Clock, User as UserIcon, Bookmark, Search, Trash2, MessageSquare, TrendingUp, Plus, CheckCircle } from 'lucide-react';
+import { Compass, Crown, ArrowRight, BookOpen, Sparkles, Clock, User as UserIcon, Bookmark, Search, Trash2, MessageSquare, TrendingUp, Plus, CheckCircle, Library as LibraryIcon } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
@@ -541,6 +541,20 @@ export default function Account() {
                   <div>
                     <div className="font-medium text-stone-800">Neue Empfehlung</div>
                     <div className="text-sm text-stone-500">Starte eine neue Büchersuche</div>
+                  </div>
+                </div>
+                <ArrowRight className="w-5 h-5 text-stone-400" />
+              </button>
+
+              <button
+                onClick={() => navigate('/Library')}
+                className="flex items-center justify-between p-4 border border-stone-200 rounded-xl hover:border-stone-300 hover:bg-stone-50 transition-all text-left"
+              >
+                <div className="flex items-center gap-3">
+                  <LibraryIcon className="w-5 h-5 text-amber-600" />
+                  <div>
+                    <div className="font-medium text-stone-800">Meine Bibliothek</div>
+                    <div className="text-sm text-stone-500">Deine Bücher im Regal ansehen</div>
                   </div>
                 </div>
                 <ArrowRight className="w-5 h-5 text-stone-400" />
