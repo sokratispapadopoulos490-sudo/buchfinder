@@ -460,12 +460,14 @@ function HomeContent() {
   };
 
   const handleTextSubmit = () => {
+    const newAnswers = { ...answers, [translatedQuestions[currentQuestion].id]: answers[translatedQuestions[currentQuestion].id] || '' };
+    
     setTimeout(() => {
       if (currentQuestion < translatedQuestions.length - 1) {
         setCurrentQuestion(currentQuestion + 1);
       } else {
         // Analyse abschließen
-        const userProfile = analyzeAnswers(answers);
+        const userProfile = analyzeAnswers(newAnswers);
         setProfile(userProfile);
         setPhase('profile');
       }
