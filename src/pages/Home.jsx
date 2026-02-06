@@ -8,6 +8,8 @@ import BookCard from '@/components/books/BookCard';
 import { getMatchingBooks } from '@/components/books/BookDatabase';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
+import { LanguageProvider, useLanguage } from '@/components/language/LanguageContext';
+import LanguageSelector from '@/components/language/LanguageSelector';
 
 // Erste Frage für alle - Altersgruppe ermitteln
 const ageQuestion = {
@@ -286,8 +288,8 @@ const generateReasons = (book, profile) => {
   };
 };
 
-export default function Home() {
-  const [phase, setPhase] = useState('welcome'); // welcome, questions, profile, results
+function HomeContent() {
+  const [phase, setPhase] = useState('language'); // language, welcome, questions, profile, results
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState({});
   const [profile, setProfile] = useState(null);
@@ -300,11 +302,22 @@ export default function Home() {
   const [recommendationCount, setRecommendationCount] = useState(0);
   const [isPremium, setIsPremium] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [translatedQuestions, setTranslatedQuestions] = useState(questionSets.erwachsene);
+  const { language, translateObject, isLoading: langLoading } = useLanguage();
 
   useEffect(() => {
     const init = async () => {
       await checkAuth();
       await loadRecommendationCount();
+      
+      // Prüfe ob der Nutzer bereits eine Sprache gewählt hat
+      const isAuth = await base44.auth.isAuthenticated();
+      if (isAuth) {
+        const currentUser = await base44.auth.me();
+        if (currentUser?.language) {
+          setPhase('welcome');
+        }
+      }
       
       // Prüfe ob wir die letzte Empfehlung anzeigen sollen
       const urlParams = new URLSearchParams(window.location.search);
@@ -320,6 +333,21 @@ export default function Home() {
     }, 2000);
     return () => clearTimeout(timer);
   }, []);
+
+  // Übersetze Fragen wenn sich die Sprache ändert
+  useEffect(() => {
+    const translateQuestions = async () => {
+      if (language === 'de') {
+        setTranslatedQuestions(questionSets[ageGroup]);
+        return;
+      }
+
+      const translated = await translateObject(questionSets[ageGroup], language);
+      setTranslatedQuestions(translated);
+    };
+
+    translateQuestions();
+  }, [language, ageGroup]);
 
   const checkAuth = async () => {
     try {
@@ -384,17 +412,17 @@ export default function Home() {
   };
 
   const handleAnswer = (value) => {
-    const newAnswers = { ...answers, [questions[currentQuestion].id]: value };
+    const newAnswers = { ...answers, [translatedQuestions[currentQuestion].id]: value };
     setAnswers(newAnswers);
 
     // Wenn die Altersfrage beantwortet wird, Fragenset aktualisieren
-    if (questions[currentQuestion].id === 'age') {
+    if (translatedQuestions[currentQuestion].id === 'age') {
       setAgeGroup(value);
       setQuestions(questionSets[value]);
     }
 
     setTimeout(() => {
-      if (currentQuestion < questions.length - 1) {
+      if (currentQuestion < translatedQuestions.length - 1) {
         setCurrentQuestion(currentQuestion + 1);
       } else {
         // Analyse abschließen
@@ -453,6 +481,29 @@ export default function Home() {
   const handleShowBooks = async () => {
     setLoading(true);
     const results = getMatchingBooks(profile);
+    
+    // Übersetze Bücher wenn nicht auf Deutsch
+    if (language !== 'de') {
+      const translatedRecommendations = await Promise.all(
+        results.recommendations.map(async (book) => ({
+          ...book,
+          title: await translateObject({ text: book.title }, language).then(r => r.text),
+          description: await translateObject({ text: book.description }, language).then(r => r.text)
+        }))
+      );
+      
+      let translatedContrastBook = null;
+      if (results.contrastBook) {
+        translatedContrastBook = {
+          ...results.contrastBook,
+          title: await translateObject({ text: results.contrastBook.title }, language).then(r => r.text),
+          description: await translateObject({ text: results.contrastBook.description }, language).then(r => r.text)
+        };
+      }
+      
+      results.recommendations = translatedRecommendations;
+      results.contrastBook = translatedContrastBook;
+    }
     
     // Speichere Empfehlung immer (wenn authentifiziert)
     if (isAuthenticated) {
@@ -514,6 +565,18 @@ export default function Home() {
     navigate('/Premium');
   };
 
+  const handleLanguageSelected = () => {
+    setPhase('welcome');
+  };
+
+  if (langLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50 flex items-center justify-center">
+        <div className="text-stone-500">Loading...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50">
       {/* Header mit Login/Logout */}
@@ -544,6 +607,11 @@ export default function Home() {
       </div>
 
       <AnimatePresence mode="wait">
+        {/* Language Selection Phase */}
+        {phase === 'language' && (
+          <LanguageSelector onComplete={handleLanguageSelected} />
+        )}
+
         {/* Welcome Phase */}
         {phase === 'welcome' && (
           <motion.div
@@ -713,12 +781,12 @@ export default function Home() {
               <AnimatePresence mode="wait">
                 <QuestionCard
                   key={currentQuestion}
-                  question={questions[currentQuestion].question}
-                  options={questions[currentQuestion].options}
+                  question={translatedQuestions[currentQuestion].question}
+                  options={translatedQuestions[currentQuestion].options}
                   onSelect={handleAnswer}
-                  selectedValue={answers[questions[currentQuestion].id]}
+                  selectedValue={answers[translatedQuestions[currentQuestion].id]}
                   questionNumber={currentQuestion + 1}
-                  totalQuestions={questions.length}
+                  totalQuestions={translatedQuestions.length}
                 />
               </AnimatePresence>
             </div>
@@ -904,5 +972,13 @@ export default function Home() {
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <LanguageProvider>
+      <HomeContent />
+    </LanguageProvider>
   );
 }
