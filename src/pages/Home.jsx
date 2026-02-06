@@ -216,6 +216,38 @@ const questionSets = {
   ]
 };
 
+// Statische UI-Texte außerhalb der Komponente definieren
+const UI_TEXTS = {
+  welcomeTitle: "Book Compass",
+  welcomeSubtitle: "Dein Wegweiser zum perfekten Buch",
+  welcomeDescription: "Wenige einfache Fragen führen dich zu Büchern, die genau zu dir passen – für jedes Alter.",
+  freeStart: "Kostenlos starten",
+  freeDescription: "3 personalisierte Empfehlungen – komplett kostenlos, keine Kreditkarte nötig",
+  premiumTitle: "Premium für 4,99€/Monat",
+  premiumDescription: "Unbegrenzte Empfehlungen, erweiterte Profile und regelmäßig neue Bücher",
+  startButton: "Entdeckungsreise starten",
+  backButton: "Zurück",
+  backToStart: "Zum Start",
+  backToProfile: "Zurück zum Profil",
+  analysisComplete: "Analyse abgeschlossen",
+  myRecommendationsButton: "Meine Buchempfehlungen",
+  loading: "Wird geladen...",
+  yourRecommendations: "Deine Empfehlungen",
+  selectedByNeeds: "Ausgewählt nach deinen Bedürfnissen und deinem Lesestil",
+  freeVersion: "Kostenlose Version:",
+  recommendationsUsed: "von 3 Empfehlungen genutzt",
+  upgradePremium: "Auf Premium upgraden",
+  bestMatch: "Passt am besten zu deinem Thema",
+  perfectChoice: "Deine perfekte Wahl für genau jetzt",
+  secondBest: "Ebenfalls eine starke Wahl",
+  deepensTheme: "Vertieft dein Thema aus einem anderen Blickwinkel",
+  somethingDifferent: "Wenn du etwas ganz anderes lesen willst",
+  expandHorizon: "Erweitert deinen Horizont mit neuen Perspektiven",
+  newAnalysis: "Neue Analyse starten",
+  myAccount: "Mein Account",
+  login: "Anmelden"
+};
+
 const generateReasons = (book, profile) => {
   const topicMatch = profile.mainTopics.find(t => book.tags.includes(t));
   const styleMatch = profile.style.find(s => book.style.includes(s));
@@ -326,38 +358,8 @@ function HomeContent() {
   const [loading, setLoading] = useState(false);
   const [translatedQuestions, setTranslatedQuestions] = useState(questionSets.erwachsene);
   const { language, changeLanguage, translateObject, isLoading: langLoading, supportedLanguages } = useLanguage();
-
-  // Statische UI-Texte
-  const uiTexts = useTranslatedText({
-    welcomeTitle: "Book Compass",
-    welcomeSubtitle: "Dein Wegweiser zum perfekten Buch",
-    welcomeDescription: "Wenige einfache Fragen führen dich zu Büchern, die genau zu dir passen – für jedes Alter.",
-    freeStart: "Kostenlos starten",
-    freeDescription: "3 personalisierte Empfehlungen – komplett kostenlos, keine Kreditkarte nötig",
-    premiumTitle: "Premium für 4,99€/Monat",
-    premiumDescription: "Unbegrenzte Empfehlungen, erweiterte Profile und regelmäßig neue Bücher",
-    startButton: "Entdeckungsreise starten",
-    backButton: "Zurück",
-    backToStart: "Zum Start",
-    backToProfile: "Zurück zum Profil",
-    analysisComplete: "Analyse abgeschlossen",
-    myRecommendationsButton: "Meine Buchempfehlungen",
-    loading: "Wird geladen...",
-    yourRecommendations: "Deine Empfehlungen",
-    selectedByNeeds: "Ausgewählt nach deinen Bedürfnissen und deinem Lesestil",
-    freeVersion: "Kostenlose Version:",
-    recommendationsUsed: "von 3 Empfehlungen genutzt",
-    upgradePremium: "Auf Premium upgraden",
-    bestMatch: "Passt am besten zu deinem Thema",
-    perfectChoice: "Deine perfekte Wahl für genau jetzt",
-    secondBest: "Ebenfalls eine starke Wahl",
-    deepensTheme: "Vertieft dein Thema aus einem anderen Blickwinkel",
-    somethingDifferent: "Wenn du etwas ganz anderes lesen willst",
-    expandHorizon: "Erweitert deinen Horizont mit neuen Perspektiven",
-    newAnalysis: "Neue Analyse starten",
-    myAccount: "Mein Account",
-    login: "Anmelden"
-  });
+  
+  const uiTexts = useTranslatedText(UI_TEXTS);
 
   useEffect(() => {
     const init = async () => {
