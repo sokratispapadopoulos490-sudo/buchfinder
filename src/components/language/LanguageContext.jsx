@@ -67,11 +67,12 @@ export const LanguageProvider = ({ children }) => {
     }
 
     try {
+      const langName = getLanguageName(targetLanguage);
       const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `Translate the following text to ${getLanguageName(targetLanguage)}. Return ONLY the translation, no explanations:\n\n${text}`,
+        prompt: `Translate this text to ${langName} (language code: ${targetLanguage}). Return ONLY the translated text, nothing else:\n\n${text}`,
       });
 
-      const translated = response.trim();
+      const translated = typeof response === 'string' ? response.trim() : text;
       setTranslationCache(prev => ({ ...prev, [cacheKey]: translated }));
       return translated;
     } catch (error) {
