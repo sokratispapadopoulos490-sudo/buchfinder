@@ -1,21 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { Compass, Crown, ArrowRight, BookOpen, Sparkles, Clock, User as UserIcon, Bookmark, Search, Trash2, MessageSquare } from 'lucide-react';
+import { Compass, Crown, ArrowRight, BookOpen, Sparkles, Clock, User as UserIcon, Bookmark, Search, Trash2, MessageSquare, TrendingUp, Plus, CheckCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import { de } from 'date-fns/locale';
 import BookCard from '@/components/books/BookCard';
 import StarRating from '@/components/books/StarRating';
+import WeeklyStats from '@/components/reading/WeeklyStats';
+import ReadingProgressModal from '@/components/reading/ReadingProgressModal';
 
 export default function Account() {
   const [user, setUser] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
   const [savedBooks, setSavedBooks] = useState([]);
+  const [readingLogs, setReadingLogs] = useState([]);
   const [activeTab, setActiveTab] = useState('overview');
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedBookForProgress, setSelectedBookForProgress] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,6 +36,9 @@ export default function Account() {
 
       const books = await base44.entities.SavedBook.list('-created_date');
       setSavedBooks(books);
+
+      const logs = await base44.entities.ReadingLog.list('-reading_date');
+      setReadingLogs(logs);
     } catch (error) {
       console.error('Error loading account:', error);
       base44.auth.redirectToLogin();
@@ -56,6 +63,20 @@ export default function Account() {
     book.book_data.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     book.book_data.author.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const completedBooksCount = savedBooks.filter(book => book.is_completed).length;
+
+  const handleToggleCompleted = async (savedBook) => {
+    try {
+      await base44.entities.SavedBook.update(savedBook.id, {
+        is_completed: !savedBook.is_completed,
+        completed_date: !savedBook.is_completed ? new Date().toISOString().split('T')[0] : null
+      });
+      await loadAccountData();
+    } catch (error) {
+      console.error('Error toggling completed status:', error);
+    }
+  };
 
   const handleDeleteRecommendation = async (recId) => {
     if (confirm('Möchtest du diese Empfehlung wirklich löschen?')) {
@@ -146,16 +167,28 @@ export default function Account() {
               </div>
               <div className="text-2xl font-light text-stone-800">
                 {savedBooks.length}
+                {completedBooksCount > 0 && (
+                  <span className="text-sm text-green-600 ml-2">
+                    ({completedBooksCount} abgeschlossen)
+                  </span>
+                )}
               </div>
             </div>
 
             <div className="bg-stone-50 rounded-xl p-4">
               <div className="flex items-center gap-2 text-stone-500 text-sm mb-2">
-                <Sparkles className="w-4 h-4" />
-                Mitglied seit
+                <TrendingUp className="w-4 h-4" />
+                Seiten diese Woche
               </div>
               <div className="text-2xl font-light text-stone-800">
-                {formatDistanceToNow(new Date(user.created_date), { addSuffix: false, locale: de })}
+                {readingLogs
+                  .filter(log => {
+                    const logDate = new Date(log.reading_date);
+                    const now = new Date();
+                    const weekStart = new Date(now.setDate(now.getDate() - now.getDay() + 1));
+                    return logDate >= weekStart;
+                  })
+                  .reduce((sum, log) => sum + log.pages_read, 0)}
               </div>
             </div>
           </div>
@@ -192,10 +225,10 @@ export default function Account() {
         )}
 
         {/* Navigation Tabs */}
-        <div className="bg-white rounded-xl border border-stone-200 p-2 mb-8 flex gap-2">
+        <div className="bg-white rounded-xl border border-stone-200 p-2 mb-8 flex gap-2 overflow-x-auto">
           <button
             onClick={() => setActiveTab('overview')}
-            className={`flex-1 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex-1 min-w-fit px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
               activeTab === 'overview'
                 ? 'bg-stone-800 text-white'
                 : 'text-stone-600 hover:bg-stone-50'
@@ -204,8 +237,21 @@ export default function Account() {
             Übersicht
           </button>
           <button
+            onClick={() => setActiveTab('reading')}
+            className={`flex-1 min-w-fit px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+              activeTab === 'reading'
+                ? 'bg-stone-800 text-white'
+                : 'text-stone-600 hover:bg-stone-50'
+            }`}
+          >
+            <div className="flex items-center justify-center gap-2">
+              <TrendingUp className="w-4 h-4" />
+              Lesefortschritt
+            </div>
+          </button>
+          <button
             onClick={() => setActiveTab('saved')}
-            className={`flex-1 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex-1 min-w-fit px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
               activeTab === 'saved'
                 ? 'bg-stone-800 text-white'
                 : 'text-stone-600 hover:bg-stone-50'
@@ -213,12 +259,12 @@ export default function Account() {
           >
             <div className="flex items-center justify-center gap-2">
               <Bookmark className="w-4 h-4" />
-              Gespeicherte Bücher ({savedBooks.length})
+              Bücher ({savedBooks.length})
             </div>
           </button>
           <button
             onClick={() => setActiveTab('history')}
-            className={`flex-1 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex-1 min-w-fit px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
               activeTab === 'history'
                 ? 'bg-stone-800 text-white'
                 : 'text-stone-600 hover:bg-stone-50'
@@ -227,6 +273,51 @@ export default function Account() {
             Verlauf
           </button>
         </div>
+
+        {/* Lesefortschritt Tab */}
+        {activeTab === 'reading' && (
+          <div className="space-y-6">
+            <WeeklyStats readingLogs={readingLogs} completedBooksCount={completedBooksCount} />
+
+            {savedBooks.length > 0 && (
+              <div className="bg-white rounded-2xl border border-stone-200 p-6">
+                <h2 className="text-xl font-light text-stone-800 mb-4">Schnellzugriff</h2>
+                <div className="space-y-3">
+                  {savedBooks.slice(0, 3).map((saved) => (
+                    <div key={saved.id} className="flex items-center justify-between p-4 border border-stone-200 rounded-xl hover:border-stone-300 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-10 h-14 rounded ${saved.book_data.coverColor || 'bg-stone-100'} flex items-center justify-center flex-shrink-0`}>
+                          <span className="text-xl font-serif text-stone-400">
+                            {saved.book_data.title.charAt(0)}
+                          </span>
+                        </div>
+                        <div>
+                          <div className="font-medium text-stone-800">{saved.book_data.title}</div>
+                          <div className="text-sm text-stone-500">{saved.book_data.author}</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {saved.is_completed && (
+                          <div className="text-green-600 text-xs flex items-center gap-1">
+                            <CheckCircle className="w-4 h-4" />
+                          </div>
+                        )}
+                        <Button
+                          onClick={() => setSelectedBookForProgress({ book: saved.book_data, savedBookId: saved.id })}
+                          size="sm"
+                          className="bg-amber-600 hover:bg-amber-700 text-white gap-2"
+                        >
+                          <Plus className="w-4 h-4" />
+                          Fortschritt
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Gespeicherte Bücher Tab */}
         {activeTab === 'saved' && (
@@ -269,12 +360,38 @@ export default function Account() {
               <div className="space-y-6">
                 {filteredBooks.map((saved, index) => (
                   <div key={saved.id} className="space-y-4">
-                    <BookCard
-                      book={saved.book_data}
-                      reasons={saved.recommendation_reason}
-                      index={index}
-                      isContrast={false}
-                    />
+                    <div className="flex items-start justify-between gap-4 mb-2">
+                      <div className="flex-1">
+                        <BookCard
+                          book={saved.book_data}
+                          reasons={saved.recommendation_reason}
+                          index={index}
+                          isContrast={false}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex items-center gap-2 ml-4">
+                      <Button
+                        onClick={() => setSelectedBookForProgress({ book: saved.book_data, savedBookId: saved.id })}
+                        size="sm"
+                        variant="outline"
+                        className="gap-2"
+                      >
+                        <Plus className="w-4 h-4" />
+                        Fortschritt hinzufügen
+                      </Button>
+                      <Button
+                        onClick={() => handleToggleCompleted(saved)}
+                        size="sm"
+                        variant={saved.is_completed ? "default" : "outline"}
+                        className={saved.is_completed ? "bg-green-600 hover:bg-green-700 text-white gap-2" : "gap-2"}
+                      >
+                        <CheckCircle className="w-4 h-4" />
+                        {saved.is_completed ? "Abgeschlossen" : "Als abgeschlossen markieren"}
+                      </Button>
+                    </div>
                     
                     {/* Zeige Bewertung und Kommentar als Vorschau */}
                     {(saved.rating || saved.comment) && (
@@ -444,9 +561,19 @@ export default function Account() {
               </button>
             </div>
           </div>
-        )}
+          )}
 
-        {/* Account Actions */}
+          {/* Reading Progress Modal */}
+          {selectedBookForProgress && (
+          <ReadingProgressModal
+            book={selectedBookForProgress.book}
+            savedBookId={selectedBookForProgress.savedBookId}
+            onClose={() => setSelectedBookForProgress(null)}
+            onUpdate={loadAccountData}
+          />
+          )}
+
+          {/* Account Actions */}
         <div className="mt-8 text-center">
           <Button
             onClick={() => base44.auth.logout()}
