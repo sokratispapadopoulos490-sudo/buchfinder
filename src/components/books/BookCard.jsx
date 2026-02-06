@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Sparkles, ShoppingCart, Bookmark, BookmarkCheck } from 'lucide-react';
+import { ExternalLink, Sparkles, ShoppingCart, Bookmark, BookmarkCheck, MessageSquare, Users } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { base44 } from '@/api/base44Client';
+import StarRating from './StarRating';
 
 const generateBuyLinks = (book) => {
   const encodedTitle = encodeURIComponent(`${book.title} ${book.author}`);
@@ -41,11 +42,25 @@ export default function BookCard({ book, reasons, index, isContrast }) {
   const [editingNotes, setEditingNotes] = useState(false);
   const [notes, setNotes] = useState('');
   const [savedBookId, setSavedBookId] = useState(null);
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState('');
+  const [editingReview, setEditingReview] = useState(false);
+  const [readCount, setReadCount] = useState(0);
   const buyLinks = generateBuyLinks(book);
 
   useEffect(() => {
     checkIfSaved();
+    loadReadCount();
   }, [book.id]);
+
+  const loadReadCount = async () => {
+    try {
+      const allSaved = await base44.entities.SavedBook.filter({ book_id: book.id });
+      setReadCount(allSaved.length);
+    } catch (error) {
+      console.error('Error loading read count:', error);
+    }
+  };
 
   const checkIfSaved = async () => {
     try {
@@ -58,6 +73,8 @@ export default function BookCard({ book, reasons, index, isContrast }) {
           setIsSaved(true);
           setSavedBookId(saved[0].id);
           setNotes(saved[0].notes || '');
+          setRating(saved[0].rating || 0);
+          setComment(saved[0].comment || '');
         }
       }
     } catch (error) {
@@ -85,10 +102,13 @@ export default function BookCard({ book, reasons, index, isContrast }) {
           book_id: book.id,
           book_data: book,
           recommendation_reason: reasons,
-          notes: notes
+          notes: notes,
+          rating: rating,
+          comment: comment
         });
         setIsSaved(true);
         setSavedBookId(created.id);
+        await loadReadCount();
       }
     } catch (error) {
       console.error('Error saving book:', error);
@@ -105,6 +125,17 @@ export default function BookCard({ book, reasons, index, isContrast }) {
       setEditingNotes(false);
     } catch (error) {
       console.error('Error saving notes:', error);
+    }
+  };
+
+  const handleSaveReview = async () => {
+    if (!savedBookId) return;
+    
+    try {
+      await base44.entities.SavedBook.update(savedBookId, { rating, comment });
+      setEditingReview(false);
+    } catch (error) {
+      console.error('Error saving review:', error);
     }
   };
 
@@ -144,7 +175,13 @@ export default function BookCard({ book, reasons, index, isContrast }) {
             <h3 className="text-xl md:text-2xl font-light text-stone-800 mb-1 leading-tight">
               {book.title}
             </h3>
-            <p className="text-stone-500 text-sm mb-3">{book.author}</p>
+            <p className="text-stone-500 text-sm mb-2">{book.author}</p>
+            {readCount > 0 && (
+              <div className="flex items-center gap-2 text-xs text-stone-500">
+                <Users className="w-3 h-3" />
+                <span>Schon {readCount}× gelesen</span>
+              </div>
+            )}
             <p className="text-stone-600 text-sm leading-relaxed">
               {book.description}
             </p>
@@ -168,39 +205,86 @@ export default function BookCard({ book, reasons, index, isContrast }) {
 
           <div className="space-y-3">
             {isSaved && (
-              <div className="bg-stone-50 rounded-lg p-4 space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium text-stone-700">Meine Notizen</label>
-                  {!editingNotes ? (
-                    <button
-                      onClick={() => setEditingNotes(true)}
-                      className="text-xs text-amber-600 hover:text-amber-700"
-                    >
-                      Bearbeiten
-                    </button>
+              <>
+                <div className="bg-stone-50 rounded-lg p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium text-stone-700">Meine Bewertung</label>
+                    {!editingReview ? (
+                      <button
+                        onClick={() => setEditingReview(true)}
+                        className="text-xs text-amber-600 hover:text-amber-700"
+                      >
+                        Bearbeiten
+                      </button>
+                    ) : (
+                      <button
+                        onClick={handleSaveReview}
+                        className="text-xs text-green-600 hover:text-green-700 font-medium"
+                      >
+                        Speichern
+                      </button>
+                    )}
+                  </div>
+
+                  <div>
+                    <StarRating 
+                      rating={rating} 
+                      onRatingChange={setRating}
+                      editable={editingReview}
+                      size="md"
+                    />
+                  </div>
+
+                  {editingReview ? (
+                    <textarea
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
+                      placeholder="Was hat dir gefallen oder nicht gefallen?"
+                      className="w-full px-3 py-2 border border-stone-200 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-amber-500"
+                      rows={3}
+                    />
+                  ) : comment ? (
+                    <div className="flex items-start gap-2">
+                      <MessageSquare className="w-4 h-4 text-stone-400 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-stone-600">{comment}</p>
+                    </div>
+                  ) : null}
+                </div>
+
+                <div className="bg-stone-50 rounded-lg p-4 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium text-stone-700">Meine Notizen</label>
+                    {!editingNotes ? (
+                      <button
+                        onClick={() => setEditingNotes(true)}
+                        className="text-xs text-amber-600 hover:text-amber-700"
+                      >
+                        Bearbeiten
+                      </button>
+                    ) : (
+                      <button
+                        onClick={handleSaveNotes}
+                        className="text-xs text-green-600 hover:text-green-700 font-medium"
+                      >
+                        Speichern
+                      </button>
+                    )}
+                  </div>
+                  {editingNotes ? (
+                    <textarea
+                      value={notes}
+                      onChange={(e) => setNotes(e.target.value)}
+                      placeholder="Z.B. Seite 42 ist interessant..."
+                      className="w-full px-3 py-2 border border-stone-200 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-amber-500"
+                      rows={3}
+                    />
                   ) : (
-                    <button
-                      onClick={handleSaveNotes}
-                      className="text-xs text-green-600 hover:text-green-700 font-medium"
-                    >
-                      Speichern
-                    </button>
+                    <p className="text-sm text-stone-600">
+                      {notes || 'Noch keine Notizen hinzugefügt'}
+                    </p>
                   )}
                 </div>
-                {editingNotes ? (
-                  <textarea
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    placeholder="Z.B. Seite 42 ist interessant..."
-                    className="w-full px-3 py-2 border border-stone-200 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-amber-500"
-                    rows={3}
-                  />
-                ) : (
-                  <p className="text-sm text-stone-600">
-                    {notes || 'Noch keine Notizen hinzugefügt'}
-                  </p>
-                )}
-              </div>
+              </>
             )}
 
             <div className="flex gap-3">

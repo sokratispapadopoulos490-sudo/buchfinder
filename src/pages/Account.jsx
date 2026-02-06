@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { Compass, Crown, ArrowRight, BookOpen, Sparkles, Clock, User as UserIcon, Bookmark, Search, Trash2 } from 'lucide-react';
+import { Compass, Crown, ArrowRight, BookOpen, Sparkles, Clock, User as UserIcon, Bookmark, Search, Trash2, MessageSquare } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import { de } from 'date-fns/locale';
 import BookCard from '@/components/books/BookCard';
+import StarRating from '@/components/books/StarRating';
 
 export default function Account() {
   const [user, setUser] = useState(null);
@@ -267,13 +268,32 @@ export default function Account() {
             ) : (
               <div className="space-y-6">
                 {filteredBooks.map((saved, index) => (
-                  <BookCard
-                    key={saved.id}
-                    book={saved.book_data}
-                    reasons={saved.recommendation_reason}
-                    index={index}
-                    isContrast={false}
-                  />
+                  <div key={saved.id} className="space-y-4">
+                    <BookCard
+                      book={saved.book_data}
+                      reasons={saved.recommendation_reason}
+                      index={index}
+                      isContrast={false}
+                    />
+                    
+                    {/* Zeige Bewertung und Kommentar als Vorschau */}
+                    {(saved.rating || saved.comment) && (
+                      <div className="ml-4 pl-4 border-l-2 border-stone-200 space-y-2">
+                        {saved.rating && (
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-stone-500">Meine Bewertung:</span>
+                            <StarRating rating={saved.rating} size="sm" />
+                          </div>
+                        )}
+                        {saved.comment && (
+                          <div className="flex items-start gap-2">
+                            <MessageSquare className="w-3 h-3 text-stone-400 mt-0.5 flex-shrink-0" />
+                            <p className="text-xs text-stone-600">{saved.comment}</p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 ))}
               </div>
             )}
