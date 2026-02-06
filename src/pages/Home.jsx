@@ -324,7 +324,7 @@ function HomeContent() {
   const [isPremium, setIsPremium] = useState(false);
   const [loading, setLoading] = useState(false);
   const [translatedQuestions, setTranslatedQuestions] = useState(questionSets.erwachsene);
-  const { language, translateObject, isLoading: langLoading } = useLanguage();
+  const { language, changeLanguage, translateObject, isLoading: langLoading, supportedLanguages } = useLanguage();
 
   useEffect(() => {
     const init = async () => {
