@@ -160,12 +160,26 @@ export default function BookCard({ book, reasons, index, isContrast }) {
       
       <div className="p-6 md:p-8">
         <div className="flex gap-6">
-          {/* Book cover placeholder */}
-          <div className={cn(
-            "w-20 h-28 md:w-24 md:h-32 rounded-lg flex-shrink-0 flex items-center justify-center",
-            book.coverColor || "bg-stone-100"
-          )}>
-            <span className="text-2xl md:text-3xl font-serif text-stone-400">
+          {/* Book cover */}
+          {book.coverUrl ? (
+            <img
+              src={book.coverUrl}
+              alt={`Cover von ${book.title}`}
+              className="w-24 h-36 md:w-28 md:h-42 rounded-lg shadow-md object-cover flex-shrink-0"
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.nextSibling.style.display = 'flex';
+              }}
+            />
+          ) : null}
+          <div 
+            className={cn(
+              "w-24 h-36 md:w-28 md:h-42 rounded-lg flex-shrink-0 flex items-center justify-center shadow-md",
+              book.coverColor || "bg-stone-100",
+              book.coverUrl && "hidden"
+            )}
+          >
+            <span className="text-3xl md:text-4xl font-serif text-stone-400">
               {book.title.charAt(0)}
             </span>
           </div>
@@ -175,13 +189,22 @@ export default function BookCard({ book, reasons, index, isContrast }) {
             <h3 className="text-xl md:text-2xl font-light text-stone-800 mb-1 leading-tight">
               {book.title}
             </h3>
-            <p className="text-stone-500 text-sm mb-2">{book.author}</p>
+            <p className="text-stone-600 text-sm mb-2">{book.author}</p>
+            
+            {/* Buchdetails */}
+            <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-stone-500 mb-3">
+              {book.publishYear && <span>{book.publishYear}</span>}
+              {book.pageCount && <span>• {book.pageCount} Seiten</span>}
+              {book.publisher && <span>• {book.publisher}</span>}
+            </div>
+
             {readCount > 0 && (
-              <div className="flex items-center gap-2 text-xs text-stone-500">
+              <div className="flex items-center gap-2 text-xs text-stone-500 mb-2">
                 <Users className="w-3 h-3" />
                 <span>Schon {readCount}× gelesen</span>
               </div>
             )}
+            
             <p className="text-stone-600 text-sm leading-relaxed">
               {book.description}
             </p>
