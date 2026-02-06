@@ -10,6 +10,7 @@ import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { LanguageProvider, useLanguage } from '@/components/language/LanguageContext';
 import LanguageSelector from '@/components/language/LanguageSelector';
+import { useTranslatedText } from '@/components/language/useTranslatedText';
 
 // Erste Frage für alle - Altersgruppe ermitteln
 const ageQuestion = {
@@ -326,6 +327,38 @@ function HomeContent() {
   const [translatedQuestions, setTranslatedQuestions] = useState(questionSets.erwachsene);
   const { language, changeLanguage, translateObject, isLoading: langLoading, supportedLanguages } = useLanguage();
 
+  // Statische UI-Texte
+  const uiTexts = useTranslatedText({
+    welcomeTitle: "Book Compass",
+    welcomeSubtitle: "Dein Wegweiser zum perfekten Buch",
+    welcomeDescription: "Wenige einfache Fragen führen dich zu Büchern, die genau zu dir passen – für jedes Alter.",
+    freeStart: "Kostenlos starten",
+    freeDescription: "3 personalisierte Empfehlungen – komplett kostenlos, keine Kreditkarte nötig",
+    premiumTitle: "Premium für 4,99€/Monat",
+    premiumDescription: "Unbegrenzte Empfehlungen, erweiterte Profile und regelmäßig neue Bücher",
+    startButton: "Entdeckungsreise starten",
+    backButton: "Zurück",
+    backToStart: "Zum Start",
+    backToProfile: "Zurück zum Profil",
+    analysisComplete: "Analyse abgeschlossen",
+    myRecommendationsButton: "Meine Buchempfehlungen",
+    loading: "Wird geladen...",
+    yourRecommendations: "Deine Empfehlungen",
+    selectedByNeeds: "Ausgewählt nach deinen Bedürfnissen und deinem Lesestil",
+    freeVersion: "Kostenlose Version:",
+    recommendationsUsed: "von 3 Empfehlungen genutzt",
+    upgradePremium: "Auf Premium upgraden",
+    bestMatch: "Passt am besten zu deinem Thema",
+    perfectChoice: "Deine perfekte Wahl für genau jetzt",
+    secondBest: "Ebenfalls eine starke Wahl",
+    deepensTheme: "Vertieft dein Thema aus einem anderen Blickwinkel",
+    somethingDifferent: "Wenn du etwas ganz anderes lesen willst",
+    expandHorizon: "Erweitert deinen Horizont mit neuen Perspektiven",
+    newAnalysis: "Neue Analyse starten",
+    myAccount: "Mein Account",
+    login: "Anmelden"
+  });
+
   useEffect(() => {
     const init = async () => {
       await checkAuth();
@@ -639,7 +672,7 @@ function HomeContent() {
               className="gap-2 border-stone-300 hover:bg-stone-50"
             >
               <User className="w-4 h-4" />
-              Mein Account
+              {uiTexts.myAccount}
             </Button>
           ) : (
             <Button
@@ -649,7 +682,7 @@ function HomeContent() {
               className="gap-2 border-amber-300 hover:bg-amber-50 text-amber-900"
             >
               <User className="w-4 h-4" />
-              Anmelden
+              {uiTexts.login}
             </Button>
           )}
         </div>
@@ -728,7 +761,7 @@ function HomeContent() {
               transition={{ delay: showBookOpen ? 1.6 : 0.3 }}
               className="text-4xl md:text-5xl font-light text-stone-800 text-center mb-2"
             >
-              Book Compass
+              {uiTexts.welcomeTitle}
             </motion.h1>
 
             <motion.p
@@ -737,7 +770,7 @@ function HomeContent() {
               transition={{ delay: showBookOpen ? 1.7 : 0.4 }}
               className="text-amber-700 text-center text-sm uppercase tracking-wider mb-8 font-medium"
             >
-              Dein Wegweiser zum perfekten Buch
+              {uiTexts.welcomeSubtitle}
             </motion.p>
 
             <motion.p
@@ -746,9 +779,7 @@ function HomeContent() {
               transition={{ delay: showBookOpen ? 1.8 : 0.5 }}
               className="text-stone-500 text-center max-w-md mb-8 text-base font-light"
             >
-              Wenige einfache Fragen führen dich zu Büchern,
-              <br />
-              die genau zu dir passen – für jedes Alter.
+              {uiTexts.welcomeDescription}
             </motion.p>
 
             {/* Freemium Info */}
@@ -761,10 +792,10 @@ function HomeContent() {
               <div className="space-y-4">
                 <div className="text-center">
                   <div className="inline-flex items-center gap-2 bg-amber-100 text-amber-800 px-4 py-2 rounded-full text-sm font-medium mb-3">
-                    ✨ Kostenlos starten
+                    ✨ {uiTexts.freeStart}
                   </div>
                   <p className="text-stone-700 text-sm">
-                    <strong>3 personalisierte Empfehlungen</strong> – komplett kostenlos, keine Kreditkarte nötig
+                    {uiTexts.freeDescription}
                   </p>
                 </div>
                 
@@ -772,9 +803,9 @@ function HomeContent() {
                   <div className="flex items-start gap-3 text-sm text-stone-600">
                     <Compass className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-medium text-stone-800 mb-1">Premium für 4,99€/Monat</p>
+                      <p className="font-medium text-stone-800 mb-1">{uiTexts.premiumTitle}</p>
                       <p className="text-xs leading-relaxed">
-                        Unbegrenzte Empfehlungen, erweiterte Profile und regelmäßig neue Bücher
+                        {uiTexts.premiumDescription}
                       </p>
                     </div>
                   </div>
@@ -793,7 +824,7 @@ function HomeContent() {
                 size="lg"
                 className="bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white px-8 py-6 text-lg rounded-xl gap-2 transition-all shadow-lg"
               >
-                Entdeckungsreise starten
+                {uiTexts.startButton}
                 <ArrowRight className="w-5 h-5" />
               </Button>
             </motion.div>
@@ -818,7 +849,7 @@ function HomeContent() {
               className="flex items-center gap-2 text-stone-500 hover:text-stone-700 mb-8 transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
-              <span className="text-sm">{currentQuestion > 0 ? 'Zurück' : 'Zum Start'}</span>
+              <span className="text-sm">{currentQuestion > 0 ? uiTexts.backButton : uiTexts.backToStart}</span>
             </button>
 
             <div className="flex-1 flex items-center justify-center">
@@ -857,7 +888,7 @@ function HomeContent() {
               className="flex items-center gap-2 text-stone-500 hover:text-stone-700 mb-8 transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
-              <span className="text-sm">Zurück</span>
+              <span className="text-sm">{uiTexts.backButton}</span>
             </button>
 
             <div className="flex-1 flex flex-col items-center justify-center">
@@ -866,7 +897,7 @@ function HomeContent() {
                 animate={{ y: 0, opacity: 1 }}
                 className="text-stone-500 text-sm uppercase tracking-wide mb-6"
               >
-                Analyse abgeschlossen
+                {uiTexts.analysisComplete}
               </motion.p>
 
               <ProfileCard profile={profile} />
@@ -883,7 +914,7 @@ function HomeContent() {
                   disabled={loading}
                   className="bg-stone-800 hover:bg-stone-700 text-white px-8 py-6 text-lg rounded-xl gap-2"
                 >
-                  {loading ? 'Wird geladen...' : 'Meine Buchempfehlungen'}
+                  {loading ? uiTexts.loading : uiTexts.myRecommendationsButton}
                   <ArrowRight className="w-5 h-5" />
                 </Button>
               </motion.div>
@@ -909,7 +940,7 @@ function HomeContent() {
                     className="flex items-center gap-2 text-stone-500 hover:text-stone-700 transition-colors"
                   >
                     <ChevronLeft className="w-4 h-4" />
-                    <span className="text-sm">Zurück zum Profil</span>
+                    <span className="text-sm">{uiTexts.backToProfile}</span>
                   </button>
 
                   <div className="flex items-center gap-2">
@@ -941,7 +972,7 @@ function HomeContent() {
                         className="gap-2 border-stone-300 hover:bg-stone-50"
                       >
                         <User className="w-4 h-4" />
-                        <span className="hidden sm:inline">Mein Account</span>
+                        <span className="hidden sm:inline">{uiTexts.myAccount}</span>
                       </Button>
                     )}
                   </div>
@@ -954,10 +985,10 @@ function HomeContent() {
                 className="text-center mb-12"
               >
                 <h2 className="text-3xl md:text-4xl font-light text-stone-800 mb-3">
-                  Deine Empfehlungen
+                  {uiTexts.yourRecommendations}
                 </h2>
                 <p className="text-stone-500 font-light">
-                  Ausgewählt nach deinen Bedürfnissen und deinem Lesestil
+                  {uiTexts.selectedByNeeds}
                 </p>
                 
                 {/* Freemium-Hinweis */}
@@ -965,7 +996,7 @@ function HomeContent() {
                   <div className="mt-6 inline-block">
                     <div className="bg-amber-50 border border-amber-200 rounded-lg px-6 py-4">
                       <p className="text-sm text-amber-800 mb-2">
-                        <strong>Kostenlose Version:</strong> {recommendationCount} von 3 Empfehlungen genutzt
+                        <strong>{uiTexts.freeVersion}</strong> {recommendationCount} {uiTexts.recommendationsUsed}
                       </p>
                       {recommendationCount >= 3 && (
                         <Button
@@ -973,7 +1004,7 @@ function HomeContent() {
                           size="sm"
                           className="bg-amber-600 hover:bg-amber-700 text-white"
                         >
-                          Auf Premium upgraden
+                          {uiTexts.upgradePremium}
                         </Button>
                       )}
                     </div>
@@ -990,8 +1021,8 @@ function HomeContent() {
                         1
                       </div>
                       <div>
-                        <h3 className="text-lg font-medium text-stone-800">Passt am besten zu deinem Thema</h3>
-                        <p className="text-sm text-stone-500">Deine perfekte Wahl für genau jetzt</p>
+                        <h3 className="text-lg font-medium text-stone-800">{uiTexts.bestMatch}</h3>
+                        <p className="text-sm text-stone-500">{uiTexts.perfectChoice}</p>
                       </div>
                     </div>
                     <BookCard
@@ -1011,8 +1042,8 @@ function HomeContent() {
                         2
                       </div>
                       <div>
-                        <h3 className="text-lg font-medium text-stone-800">Ebenfalls eine starke Wahl</h3>
-                        <p className="text-sm text-stone-500">Vertieft dein Thema aus einem anderen Blickwinkel</p>
+                        <h3 className="text-lg font-medium text-stone-800">{uiTexts.secondBest}</h3>
+                        <p className="text-sm text-stone-500">{uiTexts.deepensTheme}</p>
                       </div>
                     </div>
                     <BookCard
@@ -1032,8 +1063,8 @@ function HomeContent() {
                         3
                       </div>
                       <div>
-                        <h3 className="text-lg font-medium text-stone-800">Wenn du etwas ganz anderes lesen willst</h3>
-                        <p className="text-sm text-stone-500">Erweitert deinen Horizont mit neuen Perspektiven</p>
+                        <h3 className="text-lg font-medium text-stone-800">{uiTexts.somethingDifferent}</h3>
+                        <p className="text-sm text-stone-500">{uiTexts.expandHorizon}</p>
                       </div>
                     </div>
                     <BookCard
@@ -1056,7 +1087,7 @@ function HomeContent() {
                   onClick={handleRestart}
                   className="text-stone-500 hover:text-stone-700 text-sm underline underline-offset-4 transition-colors"
                 >
-                  Neue Analyse starten
+                  {uiTexts.newAnalysis}
                 </button>
               </motion.div>
             </div>
