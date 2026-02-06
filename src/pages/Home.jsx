@@ -63,6 +63,13 @@ const questionSets = {
         { value: "mittel", label: "Ein Kapitel am Tag" },
         { value: "lang", label: "Längere, spannende Bücher" }
       ]
+    },
+    {
+      id: 'read_books',
+      question: "Nenne 3 Bücher, die du bereits gelesen und geliebt hast",
+      description: "Damit wir Dopplungen vermeiden und besser verstehen, was dir gefällt",
+      isTextInput: true,
+      placeholder: "z.B. Harry Potter, Das magische Baumhaus, Der kleine Prinz"
     }
   ],
   jugendliche: [
@@ -106,6 +113,13 @@ const questionSets = {
         { value: "mittel", label: "Ein paar Kapitel täglich" },
         { value: "lang", label: "Ich tauche gerne tief ein" }
       ]
+    },
+    {
+      id: 'read_books',
+      question: "Nenne 3 Bücher, die du bereits gelesen und geliebt hast",
+      description: "Damit wir Dopplungen vermeiden und besser verstehen, was dir gefällt",
+      isTextInput: true,
+      placeholder: "z.B. Die Tribute von Panem, Tschick, Das Schicksal ist ein mieser Verräter"
     }
   ],
   erwachsene: [
@@ -190,6 +204,13 @@ const questionSets = {
         { value: "zukunft", label: "Zukunft & Science-Fiction" },
         { value: "egal", label: "Hauptsache gute Geschichte" }
       ]
+    },
+    {
+      id: 'read_books',
+      question: "Nenne 3 Bücher, die du bereits gelesen und geliebt hast",
+      description: "Damit wir Dopplungen vermeiden und besser verstehen, was dir gefällt",
+      isTextInput: true,
+      placeholder: "z.B. Atomic Habits, Der kleine Prinz, Sapiens"
     }
   ]
 };
@@ -421,12 +442,30 @@ function HomeContent() {
       setQuestions(questionSets[value]);
     }
 
+    // Bei Textfragen nicht automatisch weiter
+    if (translatedQuestions[currentQuestion].isTextInput) {
+      return;
+    }
+
     setTimeout(() => {
       if (currentQuestion < translatedQuestions.length - 1) {
         setCurrentQuestion(currentQuestion + 1);
       } else {
         // Analyse abschließen
         const userProfile = analyzeAnswers(newAnswers);
+        setProfile(userProfile);
+        setPhase('profile');
+      }
+    }, 300);
+  };
+
+  const handleTextSubmit = () => {
+    setTimeout(() => {
+      if (currentQuestion < translatedQuestions.length - 1) {
+        setCurrentQuestion(currentQuestion + 1);
+      } else {
+        // Analyse abschließen
+        const userProfile = analyzeAnswers(answers);
         setProfile(userProfile);
         setPhase('profile');
       }
@@ -468,13 +507,17 @@ function HomeContent() {
     if (ans.length === "kurz") style.push("kurz");
     if (ans.length === "lang") style.push("anspruchsvoll");
 
+    // Gelesene Bücher parsen
+    const readBooks = ans.read_books ? ans.read_books.split(',').map(b => b.trim().toLowerCase()) : [];
+
     return {
       mainTopics,
       secondaryTopics,
       style,
       difficulty: ans.level || "einsteiger",
       timeEffort: ans.length,
-      ageGroup: ageGroup
+      ageGroup: ageGroup,
+      readBooks
     };
   };
 
@@ -787,6 +830,10 @@ function HomeContent() {
                   selectedValue={answers[translatedQuestions[currentQuestion].id]}
                   questionNumber={currentQuestion + 1}
                   totalQuestions={translatedQuestions.length}
+                  isTextInput={translatedQuestions[currentQuestion].isTextInput}
+                  placeholder={translatedQuestions[currentQuestion].placeholder}
+                  description={translatedQuestions[currentQuestion].description}
+                  onTextSubmit={handleTextSubmit}
                 />
               </AnimatePresence>
             </div>
