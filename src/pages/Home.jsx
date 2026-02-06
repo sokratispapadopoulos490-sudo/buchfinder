@@ -608,50 +608,52 @@ function HomeContent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50">
-      {/* Header mit Login/Logout und Sprachauswahl */}
-      <div className="fixed top-0 right-0 p-6 z-40 flex items-center gap-3">
-        {/* Kompakte Sprachauswahl */}
-        <div className="relative">
-          <select
-            value={language}
-            onChange={(e) => changeLanguage(e.target.value)}
-            className="appearance-none bg-white border border-stone-300 rounded-lg px-3 py-2 pr-8 text-sm text-stone-700 hover:bg-stone-50 focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
-          >
-            {supportedLanguages.map((lang) => (
-              <option key={lang.code} value={lang.code}>
-                {lang.flag} {lang.name}
-              </option>
-            ))}
-          </select>
-          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-stone-500">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
+      {/* Header mit Login/Logout und Sprachauswahl - nur auf Welcome-Phase */}
+      {phase === 'welcome' && (
+        <div className="fixed top-0 right-0 p-6 z-40 flex items-center gap-3">
+          {/* Kompakte Sprachauswahl */}
+          <div className="relative">
+            <select
+              value={language}
+              onChange={(e) => changeLanguage(e.target.value)}
+              className="appearance-none bg-white border border-stone-300 rounded-lg px-3 py-2 pr-8 text-sm text-stone-700 hover:bg-stone-50 focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
+            >
+              {supportedLanguages.map((lang) => (
+                <option key={lang.code} value={lang.code}>
+                  {lang.flag} {lang.name}
+                </option>
+              ))}
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-stone-500">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
           </div>
-        </div>
 
-        {isAuthenticated && user ? (
-          <Button
-            onClick={() => navigate('/Account')}
-            variant="outline"
-            size="sm"
-            className="gap-2 border-stone-300 hover:bg-stone-50"
-          >
-            <User className="w-4 h-4" />
-            Mein Account
-          </Button>
-        ) : (
-          <Button
-            onClick={handleLogin}
-            variant="outline"
-            size="sm"
-            className="gap-2 border-amber-300 hover:bg-amber-50 text-amber-900"
-          >
-            <User className="w-4 h-4" />
-            Anmelden
-          </Button>
-        )}
-      </div>
+          {isAuthenticated && user ? (
+            <Button
+              onClick={() => navigate('/Account')}
+              variant="outline"
+              size="sm"
+              className="gap-2 border-stone-300 hover:bg-stone-50"
+            >
+              <User className="w-4 h-4" />
+              Mein Account
+            </Button>
+          ) : (
+            <Button
+              onClick={handleLogin}
+              variant="outline"
+              size="sm"
+              className="gap-2 border-amber-300 hover:bg-amber-50 text-amber-900"
+            >
+              <User className="w-4 h-4" />
+              Anmelden
+            </Button>
+          )}
+        </div>
+      )}
 
       <AnimatePresence mode="wait">
         {/* Welcome Phase */}
@@ -899,24 +901,51 @@ function HomeContent() {
             className="min-h-screen px-6 py-12"
           >
             <div className="max-w-2xl mx-auto">
-              <div className="flex items-center justify-between mb-8">
-                <button
-                  onClick={handleBackFromResults}
-                  className="flex items-center gap-2 text-stone-500 hover:text-stone-700 transition-colors"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                  <span className="text-sm">Zurück zum Profil</span>
-                </button>
-
-                {isAuthenticated && (
+              {/* Header mit Navigation */}
+              <div className="mb-8 space-y-3">
+                <div className="flex items-center justify-between flex-wrap gap-2">
                   <button
-                    onClick={() => navigate('/Account')}
+                    onClick={handleBackFromResults}
                     className="flex items-center gap-2 text-stone-500 hover:text-stone-700 transition-colors"
                   >
-                    <User className="w-4 h-4" />
-                    <span className="text-sm">Mein Account</span>
+                    <ChevronLeft className="w-4 h-4" />
+                    <span className="text-sm">Zurück zum Profil</span>
                   </button>
-                )}
+
+                  <div className="flex items-center gap-2">
+                    {/* Kompakte Sprachauswahl */}
+                    <div className="relative">
+                      <select
+                        value={language}
+                        onChange={(e) => changeLanguage(e.target.value)}
+                        className="appearance-none bg-white border border-stone-300 rounded-lg px-3 py-2 pr-8 text-sm text-stone-700 hover:bg-stone-50 focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
+                      >
+                        {supportedLanguages.map((lang) => (
+                          <option key={lang.code} value={lang.code}>
+                            {lang.flag} {lang.name}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-stone-500">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </div>
+                    </div>
+
+                    {isAuthenticated && (
+                      <Button
+                        onClick={() => navigate('/Account')}
+                        variant="outline"
+                        size="sm"
+                        className="gap-2 border-stone-300 hover:bg-stone-50"
+                      >
+                        <User className="w-4 h-4" />
+                        <span className="hidden sm:inline">Mein Account</span>
+                      </Button>
+                    )}
+                  </div>
+                </div>
               </div>
 
               <motion.div
