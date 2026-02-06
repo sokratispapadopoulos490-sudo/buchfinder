@@ -49,15 +49,15 @@
  */
 import Account from './pages/Account';
 import Home from './pages/Home';
-import Premium from './pages/Premium';
 import Library from './pages/Library';
+import Premium from './pages/Premium';
 
 
 export const PAGES = {
     "Account": Account,
     "Home": Home,
-    "Premium": Premium,
     "Library": Library,
+    "Premium": Premium,
 }
 
 export const pagesConfig = {

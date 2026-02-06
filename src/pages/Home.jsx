@@ -367,7 +367,9 @@ function HomeContent() {
       setTranslatedQuestions(translated);
     };
 
-    translateQuestions();
+    if (questionSets[ageGroup]) {
+      translateQuestions();
+    }
   }, [language, ageGroup]);
 
   const checkAuth = async () => {
@@ -433,11 +435,14 @@ function HomeContent() {
   };
 
   const handleAnswer = (value) => {
-    const newAnswers = { ...answers, [translatedQuestions[currentQuestion].id]: value };
+    const currentQuestionId = translatedQuestions?.[currentQuestion]?.id;
+    if (!currentQuestionId) return;
+
+    const newAnswers = { ...answers, [currentQuestionId]: value };
     setAnswers(newAnswers);
 
     // Wenn die Altersfrage beantwortet wird, Fragenset aktualisieren
-    if (translatedQuestions[currentQuestion].id === 'age') {
+    if (currentQuestionId === 'age') {
       setAgeGroup(value);
       setQuestions(questionSets[value]);
     }
@@ -814,19 +819,21 @@ function HomeContent() {
 
             <div className="flex-1 flex items-center justify-center">
               <AnimatePresence mode="wait">
-                <QuestionCard
-                  key={currentQuestion}
-                  question={translatedQuestions[currentQuestion].question}
-                  options={translatedQuestions[currentQuestion].options}
-                  onSelect={handleAnswer}
-                  selectedValue={answers[translatedQuestions[currentQuestion].id]}
-                  questionNumber={currentQuestion + 1}
-                  totalQuestions={translatedQuestions.length}
-                  isTextInput={translatedQuestions[currentQuestion].isTextInput}
-                  placeholder={translatedQuestions[currentQuestion].placeholder}
-                  description={translatedQuestions[currentQuestion].description}
-                  onTextSubmit={handleTextSubmit}
-                />
+                {translatedQuestions[currentQuestion] && (
+                  <QuestionCard
+                    key={currentQuestion}
+                    question={translatedQuestions[currentQuestion].question}
+                    options={translatedQuestions[currentQuestion].options}
+                    onSelect={handleAnswer}
+                    selectedValue={answers[translatedQuestions[currentQuestion].id]}
+                    questionNumber={currentQuestion + 1}
+                    totalQuestions={translatedQuestions.length}
+                    isTextInput={translatedQuestions[currentQuestion].isTextInput}
+                    placeholder={translatedQuestions[currentQuestion].placeholder}
+                    description={translatedQuestions[currentQuestion].description}
+                    onTextSubmit={handleTextSubmit}
+                  />
+                )}
               </AnimatePresence>
             </div>
           </motion.div>
