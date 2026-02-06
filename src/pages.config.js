@@ -50,12 +50,14 @@
 import Account from './pages/Account';
 import Home from './pages/Home';
 import Premium from './pages/Premium';
+import Library from './pages/Library';
 
 
 export const PAGES = {
     "Account": Account,
     "Home": Home,
     "Premium": Premium,
+    "Library": Library,
 }
 
 export const pagesConfig = {
