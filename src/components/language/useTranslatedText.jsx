@@ -17,7 +17,7 @@ export function useTranslatedText(textMap) {
     };
 
     translate();
-  }, [language]);
+  }, [language, textMap, translateObject]);
 
   return translatedTexts;
 }
