@@ -111,29 +111,31 @@ export default function Account() {
         </div>
 
         {/* Header mit Premium Status */}
-        <div className="bg-white rounded-2xl border border-stone-200 p-8 mb-8 shadow-sm">
-          <div className="flex items-start justify-between mb-6">
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-12 h-12 rounded-full bg-stone-100 flex items-center justify-center">
-                  <UserIcon className="w-6 h-6 text-stone-600" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-light text-stone-800">{user.full_name}</h1>
-                  <p className="text-stone-500 text-sm">{user.email}</p>
-                </div>
+        <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden mb-8 shadow-sm">
+          {/* Gradient Header */}
+          <div className="bg-gradient-to-br from-amber-50 to-stone-50 p-6 border-b border-stone-100">
+            <div className="flex items-start gap-4 mb-4">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center text-white text-2xl font-light shadow-lg flex-shrink-0">
+                {user.full_name?.charAt(0) || 'U'}
+              </div>
+              <div className="flex-1 min-w-0">
+                <h1 className="text-xl font-medium text-stone-800 mb-1 truncate">{user.full_name}</h1>
+                <p className="text-stone-500 text-sm truncate">{user.email}</p>
+                {isPremium && (
+                  <div className="mt-2">
+                    <span className="inline-flex items-center gap-1 bg-amber-600 text-white px-3 py-1 rounded-full text-xs font-medium shadow-sm">
+                      <Crown className="w-3 h-3" />
+                      Premium
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
-
-            {isPremium ? (
-              <div className="flex items-center gap-2 bg-gradient-to-r from-amber-100 to-amber-50 text-amber-800 px-4 py-2 rounded-full text-sm font-medium">
-                <Crown className="w-4 h-4" />
-                Premium Mitglied
-              </div>
-            ) : (
+            
+            {!isPremium && (
               <Button
                 onClick={() => navigate('/Premium')}
-                className="bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white gap-2"
+                className="w-full bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white gap-2 shadow-lg"
               >
                 <Crown className="w-4 h-4" />
                 Auf Premium upgraden
@@ -142,45 +144,34 @@ export default function Account() {
           </div>
 
           {/* Nutzungsstatistik */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-stone-50 rounded-xl p-4">
-              <div className="flex items-center gap-2 text-stone-500 text-sm mb-2">
-                <Compass className="w-4 h-4" />
-                Empfehlungen erhalten
+          <div className="grid grid-cols-3 gap-3 p-4">
+            <div className="text-center">
+              <div className="w-12 h-12 mx-auto mb-2 rounded-xl bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center">
+                <Compass className="w-6 h-6 text-blue-600" />
               </div>
-              <div className="text-2xl font-light text-stone-800">
-                {isPremium ? (
-                  <span className="flex items-center gap-2">
-                    {usedRecommendations}
-                    <span className="text-sm text-amber-600 font-medium">unbegrenzt</span>
-                  </span>
-                ) : (
-                  <span>{usedRecommendations} / {freeLimit}</span>
-                )}
+              <div className="text-xl font-semibold text-stone-800 mb-0.5">
+                {isPremium ? usedRecommendations : `${usedRecommendations}/${freeLimit}`}
+              </div>
+              <div className="text-xs text-stone-500 leading-tight">
+                {isPremium ? 'Empfehlungen' : 'von 3'}
               </div>
             </div>
-
-            <div className="bg-stone-50 rounded-xl p-4">
-              <div className="flex items-center gap-2 text-stone-500 text-sm mb-2">
-                <Bookmark className="w-4 h-4" />
-                Gespeicherte Bücher
+            
+            <div className="text-center">
+              <div className="w-12 h-12 mx-auto mb-2 rounded-xl bg-gradient-to-br from-amber-100 to-amber-50 flex items-center justify-center">
+                <Bookmark className="w-6 h-6 text-amber-600" />
               </div>
-              <div className="text-2xl font-light text-stone-800">
-                {savedBooks.length}
-                {completedBooksCount > 0 && (
-                  <span className="text-sm text-green-600 ml-2">
-                    ({completedBooksCount} abgeschlossen)
-                  </span>
-                )}
+              <div className="text-xl font-semibold text-stone-800 mb-0.5">{savedBooks.length}</div>
+              <div className="text-xs text-stone-500 leading-tight">
+                {completedBooksCount > 0 ? `${completedBooksCount} fertig` : 'Bücher'}
               </div>
             </div>
-
-            <div className="bg-stone-50 rounded-xl p-4">
-              <div className="flex items-center gap-2 text-stone-500 text-sm mb-2">
-                <TrendingUp className="w-4 h-4" />
-                Seiten diese Woche
+            
+            <div className="text-center">
+              <div className="w-12 h-12 mx-auto mb-2 rounded-xl bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center">
+                <TrendingUp className="w-6 h-6 text-green-600" />
               </div>
-              <div className="text-2xl font-light text-stone-800">
+              <div className="text-xl font-semibold text-stone-800 mb-0.5">
                 {readingLogs
                   .filter(log => {
                     const logDate = new Date(log.reading_date);
@@ -190,6 +181,7 @@ export default function Account() {
                   })
                   .reduce((sum, log) => sum + log.pages_read, 0)}
               </div>
+              <div className="text-xs text-stone-500 leading-tight">Seiten/Woche</div>
             </div>
           </div>
         </div>
@@ -225,10 +217,10 @@ export default function Account() {
         )}
 
         {/* Navigation Tabs */}
-        <div className="bg-white rounded-xl border border-stone-200 p-2 mb-8 flex gap-2 overflow-x-auto">
+        <div className="bg-white rounded-xl border border-stone-200 p-1.5 mb-8 flex gap-1.5 overflow-x-auto">
           <button
             onClick={() => setActiveTab('overview')}
-            className={`flex-1 min-w-fit px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex-1 min-w-[80px] px-3 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
               activeTab === 'overview'
                 ? 'bg-stone-800 text-white'
                 : 'text-stone-600 hover:bg-stone-50'
@@ -238,33 +230,27 @@ export default function Account() {
           </button>
           <button
             onClick={() => setActiveTab('reading')}
-            className={`flex-1 min-w-fit px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex-1 min-w-[80px] px-3 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
               activeTab === 'reading'
                 ? 'bg-stone-800 text-white'
                 : 'text-stone-600 hover:bg-stone-50'
             }`}
           >
-            <div className="flex items-center justify-center gap-2">
-              <TrendingUp className="w-4 h-4" />
-              Lesefortschritt
-            </div>
+            Fortschritt
           </button>
           <button
             onClick={() => setActiveTab('saved')}
-            className={`flex-1 min-w-fit px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex-1 min-w-[80px] px-3 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
               activeTab === 'saved'
                 ? 'bg-stone-800 text-white'
                 : 'text-stone-600 hover:bg-stone-50'
             }`}
           >
-            <div className="flex items-center justify-center gap-2">
-              <Bookmark className="w-4 h-4" />
-              Bücher ({savedBooks.length})
-            </div>
+            Bücher
           </button>
           <button
             onClick={() => setActiveTab('history')}
-            className={`flex-1 min-w-fit px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex-1 min-w-[80px] px-3 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
               activeTab === 'history'
                 ? 'bg-stone-800 text-white'
                 : 'text-stone-600 hover:bg-stone-50'
