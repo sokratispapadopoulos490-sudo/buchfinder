@@ -1284,10 +1284,23 @@ export const books = [
     ];
 
 export const getMatchingBooks = (profile) => {
-  const { mainTopics, secondaryTopics, style, difficulty, ageGroup } = profile;
+  const { mainTopics, secondaryTopics, style, difficulty, ageGroup, readBooks = [] } = profile;
   
   // Zuerst nach Altersgruppe filtern
-  const ageFilteredBooks = books.filter(book => book.ageGroup === ageGroup);
+  let ageFilteredBooks = books.filter(book => book.ageGroup === ageGroup);
+  
+  // Filtere bereits gelesene Bücher aus
+  if (readBooks.length > 0) {
+    ageFilteredBooks = ageFilteredBooks.filter(book => {
+      const bookTitleLower = book.title.toLowerCase();
+      const bookAuthorLower = book.author.toLowerCase();
+      return !readBooks.some(readBook => {
+        const readBookLower = readBook.toLowerCase();
+        return bookTitleLower.includes(readBookLower) || readBookLower.includes(bookTitleLower) ||
+               bookAuthorLower.includes(readBookLower) || readBookLower.includes(bookAuthorLower);
+      });
+    });
+  }
   
   const scoredBooks = ageFilteredBooks.map(book => {
     let score = 0;
@@ -1319,22 +1332,25 @@ export const getMatchingBooks = (profile) => {
     return { ...book, score };
   });
   
-  // Sortieren und Top 4 auswählen
+  // Sortieren
   const sorted = scoredBooks.sort((a, b) => b.score - a.score);
-  const topBooks = sorted.slice(0, 4);
   
-  // Kontrast-Buch finden (niedrigerer Score, aber thematisch verbunden)
-  const usedIds = topBooks.map(b => b.id);
-  const contrastBook = sorted
+  // Top 3 Bücher für die Platzierung
+  const place1 = sorted[0]; // Passt am besten
+  const place2 = sorted[1]; // Zweite beste Wahl
+  
+  // Platz 3: Kontrastbuch (anderer Stil)
+  const usedIds = [place1?.id, place2?.id];
+  const place3 = sorted
     .filter(b => !usedIds.includes(b.id) && b.score > 0)
     .find(b => {
-      // Anderer Stil als bevorzugt
       const hasDifferentStyle = !style.some(s => b.style.includes(s));
       return hasDifferentStyle;
     }) || sorted.find(b => !usedIds.includes(b.id));
   
   return {
-    recommendations: topBooks,
-    contrastBook: contrastBook ? { ...contrastBook, isContrast: true } : null
+    place1: place1 ? { ...place1, placement: 1 } : null,
+    place2: place2 ? { ...place2, placement: 2 } : null,
+    place3: place3 ? { ...place3, placement: 3, isContrast: true } : null
   };
 };

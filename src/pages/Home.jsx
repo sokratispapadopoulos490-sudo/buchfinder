@@ -527,34 +527,24 @@ function HomeContent() {
     
     // Übersetze Bücher wenn nicht auf Deutsch
     if (language !== 'de') {
-      const translatedRecommendations = await Promise.all(
-        results.recommendations.map(async (book) => ({
+      const translateBook = async (book) => {
+        if (!book) return null;
+        return {
           ...book,
           title: await translateObject({ text: book.title }, language).then(r => r.text),
           description: await translateObject({ text: book.description }, language).then(r => r.text)
-        }))
-      );
-      
-      let translatedContrastBook = null;
-      if (results.contrastBook) {
-        translatedContrastBook = {
-          ...results.contrastBook,
-          title: await translateObject({ text: results.contrastBook.title }, language).then(r => r.text),
-          description: await translateObject({ text: results.contrastBook.description }, language).then(r => r.text)
         };
-      }
+      };
       
-      results.recommendations = translatedRecommendations;
-      results.contrastBook = translatedContrastBook;
+      results.place1 = await translateBook(results.place1);
+      results.place2 = await translateBook(results.place2);
+      results.place3 = await translateBook(results.place3);
     }
     
     // Speichere Empfehlung immer (wenn authentifiziert)
     if (isAuthenticated) {
       try {
-        const allBooks = [...results.recommendations];
-        if (results.contrastBook) {
-          allBooks.push(results.contrastBook);
-        }
+        const allBooks = [results.place1, results.place2, results.place3].filter(Boolean);
         
         await base44.entities.Recommendation.create({
           books: allBooks,
@@ -951,53 +941,68 @@ function HomeContent() {
                 )}
               </motion.div>
 
-              <div className="space-y-6">
-                {/* Zeige erste 3 Bücher kostenlos, Rest nur für Premium */}
-                {recommendations.recommendations.slice(0, isPremium ? undefined : 3).map((book, index) => (
-                  <BookCard
-                    key={book.id}
-                    book={book}
-                    reasons={generateReasons(book, profile)}
-                    index={index}
-                    isContrast={false}
-                  />
-                ))}
-
-                {/* Premium-Sperre für weitere Bücher */}
-                {!isPremium && recommendations.recommendations.length > 3 && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 }}
-                    className="bg-gradient-to-br from-amber-50 to-amber-100 border-2 border-amber-300 rounded-2xl p-8 text-center"
-                  >
-                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-600 flex items-center justify-center">
-                      <Compass className="w-8 h-8 text-white" />
+              <div className="space-y-8">
+                {/* Platz 1 - Passt am besten */}
+                {recommendations.place1 && (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-white font-bold">
+                        1
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-medium text-stone-800">Passt am besten zu deinem Thema</h3>
+                        <p className="text-sm text-stone-500">Deine perfekte Wahl für genau jetzt</p>
+                      </div>
                     </div>
-                    <h3 className="text-2xl font-light text-stone-800 mb-3">
-                      Noch mehr passende Bücher
-                    </h3>
-                    <p className="text-stone-600 mb-6 max-w-md mx-auto">
-                      Mit Premium erhältst du {recommendations.recommendations.length - 3} weitere personalisierte Empfehlungen 
-                      und unbegrenzten Zugang zu allen Funktionen.
-                    </p>
-                    <Button
-                      onClick={handleUpgrade}
-                      size="lg"
-                      className="bg-amber-600 hover:bg-amber-700 text-white"
-                    >
-                      Premium freischalten
-                    </Button>
-                  </motion.div>
+                    <BookCard
+                      book={recommendations.place1}
+                      reasons={generateReasons(recommendations.place1, profile)}
+                      index={0}
+                      isContrast={false}
+                    />
+                  </div>
                 )}
 
-                {(isPremium || recommendations.recommendations.length <= 3) && recommendations.contrastBook && (
-                  <BookCard
-                    book={recommendations.contrastBook}
-                    reasons={generateReasons(recommendations.contrastBook, profile)}
-                    index={recommendations.recommendations.length}
-                    isContrast={true}
-                  />
+                {/* Platz 2 - Zweite beste Wahl */}
+                {recommendations.place2 && (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-stone-400 to-stone-500 flex items-center justify-center text-white font-bold">
+                        2
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-medium text-stone-800">Ebenfalls eine starke Wahl</h3>
+                        <p className="text-sm text-stone-500">Vertieft dein Thema aus einem anderen Blickwinkel</p>
+                      </div>
+                    </div>
+                    <BookCard
+                      book={recommendations.place2}
+                      reasons={generateReasons(recommendations.place2, profile)}
+                      index={1}
+                      isContrast={false}
+                    />
+                  </div>
+                )}
+
+                {/* Platz 3 - Horizont-Erweiterung */}
+                {recommendations.place3 && (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-300 to-amber-400 flex items-center justify-center text-white font-bold">
+                        3
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-medium text-stone-800">Wenn du etwas ganz anderes lesen willst</h3>
+                        <p className="text-sm text-stone-500">Erweitert deinen Horizont mit neuen Perspektiven</p>
+                      </div>
+                    </div>
+                    <BookCard
+                      book={recommendations.place3}
+                      reasons={generateReasons(recommendations.place3, profile)}
+                      index={2}
+                      isContrast={true}
+                    />
+                  </div>
                 )}
               </div>
 
