@@ -261,6 +261,12 @@ function AccountContent() {
           >
             Einstellungen
           </button>
+          <button
+            onClick={() => navigate('/Community')}
+            className="flex-1 min-w-[80px] px-3 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap text-stone-600 hover:bg-stone-50 border border-amber-300 bg-amber-50"
+          >
+            Community
+          </button>
         </div>
 
         {/* Übersicht Tab */}
