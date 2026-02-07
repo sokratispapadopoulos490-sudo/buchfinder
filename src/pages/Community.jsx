@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { Plus, Users, Crown, Filter, ArrowLeft } from 'lucide-react';
+import { Plus, Users, Crown, Filter, ArrowLeft, Search } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import PostCard from '@/components/community/PostCard';
@@ -19,6 +19,7 @@ function CommunityContent() {
   const [comments, setComments] = useState([]);
   const [userLikes, setUserLikes] = useState([]);
   const [categoryFilter, setCategoryFilter] = useState('alle');
+  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -78,19 +79,30 @@ function CommunityContent() {
   const handleLikePost = async (postId) => {
     try {
       const existingLike = userLikes.find(like => like.post_id === postId);
+      const post = posts.find(p => p.id === postId);
       
       if (existingLike) {
         await base44.entities.CommunityLike.delete(existingLike.id);
-        const post = posts.find(p => p.id === postId);
         await base44.entities.CommunityPost.update(postId, {
           likes_count: Math.max(0, (post.likes_count || 0) - 1)
         });
       } else {
         await base44.entities.CommunityLike.create({ post_id: postId });
-        const post = posts.find(p => p.id === postId);
         await base44.entities.CommunityPost.update(postId, {
           likes_count: (post.likes_count || 0) + 1
         });
+        
+        // Create notification for post author
+        if (post && post.created_by !== user.email) {
+          await base44.entities.Notification.create({
+            type: 'like',
+            title: 'Neuer Like',
+            message: `${user.full_name} hat deinen Post "${post.title}" geliked`,
+            link: '/Community',
+            from_user_email: user.email,
+            created_by: post.created_by
+          });
+        }
       }
       
       await loadData();
@@ -111,6 +123,18 @@ function CommunityContent() {
       await base44.entities.CommunityPost.update(postId, {
         comments_count: (post.comments_count || 0) + 1
       });
+
+      // Create notification for post author
+      if (post && post.created_by !== user.email && !isAI) {
+        await base44.entities.Notification.create({
+          type: 'comment',
+          title: 'Neuer Kommentar',
+          message: `${user.full_name} hat deinen Post "${post.title}" kommentiert`,
+          link: '/Community',
+          from_user_email: user.email,
+          created_by: post.created_by
+        });
+      }
 
       await loadComments(postId);
       await loadData();
@@ -138,9 +162,14 @@ Gib eine hilfreiche, freundliche Antwort (max. 150 Wörter). Sei persönlich und
 
   const isPremium = user?.is_premium || user?.role === 'admin';
 
-  const filteredPosts = categoryFilter === 'alle' 
-    ? posts 
-    : posts.filter(p => p.category === categoryFilter);
+  const filteredPosts = posts.filter(post => {
+    const matchesCategory = categoryFilter === 'alle' || post.category === categoryFilter;
+    const matchesSearch = !searchQuery || 
+      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      post.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      post.created_by.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   if (loading) {
     return (
@@ -207,6 +236,20 @@ Gib eine hilfreiche, freundliche Antwort (max. 150 Wörter). Sei persönlich und
               </div>
             </div>
           )}
+
+          {/* Search */}
+          <div className="bg-white rounded-xl border border-stone-200 p-4 mb-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+              <input
+                type="text"
+                placeholder="Posts durchsuchen..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-stone-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+              />
+            </div>
+          </div>
 
           {/* Filter */}
           <div className="flex gap-2 overflow-x-auto pb-2">
