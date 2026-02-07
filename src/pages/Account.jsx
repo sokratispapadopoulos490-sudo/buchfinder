@@ -10,9 +10,9 @@ import BookCard from '@/components/books/BookCard';
 import StarRating from '@/components/books/StarRating';
 import WeeklyStats from '@/components/reading/WeeklyStats';
 import ReadingProgressModal from '@/components/reading/ReadingProgressModal';
-import { useLanguage } from '@/components/language/LanguageContext';
+import { useLanguage, LanguageProvider } from '@/components/language/LanguageContext';
 
-export default function Account() {
+function AccountContent() {
   const [user, setUser] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
   const [savedBooks, setSavedBooks] = useState([]);
@@ -695,5 +695,13 @@ export default function Account() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Account() {
+  return (
+    <LanguageProvider>
+      <AccountContent />
+    </LanguageProvider>
   );
 }
