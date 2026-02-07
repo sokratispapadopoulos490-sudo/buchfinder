@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { Compass, Crown, ArrowRight, BookOpen, Sparkles, Clock, User as UserIcon, Bookmark, Search, Trash2, MessageSquare, TrendingUp, Plus, CheckCircle, Library as LibraryIcon } from 'lucide-react';
+import { Compass, Crown, ArrowRight, Sparkles, Clock, User as UserIcon, Bookmark, Search, Trash2, MessageSquare, TrendingUp, Plus, CheckCircle, Library as LibraryIcon, Settings as SettingsIcon, Globe } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
@@ -10,6 +10,7 @@ import BookCard from '@/components/books/BookCard';
 import StarRating from '@/components/books/StarRating';
 import WeeklyStats from '@/components/reading/WeeklyStats';
 import ReadingProgressModal from '@/components/reading/ReadingProgressModal';
+import { useLanguage } from '@/components/language/LanguageContext';
 
 export default function Account() {
   const [user, setUser] = useState(null);
@@ -21,6 +22,7 @@ export default function Account() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBookForProgress, setSelectedBookForProgress] = useState(null);
   const navigate = useNavigate();
+  const { language, changeLanguage, supportedLanguages } = useLanguage();
 
   useEffect(() => {
     loadAccountData();
@@ -59,7 +61,17 @@ export default function Account() {
   const freeLimit = 3;
   const usedRecommendations = recommendations.length;
 
-  const filteredBooks = savedBooks.filter(book => 
+  const completedBooks = savedBooks.filter(book => book.is_completed);
+  const inProgressBooks = savedBooks.filter(book => !book.is_completed);
+
+  const calculateReadingProgress = (bookId) => {
+    const bookLogs = readingLogs.filter(log => log.book_id === bookId);
+    const totalPagesRead = bookLogs.reduce((sum, log) => sum + log.pages_read, 0);
+    const totalBookPages = savedBooks.find(b => b.book_id === bookId)?.book_data?.pageCount || 1;
+    return Math.min(100, Math.round((totalPagesRead / totalBookPages) * 100));
+  };
+
+  const filteredLibraryBooks = savedBooks.filter(book =>
     book.book_data.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     book.book_data.author.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -85,6 +97,17 @@ export default function Account() {
         setRecommendations(recommendations.filter(r => r.id !== recId));
       } catch (error) {
         console.error('Error deleting recommendation:', error);
+      }
+    }
+  };
+
+  const handleDeleteSavedBook = async (savedBookId) => {
+    if (confirm('Möchtest du dieses Buch wirklich aus deiner Bibliothek entfernen?')) {
+      try {
+        await base44.entities.SavedBook.delete(savedBookId);
+        await loadAccountData();
+      } catch (error) {
+        console.error('Error deleting saved book:', error);
       }
     }
   };
@@ -229,6 +252,16 @@ export default function Account() {
             Übersicht
           </button>
           <button
+            onClick={() => setActiveTab('library')}
+            className={`flex-1 min-w-[80px] px-3 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
+              activeTab === 'library'
+                ? 'bg-stone-800 text-white'
+                : 'text-stone-600 hover:bg-stone-50'
+            }`}
+          >
+            Bibliothek
+          </button>
+          <button
             onClick={() => setActiveTab('reading')}
             className={`flex-1 min-w-[80px] px-3 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
               activeTab === 'reading'
@@ -237,16 +270,6 @@ export default function Account() {
             }`}
           >
             Fortschritt
-          </button>
-          <button
-            onClick={() => setActiveTab('saved')}
-            className={`flex-1 min-w-[80px] px-3 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
-              activeTab === 'saved'
-                ? 'bg-stone-800 text-white'
-                : 'text-stone-600 hover:bg-stone-50'
-            }`}
-          >
-            Bücher
           </button>
           <button
             onClick={() => setActiveTab('history')}
@@ -258,7 +281,213 @@ export default function Account() {
           >
             Verlauf
           </button>
+          <button
+            onClick={() => setActiveTab('settings')}
+            className={`flex-1 min-w-[80px] px-3 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
+              activeTab === 'settings'
+                ? 'bg-stone-800 text-white'
+                : 'text-stone-600 hover:bg-stone-50'
+            }`}
+          >
+            Einstellungen
+          </button>
         </div>
+
+        {/* Übersicht Tab */}
+        {activeTab === 'overview' && (
+          <div className="bg-white rounded-2xl border border-stone-200 p-8">
+            <h2 className="text-xl font-light text-stone-800 mb-6">Schnellzugriff</h2>
+            <div className="grid gap-4">
+              <button
+                onClick={() => navigate('/')}
+                className="flex items-center justify-between p-4 border border-stone-200 rounded-xl hover:border-stone-300 hover:bg-stone-50 transition-all text-left"
+              >
+                <div className="flex items-center gap-3">
+                  <Compass className="w-5 h-5 text-amber-600" />
+                  <div>
+                    <div className="font-medium text-stone-800">Neue Empfehlung</div>
+                    <div className="text-sm text-stone-500">Starte eine neue Büchersuche</div>
+                  </div>
+                </div>
+                <ArrowRight className="w-5 h-5 text-stone-400" />
+              </button>
+
+              <button
+                onClick={() => setActiveTab('library')}
+                className="flex items-center justify-between p-4 border border-stone-200 rounded-xl hover:border-stone-300 hover:bg-stone-50 transition-all text-left"
+              >
+                <div className="flex items-center gap-3">
+                  <LibraryIcon className="w-5 h-5 text-amber-600" />
+                  <div>
+                    <div className="font-medium text-stone-800">Meine Bibliothek</div>
+                    <div className="text-sm text-stone-500">Deine Bücher im Regal ansehen</div>
+                  </div>
+                </div>
+                <ArrowRight className="w-5 h-5 text-stone-400" />
+              </button>
+
+              <button
+                onClick={() => setActiveTab('history')}
+                className="flex items-center justify-between p-4 border border-stone-200 rounded-xl hover:border-stone-300 hover:bg-stone-50 transition-all text-left"
+              >
+                <div className="flex items-center gap-3">
+                  <Clock className="w-5 h-5 text-amber-600" />
+                  <div>
+                    <div className="font-medium text-stone-800">Empfehlungsverlauf</div>
+                    <div className="text-sm text-stone-500">{recommendations.length} Empfehlungen</div>
+                  </div>
+                </div>
+                <ArrowRight className="w-5 h-5 text-stone-400" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Bibliothek Tab */}
+        {activeTab === 'library' && (
+          <div className="space-y-8">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-light text-stone-800">Deine Bibliothek</h2>
+            </div>
+
+            {savedBooks.length > 0 && (
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+                <input
+                  type="text"
+                  placeholder="Bücher durchsuchen..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-stone-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white"
+                />
+              </div>
+            )}
+
+            {filteredLibraryBooks.length === 0 ? (
+              <div className="text-center py-12 bg-white rounded-2xl border border-stone-200">
+                <LibraryIcon className="w-12 h-12 text-stone-300 mx-auto mb-4" />
+                <p className="text-stone-500 mb-4">Noch keine Bücher in deiner Bibliothek</p>
+                <Button
+                  onClick={() => navigate('/')}
+                  className="bg-stone-800 hover:bg-stone-700 text-white"
+                >
+                  Bücher entdecken
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-8">
+                {inProgressBooks.length > 0 && (
+                  <div className="bg-white rounded-2xl border border-stone-200 p-6">
+                    <h3 className="text-lg font-medium text-stone-800 mb-4">
+                      Aktuell im Lesen ({inProgressBooks.length})
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {inProgressBooks.map((saved) => (
+                        <div key={saved.id} className="relative group border border-stone-200 rounded-lg p-4 hover:border-stone-300 transition-colors">
+                          <div className="flex items-start gap-3 mb-3">
+                            <div className={`w-12 h-16 rounded ${saved.book_data.coverColor || 'bg-stone-100'} flex items-center justify-center flex-shrink-0`}>
+                              <span className="text-xl font-serif text-stone-400">
+                                {saved.book_data.title.charAt(0)}
+                              </span>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-medium text-stone-800 text-sm truncate">{saved.book_data.title}</h4>
+                              <p className="text-xs text-stone-500 truncate">{saved.book_data.author}</p>
+                            </div>
+                          </div>
+                          
+                          <div className="mb-3">
+                            <div className="flex justify-between text-xs text-stone-500 mb-1">
+                              <span>Fortschritt</span>
+                              <span>{calculateReadingProgress(saved.book_id)}%</span>
+                            </div>
+                            <div className="w-full bg-stone-100 rounded-full h-1.5">
+                              <div 
+                                className="bg-amber-600 h-1.5 rounded-full transition-all"
+                                style={{ width: `${calculateReadingProgress(saved.book_id)}%` }}
+                              />
+                            </div>
+                          </div>
+
+                          <div className="flex gap-1">
+                            <Button
+                              size="sm"
+                              onClick={() => setSelectedBookForProgress({ book: saved.book_data, savedBookId: saved.id })}
+                              className="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-xs h-8"
+                            >
+                              <Plus className="w-3 h-3" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              onClick={() => handleToggleCompleted(saved)}
+                              className="flex-1 bg-green-500 hover:bg-green-600 text-white text-xs h-8"
+                            >
+                              <CheckCircle className="w-3 h-3" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              onClick={() => handleDeleteSavedBook(saved.id)}
+                              className="flex-1 bg-red-500 hover:bg-red-600 text-white text-xs h-8"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {completedBooks.length > 0 && (
+                  <div className="bg-white rounded-2xl border border-stone-200 p-6">
+                    <h3 className="text-lg font-medium text-stone-800 mb-4">
+                      Abgeschlossene Bücher ({completedBooks.length})
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {completedBooks.map((saved) => (
+                        <div key={saved.id} className="relative group border border-stone-200 rounded-lg p-4 hover:border-stone-300 transition-colors">
+                          <div className="flex items-start gap-3 mb-3">
+                            <div className={`w-12 h-16 rounded ${saved.book_data.coverColor || 'bg-stone-100'} flex items-center justify-center flex-shrink-0`}>
+                              <span className="text-xl font-serif text-stone-400">
+                                {saved.book_data.title.charAt(0)}
+                              </span>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-medium text-stone-800 text-sm truncate">{saved.book_data.title}</h4>
+                              <p className="text-xs text-stone-500 truncate">{saved.book_data.author}</p>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center gap-1 mb-3 text-xs text-green-600">
+                            <CheckCircle className="w-3 h-3" />
+                            <span>Abgeschlossen</span>
+                          </div>
+
+                          <div className="flex gap-1">
+                            <Button
+                              size="sm"
+                              onClick={() => handleToggleCompleted(saved)}
+                              className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white text-xs h-8"
+                            >
+                              <Sparkles className="w-3 h-3" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              onClick={() => handleDeleteSavedBook(saved.id)}
+                              className="flex-1 bg-red-500 hover:bg-red-600 text-white text-xs h-8"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Lesefortschritt Tab */}
         {activeTab === 'reading' && (
@@ -300,104 +529,6 @@ export default function Account() {
                     </div>
                   ))}
                 </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Gespeicherte Bücher Tab */}
-        {activeTab === 'saved' && (
-          <div className="bg-white rounded-2xl border border-stone-200 p-8">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-light text-stone-800">Deine gespeicherten Bücher</h2>
-              <div className="text-sm text-stone-500">{savedBooks.length} Bücher</div>
-            </div>
-
-            {savedBooks.length > 0 && (
-              <div className="mb-6 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
-                <input
-                  type="text"
-                  placeholder="Bücher durchsuchen..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-stone-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
-                />
-              </div>
-            )}
-
-            {savedBooks.length === 0 ? (
-              <div className="text-center py-12">
-                <Bookmark className="w-12 h-12 text-stone-300 mx-auto mb-4" />
-                <p className="text-stone-500 mb-4">Noch keine Bücher gespeichert</p>
-                <Button
-                  onClick={() => navigate('/')}
-                  className="bg-stone-800 hover:bg-stone-700 text-white"
-                >
-                  Bücher entdecken
-                </Button>
-              </div>
-            ) : filteredBooks.length === 0 ? (
-              <div className="text-center py-12">
-                <Search className="w-12 h-12 text-stone-300 mx-auto mb-4" />
-                <p className="text-stone-500">Keine Bücher gefunden</p>
-              </div>
-            ) : (
-              <div className="space-y-6">
-                {filteredBooks.map((saved, index) => (
-                  <div key={saved.id} className="space-y-4">
-                    <div className="flex items-start justify-between gap-4 mb-2">
-                      <div className="flex-1">
-                        <BookCard
-                          book={saved.book_data}
-                          reasons={saved.recommendation_reason}
-                          index={index}
-                          isContrast={false}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex items-center gap-2 ml-4">
-                      <Button
-                        onClick={() => setSelectedBookForProgress({ book: saved.book_data, savedBookId: saved.id })}
-                        size="sm"
-                        variant="outline"
-                        className="gap-2"
-                      >
-                        <Plus className="w-4 h-4" />
-                        Fortschritt hinzufügen
-                      </Button>
-                      <Button
-                        onClick={() => handleToggleCompleted(saved)}
-                        size="sm"
-                        variant={saved.is_completed ? "default" : "outline"}
-                        className={saved.is_completed ? "bg-green-600 hover:bg-green-700 text-white gap-2" : "gap-2"}
-                      >
-                        <CheckCircle className="w-4 h-4" />
-                        {saved.is_completed ? "Abgeschlossen" : "Als abgeschlossen markieren"}
-                      </Button>
-                    </div>
-                    
-                    {/* Zeige Bewertung und Kommentar als Vorschau */}
-                    {(saved.rating || saved.comment) && (
-                      <div className="ml-4 pl-4 border-l-2 border-stone-200 space-y-2">
-                        {saved.rating && (
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs text-stone-500">Meine Bewertung:</span>
-                            <StarRating rating={saved.rating} size="sm" />
-                          </div>
-                        )}
-                        {saved.comment && (
-                          <div className="flex items-start gap-2">
-                            <MessageSquare className="w-3 h-3 text-stone-400 mt-0.5 flex-shrink-0" />
-                            <p className="text-xs text-stone-600">{saved.comment}</p>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                ))}
               </div>
             )}
           </div>
@@ -513,55 +644,34 @@ export default function Account() {
           </div>
         )}
 
-        {/* Übersicht Tab - bleibt wie vorher */}
-        {activeTab === 'overview' && (
+        {/* Einstellungen Tab */}
+        {activeTab === 'settings' && (
           <div className="bg-white rounded-2xl border border-stone-200 p-8">
-            <h2 className="text-xl font-light text-stone-800 mb-6">Schnellzugriff</h2>
-            <div className="grid gap-4">
-              <button
-                onClick={() => navigate('/')}
-                className="flex items-center justify-between p-4 border border-stone-200 rounded-xl hover:border-stone-300 hover:bg-stone-50 transition-all text-left"
-              >
+            <h2 className="text-xl font-light text-stone-800 mb-6">Meine Einstellungen</h2>
+            <div className="space-y-6">
+              <div className="flex items-center justify-between p-4 border border-stone-200 rounded-xl">
                 <div className="flex items-center gap-3">
-                  <Compass className="w-5 h-5 text-amber-600" />
+                  <Globe className="w-5 h-5 text-stone-600" />
                   <div>
-                    <div className="font-medium text-stone-800">Neue Empfehlung</div>
-                    <div className="text-sm text-stone-500">Starte eine neue Büchersuche</div>
+                    <div className="font-medium text-stone-800">Sprache</div>
+                    <div className="text-sm text-stone-500">App-Sprache ändern</div>
                   </div>
                 </div>
-                <ArrowRight className="w-5 h-5 text-stone-400" />
-              </button>
-
-              <button
-                onClick={() => navigate('/Library')}
-                className="flex items-center justify-between p-4 border border-stone-200 rounded-xl hover:border-stone-300 hover:bg-stone-50 transition-all text-left"
-              >
-                <div className="flex items-center gap-3">
-                  <LibraryIcon className="w-5 h-5 text-amber-600" />
-                  <div>
-                    <div className="font-medium text-stone-800">Meine Bibliothek</div>
-                    <div className="text-sm text-stone-500">Deine Bücher im Regal ansehen</div>
-                  </div>
-                </div>
-                <ArrowRight className="w-5 h-5 text-stone-400" />
-              </button>
-
-              <button
-                onClick={() => setActiveTab('saved')}
-                className="flex items-center justify-between p-4 border border-stone-200 rounded-xl hover:border-stone-300 hover:bg-stone-50 transition-all text-left"
-              >
-                <div className="flex items-center gap-3">
-                  <Bookmark className="w-5 h-5 text-amber-600" />
-                  <div>
-                    <div className="font-medium text-stone-800">Gespeicherte Bücher</div>
-                    <div className="text-sm text-stone-500">{savedBooks.length} Bücher markiert</div>
-                  </div>
-                </div>
-                <ArrowRight className="w-5 h-5 text-stone-400" />
-              </button>
+                <select
+                  value={language}
+                  onChange={(e) => changeLanguage(e.target.value)}
+                  className="appearance-none bg-stone-50 border border-stone-300 rounded-lg px-3 py-2 pr-8 text-sm text-stone-700 hover:bg-stone-100 focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
+                >
+                  {supportedLanguages.map((lang) => (
+                    <option key={lang.code} value={lang.code}>
+                      {lang.flag} {lang.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
-          )}
+        )}
 
           {/* Reading Progress Modal */}
           {selectedBookForProgress && (
