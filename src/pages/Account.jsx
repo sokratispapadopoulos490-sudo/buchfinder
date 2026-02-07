@@ -113,7 +113,7 @@ function AccountContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50 px-6 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50 px-4 py-6 md:px-6 md:py-12">
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <button
@@ -654,7 +654,7 @@ function AccountContent() {
           )}
 
           {/* Account Actions */}
-        <div className="mt-8 text-center">
+        <div className="mt-6 mb-4 text-center">
           <Button
             onClick={() => base44.auth.logout()}
             variant="ghost"
