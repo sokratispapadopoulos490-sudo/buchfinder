@@ -261,60 +261,89 @@ function AccountContent() {
           >
             Einstellungen
           </button>
-          <button
-            onClick={() => navigate('/Community')}
-            className="flex-1 min-w-[80px] px-3 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap text-stone-600 hover:bg-stone-50 border border-amber-300 bg-amber-50"
-          >
-            Community
-          </button>
         </div>
 
         {/* Übersicht Tab */}
         {activeTab === 'overview' && (
-          <div className="bg-white rounded-2xl border border-stone-200 p-8">
-            <h2 className="text-xl font-light text-stone-800 mb-6">Schnellzugriff</h2>
-            <div className="grid gap-4">
-              <button
-                onClick={() => navigate('/')}
-                className="flex items-center justify-between p-4 border border-stone-200 rounded-xl hover:border-stone-300 hover:bg-stone-50 transition-all text-left"
-              >
+          <div className="space-y-6">
+            {/* Community Highlight */}
+            <div className="bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl p-8 text-white shadow-xl">
+              <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <Compass className="w-5 h-5 text-amber-600" />
+                  <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                    <Users className="w-6 h-6" />
+                  </div>
                   <div>
-                    <div className="font-medium text-stone-800">Neue Empfehlung</div>
-                    <div className="text-sm text-stone-500">Starte eine neue Büchersuche</div>
+                    <h2 className="text-2xl font-light mb-1">Community</h2>
+                    <p className="text-amber-100 text-sm">Tausche dich mit anderen Lesern aus</p>
                   </div>
                 </div>
-                <ArrowRight className="w-5 h-5 text-stone-400" />
-              </button>
+                {isPremium && (
+                  <Crown className="w-6 h-6 text-amber-200" />
+                )}
+              </div>
+              
+              <p className="text-white/90 mb-6 leading-relaxed">
+                Entdecke neue Perspektiven, teile deine Buchempfehlungen und stelle Fragen. 
+                {isPremium && ' Als Premium-Mitglied kannst du auch die Book Compass KI in Diskussionen einbinden.'}
+              </p>
 
-              <button
-                onClick={() => setActiveTab('library')}
-                className="flex items-center justify-between p-4 border border-stone-200 rounded-xl hover:border-stone-300 hover:bg-stone-50 transition-all text-left"
+              <Button
+                onClick={() => navigate('/Community')}
+                className="bg-white text-amber-600 hover:bg-amber-50 font-medium shadow-lg"
               >
-                <div className="flex items-center gap-3">
-                  <LibraryIcon className="w-5 h-5 text-amber-600" />
-                  <div>
-                    <div className="font-medium text-stone-800">Meine Bibliothek</div>
-                    <div className="text-sm text-stone-500">Deine Bücher im Regal ansehen</div>
-                  </div>
-                </div>
-                <ArrowRight className="w-5 h-5 text-stone-400" />
-              </button>
+                <Users className="w-4 h-4 mr-2" />
+                Zur Community
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </div>
 
-              <button
-                onClick={() => setActiveTab('history')}
-                className="flex items-center justify-between p-4 border border-stone-200 rounded-xl hover:border-stone-300 hover:bg-stone-50 transition-all text-left"
-              >
-                <div className="flex items-center gap-3">
-                  <Clock className="w-5 h-5 text-amber-600" />
-                  <div>
-                    <div className="font-medium text-stone-800">Empfehlungsverlauf</div>
-                    <div className="text-sm text-stone-500">{recommendations.length} Empfehlungen</div>
+            {/* Schnellzugriff */}
+            <div className="bg-white rounded-2xl border border-stone-200 p-8">
+              <h2 className="text-xl font-light text-stone-800 mb-6">Schnellzugriff</h2>
+              <div className="grid gap-4">
+                <button
+                  onClick={() => navigate('/')}
+                  className="flex items-center justify-between p-4 border border-stone-200 rounded-xl hover:border-stone-300 hover:bg-stone-50 transition-all text-left"
+                >
+                  <div className="flex items-center gap-3">
+                    <Compass className="w-5 h-5 text-amber-600" />
+                    <div>
+                      <div className="font-medium text-stone-800">Neue Empfehlung</div>
+                      <div className="text-sm text-stone-500">Starte eine neue Büchersuche</div>
+                    </div>
                   </div>
-                </div>
-                <ArrowRight className="w-5 h-5 text-stone-400" />
-              </button>
+                  <ArrowRight className="w-5 h-5 text-stone-400" />
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('library')}
+                  className="flex items-center justify-between p-4 border border-stone-200 rounded-xl hover:border-stone-300 hover:bg-stone-50 transition-all text-left"
+                >
+                  <div className="flex items-center gap-3">
+                    <LibraryIcon className="w-5 h-5 text-amber-600" />
+                    <div>
+                      <div className="font-medium text-stone-800">Meine Bibliothek</div>
+                      <div className="text-sm text-stone-500">Deine Bücher im Regal ansehen</div>
+                    </div>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-stone-400" />
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('history')}
+                  className="flex items-center justify-between p-4 border border-stone-200 rounded-xl hover:border-stone-300 hover:bg-stone-50 transition-all text-left"
+                >
+                  <div className="flex items-center gap-3">
+                    <Clock className="w-5 h-5 text-amber-600" />
+                    <div>
+                      <div className="font-medium text-stone-800">Empfehlungsverlauf</div>
+                      <div className="text-sm text-stone-500">{recommendations.length} Empfehlungen</div>
+                    </div>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-stone-400" />
+                </button>
+              </div>
             </div>
           </div>
         )}
