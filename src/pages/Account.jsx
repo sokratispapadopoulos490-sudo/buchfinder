@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { Compass, Crown, ArrowRight, Sparkles, Clock, User as UserIcon, Bookmark, Search, Trash2, MessageSquare, TrendingUp, Plus, CheckCircle, Library as LibraryIcon, Settings as SettingsIcon, Globe, Users } from 'lucide-react';
+import { Compass, Crown, ArrowRight, Sparkles, Clock, User as UserIcon, Bookmark, Search, Trash2, MessageSquare, TrendingUp, Plus, CheckCircle, Library as LibraryIcon, Settings as SettingsIcon, Globe, Users, Edit, Target } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
@@ -11,6 +11,8 @@ import StarRating from '@/components/books/StarRating';
 import WeeklyStats from '@/components/reading/WeeklyStats';
 import ReadingProgressModal from '@/components/reading/ReadingProgressModal';
 import { useLanguage, LanguageProvider } from '@/components/language/LanguageContext';
+import ProfileEditModal from '@/components/profile/ProfileEditModal';
+import NotificationBell from '@/components/notifications/NotificationBell';
 
 function AccountContent() {
   const [user, setUser] = useState(null);
@@ -21,6 +23,7 @@ function AccountContent() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBookForProgress, setSelectedBookForProgress] = useState(null);
+  const [showProfileEdit, setShowProfileEdit] = useState(false);
   const navigate = useNavigate();
   const { language, changeLanguage, supportedLanguages } = useLanguage();
 
@@ -123,14 +126,17 @@ function AccountContent() {
             ← Zurück zur Startseite
           </button>
 
-          {recommendations.length > 0 && (
-            <button
-              onClick={() => navigate('/?showLastRecommendation=true')}
-              className="text-amber-600 hover:text-amber-700 transition-colors font-medium"
-            >
-              Zu den Ergebnissen →
-            </button>
-          )}
+          <div className="flex items-center gap-3">
+            <NotificationBell />
+            {recommendations.length > 0 && (
+              <button
+                onClick={() => navigate('/?showLastRecommendation=true')}
+                className="text-amber-600 hover:text-amber-700 transition-colors font-medium"
+              >
+                Zu den Ergebnissen →
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Header mit Premium Status */}
@@ -142,8 +148,31 @@ function AccountContent() {
                 {user.full_name?.charAt(0) || 'U'}
               </div>
               <div className="flex-1 min-w-0">
-                <h1 className="text-xl font-medium text-stone-800 mb-1 truncate">{user.full_name}</h1>
+                <div className="flex items-center justify-between mb-1">
+                  <h1 className="text-xl font-medium text-stone-800 truncate">{user.full_name}</h1>
+                  <button
+                    onClick={() => setShowProfileEdit(true)}
+                    className="text-stone-400 hover:text-stone-600 transition-colors"
+                  >
+                    <Edit className="w-4 h-4" />
+                  </button>
+                </div>
                 <p className="text-stone-500 text-sm truncate">{user.email}</p>
+                {user.bio && (
+                  <p className="text-stone-600 text-sm mt-2 line-clamp-2">{user.bio}</p>
+                )}
+                {user.favorite_genres && user.favorite_genres.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    {user.favorite_genres.slice(0, 3).map((genre, i) => (
+                      <span key={i} className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">
+                        {genre}
+                      </span>
+                    ))}
+                    {user.favorite_genres.length > 3 && (
+                      <span className="text-xs text-stone-500">+{user.favorite_genres.length - 3}</span>
+                    )}
+                  </div>
+                )}
                 {isPremium && (
                   <div className="mt-2">
                     <span className="inline-flex items-center gap-1 bg-amber-600 text-white px-3 py-1 rounded-full text-xs font-medium shadow-sm">
@@ -192,7 +221,7 @@ function AccountContent() {
             
             <div className="text-center">
               <div className="w-12 h-12 mx-auto mb-2 rounded-xl bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center">
-                <TrendingUp className="w-6 h-6 text-green-600" />
+                <Target className="w-6 h-6 text-green-600" />
               </div>
               <div className="text-xl font-semibold text-stone-800 mb-0.5">
                 {readingLogs
@@ -203,8 +232,11 @@ function AccountContent() {
                     return logDate >= weekStart;
                   })
                   .reduce((sum, log) => sum + log.pages_read, 0)}
+                {user.reading_goal_pages > 0 && `/${user.reading_goal_pages}`}
               </div>
-              <div className="text-xs text-stone-500 leading-tight">Seiten/Woche</div>
+              <div className="text-xs text-stone-500 leading-tight">
+                {user.reading_goal_pages > 0 ? 'Ziel/Woche' : 'Seiten/Woche'}
+              </div>
             </div>
           </div>
         </div>
@@ -684,6 +716,15 @@ function AccountContent() {
             book={selectedBookForProgress.book}
             savedBookId={selectedBookForProgress.savedBookId}
             onClose={() => setSelectedBookForProgress(null)}
+            onUpdate={loadAccountData}
+          />
+        )}
+
+        {/* Profile Edit Modal */}
+        {showProfileEdit && (
+          <ProfileEditModal
+            user={user}
+            onClose={() => setShowProfileEdit(false)}
             onUpdate={loadAccountData}
           />
         )}
