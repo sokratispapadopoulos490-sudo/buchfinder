@@ -430,15 +430,14 @@ function HomeContent() {
     try {
       const isAuth = await base44.auth.isAuthenticated();
       if (isAuth) {
-        const recommendations = await base44.entities.Recommendation.list('-created_date', 1);
-        if (recommendations.length > 0) {
-          const lastRec = recommendations[0];
+        const recs = await base44.entities.Recommendation.list('-created_date', 1);
+        if (recs.length > 0) {
+          const lastRec = recs[0];
           setProfile(lastRec.profile);
           setRecommendations({
-            recommendations: lastRec.books.slice(0, isPremium ? undefined : 3),
-            contrastBook: lastRec.books[lastRec.books.length - 1]?.isContrast 
-              ? lastRec.books[lastRec.books.length - 1] 
-              : null
+            place1: lastRec.books[0] || null,
+            place2: lastRec.books[1] || null,
+            place3: lastRec.books[2] || null
           });
           setPhase('results');
         }
