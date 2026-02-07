@@ -364,6 +364,20 @@ function AccountContent() {
                 </button>
 
                 <button
+                  onClick={() => navigate('/Challenges')}
+                  className="flex items-center justify-between p-4 border border-stone-200 rounded-xl hover:border-stone-300 hover:bg-stone-50 transition-all text-left"
+                >
+                  <div className="flex items-center gap-3">
+                    <Target className="w-5 h-5 text-amber-600" />
+                    <div>
+                      <div className="font-medium text-stone-800">Lese-Challenges</div>
+                      <div className="text-sm text-stone-500">Setze dir Ziele mit der Community</div>
+                    </div>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-stone-400" />
+                </button>
+
+                <button
                   onClick={() => setActiveTab('library')}
                   className="flex items-center justify-between p-4 border border-stone-200 rounded-xl hover:border-stone-300 hover:bg-stone-50 transition-all text-left"
                 >
