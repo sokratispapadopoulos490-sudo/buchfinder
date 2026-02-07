@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { Heart, MessageSquare, BookOpen, User, Crown } from 'lucide-react';
+import { Heart, MessageSquare, BookOpen, User, Crown, Mail } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
@@ -9,9 +9,14 @@ import { cn } from "@/lib/utils";
 
 export default function PostCard({ post, onLike, onComment, isLiked, currentUser }) {
   const [showComments, setShowComments] = useState(false);
+  const navigate = useNavigate();
 
   const isAuthor = currentUser?.email === post.created_by;
   const isPremium = currentUser?.is_premium || currentUser?.role === 'admin';
+  
+  const handleSendMessage = () => {
+    navigate('/Account?tab=messages&user=' + post.created_by);
+  };
 
   const categoryColors = {
     allgemein: "bg-stone-100 text-stone-700",
@@ -69,24 +74,36 @@ export default function PostCard({ post, onLike, onComment, isLiked, currentUser
       )}
 
       {/* Actions */}
-      <div className="flex items-center gap-4 pt-4 border-t border-stone-100">
-        <button
-          onClick={() => onLike(post.id)}
-          className={cn(
-            "flex items-center gap-2 transition-colors",
-            isLiked ? "text-red-500" : "text-stone-500 hover:text-red-500"
-          )}
-        >
-          <Heart className={cn("w-5 h-5", isLiked && "fill-current")} />
-          <span className="text-sm font-medium">{post.likes_count || 0}</span>
-        </button>
-        <button
-          onClick={() => setShowComments(!showComments)}
-          className="flex items-center gap-2 text-stone-500 hover:text-amber-600 transition-colors"
-        >
-          <MessageSquare className="w-5 h-5" />
-          <span className="text-sm font-medium">{post.comments_count || 0}</span>
-        </button>
+      <div className="flex items-center justify-between pt-4 border-t border-stone-100">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => onLike(post.id)}
+            className={cn(
+              "flex items-center gap-2 transition-colors",
+              isLiked ? "text-red-500" : "text-stone-500 hover:text-red-500"
+            )}
+          >
+            <Heart className={cn("w-5 h-5", isLiked && "fill-current")} />
+            <span className="text-sm font-medium">{post.likes_count || 0}</span>
+          </button>
+          <button
+            onClick={() => setShowComments(!showComments)}
+            className="flex items-center gap-2 text-stone-500 hover:text-amber-600 transition-colors"
+          >
+            <MessageSquare className="w-5 h-5" />
+            <span className="text-sm font-medium">{post.comments_count || 0}</span>
+          </button>
+        </div>
+        
+        {!isAuthor && (
+          <button
+            onClick={handleSendMessage}
+            className="flex items-center gap-1 text-sm text-amber-600 hover:text-amber-700 transition-colors"
+          >
+            <Mail className="w-4 h-4" />
+            <span className="hidden sm:inline">Nachricht</span>
+          </button>
+        )}
       </div>
 
       {/* Comments Section */}
