@@ -405,7 +405,7 @@ function HomeContent() {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
         setIsAuthenticated(true);
-        setIsPremium(currentUser.is_premium || false);
+        setIsPremium(currentUser.is_premium || currentUser.role === 'admin');
       } else {
         setIsAuthenticated(false);
       }

@@ -57,7 +57,7 @@ function AccountContent() {
     );
   }
 
-  const isPremium = user?.is_premium || false;
+  const isPremium = user?.is_premium || user?.role === 'admin';
   const freeLimit = 3;
   const usedRecommendations = recommendations.length;
 
@@ -208,36 +208,6 @@ function AccountContent() {
             </div>
           </div>
         </div>
-
-        {/* Premium Features Info */}
-        {!isPremium && usedRecommendations >= freeLimit && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-gradient-to-br from-amber-50 to-amber-100 border-2 border-amber-300 rounded-2xl p-8 mb-8"
-          >
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-full bg-amber-600 flex items-center justify-center flex-shrink-0">
-                <Crown className="w-6 h-6 text-white" />
-              </div>
-              <div className="flex-1">
-                <h3 className="text-xl font-light text-stone-800 mb-2">
-                  Du hast alle kostenlosen Empfehlungen genutzt
-                </h3>
-                <p className="text-stone-600 mb-4">
-                  Upgrade auf Premium für unbegrenzte Empfehlungen und exklusive Features
-                </p>
-                <Button
-                  onClick={() => navigate('/Premium')}
-                  className="bg-amber-600 hover:bg-amber-700 text-white gap-2"
-                >
-                  Premium freischalten
-                  <ArrowRight className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-          </motion.div>
-        )}
 
         {/* Navigation Tabs */}
         <div className="bg-white rounded-xl border border-stone-200 p-1.5 mb-8 flex gap-1.5 overflow-x-auto">
