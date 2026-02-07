@@ -643,17 +643,17 @@ function AccountContent() {
           </div>
         )}
 
-          {/* Reading Progress Modal */}
-          {selectedBookForProgress && (
+        {/* Reading Progress Modal */}
+        {selectedBookForProgress && (
           <ReadingProgressModal
             book={selectedBookForProgress.book}
             savedBookId={selectedBookForProgress.savedBookId}
             onClose={() => setSelectedBookForProgress(null)}
             onUpdate={loadAccountData}
           />
-          )}
+        )}
 
-          {/* Account Actions */}
+        {/* Account Actions */}
         <div className="mt-6 mb-4 text-center">
           <Button
             onClick={() => base44.auth.logout()}
