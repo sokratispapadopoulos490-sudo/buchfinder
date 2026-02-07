@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Heart, MessageSquare, BookOpen, User, Crown } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { de } from 'date-fns/locale';
+import { useNavigate } from 'react-router-dom';
 import { cn } from "@/lib/utils";
 
 export default function PostCard({ post, onLike, onComment, isLiked, currentUser }) {

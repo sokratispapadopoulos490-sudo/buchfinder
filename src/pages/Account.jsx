@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { Compass, Crown, ArrowRight, Sparkles, Clock, User as UserIcon, Bookmark, Search, Trash2, MessageSquare, TrendingUp, Plus, CheckCircle, Library as LibraryIcon, Settings as SettingsIcon, Globe, Users, Edit, Target } from 'lucide-react';
+import { Compass, Crown, ArrowRight, Sparkles, Clock, User as UserIcon, Bookmark, Search, Trash2, MessageSquare, TrendingUp, Plus, CheckCircle, Library as LibraryIcon, Settings as SettingsIcon, Globe, Users, Edit, Target, Mail } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
@@ -13,6 +13,9 @@ import ReadingProgressModal from '@/components/reading/ReadingProgressModal';
 import { useLanguage, LanguageProvider } from '@/components/language/LanguageContext';
 import ProfileEditModal from '@/components/profile/ProfileEditModal';
 import NotificationBell from '@/components/notifications/NotificationBell';
+import ConversationList from '@/components/messages/ConversationList';
+import ChatWindow from '@/components/messages/ChatWindow';
+import NewMessageModal from '@/components/messages/NewMessageModal';
 
 function AccountContent() {
   const [user, setUser] = useState(null);
@@ -24,6 +27,8 @@ function AccountContent() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBookForProgress, setSelectedBookForProgress] = useState(null);
   const [showProfileEdit, setShowProfileEdit] = useState(false);
+  const [selectedConversation, setSelectedConversation] = useState(null);
+  const [showNewMessage, setShowNewMessage] = useState(false);
   const navigate = useNavigate();
   const { language, changeLanguage, supportedLanguages } = useLanguage();
 
@@ -292,6 +297,16 @@ function AccountContent() {
             }`}
           >
             Einstellungen
+          </button>
+          <button
+            onClick={() => setActiveTab('messages')}
+            className={`flex-1 min-w-[80px] px-3 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
+              activeTab === 'messages'
+                ? 'bg-stone-800 text-white'
+                : 'text-stone-600 hover:bg-stone-50'
+            }`}
+          >
+            Nachrichten
           </button>
         </div>
 
@@ -710,6 +725,44 @@ function AccountContent() {
           </div>
         )}
 
+        {/* Nachrichten Tab */}
+        {activeTab === 'messages' && (
+          <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden">
+            <div className="p-4 border-b border-stone-200 flex items-center justify-between">
+              <h2 className="text-xl font-light text-stone-800">Nachrichten</h2>
+              <Button
+                onClick={() => setShowNewMessage(true)}
+                className="bg-amber-600 hover:bg-amber-700 text-white gap-2"
+                size="sm"
+              >
+                <Mail className="w-4 h-4" />
+                Neue Nachricht
+              </Button>
+            </div>
+            <div className="grid lg:grid-cols-[320px,1fr] h-[600px]">
+              <ConversationList
+                currentUser={user}
+                onSelectConversation={setSelectedConversation}
+                selectedConversationId={selectedConversation?.conversation_id}
+              />
+              {selectedConversation ? (
+                <ChatWindow
+                  conversation={selectedConversation}
+                  currentUser={user}
+                  onBack={() => setSelectedConversation(null)}
+                />
+              ) : (
+                <div className="hidden lg:flex items-center justify-center bg-stone-50 text-stone-500">
+                  <div className="text-center">
+                    <MessageSquare className="w-16 h-16 text-stone-300 mx-auto mb-4" />
+                    <p>Wähle eine Konversation aus</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Reading Progress Modal */}
         {selectedBookForProgress && (
           <ReadingProgressModal
@@ -726,6 +779,15 @@ function AccountContent() {
             user={user}
             onClose={() => setShowProfileEdit(false)}
             onUpdate={loadAccountData}
+          />
+        )}
+
+        {/* New Message Modal */}
+        {showNewMessage && (
+          <NewMessageModal
+            currentUser={user}
+            onClose={() => setShowNewMessage(false)}
+            onMessageSent={() => setActiveTab('messages')}
           />
         )}
 
