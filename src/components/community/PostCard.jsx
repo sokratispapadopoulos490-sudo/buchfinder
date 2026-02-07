@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { Heart, MessageSquare, BookOpen, User, Crown, Mail } from 'lucide-react';
+import { Heart, MessageSquare, BookOpen, User, Crown, Mail, AlertTriangle, Trash2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
 import { cn } from "@/lib/utils";
 
-export default function PostCard({ post, onLike, onComment, isLiked, currentUser }) {
+export default function PostCard({ post, onLike, onComment, isLiked, currentUser, onReport, onDelete }) {
   const [showComments, setShowComments] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
   const navigate = useNavigate();
 
   const isAuthor = currentUser?.email === post.created_by;
   const isPremium = currentUser?.is_premium || currentUser?.role === 'admin';
+  const isAdmin = currentUser?.role === 'admin';
   
   const handleSendMessage = () => {
     navigate('/Account?tab=messages&user=' + post.created_by);
@@ -56,9 +58,49 @@ export default function PostCard({ post, onLike, onComment, isLiked, currentUser
             </span>
           </div>
         </div>
-        <span className={cn("px-3 py-1 rounded-full text-xs font-medium", categoryColors[post.category])}>
-          {categoryLabels[post.category]}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className={cn("px-3 py-1 rounded-full text-xs font-medium", categoryColors[post.category])}>
+            {categoryLabels[post.category]}
+          </span>
+          {(isAdmin || !isAuthor) && (
+            <div className="relative">
+              <button
+                onClick={() => setShowMenu(!showMenu)}
+                className="p-2 hover:bg-stone-100 rounded-lg transition-colors"
+              >
+                <span className="text-stone-500">⋮</span>
+              </button>
+              {showMenu && (
+                <div className="absolute right-0 mt-1 bg-white border border-stone-200 rounded-lg shadow-lg py-1 z-10 min-w-[140px]">
+                  {!isAuthor && (
+                    <button
+                      onClick={() => {
+                        setShowMenu(false);
+                        onReport(post);
+                      }}
+                      className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                    >
+                      <AlertTriangle className="w-4 h-4" />
+                      Melden
+                    </button>
+                  )}
+                  {isAdmin && (
+                    <button
+                      onClick={() => {
+                        setShowMenu(false);
+                        onDelete(post.id);
+                      }}
+                      className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      Löschen
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Content */}
