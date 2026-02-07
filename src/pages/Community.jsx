@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { Plus, Users, Crown, Filter, ArrowLeft, Search } from 'lucide-react';
+import { Plus, Users, Crown, Filter, ArrowLeft, Search, Shield } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import PostCard from '@/components/community/PostCard';
 import CreatePostModal from '@/components/community/CreatePostModal';
 import CommentSection from '@/components/community/CommentSection';
+import ReportModal from '@/components/community/ReportModal';
 import { LanguageProvider } from '@/components/language/LanguageContext';
 
 function CommunityContent() {
@@ -20,6 +21,7 @@ function CommunityContent() {
   const [userLikes, setUserLikes] = useState([]);
   const [categoryFilter, setCategoryFilter] = useState('alle');
   const [searchQuery, setSearchQuery] = useState('');
+  const [postToReport, setPostToReport] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -160,7 +162,23 @@ Gib eine hilfreiche, freundliche Antwort (max. 150 Wörter). Sei persönlich und
     }
   };
 
+  const handleReportPost = async () => {
+    await loadData();
+    setPostToReport(null);
+  };
+
+  const handleDeletePost = async (postId) => {
+    if (!confirm('Post wirklich löschen?')) return;
+    try {
+      await base44.entities.CommunityPost.delete(postId);
+      await loadData();
+    } catch (error) {
+      console.error('Error deleting post:', error);
+    }
+  };
+
   const isPremium = user?.is_premium || user?.role === 'admin';
+  const isAdmin = user?.role === 'admin';
 
   const filteredPosts = posts.filter(post => {
     const matchesCategory = categoryFilter === 'alle' || post.category === categoryFilter;
@@ -204,13 +222,25 @@ Gib eine hilfreiche, freundliche Antwort (max. 150 Wörter). Sei persönlich und
                 </p>
               </div>
             </div>
-            <Button
-              onClick={() => setShowCreateModal(true)}
-              className="bg-amber-600 hover:bg-amber-700 text-white gap-2"
-            >
-              <Plus className="w-4 h-4" />
-              Neuer Post
-            </Button>
+            <div className="flex gap-2">
+              {isAdmin && (
+                <Button
+                  onClick={() => navigate('/Moderation')}
+                  variant="outline"
+                  className="gap-2"
+                >
+                  <Shield className="w-4 h-4" />
+                  <span className="hidden sm:inline">Moderation</span>
+                </Button>
+              )}
+              <Button
+                onClick={() => setShowCreateModal(true)}
+                className="bg-amber-600 hover:bg-amber-700 text-white gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                Neuer Post
+              </Button>
+            </div>
           </div>
 
           {/* Premium Info */}
@@ -289,6 +319,8 @@ Gib eine hilfreiche, freundliche Antwort (max. 150 Wörter). Sei persönlich und
                   onComment={(post) => setSelectedPost(selectedPost?.id === post.id ? null : post)}
                   isLiked={userLikes.some(like => like.post_id === post.id)}
                   currentUser={user}
+                  onReport={setPostToReport}
+                  onDelete={handleDeletePost}
                 />
                 
                 {selectedPost?.id === post.id && (
@@ -319,6 +351,15 @@ Gib eine hilfreiche, freundliche Antwort (max. 150 Wörter). Sei persönlich und
           onClose={() => setShowCreateModal(false)}
           onCreate={handleCreatePost}
           savedBooks={savedBooks}
+        />
+      )}
+
+      {/* Report Modal */}
+      {postToReport && (
+        <ReportModal
+          post={postToReport}
+          onClose={() => setPostToReport(null)}
+          onReported={handleReportPost}
         />
       )}
     </div>
