@@ -392,6 +392,20 @@ function AccountContent() {
                 </button>
 
                 <button
+                  onClick={() => navigate('/Quotes')}
+                  className="flex items-center justify-between p-4 border border-stone-200 rounded-xl hover:border-stone-300 hover:bg-stone-50 transition-all text-left"
+                >
+                  <div className="flex items-center gap-3">
+                    <MessageSquare className="w-5 h-5 text-amber-600" />
+                    <div>
+                      <div className="font-medium text-stone-800">Meine Zitate</div>
+                      <div className="text-sm text-stone-500">Lieblingsstellen speichern und teilen</div>
+                    </div>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-stone-400" />
+                </button>
+
+                <button
                   onClick={() => setActiveTab('library')}
                   className="flex items-center justify-between p-4 border border-stone-200 rounded-xl hover:border-stone-300 hover:bg-stone-50 transition-all text-left"
                 >

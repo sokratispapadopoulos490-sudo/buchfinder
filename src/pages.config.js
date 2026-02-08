@@ -49,25 +49,27 @@
  */
 import Account from './pages/Account';
 import Challenges from './pages/Challenges';
+import ClubDetail from './pages/ClubDetail';
+import Clubs from './pages/Clubs';
 import Community from './pages/Community';
 import Home from './pages/Home';
 import Library from './pages/Library';
 import Moderation from './pages/Moderation';
 import Premium from './pages/Premium';
-import Clubs from './pages/Clubs';
-import ClubDetail from './pages/ClubDetail';
+import Quotes from './pages/Quotes';
 
 
 export const PAGES = {
     "Account": Account,
     "Challenges": Challenges,
+    "ClubDetail": ClubDetail,
+    "Clubs": Clubs,
     "Community": Community,
     "Home": Home,
     "Library": Library,
     "Moderation": Moderation,
     "Premium": Premium,
-    "Clubs": Clubs,
-    "ClubDetail": ClubDetail,
+    "Quotes": Quotes,
 }
 
 export const pagesConfig = {
