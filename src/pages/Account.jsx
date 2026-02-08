@@ -378,6 +378,20 @@ function AccountContent() {
                 </button>
 
                 <button
+                  onClick={() => navigate('/Clubs')}
+                  className="flex items-center justify-between p-4 border border-stone-200 rounded-xl hover:border-stone-300 hover:bg-stone-50 transition-all text-left"
+                >
+                  <div className="flex items-center gap-3">
+                    <Users className="w-5 h-5 text-amber-600" />
+                    <div>
+                      <div className="font-medium text-stone-800">Buch-Clubs</div>
+                      <div className="text-sm text-stone-500">Tritt einem Club bei oder erstelle deinen eigenen</div>
+                    </div>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-stone-400" />
+                </button>
+
+                <button
                   onClick={() => setActiveTab('library')}
                   className="flex items-center justify-between p-4 border border-stone-200 rounded-xl hover:border-stone-300 hover:bg-stone-50 transition-all text-left"
                 >

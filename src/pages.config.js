@@ -48,22 +48,26 @@
  * The mainPage value must match a key in the PAGES object exactly.
  */
 import Account from './pages/Account';
+import Challenges from './pages/Challenges';
+import Community from './pages/Community';
 import Home from './pages/Home';
 import Library from './pages/Library';
-import Premium from './pages/Premium';
-import Community from './pages/Community';
 import Moderation from './pages/Moderation';
-import Challenges from './pages/Challenges';
+import Premium from './pages/Premium';
+import Clubs from './pages/Clubs';
+import ClubDetail from './pages/ClubDetail';
 
 
 export const PAGES = {
     "Account": Account,
+    "Challenges": Challenges,
+    "Community": Community,
     "Home": Home,
     "Library": Library,
-    "Premium": Premium,
-    "Community": Community,
     "Moderation": Moderation,
-    "Challenges": Challenges,
+    "Premium": Premium,
+    "Clubs": Clubs,
+    "ClubDetail": ClubDetail,
 }
 
 export const pagesConfig = {
