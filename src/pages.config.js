@@ -58,6 +58,7 @@ import Moderation from './pages/Moderation';
 import Premium from './pages/Premium';
 import Quotes from './pages/Quotes';
 import Legal from './pages/Legal';
+import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
@@ -77,4 +78,5 @@ export const PAGES = {
 export const pagesConfig = {
     mainPage: "Home",
     Pages: PAGES,
+    Layout: __Layout,
 };
