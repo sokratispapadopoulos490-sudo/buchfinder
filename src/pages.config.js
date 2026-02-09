@@ -57,6 +57,7 @@ import Library from './pages/Library';
 import Moderation from './pages/Moderation';
 import Premium from './pages/Premium';
 import Quotes from './pages/Quotes';
+import Legal from './pages/Legal';
 
 
 export const PAGES = {
@@ -70,6 +71,7 @@ export const PAGES = {
     "Moderation": Moderation,
     "Premium": Premium,
     "Quotes": Quotes,
+    "Legal": Legal,
 }
 
 export const pagesConfig = {
