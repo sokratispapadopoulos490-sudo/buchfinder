@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { Compass, Crown, ArrowRight, Sparkles, Clock, User as UserIcon, Bookmark, Search, Trash2, MessageSquare, TrendingUp, Plus, CheckCircle, Library as LibraryIcon, Settings as SettingsIcon, Globe, Users, Edit, Target, Mail } from 'lucide-react';
+import { Compass, Crown, ArrowRight, Sparkles, Clock, User as UserIcon, Bookmark, Search, Trash2, MessageSquare, TrendingUp, Plus, CheckCircle, Library as LibraryIcon, Settings as SettingsIcon, Globe, Users, Edit, Target, Mail, Award, List, Download } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
@@ -16,6 +16,10 @@ import NotificationBell from '@/components/notifications/NotificationBell';
 import ConversationList from '@/components/messages/ConversationList';
 import ChatWindow from '@/components/messages/ChatWindow';
 import NewMessageModal from '@/components/messages/NewMessageModal';
+import YearlyStats from '@/components/stats/YearlyStats';
+import ReadingStreak from '@/components/stats/ReadingStreak';
+import GlobalSearch from '@/components/search/GlobalSearch';
+import DarkModeToggle from '@/components/settings/DarkModeToggle';
 
 function AccountContent() {
   const [user, setUser] = useState(null);
@@ -29,6 +33,7 @@ function AccountContent() {
   const [showProfileEdit, setShowProfileEdit] = useState(false);
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [showNewMessage, setShowNewMessage] = useState(false);
+  const [showGlobalSearch, setShowGlobalSearch] = useState(false);
   const navigate = useNavigate();
   const { language, changeLanguage, supportedLanguages } = useLanguage();
 
@@ -128,19 +133,18 @@ function AccountContent() {
             onClick={() => navigate('/')}
             className="text-stone-500 hover:text-stone-700 transition-colors"
           >
-            ← Zurück zur Startseite
+            ← Zurück
           </button>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowGlobalSearch(true)}
+              className="p-2 hover:bg-stone-100 rounded-lg transition-colors"
+              title="Suchen"
+            >
+              <Search className="w-5 h-5 text-stone-600" />
+            </button>
             <NotificationBell />
-            {recommendations.length > 0 && (
-              <button
-                onClick={() => navigate('/?showLastRecommendation=true')}
-                className="text-amber-600 hover:text-amber-700 transition-colors font-medium"
-              >
-                Zu den Ergebnissen →
-              </button>
-            )}
           </div>
         </div>
 
@@ -313,42 +317,16 @@ function AccountContent() {
         {/* Übersicht Tab */}
         {activeTab === 'overview' && (
           <div className="space-y-6">
-            {/* Community Highlight */}
-            <div className="bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl p-8 text-white shadow-xl">
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
-                    <Users className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-light mb-1">Community</h2>
-                    <p className="text-amber-100 text-sm">Tausche dich mit anderen Lesern aus</p>
-                  </div>
-                </div>
-                {isPremium && (
-                  <Crown className="w-6 h-6 text-amber-200" />
-                )}
-              </div>
-              
-              <p className="text-white/90 mb-6 leading-relaxed">
-                Entdecke neue Perspektiven, teile deine Buchempfehlungen und stelle Fragen. 
-                {isPremium && ' Als Premium-Mitglied kannst du auch die Book Compass KI in Diskussionen einbinden.'}
-              </p>
-
-              <Button
-                onClick={() => navigate('/Community')}
-                className="bg-white text-amber-600 hover:bg-amber-50 font-medium shadow-lg"
-              >
-                <Users className="w-4 h-4 mr-2" />
-                Zur Community
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
+            {/* Stats Grid */}
+            <div className="grid gap-6 md:grid-cols-2">
+              <YearlyStats savedBooks={savedBooks} readingLogs={readingLogs} />
+              <ReadingStreak readingLogs={readingLogs} />
             </div>
 
             {/* Schnellzugriff */}
-            <div className="bg-white rounded-2xl border border-stone-200 p-8">
-              <h2 className="text-xl font-light text-stone-800 mb-6">Schnellzugriff</h2>
-              <div className="grid gap-4">
+            <div className="bg-white rounded-2xl border border-stone-200 p-6">
+              <h2 className="text-lg font-medium text-stone-800 mb-4">Schnellzugriff</h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <button
                   onClick={() => navigate('/')}
                   className="flex items-center justify-between p-4 border border-stone-200 rounded-xl hover:border-stone-300 hover:bg-stone-50 transition-all text-left"
@@ -742,7 +720,7 @@ function AccountContent() {
         {activeTab === 'settings' && (
           <div className="bg-white rounded-2xl border border-stone-200 p-8">
             <h2 className="text-xl font-light text-stone-800 mb-6">Meine Einstellungen</h2>
-            <div className="space-y-6">
+            <div className="space-y-4">
               <div className="flex items-center justify-between p-4 border border-stone-200 rounded-xl">
                 <div className="flex items-center gap-3">
                   <Globe className="w-5 h-5 text-stone-600" />
@@ -763,6 +741,36 @@ function AccountContent() {
                   ))}
                 </select>
               </div>
+
+              <DarkModeToggle />
+
+              <button
+                onClick={async () => {
+                  if (confirm('Möchtest du alle deine Daten exportieren?')) {
+                    const data = {
+                      user,
+                      savedBooks,
+                      readingLogs,
+                      recommendations
+                    };
+                    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `book-compass-export-${new Date().toISOString().split('T')[0]}.json`;
+                    a.click();
+                  }
+                }}
+                className="w-full flex items-center justify-between p-4 border border-stone-200 rounded-xl hover:bg-stone-50 transition-colors text-left"
+              >
+                <div className="flex items-center gap-3">
+                  <Download className="w-5 h-5 text-stone-600" />
+                  <div>
+                    <div className="font-medium text-stone-800">Daten exportieren</div>
+                    <div className="text-sm text-stone-500">Alle deine Daten herunterladen</div>
+                  </div>
+                </div>
+              </button>
             </div>
           </div>
         )}
@@ -832,6 +840,13 @@ function AccountContent() {
             onMessageSent={() => setActiveTab('messages')}
           />
         )}
+
+        {/* Global Search */}
+        <AnimatePresence>
+          {showGlobalSearch && (
+            <GlobalSearch onClose={() => setShowGlobalSearch(false)} />
+          )}
+        </AnimatePresence>
 
         {/* Account Actions */}
         <div className="mt-6 mb-4 space-y-2">

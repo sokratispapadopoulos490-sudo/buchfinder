@@ -53,11 +53,11 @@ import ClubDetail from './pages/ClubDetail';
 import Clubs from './pages/Clubs';
 import Community from './pages/Community';
 import Home from './pages/Home';
+import Legal from './pages/Legal';
 import Library from './pages/Library';
 import Moderation from './pages/Moderation';
 import Premium from './pages/Premium';
 import Quotes from './pages/Quotes';
-import Legal from './pages/Legal';
 import __Layout from './Layout.jsx';
 
 
@@ -68,11 +68,11 @@ export const PAGES = {
     "Clubs": Clubs,
     "Community": Community,
     "Home": Home,
+    "Legal": Legal,
     "Library": Library,
     "Moderation": Moderation,
     "Premium": Premium,
     "Quotes": Quotes,
-    "Legal": Legal,
 }
 
 export const pagesConfig = {
