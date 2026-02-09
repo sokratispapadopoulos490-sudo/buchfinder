@@ -43,14 +43,20 @@ export default function PostCard({ post, onLike, onComment, isLiked, currentUser
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center text-white font-medium">
+          <button
+            onClick={() => !isAuthor && navigate(`/PublicProfile?user=${post.created_by}`)}
+            className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center text-white font-medium hover:scale-105 transition-transform"
+          >
             {post.created_by?.charAt(0).toUpperCase() || 'U'}
-          </div>
+          </button>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-medium text-stone-800">
+              <button
+                onClick={() => !isAuthor && navigate(`/PublicProfile?user=${post.created_by}`)}
+                className="font-medium text-stone-800 hover:text-amber-600 transition-colors"
+              >
                 {isAuthor ? 'Du' : post.created_by?.split('@')[0] || 'Anonym'}
-              </span>
+              </button>
               {isPremium && <Crown className="w-3 h-3 text-amber-600" />}
             </div>
             <span className="text-xs text-stone-500">
