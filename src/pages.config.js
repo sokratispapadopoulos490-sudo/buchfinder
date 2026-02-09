@@ -56,6 +56,7 @@ import Home from './pages/Home';
 import Legal from './pages/Legal';
 import Moderation from './pages/Moderation';
 import Premium from './pages/Premium';
+import PublicProfile from './pages/PublicProfile';
 import __Layout from './Layout.jsx';
 
 
@@ -69,6 +70,7 @@ export const PAGES = {
     "Legal": Legal,
     "Moderation": Moderation,
     "Premium": Premium,
+    "PublicProfile": PublicProfile,
 }
 
 export const pagesConfig = {

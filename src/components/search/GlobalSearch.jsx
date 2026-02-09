@@ -57,10 +57,9 @@ export default function GlobalSearch({ onClose }) {
   const handleNavigate = (type, item) => {
     onClose();
     if (type === 'book') {
-      navigate('/Library');
+      navigate('/Account?tab=library');
     } else if (type === 'user') {
-      // Navigate to user profile when implemented
-      console.log('Navigate to user:', item.email);
+      navigate(`/PublicProfile?user=${item.email}`);
     } else if (type === 'post') {
       navigate('/Community');
     } else if (type === 'club') {

@@ -38,6 +38,8 @@ function AccountContent() {
   const [quotes, setQuotes] = useState([]);
   const [showAddQuote, setShowAddQuote] = useState(false);
   const [editingQuote, setEditingQuote] = useState(null);
+  const [following, setFollowing] = useState([]);
+  const [followers, setFollowers] = useState([]);
   const navigate = useNavigate();
   const { language, changeLanguage, supportedLanguages } = useLanguage();
 
@@ -61,6 +63,22 @@ function AccountContent() {
 
       const userQuotes = await base44.entities.BookQuote.list('-created_date');
       setQuotes(userQuotes);
+
+      const myFollowing = await base44.entities.UserFollow.list('-created_date');
+      const myFollowers = await base44.entities.UserFollow.filter({ following_email: currentUser.email });
+      
+      const allUsers = await base44.entities.User.list();
+      const followingWithUsers = myFollowing.map(f => ({
+        ...f,
+        user: allUsers.find(u => u.email === f.following_email)
+      }));
+      const followersWithUsers = myFollowers.map(f => ({
+        ...f,
+        user: allUsers.find(u => u.email === f.created_by)
+      }));
+      
+      setFollowing(followingWithUsers);
+      setFollowers(followersWithUsers);
     } catch (error) {
       console.error('Error loading account:', error);
       base44.auth.redirectToLogin();
@@ -328,6 +346,16 @@ function AccountContent() {
             }`}
           >
             Zitate
+          </button>
+          <button
+            onClick={() => setActiveTab('following')}
+            className={`flex-1 min-w-[80px] px-3 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
+              activeTab === 'following'
+                ? 'bg-stone-800 text-white'
+                : 'text-stone-600 hover:bg-stone-50'
+            }`}
+          >
+            Following
           </button>
         </div>
 
@@ -752,6 +780,72 @@ function AccountContent() {
                   </div>
                 </div>
               </button>
+            </div>
+          </div>
+        )}
+
+        {/* Following Tab */}
+        {activeTab === 'following' && (
+          <div className="space-y-6">
+            <div className="bg-white rounded-2xl border border-stone-200 p-6">
+              <h2 className="text-xl font-light text-stone-800 mb-4">Ich folge ({following.length})</h2>
+              {following.length === 0 ? (
+                <p className="text-stone-500 text-center py-8">Du folgst noch niemandem</p>
+              ) : (
+                <div className="space-y-3">
+                  {following.map((f) => f.user && (
+                    <div key={f.id} className="flex items-center justify-between p-3 border border-stone-200 rounded-lg hover:border-stone-300 transition-colors">
+                      <button
+                        onClick={() => navigate(`/PublicProfile?user=${f.user.email}`)}
+                        className="flex items-center gap-3 flex-1 text-left"
+                      >
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center text-white font-medium">
+                          {f.user.full_name?.charAt(0) || 'U'}
+                        </div>
+                        <div>
+                          <div className="font-medium text-stone-800">{f.user.full_name}</div>
+                          <div className="text-sm text-stone-500">{f.user.email}</div>
+                        </div>
+                      </button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={async () => {
+                          await base44.entities.UserFollow.delete(f.id);
+                          await loadAccountData();
+                        }}
+                      >
+                        Nicht mehr folgen
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="bg-white rounded-2xl border border-stone-200 p-6">
+              <h2 className="text-xl font-light text-stone-800 mb-4">Meine Follower ({followers.length})</h2>
+              {followers.length === 0 ? (
+                <p className="text-stone-500 text-center py-8">Noch keine Follower</p>
+              ) : (
+                <div className="space-y-3">
+                  {followers.map((f) => f.user && (
+                    <button
+                      key={f.id}
+                      onClick={() => navigate(`/PublicProfile?user=${f.user.email}`)}
+                      className="w-full flex items-center gap-3 p-3 border border-stone-200 rounded-lg hover:border-stone-300 transition-colors text-left"
+                    >
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center text-white font-medium">
+                        {f.user.full_name?.charAt(0) || 'U'}
+                      </div>
+                      <div>
+                        <div className="font-medium text-stone-800">{f.user.full_name}</div>
+                        <div className="text-sm text-stone-500">{f.user.email}</div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         )}
