@@ -329,86 +329,66 @@ function AccountContent() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <button
                   onClick={() => navigate('/')}
-                  className="flex items-center justify-between p-4 border border-stone-200 rounded-xl hover:border-stone-300 hover:bg-stone-50 transition-all text-left"
+                  className="flex flex-col items-center justify-center p-4 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all"
                 >
-                  <div className="flex items-center gap-3">
-                    <Compass className="w-5 h-5 text-amber-600" />
-                    <div>
-                      <div className="font-medium text-stone-800">Neue Empfehlung</div>
-                      <div className="text-sm text-stone-500">Starte eine neue Büchersuche</div>
-                    </div>
-                  </div>
-                  <ArrowRight className="w-5 h-5 text-stone-400" />
-                </button>
-
-                <button
-                  onClick={() => navigate('/Challenges')}
-                  className="flex items-center justify-between p-4 border border-stone-200 rounded-xl hover:border-stone-300 hover:bg-stone-50 transition-all text-left"
-                >
-                  <div className="flex items-center gap-3">
-                    <Target className="w-5 h-5 text-amber-600" />
-                    <div>
-                      <div className="font-medium text-stone-800">Lese-Challenges</div>
-                      <div className="text-sm text-stone-500">Setze dir Ziele mit der Community</div>
-                    </div>
-                  </div>
-                  <ArrowRight className="w-5 h-5 text-stone-400" />
-                </button>
-
-                <button
-                  onClick={() => navigate('/Clubs')}
-                  className="flex items-center justify-between p-4 border border-stone-200 rounded-xl hover:border-stone-300 hover:bg-stone-50 transition-all text-left"
-                >
-                  <div className="flex items-center gap-3">
-                    <Users className="w-5 h-5 text-amber-600" />
-                    <div>
-                      <div className="font-medium text-stone-800">Buch-Clubs</div>
-                      <div className="text-sm text-stone-500">Tritt einem Club bei oder erstelle deinen eigenen</div>
-                    </div>
-                  </div>
-                  <ArrowRight className="w-5 h-5 text-stone-400" />
-                </button>
-
-                <button
-                  onClick={() => navigate('/Quotes')}
-                  className="flex items-center justify-between p-4 border border-stone-200 rounded-xl hover:border-stone-300 hover:bg-stone-50 transition-all text-left"
-                >
-                  <div className="flex items-center gap-3">
-                    <MessageSquare className="w-5 h-5 text-amber-600" />
-                    <div>
-                      <div className="font-medium text-stone-800">Meine Zitate</div>
-                      <div className="text-sm text-stone-500">Lieblingsstellen speichern und teilen</div>
-                    </div>
-                  </div>
-                  <ArrowRight className="w-5 h-5 text-stone-400" />
+                  <Compass className="w-6 h-6 text-amber-600 mb-2" />
+                  <span className="text-xs font-medium text-stone-800 text-center">Neue Empfehlung</span>
                 </button>
 
                 <button
                   onClick={() => setActiveTab('library')}
-                  className="flex items-center justify-between p-4 border border-stone-200 rounded-xl hover:border-stone-300 hover:bg-stone-50 transition-all text-left"
+                  className="flex flex-col items-center justify-center p-4 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all"
                 >
-                  <div className="flex items-center gap-3">
-                    <LibraryIcon className="w-5 h-5 text-amber-600" />
-                    <div>
-                      <div className="font-medium text-stone-800">Meine Bibliothek</div>
-                      <div className="text-sm text-stone-500">Deine Bücher im Regal ansehen</div>
-                    </div>
-                  </div>
-                  <ArrowRight className="w-5 h-5 text-stone-400" />
+                  <LibraryIcon className="w-6 h-6 text-amber-600 mb-2" />
+                  <span className="text-xs font-medium text-stone-800 text-center">Bibliothek</span>
                 </button>
 
                 <button
-                  onClick={() => setActiveTab('history')}
-                  className="flex items-center justify-between p-4 border border-stone-200 rounded-xl hover:border-stone-300 hover:bg-stone-50 transition-all text-left"
+                  onClick={() => navigate('/Community')}
+                  className="flex flex-col items-center justify-center p-4 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all"
                 >
-                  <div className="flex items-center gap-3">
-                    <Clock className="w-5 h-5 text-amber-600" />
-                    <div>
-                      <div className="font-medium text-stone-800">Empfehlungsverlauf</div>
-                      <div className="text-sm text-stone-500">{recommendations.length} Empfehlungen</div>
-                    </div>
-                  </div>
-                  <ArrowRight className="w-5 h-5 text-stone-400" />
+                  <Users className="w-6 h-6 text-amber-600 mb-2" />
+                  <span className="text-xs font-medium text-stone-800 text-center">Community</span>
+                </button>
+
+                <button
+                  onClick={() => navigate('/Clubs')}
+                  className="flex flex-col items-center justify-center p-4 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all"
+                >
+                  <Users className="w-6 h-6 text-amber-600 mb-2" />
+                  <span className="text-xs font-medium text-stone-800 text-center">Clubs</span>
+                </button>
+
+                <button
+                  onClick={() => navigate('/Challenges')}
+                  className="flex flex-col items-center justify-center p-4 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all"
+                >
+                  <Target className="w-6 h-6 text-amber-600 mb-2" />
+                  <span className="text-xs font-medium text-stone-800 text-center">Challenges</span>
+                </button>
+
+                <button
+                  onClick={() => navigate('/Quotes')}
+                  className="flex flex-col items-center justify-center p-4 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all"
+                >
+                  <MessageSquare className="w-6 h-6 text-amber-600 mb-2" />
+                  <span className="text-xs font-medium text-stone-800 text-center">Zitate</span>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('reading')}
+                  className="flex flex-col items-center justify-center p-4 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all"
+                >
+                  <TrendingUp className="w-6 h-6 text-amber-600 mb-2" />
+                  <span className="text-xs font-medium text-stone-800 text-center">Fortschritt</span>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('messages')}
+                  className="flex flex-col items-center justify-center p-4 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all"
+                >
+                  <Mail className="w-6 h-6 text-amber-600 mb-2" />
+                  <span className="text-xs font-medium text-stone-800 text-center">Nachrichten</span>
                 </button>
               </div>
             </div>
