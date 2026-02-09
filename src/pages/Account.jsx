@@ -20,6 +20,7 @@ import YearlyStats from '@/components/stats/YearlyStats';
 import ReadingStreak from '@/components/stats/ReadingStreak';
 import GlobalSearch from '@/components/search/GlobalSearch';
 import DarkModeToggle from '@/components/settings/DarkModeToggle';
+import AddQuoteModal from '@/components/quotes/AddQuoteModal';
 
 function AccountContent() {
   const [user, setUser] = useState(null);
@@ -34,6 +35,9 @@ function AccountContent() {
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [showNewMessage, setShowNewMessage] = useState(false);
   const [showGlobalSearch, setShowGlobalSearch] = useState(false);
+  const [quotes, setQuotes] = useState([]);
+  const [showAddQuote, setShowAddQuote] = useState(false);
+  const [editingQuote, setEditingQuote] = useState(null);
   const navigate = useNavigate();
   const { language, changeLanguage, supportedLanguages } = useLanguage();
 
@@ -54,6 +58,9 @@ function AccountContent() {
 
       const logs = await base44.entities.ReadingLog.list('-reading_date');
       setReadingLogs(logs);
+
+      const userQuotes = await base44.entities.BookQuote.list('-created_date');
+      setQuotes(userQuotes);
     } catch (error) {
       console.error('Error loading account:', error);
       base44.auth.redirectToLogin();
@@ -312,6 +319,16 @@ function AccountContent() {
           >
             Nachrichten
           </button>
+          <button
+            onClick={() => setActiveTab('quotes')}
+            className={`flex-1 min-w-[80px] px-3 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
+              activeTab === 'quotes'
+                ? 'bg-stone-800 text-white'
+                : 'text-stone-600 hover:bg-stone-50'
+            }`}
+          >
+            Zitate
+          </button>
         </div>
 
         {/* Übersicht Tab */}
@@ -360,15 +377,7 @@ function AccountContent() {
                 </button>
 
                 <button
-                  onClick={() => navigate('/Challenges')}
-                  className="flex flex-col items-center justify-center p-4 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all"
-                >
-                  <Target className="w-6 h-6 text-amber-600 mb-2" />
-                  <span className="text-xs font-medium text-stone-800 text-center">Challenges</span>
-                </button>
-
-                <button
-                  onClick={() => navigate('/Quotes')}
+                  onClick={() => setActiveTab('quotes')}
                   className="flex flex-col items-center justify-center p-4 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all"
                 >
                   <MessageSquare className="w-6 h-6 text-amber-600 mb-2" />
@@ -376,19 +385,11 @@ function AccountContent() {
                 </button>
 
                 <button
-                  onClick={() => setActiveTab('reading')}
+                  onClick={() => navigate('/Challenges')}
                   className="flex flex-col items-center justify-center p-4 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all"
                 >
-                  <TrendingUp className="w-6 h-6 text-amber-600 mb-2" />
-                  <span className="text-xs font-medium text-stone-800 text-center">Fortschritt</span>
-                </button>
-
-                <button
-                  onClick={() => setActiveTab('messages')}
-                  className="flex flex-col items-center justify-center p-4 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all"
-                >
-                  <Mail className="w-6 h-6 text-amber-600 mb-2" />
-                  <span className="text-xs font-medium text-stone-800 text-center">Nachrichten</span>
+                  <Target className="w-6 h-6 text-amber-600 mb-2" />
+                  <span className="text-xs font-medium text-stone-800 text-center">Challenges</span>
                 </button>
               </div>
             </div>
@@ -755,6 +756,106 @@ function AccountContent() {
           </div>
         )}
 
+        {/* Zitate Tab */}
+        {activeTab === 'quotes' && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-light text-stone-800">Meine Zitate</h2>
+              <Button
+                onClick={() => {
+                  setEditingQuote(null);
+                  setShowAddQuote(true);
+                }}
+                className="bg-amber-600 hover:bg-amber-700 text-white gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                Zitat hinzufügen
+              </Button>
+            </div>
+
+            {quotes.length === 0 ? (
+              <div className="text-center py-12 bg-white rounded-2xl border border-stone-200">
+                <MessageSquare className="w-12 h-12 text-stone-300 mx-auto mb-4" />
+                <p className="text-stone-500 mb-4">Noch keine Zitate gespeichert</p>
+                <Button
+                  onClick={() => setShowAddQuote(true)}
+                  className="bg-stone-800 hover:bg-stone-700 text-white"
+                >
+                  Erstes Zitat hinzufügen
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {quotes.map((quote) => (
+                  <motion.div
+                    key={quote.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-white rounded-2xl border border-stone-200 p-6 hover:border-stone-300 transition-colors"
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex-1">
+                        <h3 className="font-medium text-stone-800 mb-1">
+                          {quote.book_data.title}
+                        </h3>
+                        <p className="text-sm text-stone-500">{quote.book_data.author}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => {
+                            setEditingQuote(quote);
+                            setShowAddQuote(true);
+                          }}
+                          className="text-stone-400 hover:text-stone-600"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={async () => {
+                            if (confirm('Zitat wirklich löschen?')) {
+                              await base44.entities.BookQuote.delete(quote.id);
+                              await loadAccountData();
+                            }
+                          }}
+                          className="text-red-400 hover:text-red-600"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <blockquote className="border-l-4 border-amber-600 pl-4 py-2 mb-4">
+                      <p className="text-stone-700 italic leading-relaxed">
+                        "{quote.quote_text}"
+                      </p>
+                    </blockquote>
+
+                    {quote.page_number && (
+                      <p className="text-xs text-stone-500 mb-2">Seite {quote.page_number}</p>
+                    )}
+
+                    {quote.notes && (
+                      <p className="text-sm text-stone-600 bg-stone-50 rounded-lg p-3 mb-3">
+                        {quote.notes}
+                      </p>
+                    )}
+
+                    {quote.tags && quote.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {quote.tags.map((tag, i) => (
+                          <span key={i} className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Nachrichten Tab */}
         {activeTab === 'messages' && (
           <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden">
@@ -827,6 +928,28 @@ function AccountContent() {
             <GlobalSearch onClose={() => setShowGlobalSearch(false)} />
           )}
         </AnimatePresence>
+
+        {/* Add Quote Modal */}
+        {showAddQuote && (
+          <AddQuoteModal
+            quote={editingQuote}
+            savedBooks={savedBooks}
+            onClose={() => {
+              setShowAddQuote(false);
+              setEditingQuote(null);
+            }}
+            onSave={async (quoteData) => {
+              if (editingQuote) {
+                await base44.entities.BookQuote.update(editingQuote.id, quoteData);
+              } else {
+                await base44.entities.BookQuote.create(quoteData);
+              }
+              await loadAccountData();
+              setShowAddQuote(false);
+              setEditingQuote(null);
+            }}
+          />
+        )}
 
         {/* Account Actions */}
         <div className="mt-6 mb-4 space-y-2">
