@@ -27,12 +27,15 @@ export default function DarkModeToggle() {
     
     if (newValue) {
       document.documentElement.classList.add('dark');
+      document.documentElement.setAttribute('data-theme', 'dark');
     } else {
       document.documentElement.classList.remove('dark');
+      document.documentElement.removeAttribute('data-theme');
     }
 
     try {
       await base44.auth.updateMe({ dark_mode: newValue });
+      window.location.reload();
     } catch (error) {
       console.error('Error saving dark mode:', error);
     }

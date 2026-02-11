@@ -58,14 +58,29 @@
     @apply bg-background text-foreground;
   }
 
-  .dark body {
+  .dark,
+  [data-theme="dark"] {
+    color-scheme: dark;
+  }
+
+  .dark body,
+  [data-theme="dark"] body {
     background: hsl(0 0% 8%) !important;
+    min-height: 100vh;
+  }
+
+  .dark *,
+  [data-theme="dark"] * {
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
   }
 
   .dark .bg-white,
   .dark .bg-gray-50,
-  .dark .bg-gray-100 {
-    @apply bg-card !important;
+  .dark .bg-gray-100,
+  [data-theme="dark"] .bg-white,
+  [data-theme="dark"] .bg-gray-50,
+  [data-theme="dark"] .bg-gray-100 {
+    background-color: hsl(0 0% 12%) !important;
   }
 
   .dark .bg-stone-50,
@@ -76,57 +91,104 @@
   .dark .bg-green-50,
   .dark .bg-yellow-50,
   .dark .bg-purple-50,
-  .dark .bg-pink-50 {
-    @apply bg-secondary !important;
+  .dark .bg-pink-50,
+  [data-theme="dark"] .bg-stone-50,
+  [data-theme="dark"] .bg-stone-100,
+  [data-theme="dark"] .bg-amber-50,
+  [data-theme="dark"] .bg-amber-100,
+  [data-theme="dark"] .bg-blue-50,
+  [data-theme="dark"] .bg-green-50,
+  [data-theme="dark"] .bg-yellow-50,
+  [data-theme="dark"] .bg-purple-50,
+  [data-theme="dark"] .bg-pink-50 {
+    background-color: hsl(0 0% 15%) !important;
   }
 
   .dark .bg-gradient-to-br,
-  .dark .bg-gradient-to-r {
+  .dark .bg-gradient-to-r,
+  .dark .bg-gradient-to-b,
+  .dark .bg-gradient-to-t,
+  [data-theme="dark"] .bg-gradient-to-br,
+  [data-theme="dark"] .bg-gradient-to-r,
+  [data-theme="dark"] .bg-gradient-to-b,
+  [data-theme="dark"] .bg-gradient-to-t {
     background-image: none !important;
-    @apply bg-card !important;
+    background-color: hsl(0 0% 12%) !important;
   }
 
   .dark .text-stone-800,
   .dark .text-stone-900,
   .dark .text-gray-800,
-  .dark .text-gray-900 {
-    @apply text-foreground !important;
+  .dark .text-gray-900,
+  .dark .text-black,
+  [data-theme="dark"] .text-stone-800,
+  [data-theme="dark"] .text-stone-900,
+  [data-theme="dark"] .text-gray-800,
+  [data-theme="dark"] .text-gray-900,
+  [data-theme="dark"] .text-black {
+    color: hsl(0 0% 90%) !important;
   }
 
   .dark .text-stone-600,
   .dark .text-stone-700,
   .dark .text-gray-600,
-  .dark .text-gray-700 {
-    @apply text-muted-foreground !important;
+  .dark .text-gray-700,
+  [data-theme="dark"] .text-stone-600,
+  [data-theme="dark"] .text-stone-700,
+  [data-theme="dark"] .text-gray-600,
+  [data-theme="dark"] .text-gray-700 {
+    color: hsl(0 0% 70%) !important;
   }
 
   .dark .text-stone-500,
-  .dark .text-gray-500 {
-    @apply text-muted-foreground !important;
-    opacity: 0.8;
+  .dark .text-gray-500,
+  [data-theme="dark"] .text-stone-500,
+  [data-theme="dark"] .text-gray-500 {
+    color: hsl(0 0% 60%) !important;
   }
 
   .dark .text-stone-400,
-  .dark .text-gray-400 {
-    @apply text-muted-foreground !important;
-    opacity: 0.7;
+  .dark .text-gray-400,
+  [data-theme="dark"] .text-stone-400,
+  [data-theme="dark"] .text-gray-400 {
+    color: hsl(0 0% 50%) !important;
   }
 
   .dark .border-stone-200,
   .dark .border-stone-300,
   .dark .border-gray-200,
-  .dark .border-gray-300 {
-    @apply border-border !important;
+  .dark .border-gray-300,
+  [data-theme="dark"] .border-stone-200,
+  [data-theme="dark"] .border-stone-300,
+  [data-theme="dark"] .border-gray-200,
+  [data-theme="dark"] .border-gray-300 {
+    border-color: hsl(0 0% 20%) !important;
   }
 
   .dark .hover\:bg-stone-50:hover,
   .dark .hover\:bg-stone-100:hover,
-  .dark .hover\:bg-gray-50:hover {
-    @apply hover:bg-accent !important;
+  .dark .hover\:bg-gray-50:hover,
+  [data-theme="dark"] .hover\:bg-stone-50:hover,
+  [data-theme="dark"] .hover\:bg-stone-100:hover,
+  [data-theme="dark"] .hover\:bg-gray-50:hover {
+    background-color: hsl(0 0% 18%) !important;
   }
 
   .dark .hover\:border-stone-300:hover,
-  .dark .hover\:border-amber-500:hover {
-    @apply hover:border-primary !important;
+  .dark .hover\:border-amber-500:hover,
+  [data-theme="dark"] .hover\:border-stone-300:hover,
+  [data-theme="dark"] .hover\:border-amber-500:hover {
+    border-color: hsl(38 92% 50%) !important;
+  }
+
+  .dark input,
+  .dark textarea,
+  .dark select,
+  [data-theme="dark"] input,
+  [data-theme="dark"] textarea,
+  [data-theme="dark"] select {
+    background-color: hsl(0 0% 15%) !important;
+    color: hsl(0 0% 90%) !important;
+    border-color: hsl(0 0% 20%) !important;
   }
 }
