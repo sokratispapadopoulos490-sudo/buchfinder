@@ -152,21 +152,20 @@ function AccountContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50 px-4 py-6 pb-24 md:px-6 md:py-12">
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50 px-4 py-6 md:px-6 md:py-12">
       <div className="max-w-5xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setShowGlobalSearch(true)}
-              className="p-2 hover:bg-stone-100 rounded-lg transition-colors"
-              title="Suchen"
-            >
-              <Search className="w-5 h-5 text-stone-600" />
-            </button>
-            <NotificationBell />
+        <div className="flex items-center justify-end mb-8">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowGlobalSearch(true)}
+                className="p-2 hover:bg-stone-100 rounded-lg transition-colors"
+                title="Suchen"
+              >
+                <Search className="w-5 h-5 text-stone-600" />
+              </button>
+              <NotificationBell />
+            </div>
           </div>
-        </div>
 
         {/* Header mit Premium Status */}
         <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden mb-8 shadow-sm">
@@ -374,55 +373,47 @@ function AccountContent() {
             {/* Schnellzugriff */}
             <div className="bg-white rounded-2xl border border-stone-200 p-6">
               <h2 className="text-lg font-medium text-stone-800 mb-4">Schnellzugriff</h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <button
-                  onClick={() => navigate('/Compass')}
-                  className="flex flex-col items-center justify-center p-4 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all"
-                >
-                  <Compass className="w-6 h-6 text-amber-600 mb-2" />
-                  <span className="text-xs font-medium text-stone-800 text-center">Zum Kompass</span>
-                </button>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  <button
+                    onClick={() => setActiveTab('library')}
+                    className="flex flex-col items-center justify-center p-4 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all"
+                  >
+                    <LibraryIcon className="w-6 h-6 text-amber-600 mb-2" />
+                    <span className="text-xs font-medium text-stone-800 text-center">Bibliothek</span>
+                  </button>
 
-                <button
-                  onClick={() => setActiveTab('library')}
-                  className="flex flex-col items-center justify-center p-4 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all"
-                >
-                  <LibraryIcon className="w-6 h-6 text-amber-600 mb-2" />
-                  <span className="text-xs font-medium text-stone-800 text-center">Bibliothek</span>
-                </button>
+                  <button
+                    onClick={() => navigate('/Community')}
+                    className="flex flex-col items-center justify-center p-4 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all"
+                  >
+                    <Users className="w-6 h-6 text-amber-600 mb-2" />
+                    <span className="text-xs font-medium text-stone-800 text-center">Community</span>
+                  </button>
 
-                <button
-                  onClick={() => navigate('/Community')}
-                  className="flex flex-col items-center justify-center p-4 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all"
-                >
-                  <Users className="w-6 h-6 text-amber-600 mb-2" />
-                  <span className="text-xs font-medium text-stone-800 text-center">Community</span>
-                </button>
+                  <button
+                    onClick={() => navigate('/Clubs')}
+                    className="flex flex-col items-center justify-center p-4 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all"
+                  >
+                    <Users className="w-6 h-6 text-amber-600 mb-2" />
+                    <span className="text-xs font-medium text-stone-800 text-center">Clubs</span>
+                  </button>
 
-                <button
-                  onClick={() => navigate('/Clubs')}
-                  className="flex flex-col items-center justify-center p-4 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all"
-                >
-                  <Users className="w-6 h-6 text-amber-600 mb-2" />
-                  <span className="text-xs font-medium text-stone-800 text-center">Clubs</span>
-                </button>
+                  <button
+                    onClick={() => setActiveTab('quotes')}
+                    className="flex flex-col items-center justify-center p-4 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all"
+                  >
+                    <MessageSquare className="w-6 h-6 text-amber-600 mb-2" />
+                    <span className="text-xs font-medium text-stone-800 text-center">Zitate</span>
+                  </button>
 
-                <button
-                  onClick={() => setActiveTab('quotes')}
-                  className="flex flex-col items-center justify-center p-4 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all"
-                >
-                  <MessageSquare className="w-6 h-6 text-amber-600 mb-2" />
-                  <span className="text-xs font-medium text-stone-800 text-center">Zitate</span>
-                </button>
-
-                <button
-                  onClick={() => navigate('/Challenges')}
-                  className="flex flex-col items-center justify-center p-4 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all"
-                >
-                  <Target className="w-6 h-6 text-amber-600 mb-2" />
-                  <span className="text-xs font-medium text-stone-800 text-center">Challenges</span>
-                </button>
-              </div>
+                  <button
+                    onClick={() => navigate('/Challenges')}
+                    className="flex flex-col items-center justify-center p-4 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all"
+                  >
+                    <Target className="w-6 h-6 text-amber-600 mb-2" />
+                    <span className="text-xs font-medium text-stone-800 text-center">Challenges</span>
+                  </button>
+                </div>
             </div>
           </div>
         )}

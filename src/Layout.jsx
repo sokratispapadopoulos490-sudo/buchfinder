@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import ConsentModal from '@/components/legal/ConsentModal';
-import MainNav from '@/components/navigation/MainNav';
+import BottomNav from '@/components/navigation/BottomNav';
 import { base44 } from '@/api/base44Client';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function Layout({ children, currentPageName }) {
   const [showConsent, setShowConsent] = useState(false);
   const [checkingConsent, setCheckingConsent] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -17,6 +18,8 @@ export default function Layout({ children, currentPageName }) {
   const checkConsentAndRedirect = async () => {
     try {
       const isAuth = await base44.auth.isAuthenticated();
+      setIsAuthenticated(isAuth);
+      
       if (isAuth) {
         const user = await base44.auth.me();
         
@@ -25,7 +28,7 @@ export default function Layout({ children, currentPageName }) {
           setShowConsent(true);
         }
 
-        // Redirect-Logik: Nur bei Landing auf Root
+        // Redirect-Logik: Nur bei Root-Landing (/)
         if (location.pathname === '/') {
           // Prüfe ob Nutzer Bücher hat
           const savedBooks = await base44.entities.SavedBook.filter({ is_completed: false }, '-created_date', 1);
@@ -34,18 +37,19 @@ export default function Layout({ children, currentPageName }) {
             // Hat Bücher → Compass
             navigate('/Compass');
           } else {
-            // Keine Bücher → BookSearch
-            navigate('/BookSearch');
+            // Keine Bücher → Home für Buchsuche
+            navigate('/Home');
           }
         }
       } else {
-        // Nicht eingeloggt → zum Onboarding
-        if (location.pathname === '/' && currentPageName !== 'Onboarding') {
+        // Nicht eingeloggt → zum Onboarding (nur bei Root)
+        if (location.pathname === '/') {
           navigate('/Onboarding');
         }
       }
     } catch (error) {
       console.error('Error checking consent:', error);
+      setIsAuthenticated(false);
     } finally {
       setCheckingConsent(false);
     }
@@ -56,16 +60,16 @@ export default function Layout({ children, currentPageName }) {
   }
 
   // Seiten ohne Navigation
-  const pagesWithoutNav = ['Onboarding', 'Home', 'Legal', 'Premium'];
-  const showNav = !pagesWithoutNav.includes(currentPageName);
+  const pagesWithoutNav = ['Onboarding', 'Legal', 'Premium'];
+  const showNavigation = isAuthenticated && !pagesWithoutNav.includes(currentPageName);
 
   return (
-    <div>
+    <div className={showNavigation ? 'pb-20' : ''}>
       {children}
-      {showNav && <MainNav />}
       {showConsent && (
         <ConsentModal onAccept={() => setShowConsent(false)} />
       )}
+      {showNavigation && <BottomNav />}
     </div>
   );
 }

@@ -59,7 +59,6 @@ import Premium from './pages/Premium';
 import PublicProfile from './pages/PublicProfile';
 import Compass from './pages/Compass';
 import Onboarding from './pages/Onboarding';
-import BookSearch from './pages/BookSearch';
 import __Layout from './Layout.jsx';
 
 
@@ -76,7 +75,6 @@ export const PAGES = {
     "PublicProfile": PublicProfile,
     "Compass": Compass,
     "Onboarding": Onboarding,
-    "BookSearch": BookSearch,
 }
 
 export const pagesConfig = {

@@ -642,7 +642,7 @@ function HomeContent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50">
-      {/* Header mit Login/Logout und Sprachauswahl - nur auf Welcome-Phase */}
+      {/* Header mit Sprachauswahl und Login - nur auf Welcome-Phase */}
       {phase === 'welcome' && (
         <div className="fixed top-0 right-0 p-6 z-40 flex items-center gap-3">
           {/* Kompakte Sprachauswahl */}
@@ -665,17 +665,7 @@ function HomeContent() {
             </div>
           </div>
 
-          {isAuthenticated && user ? (
-            <Button
-              onClick={() => navigate('/Account')}
-              variant="outline"
-              size="sm"
-              className="gap-2 border-stone-300 hover:bg-stone-50"
-            >
-              <User className="w-4 h-4" />
-              {uiTexts.myAccount}
-            </Button>
-          ) : (
+          {!isAuthenticated && (
             <Button
               onClick={handleLogin}
               variant="outline"
@@ -944,38 +934,24 @@ function HomeContent() {
                     <span className="text-sm">{uiTexts.backToProfile}</span>
                   </button>
 
-                  <div className="flex items-center gap-2">
-                    {/* Kompakte Sprachauswahl */}
-                    <div className="relative">
-                      <select
-                        value={language}
-                        onChange={(e) => changeLanguage(e.target.value)}
-                        className="appearance-none bg-white border border-stone-300 rounded-lg px-3 py-2 pr-8 text-sm text-stone-700 hover:bg-stone-50 focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
-                      >
-                        {supportedLanguages.map((lang) => (
-                          <option key={lang.code} value={lang.code}>
-                            {lang.flag} {lang.name}
-                          </option>
-                        ))}
-                      </select>
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-stone-500">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </div>
+                  {/* Kompakte Sprachauswahl */}
+                  <div className="relative">
+                    <select
+                      value={language}
+                      onChange={(e) => changeLanguage(e.target.value)}
+                      className="appearance-none bg-white border border-stone-300 rounded-lg px-3 py-2 pr-8 text-sm text-stone-700 hover:bg-stone-50 focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
+                    >
+                      {supportedLanguages.map((lang) => (
+                        <option key={lang.code} value={lang.code}>
+                          {lang.flag} {lang.name}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-stone-500">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
                     </div>
-
-                    {isAuthenticated && (
-                      <Button
-                        onClick={() => navigate('/Account')}
-                        variant="outline"
-                        size="sm"
-                        className="gap-2 border-stone-300 hover:bg-stone-50"
-                      >
-                        <User className="w-4 h-4" />
-                        <span className="hidden sm:inline">{uiTexts.myAccount}</span>
-                      </Button>
-                    )}
                   </div>
                 </div>
               </div>
