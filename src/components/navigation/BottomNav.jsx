@@ -38,13 +38,12 @@ export default function BottomNav() {
       backgroundColor: 'white',
       borderTop: '2px solid #d6d3d1',
       zIndex: 99999,
-      boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.1)',
-      paddingBottom: 'env(safe-area-inset-bottom)'
+      boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.1)'
     }}>
       <div style={{
         display: 'flex',
         justifyContent: 'space-around',
-        padding: '8px 8px 12px 8px',
+        padding: '10px 8px',
         maxWidth: '600px',
         margin: '0 auto'
       }}>
