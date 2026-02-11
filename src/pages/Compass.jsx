@@ -1,0 +1,307 @@
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Button } from "@/components/ui/button";
+import { BookOpen, Sparkles, Target, MessageCircle, Plus, ArrowRight, Library } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
+import { useNavigate } from 'react-router-dom';
+import { formatDistanceToNow } from 'date-fns';
+import { de } from 'date-fns/locale';
+import ReadingProgressModal from '@/components/reading/ReadingProgressModal';
+
+export default function Compass() {
+  const [user, setUser] = useState(null);
+  const [currentBook, setCurrentBook] = useState(null);
+  const [lastReflection, setLastReflection] = useState('');
+  const [todayReflection, setTodayReflection] = useState('');
+  const [streak, setStreak] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const [showProgressModal, setShowProgressModal] = useState(false);
+  const [reflectionQuestion, setReflectionQuestion] = useState('');
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    loadCompassData();
+  }, []);
+
+  const loadCompassData = async () => {
+    try {
+      const currentUser = await base44.auth.me();
+      setUser(currentUser);
+
+      // Aktuelles Buch laden
+      const savedBooks = await base44.entities.SavedBook.filter({ is_completed: false }, '-created_date', 1);
+      if (savedBooks.length > 0) {
+        setCurrentBook(savedBooks[0]);
+
+        // Fortschritt berechnen
+        const logs = await base44.entities.ReadingLog.filter({ book_id: savedBooks[0].book_id });
+        const totalPages = logs.reduce((sum, log) => sum + log.pages_read, 0);
+        const bookPages = savedBooks[0].book_data.pageCount || 1;
+        setProgress(Math.min(100, Math.round((totalPages / bookPages) * 100)));
+
+        // Streak berechnen
+        const allLogs = await base44.entities.ReadingLog.list('-reading_date');
+        calculateStreak(allLogs);
+      }
+
+      // Letzte Reflexion laden
+      if (currentUser.last_reflection) {
+        setLastReflection(currentUser.last_reflection);
+      }
+
+      // Reflexionsfrage generieren
+      generateReflectionQuestion();
+    } catch (error) {
+      console.error('Error loading compass:', error);
+      navigate('/Onboarding');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const calculateStreak = (logs) => {
+    if (logs.length === 0) {
+      setStreak(0);
+      return;
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const uniqueDates = [...new Set(logs.map(log => log.reading_date))].sort().reverse();
+    let currentStreak = 0;
+    let checkDate = new Date(today);
+
+    for (const dateStr of uniqueDates) {
+      const logDate = new Date(dateStr);
+      logDate.setHours(0, 0, 0, 0);
+      
+      const diffDays = Math.floor((checkDate - logDate) / (1000 * 60 * 60 * 24));
+      
+      if (diffDays === 0 || diffDays === 1) {
+        currentStreak++;
+        checkDate = logDate;
+      } else {
+        break;
+      }
+    }
+
+    setStreak(currentStreak);
+  };
+
+  const generateReflectionQuestion = () => {
+    const questions = [
+      'Was hat dich heute beim Lesen überrascht oder irritiert?',
+      'Welcher Gedanke aus dem Buch beschäftigt dich gerade am meisten?',
+      'Was würdest du anders machen als die Person im Buch?',
+      'Woran erinnert dich das Gelesene aus deinem eigenen Leben?',
+      'Was verstehst du jetzt besser als vor dieser Lesesession?'
+    ];
+    setReflectionQuestion(questions[Math.floor(Math.random() * questions.length)]);
+  };
+
+  const saveReflection = async () => {
+    if (!todayReflection.trim()) return;
+
+    try {
+      await base44.auth.updateMe({ last_reflection: todayReflection });
+      setLastReflection(todayReflection);
+      setTodayReflection('');
+    } catch (error) {
+      console.error('Error saving reflection:', error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50 flex items-center justify-center">
+        <div className="text-stone-500">Lädt...</div>
+      </div>
+    );
+  }
+
+  if (!currentBook) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50 px-4 py-12">
+        <div className="max-w-xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white rounded-2xl border border-stone-200 p-12"
+          >
+            <BookOpen className="w-16 h-16 text-amber-600 mx-auto mb-6" />
+            <h1 className="text-2xl font-light text-stone-800 mb-4">
+              Bereit für dein nächstes Buch?
+            </h1>
+            <p className="text-stone-600 mb-8">
+              Lass uns gemeinsam das richtige Buch für dich finden.
+            </p>
+            <Button
+              onClick={() => navigate('/')}
+              className="bg-amber-600 hover:bg-amber-700 text-white gap-2"
+            >
+              <Sparkles className="w-4 h-4" />
+              Empfehlung erhalten
+            </Button>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50 px-4 py-8 md:py-12">
+      <div className="max-w-2xl mx-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-2xl font-light text-stone-800">Dein Lesekompass</h1>
+          <button
+            onClick={() => navigate('/Account')}
+            className="text-stone-500 hover:text-stone-700 transition-colors"
+          >
+            <Library className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Hauptkarte */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-2xl border border-stone-200 p-8 shadow-sm mb-6"
+        >
+          {/* Aktuelles Buch */}
+          <div className="flex items-start gap-4 mb-6">
+            <div className={`w-20 h-28 rounded ${currentBook.book_data.coverColor || 'bg-stone-100'} flex items-center justify-center flex-shrink-0`}>
+              <span className="text-3xl font-serif text-stone-400">
+                {currentBook.book_data.title.charAt(0)}
+              </span>
+            </div>
+            <div className="flex-1">
+              <h2 className="text-xl font-medium text-stone-800 mb-1">
+                {currentBook.book_data.title}
+              </h2>
+              <p className="text-stone-600 mb-3">{currentBook.book_data.author}</p>
+              <div className="flex items-center gap-4 text-sm text-stone-500">
+                <span className="flex items-center gap-1">
+                  <BookOpen className="w-4 h-4" />
+                  {progress}% gelesen
+                </span>
+                {streak > 0 && (
+                  <span className="flex items-center gap-1">
+                    🔥 {streak} {streak === 1 ? 'Tag' : 'Tage'} Streak
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Fortschrittsbalken */}
+          <div className="mb-8">
+            <div className="w-full bg-stone-100 rounded-full h-2">
+              <div 
+                className="bg-amber-600 h-2 rounded-full transition-all"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Letzter Gedanke */}
+          {lastReflection && (
+            <div className="mb-6 p-4 bg-amber-50 rounded-xl border border-amber-100">
+              <div className="flex items-start gap-2 mb-2">
+                <Sparkles className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                <div className="flex-1">
+                  <div className="text-xs font-medium text-amber-900 mb-1">
+                    Dein Gedanke von {lastReflection.length > 50 ? 'gestern' : 'vorhin'}
+                  </div>
+                  <p className="text-sm text-amber-800 leading-relaxed">
+                    "{lastReflection}"
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Heute im Fokus */}
+          <div className="mb-6 p-4 bg-blue-50 rounded-xl border border-blue-100">
+            <div className="flex items-start gap-2">
+              <Target className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
+              <div>
+                <div className="text-xs font-medium text-blue-900 mb-1">Heute im Fokus</div>
+                <p className="text-sm text-blue-800">
+                  Lies weiter und halte fest, was dich bewegt
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Reflexionsfrage */}
+          <div className="mb-6 p-4 bg-stone-50 rounded-xl border border-stone-200">
+            <div className="flex items-start gap-2">
+              <MessageCircle className="w-4 h-4 text-stone-600 mt-0.5 flex-shrink-0" />
+              <div className="flex-1">
+                <div className="text-xs font-medium text-stone-700 mb-2">Reflexion für später</div>
+                <p className="text-sm text-stone-600 mb-3 leading-relaxed">
+                  {reflectionQuestion}
+                </p>
+                <textarea
+                  value={todayReflection}
+                  onChange={(e) => setTodayReflection(e.target.value)}
+                  placeholder="Deine Gedanken..."
+                  className="w-full px-3 py-2 text-sm border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none"
+                  rows={3}
+                />
+                {todayReflection.trim() && (
+                  <button
+                    onClick={saveReflection}
+                    className="mt-2 text-xs text-amber-600 hover:text-amber-700 font-medium"
+                  >
+                    Speichern
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Action Button */}
+          <Button
+            onClick={() => setShowProgressModal(true)}
+            className="w-full bg-amber-600 hover:bg-amber-700 text-white gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            Fortschritt eintragen
+          </Button>
+        </motion.div>
+
+        {/* Quick Links */}
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            onClick={() => navigate('/Community')}
+            className="p-4 bg-white border border-stone-200 rounded-xl hover:border-stone-300 transition-colors text-left"
+          >
+            <div className="text-sm font-medium text-stone-800 mb-1">Community</div>
+            <div className="text-xs text-stone-500">Was lesen andere?</div>
+          </button>
+          <button
+            onClick={() => navigate('/Account?tab=library')}
+            className="p-4 bg-white border border-stone-200 rounded-xl hover:border-stone-300 transition-colors text-left"
+          >
+            <div className="text-sm font-medium text-stone-800 mb-1">Bibliothek</div>
+            <div className="text-xs text-stone-500">Alle deine Bücher</div>
+          </button>
+        </div>
+      </div>
+
+      {/* Progress Modal */}
+      {showProgressModal && (
+        <ReadingProgressModal
+          book={currentBook.book_data}
+          savedBookId={currentBook.id}
+          onClose={() => setShowProgressModal(false)}
+          onUpdate={loadCompassData}
+        />
+      )}
+    </div>
+  );
+}
