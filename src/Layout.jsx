@@ -59,9 +59,11 @@ export default function Layout({ children, currentPageName }) {
     return <div>{children}</div>;
   }
 
-  // Seiten MIT Navigation
-  const pagesWithNav = ['Home', 'Compass', 'Account'];
-  const showNavigation = isAuthenticated && pagesWithNav.includes(currentPageName);
+  // Navigation immer anzeigen wenn authentifiziert (außer auf bestimmten Seiten)
+  const pagesWithoutNav = ['Onboarding', 'Legal'];
+  const showNavigation = isAuthenticated && !pagesWithoutNav.includes(currentPageName);
+
+  console.log('Layout Debug:', { currentPageName, isAuthenticated, showNavigation });
 
   return (
     <div className={showNavigation ? 'pb-24' : ''}>
