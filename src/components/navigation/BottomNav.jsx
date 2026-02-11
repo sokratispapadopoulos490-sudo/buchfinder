@@ -32,13 +32,14 @@ export default function BottomNav() {
   return (
     <div style={{
       position: 'fixed',
-      bottom: 0,
-      left: 0,
-      right: 0,
+      bottom: '20px',
+      left: '8px',
+      right: '8px',
       backgroundColor: 'white',
       borderTop: '2px solid #d6d3d1',
+      borderRadius: '16px',
       zIndex: 99999,
-      boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.1)'
+      boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 4px 6px -1px rgba(0, 0, 0, 0.1)'
     }}>
       <div style={{
         display: 'flex',
