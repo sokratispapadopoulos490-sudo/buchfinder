@@ -50,79 +50,79 @@ export default function YearlyStats({ savedBooks, readingLogs, year = new Date()
   }, [savedBooks, readingLogs, year]);
 
   return (
-    <div className="bg-white rounded-2xl border border-stone-200 p-6">
+    <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-6">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-light text-stone-800">Jahresstatistik {year}</h2>
-        <Award className="w-6 h-6 text-amber-600" />
+        <h2 className="text-xl font-light text-stone-800 dark:text-stone-200">Jahresstatistik {year}</h2>
+        <Award className="w-6 h-6 text-amber-600 dark:text-amber-500" />
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-4"
+          className="bg-amber-100 dark:bg-amber-900/30 rounded-xl p-4"
         >
-          <Book className="w-5 h-5 text-amber-600 mb-2" />
-          <div className="text-2xl font-semibold text-stone-800">{stats.booksRead}</div>
-          <div className="text-xs text-stone-600">Bücher gelesen</div>
+          <Book className="w-5 h-5 text-amber-600 dark:text-amber-500 mb-2" />
+          <div className="text-2xl font-semibold text-stone-800 dark:text-stone-200">{stats.booksRead}</div>
+          <div className="text-xs text-stone-600 dark:text-stone-400">Bücher gelesen</div>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4"
+          className="bg-blue-100 dark:bg-blue-900/30 rounded-xl p-4"
         >
-          <BookOpen className="w-5 h-5 text-blue-600 mb-2" />
-          <div className="text-2xl font-semibold text-stone-800">{stats.pagesRead.toLocaleString()}</div>
-          <div className="text-xs text-stone-600">Seiten gelesen</div>
+          <BookOpen className="w-5 h-5 text-blue-600 dark:text-blue-400 mb-2" />
+          <div className="text-2xl font-semibold text-stone-800 dark:text-stone-200">{stats.pagesRead.toLocaleString()}</div>
+          <div className="text-xs text-stone-600 dark:text-stone-400">Seiten gelesen</div>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4"
+          className="bg-green-100 dark:bg-green-900/30 rounded-xl p-4"
         >
-          <Calendar className="w-5 h-5 text-green-600 mb-2" />
-          <div className="text-2xl font-semibold text-stone-800">{stats.readingDays}</div>
-          <div className="text-xs text-stone-600">Lesetage</div>
+          <Calendar className="w-5 h-5 text-green-600 dark:text-green-400 mb-2" />
+          <div className="text-2xl font-semibold text-stone-800 dark:text-stone-200">{stats.readingDays}</div>
+          <div className="text-xs text-stone-600 dark:text-stone-400">Lesetage</div>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4"
+          className="bg-purple-100 dark:bg-purple-900/30 rounded-xl p-4"
         >
-          <TrendingUp className="w-5 h-5 text-purple-600 mb-2" />
-          <div className="text-2xl font-semibold text-stone-800">{stats.averagePages}</div>
-          <div className="text-xs text-stone-600">⌀ Seiten/Buch</div>
+          <TrendingUp className="w-5 h-5 text-purple-600 dark:text-purple-400 mb-2" />
+          <div className="text-2xl font-semibold text-stone-800 dark:text-stone-200">{stats.averagePages}</div>
+          <div className="text-xs text-stone-600 dark:text-stone-400">⌀ Seiten/Buch</div>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="bg-gradient-to-br from-pink-50 to-pink-100 rounded-xl p-4 col-span-2 md:col-span-1"
+          className="bg-pink-100 dark:bg-pink-900/30 rounded-xl p-4 col-span-2 md:col-span-1"
         >
-          <Award className="w-5 h-5 text-pink-600 mb-2" />
-          <div className="text-lg font-semibold text-stone-800 truncate">{stats.topGenre}</div>
-          <div className="text-xs text-stone-600">Top Genre</div>
+          <Award className="w-5 h-5 text-pink-600 dark:text-pink-400 mb-2" />
+          <div className="text-lg font-semibold text-stone-800 dark:text-stone-200 truncate">{stats.topGenre}</div>
+          <div className="text-xs text-stone-600 dark:text-stone-400">Top Genre</div>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-4 col-span-2 md:col-span-3"
+          className="bg-orange-100 dark:bg-orange-900/30 rounded-xl p-4 col-span-2 md:col-span-3"
         >
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-lg font-semibold text-stone-800">{stats.bestMonth}</div>
-              <div className="text-xs text-stone-600">Bester Monat</div>
+              <div className="text-lg font-semibold text-stone-800 dark:text-stone-200">{stats.bestMonth}</div>
+              <div className="text-xs text-stone-600 dark:text-stone-400">Bester Monat</div>
             </div>
-            <Calendar className="w-5 h-5 text-orange-600" />
+            <Calendar className="w-5 h-5 text-orange-600 dark:text-orange-400" />
           </div>
         </motion.div>
       </div>
