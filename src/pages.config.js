@@ -48,35 +48,35 @@
  * The mainPage value must match a key in the PAGES object exactly.
  */
 import Account from './pages/Account';
+import BookSearch from './pages/BookSearch';
 import Challenges from './pages/Challenges';
 import ClubDetail from './pages/ClubDetail';
 import Clubs from './pages/Clubs';
 import Community from './pages/Community';
+import Compass from './pages/Compass';
 import Home from './pages/Home';
 import Legal from './pages/Legal';
 import Moderation from './pages/Moderation';
+import Onboarding from './pages/Onboarding';
 import Premium from './pages/Premium';
 import PublicProfile from './pages/PublicProfile';
-import Compass from './pages/Compass';
-import Onboarding from './pages/Onboarding';
-import BookSearch from './pages/BookSearch';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "Account": Account,
+    "BookSearch": BookSearch,
     "Challenges": Challenges,
     "ClubDetail": ClubDetail,
     "Clubs": Clubs,
     "Community": Community,
+    "Compass": Compass,
     "Home": Home,
     "Legal": Legal,
     "Moderation": Moderation,
+    "Onboarding": Onboarding,
     "Premium": Premium,
     "PublicProfile": PublicProfile,
-    "Compass": Compass,
-    "Onboarding": Onboarding,
-    "BookSearch": BookSearch,
 }
 
 export const pagesConfig = {
