@@ -19,44 +19,31 @@ export default function Layout({ children, currentPageName }) {
     try {
       const isAuth = await base44.auth.isAuthenticated();
       setIsAuthenticated(isAuth);
+      setCheckingConsent(false);
       
       if (isAuth) {
         const user = await base44.auth.me();
         
-        // Consent prüfen
         if (!user.terms_accepted || !user.privacy_accepted) {
           setShowConsent(true);
         }
 
-        // Redirect-Logik: Nur bei Root-Landing (/)
         if (location.pathname === '/') {
-          // Prüfe ob Nutzer Bücher hat
           const savedBooks = await base44.entities.SavedBook.filter({ is_completed: false }, '-created_date', 1);
-          
-          if (savedBooks.length > 0) {
-            // Hat Bücher → Compass
-            navigate('/Compass');
-          } else {
-            // Keine Bücher → Home für Buchsuche
-            navigate('/Home');
-          }
+          navigate(savedBooks.length > 0 ? '/Compass' : '/Home');
         }
-      } else {
-        // Nicht eingeloggt → zum Onboarding (nur bei Root)
-        if (location.pathname === '/') {
-          navigate('/Onboarding');
-        }
+      } else if (location.pathname === '/') {
+        navigate('/Onboarding');
       }
     } catch (error) {
       console.error('Error checking consent:', error);
       setIsAuthenticated(false);
-    } finally {
       setCheckingConsent(false);
     }
   };
 
   if (checkingConsent) {
-    return <div>{children}</div>;
+    return null;
   }
 
   // Navigation immer anzeigen wenn authentifiziert (außer auf bestimmten Seiten)
