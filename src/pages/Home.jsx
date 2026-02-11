@@ -641,7 +641,7 @@ function HomeContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50">
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50 pb-28">
       {/* Header mit Sprachauswahl und Login - nur auf Welcome-Phase */}
       {phase === 'welcome' && (
         <div className="fixed top-0 right-0 p-6 z-40 flex items-center gap-3">

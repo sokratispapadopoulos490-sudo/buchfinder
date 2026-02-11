@@ -60,11 +60,11 @@ export default function Layout({ children, currentPageName }) {
   }
 
   // Seiten ohne Navigation
-  const pagesWithoutNav = ['Onboarding', 'Legal', 'Premium'];
+  const pagesWithoutNav = ['Onboarding', 'Legal', 'Premium', 'Community', 'Clubs', 'ClubDetail', 'Challenges', 'Moderation', 'PublicProfile'];
   const showNavigation = isAuthenticated && !pagesWithoutNav.includes(currentPageName);
 
   return (
-    <div className={showNavigation ? 'pb-20' : ''}>
+    <div>
       {children}
       {showConsent && (
         <ConsentModal onAccept={() => setShowConsent(false)} />
