@@ -67,7 +67,7 @@ export default function Layout({ children, currentPageName }) {
 
   return (
     <>
-      <div className={showNavigation ? 'pb-24' : ''}>
+      <div className={showNavigation ? 'pb-20' : ''}>
         {children}
         {showConsent && (
           <ConsentModal onAccept={() => setShowConsent(false)} />
