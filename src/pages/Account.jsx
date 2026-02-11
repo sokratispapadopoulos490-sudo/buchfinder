@@ -376,42 +376,42 @@ function AccountContent() {
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   <button
                     onClick={() => setActiveTab('library')}
-                    className="flex flex-col items-center justify-center p-4 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all"
+                    className="flex flex-col items-center justify-center p-4 border border-stone-200 dark:border-stone-700 rounded-xl hover:border-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-all"
                   >
-                    <LibraryIcon className="w-6 h-6 text-amber-600 mb-2" />
-                    <span className="text-xs font-medium text-stone-800 text-center">Bibliothek</span>
+                    <LibraryIcon className="w-6 h-6 text-amber-600 dark:text-amber-500 mb-2" />
+                    <span className="text-xs font-medium text-stone-800 dark:text-stone-200 text-center">Bibliothek</span>
                   </button>
 
                   <button
                     onClick={() => navigate('/Community')}
-                    className="flex flex-col items-center justify-center p-4 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all"
+                    className="flex flex-col items-center justify-center p-4 border border-stone-200 dark:border-stone-700 rounded-xl hover:border-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-all"
                   >
-                    <Users className="w-6 h-6 text-amber-600 mb-2" />
-                    <span className="text-xs font-medium text-stone-800 text-center">Community</span>
+                    <Users className="w-6 h-6 text-amber-600 dark:text-amber-500 mb-2" />
+                    <span className="text-xs font-medium text-stone-800 dark:text-stone-200 text-center">Community</span>
                   </button>
 
                   <button
                     onClick={() => navigate('/Clubs')}
-                    className="flex flex-col items-center justify-center p-4 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all"
+                    className="flex flex-col items-center justify-center p-4 border border-stone-200 dark:border-stone-700 rounded-xl hover:border-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-all"
                   >
-                    <Users className="w-6 h-6 text-amber-600 mb-2" />
-                    <span className="text-xs font-medium text-stone-800 text-center">Clubs</span>
+                    <Users className="w-6 h-6 text-amber-600 dark:text-amber-500 mb-2" />
+                    <span className="text-xs font-medium text-stone-800 dark:text-stone-200 text-center">Clubs</span>
                   </button>
 
                   <button
                     onClick={() => setActiveTab('quotes')}
-                    className="flex flex-col items-center justify-center p-4 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all"
+                    className="flex flex-col items-center justify-center p-4 border border-stone-200 dark:border-stone-700 rounded-xl hover:border-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-all"
                   >
-                    <MessageSquare className="w-6 h-6 text-amber-600 mb-2" />
-                    <span className="text-xs font-medium text-stone-800 text-center">Zitate</span>
+                    <MessageSquare className="w-6 h-6 text-amber-600 dark:text-amber-500 mb-2" />
+                    <span className="text-xs font-medium text-stone-800 dark:text-stone-200 text-center">Zitate</span>
                   </button>
 
                   <button
                     onClick={() => navigate('/Challenges')}
-                    className="flex flex-col items-center justify-center p-4 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all"
+                    className="flex flex-col items-center justify-center p-4 border border-stone-200 dark:border-stone-700 rounded-xl hover:border-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-all"
                   >
-                    <Target className="w-6 h-6 text-amber-600 mb-2" />
-                    <span className="text-xs font-medium text-stone-800 text-center">Challenges</span>
+                    <Target className="w-6 h-6 text-amber-600 dark:text-amber-500 mb-2" />
+                    <span className="text-xs font-medium text-stone-800 dark:text-stone-200 text-center">Challenges</span>
                   </button>
                 </div>
             </div>
