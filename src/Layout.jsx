@@ -50,8 +50,6 @@ export default function Layout({ children, currentPageName }) {
   const pagesWithoutNav = ['Onboarding', 'Legal'];
   const showNavigation = isAuthenticated && !pagesWithoutNav.includes(currentPageName);
 
-  console.log('Layout Debug:', { currentPageName, isAuthenticated, showNavigation });
-
   return (
     <>
       <div style={{ paddingBottom: showNavigation ? '80px' : '0' }}>
