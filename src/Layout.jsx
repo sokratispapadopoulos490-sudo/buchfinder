@@ -12,8 +12,23 @@ export default function Layout({ children, currentPageName }) {
   const location = useLocation();
 
   useEffect(() => {
+    initDarkMode();
     checkConsentAndRedirect();
   }, []);
+
+  const initDarkMode = async () => {
+    try {
+      const isAuth = await base44.auth.isAuthenticated();
+      if (isAuth) {
+        const user = await base44.auth.me();
+        if (user?.dark_mode) {
+          document.documentElement.classList.add('dark');
+        }
+      }
+    } catch (error) {
+      console.error('Error initializing dark mode:', error);
+    }
+  };
 
   const checkConsentAndRedirect = async () => {
     try {
