@@ -28,7 +28,10 @@ function AccountContent() {
   const [recommendations, setRecommendations] = useState([]);
   const [savedBooks, setSavedBooks] = useState([]);
   const [readingLogs, setReadingLogs] = useState([]);
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('tab') || 'overview';
+  });
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBookForProgress, setSelectedBookForProgress] = useState(null);
