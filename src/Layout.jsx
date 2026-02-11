@@ -64,7 +64,7 @@ export default function Layout({ children, currentPageName }) {
   const showNavigation = isAuthenticated && !pagesWithoutNav.includes(currentPageName);
 
   return (
-    <div>
+    <div className={showNavigation ? 'pb-24' : ''}>
       {children}
       {showConsent && (
         <ConsentModal onAccept={() => setShowConsent(false)} />
