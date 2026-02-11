@@ -59,9 +59,9 @@ export default function Layout({ children, currentPageName }) {
     return <div>{children}</div>;
   }
 
-  // Seiten ohne Navigation
-  const pagesWithoutNav = ['Onboarding', 'Legal', 'Premium', 'Community', 'Clubs', 'ClubDetail', 'Challenges', 'Moderation', 'PublicProfile'];
-  const showNavigation = isAuthenticated && !pagesWithoutNav.includes(currentPageName);
+  // Seiten MIT Navigation
+  const pagesWithNav = ['Home', 'Compass', 'Account'];
+  const showNavigation = isAuthenticated && pagesWithNav.includes(currentPageName);
 
   return (
     <div className={showNavigation ? 'pb-24' : ''}>
