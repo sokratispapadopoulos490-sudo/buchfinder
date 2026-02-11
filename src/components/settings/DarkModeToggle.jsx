@@ -3,7 +3,9 @@ import { Moon, Sun } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 export default function DarkModeToggle() {
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(() => {
+    return document.documentElement.classList.contains('dark');
+  });
 
   useEffect(() => {
     loadDarkMode();
@@ -12,9 +14,15 @@ export default function DarkModeToggle() {
   const loadDarkMode = async () => {
     try {
       const user = await base44.auth.me();
-      if (user?.dark_mode) {
-        setIsDark(true);
+      const darkModeEnabled = user?.dark_mode || false;
+      setIsDark(darkModeEnabled);
+      
+      if (darkModeEnabled) {
         document.documentElement.classList.add('dark');
+        document.body.style.backgroundColor = '#141414';
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.body.style.backgroundColor = '';
       }
     } catch (error) {
       console.error('Error loading dark mode:', error);
@@ -27,15 +35,15 @@ export default function DarkModeToggle() {
     
     if (newValue) {
       document.documentElement.classList.add('dark');
-      document.documentElement.setAttribute('data-theme', 'dark');
+      document.body.style.backgroundColor = '#141414';
     } else {
       document.documentElement.classList.remove('dark');
-      document.documentElement.removeAttribute('data-theme');
+      document.body.style.backgroundColor = '';
     }
 
     try {
       await base44.auth.updateMe({ dark_mode: newValue });
-      window.location.reload();
+      setTimeout(() => window.location.reload(), 100);
     } catch (error) {
       console.error('Error saving dark mode:', error);
     }

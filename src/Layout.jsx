@@ -8,32 +8,11 @@ export default function Layout({ children, currentPageName }) {
   const [showConsent, setShowConsent] = useState(false);
   const [checkingConsent, setCheckingConsent] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    const initApp = async () => {
-      try {
-        const isAuth = await base44.auth.isAuthenticated();
-        if (isAuth) {
-          const user = await base44.auth.me();
-          if (user?.dark_mode) {
-            document.documentElement.classList.add('dark');
-            document.documentElement.setAttribute('data-theme', 'dark');
-            setDarkMode(true);
-          } else {
-            document.documentElement.classList.remove('dark');
-            document.documentElement.removeAttribute('data-theme');
-            setDarkMode(false);
-          }
-        }
-      } catch (error) {
-        console.error('Error initializing dark mode:', error);
-      }
-      checkConsentAndRedirect();
-    };
-    initApp();
+    checkConsentAndRedirect();
   }, []);
 
   const checkConsentAndRedirect = async () => {
