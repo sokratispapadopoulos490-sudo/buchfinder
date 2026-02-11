@@ -66,12 +66,14 @@ export default function Layout({ children, currentPageName }) {
   console.log('Layout Debug:', { currentPageName, isAuthenticated, showNavigation });
 
   return (
-    <div className={showNavigation ? 'pb-24' : ''}>
-      {children}
-      {showConsent && (
-        <ConsentModal onAccept={() => setShowConsent(false)} />
-      )}
+    <>
+      <div className={showNavigation ? 'pb-24' : ''}>
+        {children}
+        {showConsent && (
+          <ConsentModal onAccept={() => setShowConsent(false)} />
+        )}
+      </div>
       {showNavigation && <BottomNav />}
-    </div>
+    </>
   );
 }
