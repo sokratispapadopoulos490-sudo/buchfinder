@@ -641,7 +641,7 @@ function HomeContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50 pb-28">
+    <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] pb-28">
       {/* Header mit Sprachauswahl und Login - nur auf Welcome-Phase */}
       {phase === 'welcome' && (
         <div className="fixed top-0 right-0 p-6 z-40 flex items-center gap-3">
@@ -687,7 +687,7 @@ function HomeContent() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="min-h-screen flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden"
+            className="min-h-screen flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden dark:bg-[#0a0a0a]"
           >
             {/* Buch-Aufklapp-Animation */}
             <AnimatePresence>
@@ -699,7 +699,7 @@ function HomeContent() {
                     animate={{ scaleX: 0 }}
                     exit={{ scaleX: 0 }}
                     transition={{ duration: 1, ease: "easeInOut" }}
-                    className="fixed inset-0 bg-amber-50 origin-right z-50 border-r-2 border-amber-200"
+                    className="fixed inset-0 bg-amber-50 dark:bg-[#1a1a1a] origin-right z-50 border-r-2 border-amber-200 dark:border-amber-800"
                     style={{ transformOrigin: "right center" }}
                   >
                     <div className="absolute inset-0 bg-gradient-to-l from-amber-100/50 to-transparent" />
@@ -711,7 +711,7 @@ function HomeContent() {
                     animate={{ scaleX: 0 }}
                     exit={{ scaleX: 0 }}
                     transition={{ duration: 1, ease: "easeInOut" }}
-                    className="fixed inset-0 bg-amber-50 origin-left z-50 border-l-2 border-amber-200"
+                    className="fixed inset-0 bg-amber-50 dark:bg-[#1a1a1a] origin-left z-50 border-l-2 border-amber-200 dark:border-amber-800"
                     style={{ transformOrigin: "left center" }}
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-amber-100/50 to-transparent" />
@@ -750,7 +750,7 @@ function HomeContent() {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: showBookOpen ? 1.6 : 0.3 }}
-              className="text-4xl md:text-5xl font-light text-stone-800 text-center mb-2"
+              className="text-4xl md:text-5xl font-light text-stone-800 dark:text-stone-200 text-center mb-2"
             >
               {uiTexts.welcomeTitle}
             </motion.h1>
@@ -759,7 +759,7 @@ function HomeContent() {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: showBookOpen ? 1.7 : 0.4 }}
-              className="text-amber-700 text-center text-sm uppercase tracking-wider mb-8 font-medium"
+              className="text-amber-700 dark:text-amber-500 text-center text-sm uppercase tracking-wider mb-8 font-medium"
             >
               {uiTexts.welcomeSubtitle}
             </motion.p>
@@ -768,7 +768,7 @@ function HomeContent() {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: showBookOpen ? 1.8 : 0.5 }}
-              className="text-stone-500 text-center max-w-md mb-8 text-base font-light"
+              className="text-stone-500 dark:text-stone-400 text-center max-w-md mb-8 text-base font-light"
             >
               {uiTexts.welcomeDescription}
             </motion.p>
@@ -778,23 +778,23 @@ function HomeContent() {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: showBookOpen ? 1.85 : 0.55 }}
-              className="bg-white/80 backdrop-blur-sm border border-amber-200 rounded-xl p-6 max-w-lg mx-auto mb-8 shadow-sm"
+              className="bg-white dark:bg-[#1a1a1a] backdrop-blur-sm border border-amber-200 dark:border-stone-700 rounded-xl p-6 max-w-lg mx-auto mb-8 shadow-sm"
             >
               <div className="space-y-4">
                 <div className="text-center">
                   <div className="inline-flex items-center gap-2 bg-amber-100 text-amber-800 px-4 py-2 rounded-full text-sm font-medium mb-3">
                     ✨ {uiTexts.freeStart}
                   </div>
-                  <p className="text-stone-700 text-sm">
+                  <p className="text-stone-700 dark:text-stone-300 text-sm">
                     {uiTexts.freeDescription}
                   </p>
                 </div>
                 
-                <div className="border-t border-stone-200 pt-4">
-                  <div className="flex items-start gap-3 text-sm text-stone-600">
-                    <Compass className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                <div className="border-t border-stone-200 dark:border-stone-700 pt-4">
+                  <div className="flex items-start gap-3 text-sm text-stone-600 dark:text-stone-400">
+                    <Compass className="w-5 h-5 text-amber-600 dark:text-amber-500 flex-shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-medium text-stone-800 mb-1">{uiTexts.premiumTitle}</p>
+                      <p className="font-medium text-stone-800 dark:text-stone-200 mb-1">{uiTexts.premiumTitle}</p>
                       <p className="text-xs leading-relaxed">
                         {uiTexts.premiumDescription}
                       </p>
@@ -833,11 +833,11 @@ function HomeContent() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="min-h-screen flex flex-col px-6 py-12"
+            className="min-h-screen flex flex-col px-6 py-12 dark:bg-[#0a0a0a]"
           >
             <button
               onClick={handleBack}
-              className="flex items-center gap-2 text-stone-500 hover:text-stone-700 mb-8 transition-colors"
+              className="flex items-center gap-2 text-stone-500 dark:text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 mb-8 transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
               <span className="text-sm">{currentQuestion > 0 ? uiTexts.backButton : uiTexts.backToStart}</span>
@@ -872,11 +872,11 @@ function HomeContent() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="min-h-screen flex flex-col px-6 py-12"
+            className="min-h-screen flex flex-col px-6 py-12 dark:bg-[#0a0a0a]"
           >
             <button
               onClick={handleBackFromProfile}
-              className="flex items-center gap-2 text-stone-500 hover:text-stone-700 mb-8 transition-colors"
+              className="flex items-center gap-2 text-stone-500 dark:text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 mb-8 transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
               <span className="text-sm">{uiTexts.backButton}</span>
@@ -920,7 +920,7 @@ function HomeContent() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="min-h-screen px-6 py-12"
+            className="min-h-screen px-6 py-12 dark:bg-[#0a0a0a]"
           >
             <div className="max-w-2xl mx-auto">
               {/* Header mit Navigation */}
@@ -928,7 +928,7 @@ function HomeContent() {
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <button
                     onClick={handleBackFromResults}
-                    className="flex items-center gap-2 text-stone-500 hover:text-stone-700 transition-colors"
+                    className="flex items-center gap-2 text-stone-500 dark:text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 transition-colors"
                   >
                     <ChevronLeft className="w-4 h-4" />
                     <span className="text-sm">{uiTexts.backToProfile}</span>
@@ -961,10 +961,10 @@ function HomeContent() {
                 animate={{ y: 0, opacity: 1 }}
                 className="text-center mb-12"
               >
-                <h2 className="text-3xl md:text-4xl font-light text-stone-800 mb-3">
+                <h2 className="text-3xl md:text-4xl font-light text-stone-800 dark:text-stone-200 mb-3">
                   {uiTexts.yourRecommendations}
                 </h2>
-                <p className="text-stone-500 font-light">
+                <p className="text-stone-500 dark:text-stone-400 font-light">
                   {uiTexts.selectedByNeeds}
                 </p>
                 
@@ -998,8 +998,8 @@ function HomeContent() {
                         1
                       </div>
                       <div>
-                        <h3 className="text-lg font-medium text-stone-800">{uiTexts.bestMatch}</h3>
-                        <p className="text-sm text-stone-500">{uiTexts.perfectChoice}</p>
+                        <h3 className="text-lg font-medium text-stone-800 dark:text-stone-200">{uiTexts.bestMatch}</h3>
+                        <p className="text-sm text-stone-500 dark:text-stone-400">{uiTexts.perfectChoice}</p>
                       </div>
                     </div>
                     <BookCard
@@ -1019,8 +1019,8 @@ function HomeContent() {
                         2
                       </div>
                       <div>
-                        <h3 className="text-lg font-medium text-stone-800">{uiTexts.secondBest}</h3>
-                        <p className="text-sm text-stone-500">{uiTexts.deepensTheme}</p>
+                        <h3 className="text-lg font-medium text-stone-800 dark:text-stone-200">{uiTexts.secondBest}</h3>
+                        <p className="text-sm text-stone-500 dark:text-stone-400">{uiTexts.deepensTheme}</p>
                       </div>
                     </div>
                     <BookCard
@@ -1040,8 +1040,8 @@ function HomeContent() {
                         3
                       </div>
                       <div>
-                        <h3 className="text-lg font-medium text-stone-800">{uiTexts.somethingDifferent}</h3>
-                        <p className="text-sm text-stone-500">{uiTexts.expandHorizon}</p>
+                        <h3 className="text-lg font-medium text-stone-800 dark:text-stone-200">{uiTexts.somethingDifferent}</h3>
+                        <p className="text-sm text-stone-500 dark:text-stone-400">{uiTexts.expandHorizon}</p>
                       </div>
                     </div>
                     <BookCard
@@ -1062,7 +1062,7 @@ function HomeContent() {
               >
                 <button
                   onClick={handleRestart}
-                  className="text-stone-500 hover:text-stone-700 text-sm underline underline-offset-4 transition-colors"
+                  className="text-stone-500 dark:text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 text-sm underline underline-offset-4 transition-colors"
                 >
                   {uiTexts.newAnalysis}
                 </button>
