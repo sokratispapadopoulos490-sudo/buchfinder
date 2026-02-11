@@ -115,26 +115,26 @@ export default function Compass() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50 flex items-center justify-center">
-        <div className="text-stone-500">Lädt...</div>
+      <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] flex items-center justify-center">
+        <div className="text-stone-500 dark:text-stone-400">Lädt...</div>
       </div>
     );
   }
 
   if (!currentBook) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50 px-4 py-12 pb-32">
+      <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] px-4 py-12 pb-32">
         <div className="max-w-xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-2xl border border-stone-200 p-12"
+            className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-12"
           >
-            <BookOpen className="w-16 h-16 text-amber-600 mx-auto mb-6" />
-            <h1 className="text-2xl font-light text-stone-800 mb-4">
+            <BookOpen className="w-16 h-16 text-amber-600 dark:text-amber-500 mx-auto mb-6" />
+            <h1 className="text-2xl font-light text-stone-800 dark:text-stone-200 mb-4">
               Bereit für dein nächstes Buch?
             </h1>
-            <p className="text-stone-600 mb-8">
+            <p className="text-stone-600 dark:text-stone-400 mb-8">
               Lass uns gemeinsam das richtige Buch für dich finden.
             </p>
             <Button
@@ -151,11 +151,11 @@ export default function Compass() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50 px-4 py-8 md:py-12">
+    <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] px-4 py-8 md:py-12">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl font-light text-stone-800">Dein Lesekompass</h1>
+          <h1 className="text-2xl font-light text-stone-800 dark:text-stone-200">Dein Lesekompass</h1>
           <button
             onClick={() => navigate('/Community')}
             className="text-stone-500 hover:text-stone-700 transition-colors"
@@ -169,7 +169,7 @@ export default function Compass() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl border border-stone-200 p-8 shadow-sm mb-6"
+          className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-8 shadow-sm mb-6"
         >
           {/* Aktuelles Buch */}
           <div className="flex items-start gap-4 mb-6">
@@ -179,11 +179,11 @@ export default function Compass() {
               </span>
             </div>
             <div className="flex-1">
-              <h2 className="text-xl font-medium text-stone-800 mb-1">
+              <h2 className="text-xl font-medium text-stone-800 dark:text-stone-200 mb-1">
                 {currentBook.book_data.title}
               </h2>
-              <p className="text-stone-600 mb-3">{currentBook.book_data.author}</p>
-              <div className="flex items-center gap-4 text-sm text-stone-500">
+              <p className="text-stone-600 dark:text-stone-400 mb-3">{currentBook.book_data.author}</p>
+              <div className="flex items-center gap-4 text-sm text-stone-500 dark:text-stone-400">
                 <span className="flex items-center gap-1">
                   <BookOpen className="w-4 h-4" />
                   {progress}% gelesen
@@ -199,7 +199,7 @@ export default function Compass() {
 
           {/* Fortschrittsbalken */}
           <div className="mb-8">
-            <div className="w-full bg-stone-100 rounded-full h-2">
+            <div className="w-full bg-stone-100 dark:bg-stone-800 rounded-full h-2">
               <div 
                 className="bg-amber-600 h-2 rounded-full transition-all"
                 style={{ width: `${progress}%` }}
@@ -209,14 +209,14 @@ export default function Compass() {
 
           {/* Letzter Gedanke */}
           {lastReflection && (
-            <div className="mb-6 p-4 bg-amber-50 rounded-xl border border-amber-100">
+            <div className="mb-6 p-4 bg-amber-50 dark:bg-amber-900/30 rounded-xl border border-amber-100 dark:border-amber-800">
               <div className="flex items-start gap-2 mb-2">
-                <Sparkles className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-500 mt-0.5 flex-shrink-0" />
                 <div className="flex-1">
-                  <div className="text-xs font-medium text-amber-900 mb-1">
+                  <div className="text-xs font-medium text-amber-900 dark:text-amber-400 mb-1">
                     Dein Gedanke von {lastReflection.length > 50 ? 'gestern' : 'vorhin'}
                   </div>
-                  <p className="text-sm text-amber-800 leading-relaxed">
+                  <p className="text-sm text-amber-800 dark:text-amber-300 leading-relaxed">
                     "{lastReflection}"
                   </p>
                 </div>
@@ -225,12 +225,12 @@ export default function Compass() {
           )}
 
           {/* Heute im Fokus */}
-          <div className="mb-6 p-4 bg-blue-50 rounded-xl border border-blue-100">
+          <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/30 rounded-xl border border-blue-100 dark:border-blue-800">
             <div className="flex items-start gap-2">
-              <Target className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
+              <Target className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
               <div>
-                <div className="text-xs font-medium text-blue-900 mb-1">Heute im Fokus</div>
-                <p className="text-sm text-blue-800">
+                <div className="text-xs font-medium text-blue-900 dark:text-blue-400 mb-1">Heute im Fokus</div>
+                <p className="text-sm text-blue-800 dark:text-blue-300">
                   Lies weiter und halte fest, was dich bewegt
                 </p>
               </div>
@@ -238,19 +238,19 @@ export default function Compass() {
           </div>
 
           {/* Reflexionsfrage */}
-          <div className="mb-6 p-4 bg-stone-50 rounded-xl border border-stone-200">
+          <div className="mb-6 p-4 bg-stone-50 dark:bg-stone-800 rounded-xl border border-stone-200 dark:border-stone-700">
             <div className="flex items-start gap-2">
-              <MessageCircle className="w-4 h-4 text-stone-600 mt-0.5 flex-shrink-0" />
+              <MessageCircle className="w-4 h-4 text-stone-600 dark:text-stone-400 mt-0.5 flex-shrink-0" />
               <div className="flex-1">
-                <div className="text-xs font-medium text-stone-700 mb-2">Reflexion für später</div>
-                <p className="text-sm text-stone-600 mb-3 leading-relaxed">
+                <div className="text-xs font-medium text-stone-700 dark:text-stone-300 mb-2">Reflexion für später</div>
+                <p className="text-sm text-stone-600 dark:text-stone-400 mb-3 leading-relaxed">
                   {reflectionQuestion}
                 </p>
                 <textarea
                   value={todayReflection}
                   onChange={(e) => setTodayReflection(e.target.value)}
                   placeholder="Deine Gedanken..."
-                  className="w-full px-3 py-2 text-sm border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none"
+                  className="w-full px-3 py-2 text-sm border border-stone-200 dark:border-stone-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none bg-white dark:bg-[#1a1a1a] text-stone-800 dark:text-stone-200"
                   rows={3}
                 />
                 {todayReflection.trim() && (
@@ -279,17 +279,17 @@ export default function Compass() {
         <div className="grid grid-cols-2 gap-3">
           <button
             onClick={() => navigate('/Community')}
-            className="p-4 bg-white border border-stone-200 rounded-xl hover:border-stone-300 transition-colors text-left"
+            className="p-4 bg-white dark:bg-[#1a1a1a] border border-stone-200 dark:border-stone-700 rounded-xl hover:border-stone-300 dark:hover:border-stone-600 transition-colors text-left"
           >
-            <div className="text-sm font-medium text-stone-800 mb-1">Community</div>
-            <div className="text-xs text-stone-500">Was lesen andere?</div>
+            <div className="text-sm font-medium text-stone-800 dark:text-stone-200 mb-1">Community</div>
+            <div className="text-xs text-stone-500 dark:text-stone-400">Was lesen andere?</div>
           </button>
           <button
             onClick={() => navigate('/Account?tab=library')}
-            className="p-4 bg-white border border-stone-200 rounded-xl hover:border-stone-300 transition-colors text-left"
+            className="p-4 bg-white dark:bg-[#1a1a1a] border border-stone-200 dark:border-stone-700 rounded-xl hover:border-stone-300 dark:hover:border-stone-600 transition-colors text-left"
           >
-            <div className="text-sm font-medium text-stone-800 mb-1">Bibliothek</div>
-            <div className="text-xs text-stone-500">Alle deine Bücher</div>
+            <div className="text-sm font-medium text-stone-800 dark:text-stone-200 mb-1">Bibliothek</div>
+            <div className="text-xs text-stone-500 dark:text-stone-400">Alle deine Bücher</div>
           </button>
         </div>
       </div>
