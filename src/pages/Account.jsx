@@ -152,25 +152,25 @@ function AccountContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50 px-4 py-6 md:px-6 md:py-12">
+    <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] px-4 py-6 md:px-6 md:py-12">
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center justify-end mb-8">
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setShowGlobalSearch(true)}
-                className="p-2 hover:bg-stone-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-lg transition-colors"
                 title="Suchen"
               >
-                <Search className="w-5 h-5 text-stone-600" />
+                <Search className="w-5 h-5 text-stone-600 dark:text-stone-400" />
               </button>
               <NotificationBell />
             </div>
           </div>
 
         {/* Header mit Premium Status */}
-        <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden mb-8 shadow-sm">
+        <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 overflow-hidden mb-8 shadow-sm">
           {/* Gradient Header */}
-          <div className="bg-gradient-to-br from-amber-50 to-stone-50 p-6 border-b border-stone-100">
+          <div className="bg-amber-50 dark:bg-[#1a1a1a] p-6 border-b border-stone-100 dark:border-stone-700">
             <div className="flex items-start gap-4 mb-4">
               <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center text-white text-2xl font-light shadow-lg flex-shrink-0">
                 {user.full_name?.charAt(0) || 'U'}
@@ -224,34 +224,34 @@ function AccountContent() {
           </div>
 
           {/* Nutzungsstatistik */}
-          <div className="grid grid-cols-3 gap-3 p-4">
+          <div className="grid grid-cols-3 gap-3 p-4 bg-white dark:bg-[#1a1a1a]">
             <div className="text-center">
-              <div className="w-12 h-12 mx-auto mb-2 rounded-xl bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center">
-                <Compass className="w-6 h-6 text-blue-600" />
+              <div className="w-12 h-12 mx-auto mb-2 rounded-xl bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+                <Compass className="w-6 h-6 text-blue-600 dark:text-blue-400" />
               </div>
-              <div className="text-xl font-semibold text-stone-800 mb-0.5">
+              <div className="text-xl font-semibold text-stone-800 dark:text-stone-200 mb-0.5">
                 {isPremium ? usedRecommendations : `${usedRecommendations}/${freeLimit}`}
               </div>
-              <div className="text-xs text-stone-500 leading-tight">
+              <div className="text-xs text-stone-500 dark:text-stone-400 leading-tight">
                 {isPremium ? 'Empfehlungen' : 'von 3'}
               </div>
             </div>
             
             <div className="text-center">
-              <div className="w-12 h-12 mx-auto mb-2 rounded-xl bg-gradient-to-br from-amber-100 to-amber-50 flex items-center justify-center">
-                <Bookmark className="w-6 h-6 text-amber-600" />
+              <div className="w-12 h-12 mx-auto mb-2 rounded-xl bg-amber-100 dark:bg-amber-900 flex items-center justify-center">
+                <Bookmark className="w-6 h-6 text-amber-600 dark:text-amber-400" />
               </div>
-              <div className="text-xl font-semibold text-stone-800 mb-0.5">{savedBooks.length}</div>
-              <div className="text-xs text-stone-500 leading-tight">
+              <div className="text-xl font-semibold text-stone-800 dark:text-stone-200 mb-0.5">{savedBooks.length}</div>
+              <div className="text-xs text-stone-500 dark:text-stone-400 leading-tight">
                 {completedBooksCount > 0 ? `${completedBooksCount} fertig` : 'Bücher'}
               </div>
             </div>
             
             <div className="text-center">
-              <div className="w-12 h-12 mx-auto mb-2 rounded-xl bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center">
-                <Target className="w-6 h-6 text-green-600" />
+              <div className="w-12 h-12 mx-auto mb-2 rounded-xl bg-green-100 dark:bg-green-900 flex items-center justify-center">
+                <Target className="w-6 h-6 text-green-600 dark:text-green-400" />
               </div>
-              <div className="text-xl font-semibold text-stone-800 mb-0.5">
+              <div className="text-xl font-semibold text-stone-800 dark:text-stone-200 mb-0.5">
                 {readingLogs
                   .filter(log => {
                     const logDate = new Date(log.reading_date);
@@ -262,7 +262,7 @@ function AccountContent() {
                   .reduce((sum, log) => sum + log.pages_read, 0)}
                 {user.reading_goal_pages > 0 && `/${user.reading_goal_pages}`}
               </div>
-              <div className="text-xs text-stone-500 leading-tight">
+              <div className="text-xs text-stone-500 dark:text-stone-400 leading-tight">
                 {user.reading_goal_pages > 0 ? 'Ziel/Woche' : 'Seiten/Woche'}
               </div>
             </div>
@@ -270,13 +270,13 @@ function AccountContent() {
         </div>
 
         {/* Navigation Tabs */}
-        <div className="bg-white rounded-xl border border-stone-200 p-1.5 mb-8 flex gap-1.5 overflow-x-auto">
+        <div className="bg-white dark:bg-[#1a1a1a] rounded-xl border border-stone-200 dark:border-stone-700 p-1.5 mb-8 flex gap-1.5 overflow-x-auto">
           <button
             onClick={() => setActiveTab('overview')}
             className={`flex-1 min-w-[80px] px-3 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
               activeTab === 'overview'
-                ? 'bg-stone-800 text-white'
-                : 'text-stone-600 hover:bg-stone-50'
+                ? 'bg-stone-800 dark:bg-amber-600 text-white'
+                : 'text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800'
             }`}
           >
             Übersicht
@@ -285,8 +285,8 @@ function AccountContent() {
             onClick={() => setActiveTab('library')}
             className={`flex-1 min-w-[80px] px-3 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
               activeTab === 'library'
-                ? 'bg-stone-800 text-white'
-                : 'text-stone-600 hover:bg-stone-50'
+                ? 'bg-stone-800 dark:bg-amber-600 text-white'
+                : 'text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800'
             }`}
           >
             Bibliothek
@@ -295,8 +295,8 @@ function AccountContent() {
             onClick={() => setActiveTab('reading')}
             className={`flex-1 min-w-[80px] px-3 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
               activeTab === 'reading'
-                ? 'bg-stone-800 text-white'
-                : 'text-stone-600 hover:bg-stone-50'
+                ? 'bg-stone-800 dark:bg-amber-600 text-white'
+                : 'text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800'
             }`}
           >
             Fortschritt
@@ -305,8 +305,8 @@ function AccountContent() {
             onClick={() => setActiveTab('history')}
             className={`flex-1 min-w-[80px] px-3 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
               activeTab === 'history'
-                ? 'bg-stone-800 text-white'
-                : 'text-stone-600 hover:bg-stone-50'
+                ? 'bg-stone-800 dark:bg-amber-600 text-white'
+                : 'text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800'
             }`}
           >
             Verlauf
@@ -315,8 +315,8 @@ function AccountContent() {
             onClick={() => setActiveTab('settings')}
             className={`flex-1 min-w-[80px] px-3 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
               activeTab === 'settings'
-                ? 'bg-stone-800 text-white'
-                : 'text-stone-600 hover:bg-stone-50'
+                ? 'bg-stone-800 dark:bg-amber-600 text-white'
+                : 'text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800'
             }`}
           >
             Einstellungen
@@ -325,8 +325,8 @@ function AccountContent() {
             onClick={() => setActiveTab('messages')}
             className={`flex-1 min-w-[80px] px-3 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
               activeTab === 'messages'
-                ? 'bg-stone-800 text-white'
-                : 'text-stone-600 hover:bg-stone-50'
+                ? 'bg-stone-800 dark:bg-amber-600 text-white'
+                : 'text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800'
             }`}
           >
             Nachrichten
@@ -335,8 +335,8 @@ function AccountContent() {
             onClick={() => setActiveTab('quotes')}
             className={`flex-1 min-w-[80px] px-3 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
               activeTab === 'quotes'
-                ? 'bg-stone-800 text-white'
-                : 'text-stone-600 hover:bg-stone-50'
+                ? 'bg-stone-800 dark:bg-amber-600 text-white'
+                : 'text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800'
             }`}
           >
             Zitate
@@ -345,8 +345,8 @@ function AccountContent() {
             onClick={() => setActiveTab('following')}
             className={`flex-1 min-w-[80px] px-3 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
               activeTab === 'following'
-                ? 'bg-stone-800 text-white'
-                : 'text-stone-600 hover:bg-stone-50'
+                ? 'bg-stone-800 dark:bg-amber-600 text-white'
+                : 'text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800'
             }`}
           >
             Following
@@ -371,8 +371,8 @@ function AccountContent() {
             </div>
 
             {/* Schnellzugriff */}
-            <div className="bg-white rounded-2xl border border-stone-200 p-6">
-              <h2 className="text-lg font-medium text-stone-800 mb-4">Schnellzugriff</h2>
+            <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-6">
+              <h2 className="text-lg font-medium text-stone-800 dark:text-stone-200 mb-4">Schnellzugriff</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   <button
                     onClick={() => setActiveTab('library')}
@@ -721,21 +721,21 @@ function AccountContent() {
 
         {/* Einstellungen Tab */}
         {activeTab === 'settings' && (
-          <div className="bg-white rounded-2xl border border-stone-200 p-8">
-            <h2 className="text-xl font-light text-stone-800 mb-6">Meine Einstellungen</h2>
+          <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-8">
+            <h2 className="text-xl font-light text-stone-800 dark:text-stone-200 mb-6">Meine Einstellungen</h2>
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 border border-stone-200 rounded-xl">
+              <div className="flex items-center justify-between p-4 border border-stone-200 dark:border-stone-700 rounded-xl bg-white dark:bg-[#1a1a1a]">
                 <div className="flex items-center gap-3">
-                  <Globe className="w-5 h-5 text-stone-600" />
+                  <Globe className="w-5 h-5 text-stone-600 dark:text-stone-400" />
                   <div>
-                    <div className="font-medium text-stone-800">Sprache</div>
-                    <div className="text-sm text-stone-500">App-Sprache ändern</div>
+                    <div className="font-medium text-stone-800 dark:text-stone-200">Sprache</div>
+                    <div className="text-sm text-stone-500 dark:text-stone-400">App-Sprache ändern</div>
                   </div>
                 </div>
                 <select
                   value={language}
                   onChange={(e) => changeLanguage(e.target.value)}
-                  className="appearance-none bg-stone-50 border border-stone-300 rounded-lg px-3 py-2 pr-8 text-sm text-stone-700 hover:bg-stone-100 focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
+                  className="appearance-none bg-stone-50 dark:bg-[#262626] border border-stone-300 dark:border-stone-600 rounded-lg px-3 py-2 pr-8 text-sm text-stone-700 dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-700 focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
                 >
                   {supportedLanguages.map((lang) => (
                     <option key={lang.code} value={lang.code}>
@@ -764,13 +764,13 @@ function AccountContent() {
                     a.click();
                   }
                 }}
-                className="w-full flex items-center justify-between p-4 border border-stone-200 rounded-xl hover:bg-stone-50 transition-colors text-left"
+                className="w-full flex items-center justify-between p-4 border border-stone-200 dark:border-stone-700 rounded-xl hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors text-left bg-white dark:bg-[#1a1a1a]"
               >
                 <div className="flex items-center gap-3">
-                  <Download className="w-5 h-5 text-stone-600" />
+                  <Download className="w-5 h-5 text-stone-600 dark:text-stone-400" />
                   <div>
-                    <div className="font-medium text-stone-800">Daten exportieren</div>
-                    <div className="text-sm text-stone-500">Alle deine Daten herunterladen</div>
+                    <div className="font-medium text-stone-800 dark:text-stone-200">Daten exportieren</div>
+                    <div className="text-sm text-stone-500 dark:text-stone-400">Alle deine Daten herunterladen</div>
                   </div>
                 </div>
               </button>
