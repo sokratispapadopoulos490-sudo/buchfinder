@@ -21,6 +21,7 @@ import ReadingStreak from '@/components/stats/ReadingStreak';
 import GlobalSearch from '@/components/search/GlobalSearch';
 import DarkModeToggle from '@/components/settings/DarkModeToggle';
 import AddQuoteModal from '@/components/quotes/AddQuoteModal';
+import ReadingJourneyTeaser from '@/components/premium/ReadingJourneyTeaser';
 
 function AccountContent() {
   const [user, setUser] = useState(null);
@@ -362,6 +363,14 @@ function AccountContent() {
         {/* Übersicht Tab */}
         {activeTab === 'overview' && (
           <div className="space-y-6">
+            {/* Premium Teaser */}
+            {!isPremium && completedBooks.length >= 2 && (
+              <ReadingJourneyTeaser 
+                completedBooksCount={completedBooks.length}
+                recentBooks={completedBooks.slice(0, 3)}
+              />
+            )}
+
             {/* Stats Grid */}
             <div className="grid gap-6 md:grid-cols-2">
               <YearlyStats savedBooks={savedBooks} readingLogs={readingLogs} />
