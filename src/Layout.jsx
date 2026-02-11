@@ -67,7 +67,7 @@ export default function Layout({ children, currentPageName }) {
 
   return (
     <>
-      <div className={showNavigation ? 'pb-20' : ''}>
+      <div style={{ paddingBottom: showNavigation ? '80px' : '0' }}>
         {children}
         {showConsent && (
           <ConsentModal onAccept={() => setShowConsent(false)} />
