@@ -151,27 +151,18 @@ export default function Compass() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50 px-4 py-8 pb-24 md:py-12">
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50 px-4 py-8 md:py-12">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-2xl font-light text-stone-800">Dein Lesekompass</h1>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate('/Community')}
-              className="text-stone-500 hover:text-stone-700 transition-colors"
-              title="Community"
-            >
-              <Users className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => navigate('/Account')}
-              className="text-stone-500 hover:text-stone-700 transition-colors"
-              title="Mein Account"
-            >
-              <Library className="w-5 h-5" />
-            </button>
-          </div>
+          <button
+            onClick={() => navigate('/Community')}
+            className="text-stone-500 hover:text-stone-700 transition-colors"
+            title="Community"
+          >
+            <Users className="w-5 h-5" />
+          </button>
         </div>
 
         {/* Hauptkarte */}
