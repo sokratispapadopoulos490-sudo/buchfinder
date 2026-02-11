@@ -32,9 +32,11 @@ export default function BottomNav() {
     return paths.some(path => location.pathname === path || location.pathname.startsWith(path + '?'));
   };
 
+  console.log('BottomNav rendered!', { location: location.pathname });
+
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200 z-50 safe-area-pb">
-      <div className="max-w-lg mx-auto px-4 py-3">
+    <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-stone-300 shadow-2xl" style={{ zIndex: 9999 }}>
+      <div className="max-w-lg mx-auto px-4 py-4">
         <div className="flex items-center justify-around">
           {navItems.map((item) => {
             const Icon = item.icon;
