@@ -33,12 +33,10 @@ export default function DarkModeToggle() {
     const newValue = !isDark;
     
     try {
-      await base44.auth.updateMe({ dark_mode: newValue });
-      
       // Dark Mode sofort anwenden
       if (newValue) {
         document.documentElement.classList.add('dark');
-        document.body.style.backgroundColor = '#141414';
+        document.body.style.backgroundColor = '#0a0a0a';
       } else {
         document.documentElement.classList.remove('dark');
         document.body.style.backgroundColor = '';
@@ -46,10 +44,7 @@ export default function DarkModeToggle() {
       
       setIsDark(newValue);
       
-      // Seite neu laden für vollständige Anwendung
-      setTimeout(() => {
-        window.location.reload();
-      }, 50);
+      await base44.auth.updateMe({ dark_mode: newValue });
     } catch (error) {
       console.error('Error saving dark mode:', error);
     }
