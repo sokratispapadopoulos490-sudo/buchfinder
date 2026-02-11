@@ -60,14 +60,16 @@ export default function BottomNav() {
                 flexDirection: 'column',
                 alignItems: 'center',
                 gap: '4px',
-                padding: '8px 12px',
+                padding: '6px 12px',
                 border: 'none',
                 background: active ? '#fef3c7' : 'transparent',
                 borderRadius: '12px',
                 cursor: 'pointer',
                 color: active ? '#d97706' : '#78716c',
                 flex: 1,
-                maxWidth: '120px'
+                maxWidth: '120px',
+                minHeight: '56px',
+                touchAction: 'manipulation'
               }}
             >
               <Icon style={{ width: '24px', height: '24px', strokeWidth: active ? 2.5 : 2 }} />
