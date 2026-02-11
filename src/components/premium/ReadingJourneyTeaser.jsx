@@ -80,10 +80,7 @@ export default function ReadingJourneyTeaser({ completedBooksCount, recentBooks 
         <Button
           variant="outline"
           className="flex-1"
-          onClick={() => {
-            // Scroll to benefits or more info
-            document.getElementById('premium-benefits')?.scrollIntoView({ behavior: 'smooth' });
-          }}
+          onClick={() => navigate('/Premium')}
         >
           Mehr erfahren
         </Button>

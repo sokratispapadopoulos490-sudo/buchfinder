@@ -155,12 +155,12 @@ function AccountContent() {
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50 px-4 py-6 md:px-6 md:py-12">
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center justify-between mb-8">
-          <button
-            onClick={() => navigate('/')}
-            className="text-stone-500 hover:text-stone-700 transition-colors"
-          >
-            ← Zurück
-          </button>
+            <button
+              onClick={() => navigate('/Compass')}
+              className="text-stone-500 hover:text-stone-700 transition-colors"
+            >
+              ← Zurück zum Kompass
+            </button>
 
           <div className="flex items-center gap-2">
             <button
@@ -382,11 +382,11 @@ function AccountContent() {
               <h2 className="text-lg font-medium text-stone-800 mb-4">Schnellzugriff</h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <button
-                  onClick={() => navigate('/')}
+                  onClick={() => navigate('/Compass')}
                   className="flex flex-col items-center justify-center p-4 border border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all"
                 >
                   <Compass className="w-6 h-6 text-amber-600 mb-2" />
-                  <span className="text-xs font-medium text-stone-800 text-center">Neue Empfehlung</span>
+                  <span className="text-xs font-medium text-stone-800 text-center">Zum Kompass</span>
                 </button>
 
                 <button

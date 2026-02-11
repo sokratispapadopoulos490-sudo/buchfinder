@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { BookOpen, Sparkles, Target, MessageCircle, Plus, ArrowRight, Library } from 'lucide-react';
+import { BookOpen, Sparkles, Target, MessageCircle, Plus, ArrowRight, Library, Users } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
@@ -156,12 +156,22 @@ export default function Compass() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-2xl font-light text-stone-800">Dein Lesekompass</h1>
-          <button
-            onClick={() => navigate('/Account')}
-            className="text-stone-500 hover:text-stone-700 transition-colors"
-          >
-            <Library className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate('/Community')}
+              className="text-stone-500 hover:text-stone-700 transition-colors"
+              title="Community"
+            >
+              <Users className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => navigate('/Account')}
+              className="text-stone-500 hover:text-stone-700 transition-colors"
+              title="Mein Account"
+            >
+              <Library className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Hauptkarte */}
