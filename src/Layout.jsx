@@ -11,6 +11,28 @@ export default function Layout({ children, currentPageName }) {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Dark Mode initialisieren SOFORT
+  useEffect(() => {
+    const initDarkMode = async () => {
+      try {
+        const isAuth = await base44.auth.isAuthenticated();
+        if (isAuth) {
+          const user = await base44.auth.me();
+          if (user?.dark_mode) {
+            document.documentElement.classList.add('dark');
+            document.body.style.backgroundColor = '#141414';
+          } else {
+            document.documentElement.classList.remove('dark');
+            document.body.style.backgroundColor = '';
+          }
+        }
+      } catch (error) {
+        console.error('Dark mode init error:', error);
+      }
+    };
+    initDarkMode();
+  }, []);
+
   useEffect(() => {
     checkConsentAndRedirect();
   }, []);
