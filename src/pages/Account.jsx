@@ -152,15 +152,9 @@ function AccountContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50 px-4 py-6 md:px-6 md:py-12">
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50 px-4 py-6 pb-24 md:px-6 md:py-12">
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center justify-between mb-8">
-            <button
-              onClick={() => navigate('/Compass')}
-              className="text-stone-500 hover:text-stone-700 transition-colors"
-            >
-              ← Zurück zum Kompass
-            </button>
 
           <div className="flex items-center gap-2">
             <button

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ConsentModal from '@/components/legal/ConsentModal';
+import MainNav from '@/components/navigation/MainNav';
 import { base44 } from '@/api/base44Client';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -24,18 +25,18 @@ export default function Layout({ children, currentPageName }) {
           setShowConsent(true);
         }
 
-        // Redirect-Logik: Nur bei Landing auf Home oder Root
-        if (location.pathname === '/' || currentPageName === 'Home') {
+        // Redirect-Logik: Nur bei Landing auf Root
+        if (location.pathname === '/') {
           // Prüfe ob Nutzer Bücher hat
           const savedBooks = await base44.entities.SavedBook.filter({ is_completed: false }, '-created_date', 1);
           
           if (savedBooks.length > 0) {
             // Hat Bücher → Compass
-            if (currentPageName === 'Home') {
-              navigate('/Compass');
-            }
+            navigate('/Compass');
+          } else {
+            // Keine Bücher → BookSearch
+            navigate('/BookSearch');
           }
-          // Keine Bücher → bleibt auf Home für neue Empfehlung
         }
       } else {
         // Nicht eingeloggt → zum Onboarding
@@ -54,9 +55,14 @@ export default function Layout({ children, currentPageName }) {
     return <div>{children}</div>;
   }
 
+  // Seiten ohne Navigation
+  const pagesWithoutNav = ['Onboarding', 'Home', 'Legal', 'Premium'];
+  const showNav = !pagesWithoutNav.includes(currentPageName);
+
   return (
     <div>
       {children}
+      {showNav && <MainNav />}
       {showConsent && (
         <ConsentModal onAccept={() => setShowConsent(false)} />
       )}
