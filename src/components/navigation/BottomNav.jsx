@@ -100,7 +100,8 @@ export default function BottomNav() {
             </button>
           );
         })}
-      </div>
-    </nav>
+        </div>
+      </nav>
+    </div>
   );
 }
