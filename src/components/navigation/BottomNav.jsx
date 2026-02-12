@@ -42,7 +42,7 @@ export default function BottomNav() {
   return (
     <div style={{
       position: 'fixed',
-      bottom: '8px',
+      bottom: '25px',
       left: '8px',
       right: '8px',
       backgroundColor: 'white',
