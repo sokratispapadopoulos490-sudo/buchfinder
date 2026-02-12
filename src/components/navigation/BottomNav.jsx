@@ -49,7 +49,7 @@ export default function BottomNav() {
       pointerEvents: 'none',
       padding: '0 8px 45px 8px'
     }}>
-      <nav style={{
+      <div style={{
         backgroundColor: 'white',
         borderTop: '2px solid #d6d3d1',
         borderRadius: '16px',
@@ -63,45 +63,46 @@ export default function BottomNav() {
           maxWidth: '600px',
           margin: '0 auto'
         }}>
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const active = isActive(item.path);
-          
-          return (
-            <button
-              key={item.path}
-              onClick={() => navigate(createPageUrl(item.path))}
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '4px',
-                padding: '6px 12px',
-                border: 'none',
-                background: active ? '#fef3c7' : 'transparent',
-                borderRadius: '12px',
-                cursor: 'pointer',
-                color: active ? '#d97706' : '#78716c',
-                flex: 1,
-                maxWidth: '120px',
-                minHeight: '56px',
-                touchAction: 'manipulation'
-              }}
-            >
-              <Icon style={{ width: '24px', height: '24px', strokeWidth: active ? 2.5 : 2 }} />
-              <span style={{ 
-                fontSize: '11px', 
-                fontWeight: active ? 600 : 500,
-                textAlign: 'center',
-                lineHeight: '1.2'
-              }}>
-                {item.label}
-              </span>
-            </button>
-          );
-        })}
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const active = isActive(item.path);
+            
+            return (
+              <button
+                key={item.path}
+                onClick={() => navigate(createPageUrl(item.path))}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '4px',
+                  padding: '6px 12px',
+                  border: 'none',
+                  background: active ? '#fef3c7' : 'transparent',
+                  borderRadius: '12px',
+                  cursor: 'pointer',
+                  color: active ? '#d97706' : '#78716c',
+                  flex: 1,
+                  maxWidth: '120px',
+                  minHeight: '56px',
+                  touchAction: 'manipulation',
+                  pointerEvents: 'auto'
+                }}
+              >
+                <Icon style={{ width: '24px', height: '24px', strokeWidth: active ? 2.5 : 2 }} />
+                <span style={{ 
+                  fontSize: '11px', 
+                  fontWeight: active ? 600 : 500,
+                  textAlign: 'center',
+                  lineHeight: '1.2'
+                }}>
+                  {item.label}
+                </span>
+              </button>
+            );
+          })}
         </div>
-      </nav>
+      </div>
     </div>
   );
 }
