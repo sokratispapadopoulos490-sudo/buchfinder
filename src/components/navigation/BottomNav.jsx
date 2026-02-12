@@ -98,6 +98,6 @@ export default function BottomNav() {
           );
         })}
       </div>
-    </div>
+    </nav>
   );
 }
