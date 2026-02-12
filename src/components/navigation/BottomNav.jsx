@@ -48,8 +48,9 @@ export default function BottomNav() {
       backgroundColor: 'white',
       borderTop: '2px solid #d6d3d1',
       borderRadius: '16px',
-      zIndex: 99999,
-      boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+      zIndex: 999999,
+      boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+      pointerEvents: 'auto'
     }}>
       <div style={{
         display: 'flex',
