@@ -50,8 +50,8 @@ export default function Layout({ children, currentPageName }) {
         }
 
         if (location.pathname === '/') {
-          const savedBooks = await base44.entities.SavedBook.filter({ is_completed: false }, '-created_date', 1);
-          navigate(savedBooks.length > 0 ? '/Compass' : '/Home');
+          // Neuer Hauptnutzerpfad: Immer zu Compass nach Login
+          navigate('/Compass');
         }
       } else if (location.pathname === '/') {
         navigate('/Onboarding');

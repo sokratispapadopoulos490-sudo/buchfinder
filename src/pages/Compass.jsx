@@ -138,7 +138,7 @@ export default function Compass() {
               Lass uns gemeinsam das richtige Buch für dich finden.
             </p>
             <Button
-              onClick={() => navigate('/')}
+              onClick={() => navigate('/Home')}
               className="bg-amber-600 hover:bg-amber-700 text-white gap-2"
             >
               <Sparkles className="w-4 h-4" />
