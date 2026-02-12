@@ -40,7 +40,7 @@ export default function BottomNav() {
   };
 
   return (
-    <div style={{
+    <nav style={{
       position: 'fixed',
       bottom: '45px',
       left: '8px',
@@ -57,7 +57,8 @@ export default function BottomNav() {
         justifyContent: 'space-around',
         padding: '10px 8px',
         maxWidth: '600px',
-        margin: '0 auto'
+        margin: '0 auto',
+        pointerEvents: 'auto'
       }}>
         {navItems.map((item) => {
           const Icon = item.icon;
