@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Compass, Search, User } from 'lucide-react';
+import { Compass, Sparkles, Bookmark, Users, User } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 
 export default function BottomNav() {
@@ -9,18 +9,28 @@ export default function BottomNav() {
 
   const navItems = [
     {
-      icon: Search,
-      label: 'Neue Entdeckungsreise',
-      path: 'Home'
-    },
-    {
       icon: Compass,
-      label: 'Lesekompass',
+      label: 'Kompass',
       path: 'Compass'
     },
     {
+      icon: Sparkles,
+      label: 'Entdecken',
+      path: 'Home'
+    },
+    {
+      icon: Bookmark,
+      label: 'Bibliothek',
+      path: 'Account?tab=library'
+    },
+    {
+      icon: Users,
+      label: 'Community',
+      path: 'Community'
+    },
+    {
       icon: User,
-      label: 'Mein Account',
+      label: 'Account',
       path: 'Account'
     }
   ];
