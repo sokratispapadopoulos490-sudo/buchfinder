@@ -40,18 +40,22 @@ export default function BottomNav() {
   };
 
   return (
-    <nav style={{
+    <div style={{
       position: 'fixed',
-      bottom: '45px',
-      left: '8px',
-      right: '8px',
-      backgroundColor: 'white',
-      borderTop: '2px solid #d6d3d1',
-      borderRadius: '16px',
-      zIndex: 999999,
-      boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-      pointerEvents: 'auto'
+      bottom: '0',
+      left: '0',
+      right: '0',
+      zIndex: 9999999,
+      pointerEvents: 'none',
+      padding: '0 8px 45px 8px'
     }}>
+      <nav style={{
+        backgroundColor: 'white',
+        borderTop: '2px solid #d6d3d1',
+        borderRadius: '16px',
+        boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+        pointerEvents: 'auto'
+      }}>
       <div style={{
         display: 'flex',
         justifyContent: 'space-around',
