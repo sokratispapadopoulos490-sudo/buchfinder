@@ -56,14 +56,13 @@ export default function BottomNav() {
         boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 4px 6px -1px rgba(0, 0, 0, 0.1)',
         pointerEvents: 'auto'
       }}>
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-around',
-        padding: '10px 8px',
-        maxWidth: '600px',
-        margin: '0 auto',
-        pointerEvents: 'auto'
-      }}>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-around',
+          padding: '10px 8px',
+          maxWidth: '600px',
+          margin: '0 auto'
+        }}>
         {navItems.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.path);
