@@ -184,6 +184,29 @@ export default function Compass() {
           animate={{ opacity: 1, y: 0 }}
           className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-8 shadow-sm mb-6"
         >
+          {/* Buch-Navigation */}
+          {allBooks.length > 1 && (
+            <div className="flex items-center justify-between mb-4">
+              <button
+                onClick={() => switchBook(Math.max(0, currentBookIndex - 1))}
+                disabled={currentBookIndex === 0}
+                className="p-2 rounded-full border border-stone-200 dark:border-stone-700 disabled:opacity-30 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors"
+              >
+                <ChevronLeft className="w-4 h-4 text-stone-600 dark:text-stone-400" />
+              </button>
+              <span className="text-xs text-stone-400 dark:text-stone-500">
+                {currentBookIndex + 1} von {allBooks.length} Büchern
+              </span>
+              <button
+                onClick={() => switchBook(Math.min(allBooks.length - 1, currentBookIndex + 1))}
+                disabled={currentBookIndex === allBooks.length - 1}
+                className="p-2 rounded-full border border-stone-200 dark:border-stone-700 disabled:opacity-30 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors"
+              >
+                <ChevronRight className="w-4 h-4 text-stone-600 dark:text-stone-400" />
+              </button>
+            </div>
+          )}
+
           {/* Aktuelles Buch */}
           <div className="flex items-start gap-4 mb-6">
             <div className={`w-20 h-28 rounded ${currentBook.book_data.coverColor || 'bg-stone-100'} flex items-center justify-center flex-shrink-0`}>
