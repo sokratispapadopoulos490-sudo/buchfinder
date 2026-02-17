@@ -115,6 +115,7 @@ export default function Compass() {
     const book = allBooks[newIndex];
     setCurrentBookIndex(newIndex);
     setCurrentBook(book);
+    setTodayReflection('');
     const logs = await base44.entities.ReadingLog.filter({ book_id: book.book_id });
     const totalPages = logs.reduce((sum, log) => sum + log.pages_read, 0);
     const bookPages = book.book_data.pageCount || 1;
@@ -122,16 +123,23 @@ export default function Compass() {
   };
 
   const saveReflection = async () => {
-    if (!todayReflection.trim()) return;
+    if (!todayReflection.trim() || !currentBook) return;
 
     try {
-      await base44.auth.updateMe({ last_reflection: todayReflection });
-      setLastReflection(todayReflection);
+      const bookId = String(currentBook.book_id);
+      const updated = {
+        ...bookReflections,
+        [bookId]: { text: todayReflection, date: new Date().toISOString() }
+      };
+      await base44.auth.updateMe({ book_reflections: updated });
+      setBookReflections(updated);
       setTodayReflection('');
     } catch (error) {
       console.error('Error saving reflection:', error);
     }
   };
+
+  const currentReflection = currentBook ? bookReflections[String(currentBook.book_id)] : null;
 
   if (loading) {
     return (
