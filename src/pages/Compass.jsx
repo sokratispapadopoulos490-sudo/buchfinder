@@ -13,6 +13,7 @@ export default function Compass() {
   const [currentBook, setCurrentBook] = useState(null);
   const [bookReflections, setBookReflections] = useState({}); // { bookId: { text, date } }
   const [todayReflection, setTodayReflection] = useState('');
+  const [reflectionExpanded, setReflectionExpanded] = useState(false);
   const [streak, setStreak] = useState(0);
   const [progress, setProgress] = useState(0);
   const [showProgressModal, setShowProgressModal] = useState(false);
