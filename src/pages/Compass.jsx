@@ -11,7 +11,7 @@ import ReadingProgressModal from '@/components/reading/ReadingProgressModal';
 export default function Compass() {
   const [user, setUser] = useState(null);
   const [currentBook, setCurrentBook] = useState(null);
-  const [lastReflection, setLastReflection] = useState('');
+  const [bookReflections, setBookReflections] = useState({}); // { bookId: { text, date } }
   const [todayReflection, setTodayReflection] = useState('');
   const [streak, setStreak] = useState(0);
   const [progress, setProgress] = useState(0);
