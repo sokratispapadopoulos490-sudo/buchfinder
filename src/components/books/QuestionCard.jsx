@@ -27,13 +27,13 @@ export default function QuestionCard({
     >
       {/* Progress indicator */}
       <div className="mb-8">
-        <div className="flex justify-between text-sm text-stone-400 mb-2">
+        <div className="flex justify-between text-sm text-stone-400 dark:text-stone-500 mb-2">
           <span>Frage {questionNumber}</span>
           <span>{questionNumber} von {totalQuestions}</span>
         </div>
-        <div className="h-1 bg-stone-100 rounded-full overflow-hidden">
+        <div className="h-1 bg-stone-100 dark:bg-stone-800 rounded-full overflow-hidden">
           <motion.div
-            className="h-full bg-stone-800"
+            className="h-full bg-stone-800 dark:bg-amber-500"
             initial={{ width: 0 }}
             animate={{ width: `${(questionNumber / totalQuestions) * 100}%` }}
             transition={{ duration: 0.5 }}
@@ -42,12 +42,12 @@ export default function QuestionCard({
       </div>
 
       {/* Question */}
-      <h2 className="text-2xl md:text-3xl font-light text-stone-800 mb-4 leading-relaxed">
+      <h2 className="text-2xl md:text-3xl font-light text-stone-800 dark:text-stone-100 mb-4 leading-relaxed">
         {question}
       </h2>
 
       {description && (
-        <p className="text-stone-500 text-sm mb-8">{description}</p>
+        <p className="text-stone-500 dark:text-stone-400 text-sm mb-8">{description}</p>
       )}
 
       {/* Text Input oder Options */}
@@ -60,12 +60,12 @@ export default function QuestionCard({
               onSelect(e.target.value);
             }}
             placeholder={placeholder}
-            className="w-full px-4 py-3 text-base"
+            className="w-full px-4 py-3 text-base dark:bg-stone-800 dark:border-stone-700 dark:text-stone-100 dark:placeholder-stone-500"
           />
           <Button
             onClick={() => onTextSubmit && onTextSubmit()}
             disabled={!textValue.trim()}
-            className="w-full bg-stone-800 hover:bg-stone-700"
+            className="w-full bg-stone-800 hover:bg-stone-700 dark:bg-amber-600 dark:hover:bg-amber-700"
           >
             Weiter
           </Button>
@@ -81,13 +81,13 @@ export default function QuestionCard({
               onClick={() => onSelect(option.value)}
               className={cn(
                 "w-full text-left px-5 py-3.5 rounded-xl border transition-all duration-300",
-                "hover:border-stone-400 hover:bg-stone-50",
+                "hover:border-stone-400 hover:bg-stone-50 dark:hover:border-amber-500 dark:hover:bg-stone-800",
                 selectedValue === option.value
-                  ? "border-stone-800 bg-stone-50"
-                  : "border-stone-200 bg-white"
+                  ? "border-stone-800 bg-stone-50 dark:border-amber-500 dark:bg-stone-800"
+                  : "border-stone-200 bg-white dark:border-stone-700 dark:bg-stone-900"
               )}
             >
-              <span className="text-stone-700 font-light text-[15px]">{option.label}</span>
+              <span className="text-stone-700 dark:text-stone-200 font-light text-[15px]">{option.label}</span>
             </motion.button>
           ))}
         </div>
