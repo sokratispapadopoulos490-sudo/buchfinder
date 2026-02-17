@@ -555,32 +555,36 @@ function HomeContent() {
 
   const handleShowBooks = async () => {
     setLoading(true);
-    const results = getMatchingBooks(profile);
+
+    // Bereits gespeicherte Buch-IDs laden
+    let savedBookIds = [];
+    if (isAuthenticated) {
+      try {
+        const savedBooks = await base44.entities.SavedBook.list();
+        savedBookIds = savedBooks.map(sb => sb.book_id);
+      } catch (error) {
+        console.error('Fehler beim Laden der Bibliothek:', error);
+      }
+    }
+
+    const profileWithSaved = { ...profile, savedBookIds };
+    let results = getMatchingBooks(profileWithSaved);
     
     // Übersetze Bücher wenn nicht auf Deutsch
     if (language !== 'de') {
-      const translateBook = async (book) => {
-        if (!book) return null;
-        return {
-          ...book,
-          title: await translateObject({ text: book.title }, language).then(r => r.text),
-          description: await translateObject({ text: book.description }, language).then(r => r.text)
-        };
-      };
-      
-      results.place1 = await translateBook(results.place1);
-      results.place2 = await translateBook(results.place2);
-      results.place3 = await translateBook(results.place3);
+      results = await Promise.all(results.map(async (book) => ({
+        ...book,
+        title: await translateObject({ text: book.title }, language).then(r => r.text),
+        description: await translateObject({ text: book.description }, language).then(r => r.text)
+      })));
     }
     
-    // Speichere Empfehlung immer (wenn authentifiziert)
+    // Speichere Empfehlung (wenn authentifiziert)
     if (isAuthenticated) {
       try {
-        const allBooks = [results.place1, results.place2, results.place3].filter(Boolean);
-        
         await base44.entities.Recommendation.create({
-          books: allBooks,
-          profile: profile,
+          books: results,
+          profile: profileWithSaved,
           is_premium: isPremium
         });
         setRecommendationCount(recommendationCount + 1);
