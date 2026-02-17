@@ -366,10 +366,11 @@ function HomeContent() {
       await checkAuth();
       await loadRecommendationCount();
       
-      // Prüfe ob wir die letzte Empfehlung anzeigen sollen
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('showLastRecommendation') === 'true') {
         await loadLastRecommendation();
+      } else if (urlParams.get('startQuestions') === 'true') {
+        setPhase('questions');
       }
     };
     init();
