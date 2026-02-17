@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Compass, Sparkles, Bookmark, Users, User } from 'lucide-react';
+import { Compass, Users, User } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 
 export default function BottomNav() {
