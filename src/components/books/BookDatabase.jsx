@@ -1284,12 +1284,17 @@ export const books = [
     ];
 
 export const getMatchingBooks = (profile) => {
-  const { mainTopics, secondaryTopics, style, difficulty, ageGroup, readBooks = [] } = profile;
+  const { mainTopics, secondaryTopics, style, difficulty, ageGroup, readBooks = [], savedBookIds = [] } = profile;
   
   // Zuerst nach Altersgruppe filtern
   let ageFilteredBooks = books.filter(book => book.ageGroup === ageGroup);
   
-  // Filtere bereits gelesene Bücher aus
+  // Filtere bereits gespeicherte Bücher (in Bibliothek) heraus
+  if (savedBookIds.length > 0) {
+    ageFilteredBooks = ageFilteredBooks.filter(book => !savedBookIds.includes(book.id));
+  }
+  
+  // Filtere manuell eingegebene gelesene Bücher aus
   if (readBooks.length > 0) {
     ageFilteredBooks = ageFilteredBooks.filter(book => {
       const bookTitleLower = book.title.toLowerCase();
@@ -1335,22 +1340,12 @@ export const getMatchingBooks = (profile) => {
   // Sortieren
   const sorted = scoredBooks.sort((a, b) => b.score - a.score);
   
-  // Top 3 Bücher für die Platzierung
-  const place1 = sorted[0]; // Passt am besten
-  const place2 = sorted[1]; // Zweite beste Wahl
+  // Top 10 Bücher
+  const topBooks = sorted.slice(0, 10).map((book, idx) => ({
+    ...book,
+    placement: idx + 1,
+    isContrast: idx >= 2
+  }));
   
-  // Platz 3: Kontrastbuch (anderer Stil)
-  const usedIds = [place1?.id, place2?.id];
-  const place3 = sorted
-    .filter(b => !usedIds.includes(b.id) && b.score > 0)
-    .find(b => {
-      const hasDifferentStyle = !style.some(s => b.style.includes(s));
-      return hasDifferentStyle;
-    }) || sorted.find(b => !usedIds.includes(b.id));
-  
-  return {
-    place1: place1 ? { ...place1, placement: 1 } : null,
-    place2: place2 ? { ...place2, placement: 2 } : null,
-    place3: place3 ? { ...place3, placement: 3, isContrast: true } : null
-  };
+  return topBooks;
 };
