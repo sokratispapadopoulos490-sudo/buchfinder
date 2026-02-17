@@ -111,6 +111,16 @@ export default function Compass() {
     setReflectionQuestion(questions[Math.floor(Math.random() * questions.length)]);
   };
 
+  const switchBook = async (newIndex) => {
+    const book = allBooks[newIndex];
+    setCurrentBookIndex(newIndex);
+    setCurrentBook(book);
+    const logs = await base44.entities.ReadingLog.filter({ book_id: book.book_id });
+    const totalPages = logs.reduce((sum, log) => sum + log.pages_read, 0);
+    const bookPages = book.book_data.pageCount || 1;
+    setProgress(Math.min(100, Math.round((totalPages / bookPages) * 100)));
+  };
+
   const saveReflection = async () => {
     if (!todayReflection.trim()) return;
 
