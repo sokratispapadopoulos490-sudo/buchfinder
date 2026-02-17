@@ -32,9 +32,10 @@ export default function Compass() {
       const currentUser = await base44.auth.me();
       setUser(currentUser);
 
-      // Aktuelles Buch laden
-      const savedBooks = await base44.entities.SavedBook.filter({ is_completed: false }, '-created_date', 1);
+      // Alle Bücher laden
+      const savedBooks = await base44.entities.SavedBook.filter({ is_completed: false }, '-created_date');
       if (savedBooks.length > 0) {
+        setAllBooks(savedBooks);
         setCurrentBook(savedBooks[0]);
 
         // Fortschritt berechnen
