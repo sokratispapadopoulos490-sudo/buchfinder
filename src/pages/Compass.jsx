@@ -251,17 +251,17 @@ export default function Compass() {
             </div>
           </div>
 
-          {/* Letzter Gedanke */}
-          {lastReflection && (
+          {/* Letzter Gedanke – buchspezifisch */}
+          {currentReflection && (
             <div className="mb-6 p-4 bg-amber-50 dark:bg-amber-900/30 rounded-xl border border-amber-100 dark:border-amber-800">
               <div className="flex items-start gap-2 mb-2">
                 <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-500 mt-0.5 flex-shrink-0" />
                 <div className="flex-1">
                   <div className="text-xs font-medium text-amber-900 dark:text-amber-400 mb-1">
-                    Dein Gedanke von {lastReflection.length > 50 ? 'gestern' : 'vorhin'}
+                    Dein Gedanke vom {new Date(currentReflection.date).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                   </div>
                   <p className="text-sm text-amber-800 dark:text-amber-300 leading-relaxed">
-                    "{lastReflection}"
+                    "{currentReflection.text}"
                   </p>
                 </div>
               </div>
