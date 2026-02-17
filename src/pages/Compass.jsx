@@ -49,9 +49,9 @@ export default function Compass() {
         calculateStreak(allLogs);
       }
 
-      // Letzte Reflexion laden
-      if (currentUser.last_reflection) {
-        setLastReflection(currentUser.last_reflection);
+      // Buchspezifische Reflexionen laden
+      if (currentUser.book_reflections) {
+        setBookReflections(currentUser.book_reflections);
       }
 
       // Letzte Empfehlungen laden
