@@ -51,6 +51,12 @@ export default function Compass() {
         setLastReflection(currentUser.last_reflection);
       }
 
+      // Letzte Empfehlungen laden
+      const recs = await base44.entities.Recommendation.list('-created_date', 1);
+      if (recs.length > 0 && recs[0].books) {
+        setLastRecommendations(recs[0].books.slice(0, 3));
+      }
+
       // Reflexionsfrage generieren
       generateReflectionQuestion();
     } catch (error) {
