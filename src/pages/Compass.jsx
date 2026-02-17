@@ -18,6 +18,8 @@ export default function Compass() {
   const [showProgressModal, setShowProgressModal] = useState(false);
   const [reflectionQuestion, setReflectionQuestion] = useState('');
   const [lastRecommendations, setLastRecommendations] = useState([]);
+  const [allBooks, setAllBooks] = useState([]);
+  const [currentBookIndex, setCurrentBookIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
