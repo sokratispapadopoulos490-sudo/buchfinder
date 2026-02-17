@@ -9,24 +9,14 @@ export default function BottomNav() {
 
   const navItems = [
     {
-      icon: Compass,
-      label: 'Kompass',
-      path: 'Compass'
-    },
-    {
-      icon: Sparkles,
-      label: 'Entdecken',
-      path: 'Home'
-    },
-    {
-      icon: Bookmark,
-      label: 'Bibliothek',
-      path: 'Account?tab=library'
-    },
-    {
       icon: Users,
       label: 'Community',
       path: 'Community'
+    },
+    {
+      icon: Compass,
+      label: 'Kompass',
+      path: 'Compass'
     },
     {
       icon: User,
