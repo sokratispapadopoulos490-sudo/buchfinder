@@ -278,7 +278,7 @@ export default function Compass() {
         {/* Quick Links */}
         <div className="grid grid-cols-2 gap-3 mb-6">
           <button
-            onClick={() => navigate('/Home')}
+            onClick={() => navigate('/Home?startQuestions=true')}
             className="p-4 bg-white dark:bg-[#1a1a1a] border border-stone-200 dark:border-stone-700 rounded-xl hover:border-amber-300 dark:hover:border-amber-700 transition-colors text-left"
           >
             <Sparkles className="w-5 h-5 text-amber-600 dark:text-amber-500 mb-2" />
