@@ -373,10 +373,10 @@ export default function BookCard({ book, reasons, index, isContrast }) {
                     className="block p-3 border border-stone-200 dark:border-stone-700 rounded-lg hover:border-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800 transition-all"
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <span className="font-medium text-stone-800 text-sm">{link.name}</span>
+                      <span className="font-medium text-stone-800 dark:text-stone-200 text-sm">{link.name}</span>
                       <ExternalLink className="w-3 h-3 text-stone-400" />
                     </div>
-                    <p className="text-xs text-stone-500">{link.description}</p>
+                    <p className="text-xs text-stone-500 dark:text-stone-400">{link.description}</p>
                   </a>
                 ))}
               </motion.div>
