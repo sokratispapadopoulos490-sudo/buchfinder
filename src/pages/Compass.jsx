@@ -140,6 +140,19 @@ export default function Compass() {
     }
   };
 
+  const deleteReflection = async () => {
+    if (!currentBook) return;
+    try {
+      const bookId = String(currentBook.book_id);
+      const updated = { ...bookReflections };
+      delete updated[bookId];
+      await base44.auth.updateMe({ book_reflections: updated });
+      setBookReflections(updated);
+    } catch (error) {
+      console.error('Error deleting reflection:', error);
+    }
+  };
+
   const currentReflection = currentBook ? bookReflections[String(currentBook.book_id)] : null;
 
   if (loading) {
