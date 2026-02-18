@@ -234,7 +234,7 @@ export default function BookCard({ book, reasons, index, isContrast }) {
           
           <ul className="space-y-2 mb-6">
             {reasons.bullets.map((bullet, i) => (
-              <li key={i} className="flex items-start gap-3 text-sm text-stone-600">
+              <li key={i} className="flex items-start gap-3 text-sm text-stone-600 dark:text-stone-300">
                 <span className="w-1.5 h-1.5 rounded-full bg-stone-400 mt-2 flex-shrink-0" />
                 <span>{bullet}</span>
               </li>
