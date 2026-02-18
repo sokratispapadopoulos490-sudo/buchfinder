@@ -934,11 +934,11 @@ function HomeContent() {
               <div className="mb-8 space-y-3">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <button
-                    onClick={handleBackFromResults}
+                    onClick={cameFromCompass ? () => navigate('/Compass') : handleBackFromResults}
                     className="flex items-center gap-2 text-stone-500 dark:text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 transition-colors"
                   >
                     <ChevronLeft className="w-4 h-4" />
-                    <span className="text-sm">{uiTexts.backToProfile}</span>
+                    <span className="text-sm">{cameFromCompass ? 'Zurück zum Kompass' : uiTexts.backToProfile}</span>
                   </button>
 
                   {/* Kompakte Sprachauswahl */}
