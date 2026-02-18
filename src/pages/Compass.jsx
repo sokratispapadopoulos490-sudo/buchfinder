@@ -265,20 +265,35 @@ export default function Compass() {
             </div>
           </div>
 
-          {/* Letzter Gedanke – buchspezifisch */}
+          {/* Letzter Gedanke – buchspezifisch, aufklappbar */}
           {currentReflection && (
-            <div className="mb-6 p-4 bg-amber-50 dark:bg-amber-900/30 rounded-xl border border-amber-100 dark:border-amber-800">
-              <div className="flex items-start gap-2 mb-2">
-                <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-500 mt-0.5 flex-shrink-0" />
-                <div className="flex-1">
-                  <div className="text-xs font-medium text-amber-900 dark:text-amber-400 mb-1">
-                    Dein Gedanke vom {new Date(currentReflection.date).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })}
-                  </div>
+            <div className="mb-6 bg-amber-50 dark:bg-amber-900/30 rounded-xl border border-amber-100 dark:border-amber-800 overflow-hidden">
+              <button
+                onClick={() => setReflectionExpanded(prev => !prev)}
+                className="w-full flex items-center gap-2 px-4 py-3 text-left"
+              >
+                <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-500 flex-shrink-0" />
+                <span className="text-xs font-medium text-amber-900 dark:text-amber-400 flex-1">
+                  Dein Gedanke vom {new Date(currentReflection.date).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                </span>
+                <button
+                  onClick={(e) => { e.stopPropagation(); deleteReflection(); }}
+                  className="p-1 rounded hover:bg-amber-200 dark:hover:bg-amber-800 transition-colors mr-1"
+                >
+                  <X className="w-3 h-3 text-amber-600 dark:text-amber-400" />
+                </button>
+                {reflectionExpanded
+                  ? <ChevronUp className="w-4 h-4 text-amber-500 flex-shrink-0" />
+                  : <ChevronDown className="w-4 h-4 text-amber-500 flex-shrink-0" />
+                }
+              </button>
+              {reflectionExpanded && (
+                <div className="px-4 pb-3">
                   <p className="text-sm text-amber-800 dark:text-amber-300 leading-relaxed">
                     "{currentReflection.text}"
                   </p>
                 </div>
-              </div>
+              )}
             </div>
           )}
 
