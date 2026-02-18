@@ -369,6 +369,7 @@ function HomeContent() {
       
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('showLastRecommendation') === 'true') {
+        setCameFromCompass(true);
         await loadLastRecommendation();
       } else if (urlParams.get('startQuestions') === 'true') {
         setPhase('questions');
