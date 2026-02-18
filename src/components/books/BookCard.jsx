@@ -220,7 +220,7 @@ export default function BookCard({ book, reasons, index, isContrast }) {
               </div>
             )}
             
-            <p className="text-stone-600 text-sm leading-relaxed">
+            <p className="text-stone-600 dark:text-stone-300 text-sm leading-relaxed">
               {book.description}
             </p>
           </div>
