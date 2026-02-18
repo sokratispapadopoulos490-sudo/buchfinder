@@ -1340,12 +1340,45 @@ export const getMatchingBooks = (profile) => {
   // Sortieren
   const sorted = scoredBooks.sort((a, b) => b.score - a.score);
   
-  // Top 10 Bücher
+  // Top 10 passende Bücher (ohne isContrast)
   const topBooks = sorted.slice(0, 10).map((book, idx) => ({
     ...book,
     placement: idx + 1,
-    isContrast: idx >= 2
+    isContrast: false
   }));
+
+  // 3 Horizont-Erweiterungs-Bücher: niedrigsten Score aus ANDEREN Themen
+  const topBookIds = new Set(topBooks.map(b => b.id));
+  const remainingBooks = scoredBooks.filter(b => !topBookIds.has(b.id));
   
-  return topBooks;
+  // Bücher mit niedrigem Main-Topic-Match aber anderem Thema als Kontrast
+  const contrastBooks = remainingBooks
+    .filter(book => {
+      // Nur Bücher, die NICHT hauptsächlich zum Hauptthema passen (echter Perspektivwechsel)
+      const mainTopicMatch = mainTopics.some(t => book.tags.includes(t));
+      return !mainTopicMatch;
+    })
+    .slice(0, 3)
+    .map((book, idx) => ({
+      ...book,
+      placement: 11 + idx,
+      isContrast: true
+    }));
+
+  // Falls nicht genug Kontrast-Bücher ohne Main-Topic, Rest auffüllen
+  if (contrastBooks.length < 3) {
+    const needed = 3 - contrastBooks.length;
+    const contrastIds = new Set(contrastBooks.map(b => b.id));
+    const filler = remainingBooks
+      .filter(b => !contrastIds.has(b.id))
+      .slice(0, needed)
+      .map((book, idx) => ({
+        ...book,
+        placement: 11 + contrastBooks.length + idx,
+        isContrast: true
+      }));
+    contrastBooks.push(...filler);
+  }
+
+  return [...topBooks, ...contrastBooks];
 };
