@@ -357,6 +357,7 @@ function HomeContent() {
   const [isPremium, setIsPremium] = useState(false);
   const [loading, setLoading] = useState(false);
   const [translatedQuestions, setTranslatedQuestions] = useState(questionSets.erwachsene);
+  const [cameFromCompass, setCameFromCompass] = useState(false);
   const { language, changeLanguage, translateObject, isLoading: langLoading, supportedLanguages } = useLanguage();
   
   const uiTexts = useTranslatedText(UI_TEXTS);
