@@ -227,7 +227,7 @@ export default function BookCard({ book, reasons, index, isContrast }) {
         </div>
 
         {/* Why this book */}
-        <div className="mt-6 pt-6 border-t border-stone-100">
+        <div className="mt-6 pt-6 border-t border-stone-100 dark:border-stone-700">
           <p className="text-stone-800 dark:text-stone-100 font-medium mb-4">
             {reasons.mainReason}
           </p>
