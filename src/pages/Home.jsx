@@ -436,12 +436,8 @@ function HomeContent() {
         const recs = await base44.entities.Recommendation.list('-created_date', 1);
         if (recs.length > 0) {
           const lastRec = recs[0];
-          setProfile(lastRec.profile);
-          setRecommendations({
-            place1: lastRec.books[0] || null,
-            place2: lastRec.books[1] || null,
-            place3: lastRec.books[2] || null
-          });
+          setProfile(lastRec.profile || { mainTopics: [], secondaryTopics: [], style: [] });
+          setRecommendations(lastRec.books || []);
           setPhase('results');
         }
       }
