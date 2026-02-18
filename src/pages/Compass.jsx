@@ -374,7 +374,7 @@ export default function Compass() {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-medium text-stone-700 dark:text-stone-300">Letzte Empfehlungen</h3>
               <button
-                onClick={() => navigate('/Home')}
+                onClick={() => navigate('/Home?showLastRecommendation=true')}
                 className="text-xs text-amber-600 dark:text-amber-500 hover:underline"
               >
                 Alle ansehen
