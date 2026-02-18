@@ -200,7 +200,7 @@ export default function BookCard({ book, reasons, index, isContrast }) {
               onClick={() => setShowDetailModal(true)}
               className="text-left w-full group"
             >
-              <h3 className="text-xl md:text-2xl font-light text-stone-800 mb-1 leading-tight group-hover:text-amber-700 transition-colors">
+              <h3 className="text-xl md:text-2xl font-light text-stone-800 dark:text-stone-100 mb-1 leading-tight group-hover:text-amber-700 transition-colors">
                 {book.title}
               </h3>
             </button>
