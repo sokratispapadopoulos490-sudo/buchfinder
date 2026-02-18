@@ -350,7 +350,7 @@ export default function BookCard({ book, reasons, index, isContrast }) {
 
               <Button 
                 onClick={() => setShowBuyOptions(!showBuyOptions)}
-                className="flex-1 gap-2 bg-stone-800 hover:bg-stone-700"
+                className="flex-1 gap-2 bg-stone-800 hover:bg-stone-700 dark:bg-amber-600 dark:hover:bg-amber-700 dark:text-white"
               >
                 <ShoppingCart className="w-4 h-4" />
                 Kaufen
