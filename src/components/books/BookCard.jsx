@@ -370,7 +370,7 @@ export default function BookCard({ book, reasons, index, isContrast }) {
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block p-3 border border-stone-200 rounded-lg hover:border-stone-400 hover:bg-stone-50 transition-all"
+                    className="block p-3 border border-stone-200 dark:border-stone-700 rounded-lg hover:border-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800 transition-all"
                   >
                     <div className="flex items-center justify-between mb-1">
                       <span className="font-medium text-stone-800 text-sm">{link.name}</span>
