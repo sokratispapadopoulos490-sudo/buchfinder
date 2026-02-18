@@ -204,7 +204,7 @@ export default function BookCard({ book, reasons, index, isContrast }) {
                 {book.title}
               </h3>
             </button>
-            <p className="text-stone-600 text-sm mb-2">{book.author}</p>
+            <p className="text-stone-600 dark:text-stone-300 text-sm mb-2">{book.author}</p>
             
             {/* Buchdetails */}
             <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-stone-500 mb-3">
