@@ -207,7 +207,7 @@ export default function BookCard({ book, reasons, index, isContrast }) {
             <p className="text-stone-600 dark:text-stone-300 text-sm mb-2">{book.author}</p>
             
             {/* Buchdetails */}
-            <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-stone-500 mb-3">
+            <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-stone-500 dark:text-stone-400 mb-3">
               {book.publishYear && <span>{book.publishYear}</span>}
               {book.pageCount && <span>• {book.pageCount} Seiten</span>}
               {book.publisher && <span>• {book.publisher}</span>}
