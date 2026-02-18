@@ -147,8 +147,8 @@ export default function BookCard({ book, reasons, index, isContrast }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.15, duration: 0.5 }}
       className={cn(
-        "bg-white rounded-2xl border overflow-hidden",
-        isContrast ? "border-amber-200" : "border-stone-200"
+        "bg-white dark:bg-[#1a1a1a] rounded-2xl border overflow-hidden",
+        isContrast ? "border-amber-200 dark:border-amber-800" : "border-stone-200 dark:border-stone-700"
       )}
     >
       {isContrast && (
