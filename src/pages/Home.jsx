@@ -649,8 +649,9 @@ function HomeContent() {
 
   return (
     <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] pb-28">
-      {/* Header mit Sprachauswahl und Login - immer sichtbar fixiert */}
-      <div className="fixed top-0 right-0 p-4 z-40 flex items-center gap-3">
+      {/* Header mit Sprachauswahl - nur auf Welcome/Questions/Profile Phasen fixiert */}
+      {phase !== 'results' && (
+        <div className="fixed top-0 right-0 p-4 z-40 flex items-center gap-3">
           {/* Kompakte Sprachauswahl */}
           <div className="relative">
             <select
@@ -683,6 +684,7 @@ function HomeContent() {
             </Button>
           )}
         </div>
+      )}
 
       <AnimatePresence mode="wait">
         {/* Welcome Phase */}
