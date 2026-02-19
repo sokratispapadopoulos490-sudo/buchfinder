@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import ReactDOM from 'react-dom';
 import ConsentModal from '@/components/legal/ConsentModal';
 import BottomNav from '@/components/navigation/BottomNav';
 import { base44 } from '@/api/base44Client';
@@ -18,32 +19,83 @@ const SUPPORTED_LANGUAGES = [
 
 function LanguageDropdown() {
   const { language, changeLanguage } = useLanguage();
-  return (
-    <div style={{ position: 'fixed', top: '12px', right: '12px', zIndex: 99999 }}>
-      <select
-        value={language}
-        onChange={(e) => changeLanguage(e.target.value)}
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+  const currentLang = SUPPORTED_LANGUAGES.find(l => l.code === language) || SUPPORTED_LANGUAGES[0];
+
+  useEffect(() => {
+    const handleClick = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
+  const dropdown = (
+    <div ref={ref} style={{ position: 'fixed', top: '10px', right: '12px', zIndex: 2147483647 }}>
+      {/* Flag button */}
+      <button
+        onClick={() => setOpen(o => !o)}
         style={{
-          appearance: 'none',
-          WebkitAppearance: 'none',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '4px',
           background: 'white',
           border: '1px solid #d6d3d1',
           borderRadius: '8px',
-          padding: '6px 28px 6px 10px',
-          fontSize: '14px',
-          color: '#1c1917',
+          padding: '6px 8px',
+          fontSize: '20px',
           cursor: 'pointer',
-          boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
+          boxShadow: '0 1px 4px rgba(0,0,0,0.12)',
+          lineHeight: 1,
         }}
       >
-        {SUPPORTED_LANGUAGES.map((lang) => (
-          <option key={lang.code} value={lang.code}>
-            {lang.flag} {lang.name}
-          </option>
-        ))}
-      </select>
+        <span>{currentLang.flag}</span>
+        <span style={{ fontSize: '10px', color: '#78716c', marginTop: '2px' }}>▾</span>
+      </button>
+
+      {/* Dropdown list */}
+      {open && (
+        <div style={{
+          position: 'absolute',
+          top: '42px',
+          right: 0,
+          background: 'white',
+          border: '1px solid #e7e5e4',
+          borderRadius: '10px',
+          boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+          minWidth: '160px',
+          overflow: 'hidden',
+          zIndex: 2147483647,
+        }}>
+          {SUPPORTED_LANGUAGES.map((lang) => (
+            <button
+              key={lang.code}
+              onClick={() => { changeLanguage(lang.code); setOpen(false); }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                width: '100%',
+                padding: '9px 14px',
+                background: lang.code === language ? '#fef3c7' : 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '14px',
+                color: '#1c1917',
+                textAlign: 'left',
+              }}
+            >
+              <span style={{ fontSize: '18px' }}>{lang.flag}</span>
+              <span>{lang.name}</span>
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
+
+  return ReactDOM.createPortal(dropdown, document.body);
 }
 
 export default function Layout({ children, currentPageName }) {
