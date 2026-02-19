@@ -32,7 +32,7 @@ function LanguageDropdown() {
   }, []);
 
   const dropdown = (
-    <div ref={ref} style={{ position: 'fixed', top: '10px', right: '12px', zIndex: 2147483647 }}>
+    <div ref={ref} style={{ position: 'fixed', top: '10px', left: '12px', zIndex: 2147483647 }}>
       {/* Flag button */}
       <button
         onClick={() => setOpen(o => !o)}
