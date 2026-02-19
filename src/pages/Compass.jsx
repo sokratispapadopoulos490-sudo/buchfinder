@@ -166,11 +166,14 @@ export default function Compass() {
   if (!currentBook) {
     return (
       <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] px-4 py-12 pb-32">
-        <div className="max-w-xl mx-auto text-center">
+        <div className="max-w-xl mx-auto">
+          <div className="mb-8">
+            <h1 className="text-2xl font-light text-stone-800 dark:text-stone-200">Dein Lesekompass</h1>
+          </div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-12"
+            className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-12 text-center mb-6"
           >
             <BookOpen className="w-16 h-16 text-amber-600 dark:text-amber-500 mx-auto mb-6" />
             <h1 className="text-2xl font-light text-stone-800 dark:text-stone-200 mb-4">
@@ -187,6 +190,34 @@ export default function Compass() {
               Empfehlung erhalten
             </Button>
           </motion.div>
+
+          {/* Letzte Empfehlungen auch ohne aktuelles Buch anzeigen */}
+          {lastRecommendations.length > 0 && (
+            <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-5 shadow-sm">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-medium text-stone-700 dark:text-stone-300">Letzte Empfehlungen</h3>
+                <button
+                  onClick={() => navigate('/Home?showLastRecommendation=true')}
+                  className="text-xs text-amber-600 dark:text-amber-500 hover:underline"
+                >
+                  Alle ansehen
+                </button>
+              </div>
+              <div className="space-y-3">
+                {lastRecommendations.map((book, idx) => (
+                  <div key={idx} className="flex items-center gap-3">
+                    <div className={`w-10 h-14 rounded flex items-center justify-center flex-shrink-0 ${book.coverColor || 'bg-stone-100 dark:bg-stone-800'}`}>
+                      <span className="text-lg font-serif text-stone-400">{book.title?.charAt(0)}</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium text-stone-800 dark:text-stone-200 truncate">{book.title}</div>
+                      <div className="text-xs text-stone-500 dark:text-stone-400 truncate">{book.author}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     );
