@@ -649,9 +649,9 @@ function HomeContent() {
 
   return (
     <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] pb-28">
-      {/* Header mit Sprachauswahl - nur auf Welcome/Questions/Profile Phasen fixiert */}
+      {/* Header mit Sprachauswahl - fixiert oben rechts, auf allen Phasen außer Ergebnisse */}
       {phase !== 'results' && (
-        <div className="fixed top-0 right-0 p-4 z-40 flex items-center gap-3">
+        <div className="fixed top-0 right-0 p-4 z-50 flex items-center gap-3" style={{ position: 'fixed' }}>
           {/* Kompakte Sprachauswahl */}
           <div className="relative">
             <select
