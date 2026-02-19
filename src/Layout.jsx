@@ -31,35 +31,44 @@ function LanguageDropdown() {
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
-  const dropdown = (
-    <div ref={ref} style={{ position: 'fixed', top: '10px', left: '12px', zIndex: 2147483647 }}>
+  return (
+    <div
+      ref={ref}
+      style={{
+        position: 'fixed',
+        top: '10px',
+        left: '10px',
+        zIndex: 2147483647,
+        pointerEvents: 'auto',
+      }}
+    >
       {/* Flag button */}
       <button
         onClick={() => setOpen(o => !o)}
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '4px',
-          background: 'white',
+          gap: '3px',
+          background: 'rgba(255,255,255,0.92)',
           border: '1px solid #d6d3d1',
           borderRadius: '8px',
-          padding: '6px 8px',
-          fontSize: '20px',
+          padding: '4px 7px',
+          fontSize: '18px',
           cursor: 'pointer',
           boxShadow: '0 1px 4px rgba(0,0,0,0.12)',
           lineHeight: 1,
         }}
       >
         <span>{currentLang.flag}</span>
-        <span style={{ fontSize: '10px', color: '#78716c', marginTop: '2px' }}>▾</span>
+        <span style={{ fontSize: '9px', color: '#78716c' }}>▾</span>
       </button>
 
       {/* Dropdown list */}
       {open && (
         <div style={{
-          position: 'absolute',
-          top: '42px',
-          left: 0,
+          position: 'fixed',
+          top: '46px',
+          left: '10px',
           background: 'white',
           border: '1px solid #e7e5e4',
           borderRadius: '10px',
@@ -94,8 +103,6 @@ function LanguageDropdown() {
       )}
     </div>
   );
-
-  return ReactDOM.createPortal(dropdown, document.body);
 }
 
 export default function Layout({ children, currentPageName }) {
