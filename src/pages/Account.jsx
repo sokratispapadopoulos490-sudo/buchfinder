@@ -1043,7 +1043,14 @@ function AccountContent() {
         )}
 
         {/* Account Actions */}
-        <div className="mt-6 mb-4 space-y-2">
+        <div className="mt-6 mb-4 space-y-3">
+          <Button
+            onClick={() => navigate('/Home')}
+            className="w-full bg-amber-600 hover:bg-amber-700 text-white gap-2"
+          >
+            <Compass className="w-4 h-4" />
+            Zur Startseite
+          </Button>
           <div className="text-center">
             <button
               onClick={() => navigate('/Legal')}
