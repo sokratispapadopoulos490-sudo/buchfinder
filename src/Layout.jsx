@@ -59,7 +59,7 @@ function LanguageDropdown() {
         <div style={{
           position: 'absolute',
           top: '42px',
-          right: 0,
+          left: 0,
           background: 'white',
           border: '1px solid #e7e5e4',
           borderRadius: '10px',
