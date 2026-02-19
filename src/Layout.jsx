@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import ReactDOM from 'react-dom';
 import ConsentModal from '@/components/legal/ConsentModal';
 import BottomNav from '@/components/navigation/BottomNav';
 import { base44 } from '@/api/base44Client';
