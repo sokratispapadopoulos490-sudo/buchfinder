@@ -651,7 +651,7 @@ function HomeContent() {
     <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] pb-28">
       {/* Header mit Sprachauswahl - fixiert oben rechts, auf allen Phasen außer Ergebnisse */}
       {phase !== 'results' && (
-        <div className="fixed top-0 right-0 p-4 z-50 flex items-center gap-3" style={{ position: 'fixed' }}>
+        <div style={{ position: 'fixed', top: 0, right: 0, padding: '1rem', zIndex: 9999, display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           {/* Kompakte Sprachauswahl */}
           <div className="relative">
             <select
