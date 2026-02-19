@@ -667,7 +667,7 @@ function HomeContent() {
             </div>
           </div>
 
-          {!isAuthenticated && (
+          {!isAuthenticated && phase === 'welcome' && (
             <Button
               onClick={handleLogin}
               variant="outline"
@@ -679,7 +679,6 @@ function HomeContent() {
             </Button>
           )}
         </div>
-      )}
 
       <AnimatePresence mode="wait">
         {/* Welcome Phase */}
