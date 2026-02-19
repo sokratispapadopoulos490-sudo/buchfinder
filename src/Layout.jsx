@@ -115,7 +115,8 @@ export default function Layout({ children, currentPageName }) {
   const showNavigation = isAuthenticated && !pagesWithoutNav.includes(currentPageName);
 
   return (
-    <>
+    <LanguageProvider>
+      <LanguageDropdown />
       <div style={{ paddingBottom: showNavigation ? '90px' : '0' }}>
         {children}
         {showConsent && (
@@ -123,6 +124,6 @@ export default function Layout({ children, currentPageName }) {
         )}
       </div>
       {showNavigation && <BottomNav />}
-    </>
+    </LanguageProvider>
   );
 }
