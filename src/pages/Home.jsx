@@ -466,22 +466,22 @@ function HomeContent() {
     setAnswers(newAnswers);
 
     // Wenn die Altersfrage beantwortet wird, Fragenset aktualisieren
-    if (currentQuestionId === 'age') {
+    const isAgeQuestion = currentQuestionId === 'age';
+    const activeQuestions = isAgeQuestion ? questionSets[value] : translatedQuestions;
+
+    if (isAgeQuestion) {
       setAgeGroup(value);
-      setQuestions(questionSets[value]);
-      setTranslatedQuestions(questionSets[value]);
+      setQuestions(activeQuestions);
+      setTranslatedQuestions(activeQuestions);
     }
 
     // Bei Textfragen nicht automatisch weiter
-    if (translatedQuestions[currentQuestion].isTextInput) {
+    if (activeQuestions[currentQuestion].isTextInput) {
       return;
     }
 
-    // Aktuelle Fragelänge bestimmen (nach ggf. Altersgruppen-Wechsel)
-    const nextQuestions = currentQuestionId === 'age' ? questionSets[value] : translatedQuestions;
-
     setTimeout(() => {
-      if (currentQuestion < nextQuestions.length - 1) {
+      if (currentQuestion < activeQuestions.length - 1) {
         setCurrentQuestion(currentQuestion + 1);
       } else {
         // Analyse abschließen
