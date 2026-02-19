@@ -469,6 +469,7 @@ function HomeContent() {
     if (currentQuestionId === 'age') {
       setAgeGroup(value);
       setQuestions(questionSets[value]);
+      setTranslatedQuestions(questionSets[value]);
     }
 
     // Bei Textfragen nicht automatisch weiter
@@ -476,8 +477,11 @@ function HomeContent() {
       return;
     }
 
+    // Aktuelle Fragelänge bestimmen (nach ggf. Altersgruppen-Wechsel)
+    const nextQuestions = currentQuestionId === 'age' ? questionSets[value] : translatedQuestions;
+
     setTimeout(() => {
-      if (currentQuestion < translatedQuestions.length - 1) {
+      if (currentQuestion < nextQuestions.length - 1) {
         setCurrentQuestion(currentQuestion + 1);
       } else {
         // Analyse abschließen
