@@ -448,6 +448,14 @@ export default function Compass() {
         )}
       </div>
 
+      {/* Scanner Modal */}
+      {showScanner && (
+        <BookScannerModal
+          onClose={() => setShowScanner(false)}
+          onBookAdded={loadCompassData}
+        />
+      )}
+
       {/* Progress Modal */}
       {showProgressModal && (
         <ReadingProgressModal
