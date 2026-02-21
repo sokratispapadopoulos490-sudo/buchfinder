@@ -392,14 +392,22 @@ export default function Compass() {
         </motion.div>
 
         {/* Quick Links */}
-        <div className="grid grid-cols-2 gap-3 mb-6">
+        <div className="grid grid-cols-3 gap-3 mb-6">
           <button
             onClick={() => navigate('/Home?startQuestions=true')}
             className="p-4 bg-white dark:bg-[#1a1a1a] border border-stone-200 dark:border-stone-700 rounded-xl hover:border-amber-300 dark:hover:border-amber-700 transition-colors text-left"
           >
             <Sparkles className="w-5 h-5 text-amber-600 dark:text-amber-500 mb-2" />
             <div className="text-sm font-medium text-stone-800 dark:text-stone-200 mb-1">Entdecken</div>
-            <div className="text-xs text-stone-500 dark:text-stone-400">Neue Empfehlungen holen</div>
+            <div className="text-xs text-stone-500 dark:text-stone-400">Empfehlungen</div>
+          </button>
+          <button
+            onClick={() => setShowScanner(true)}
+            className="p-4 bg-white dark:bg-[#1a1a1a] border border-stone-200 dark:border-stone-700 rounded-xl hover:border-amber-300 dark:hover:border-amber-700 transition-colors text-left"
+          >
+            <Camera className="w-5 h-5 text-amber-600 dark:text-amber-500 mb-2" />
+            <div className="text-sm font-medium text-stone-800 dark:text-stone-200 mb-1">Scannen</div>
+            <div className="text-xs text-stone-500 dark:text-stone-400">Buch hinzufügen</div>
           </button>
           <button
             onClick={() => navigate('/Account?tab=library')}
@@ -407,7 +415,7 @@ export default function Compass() {
           >
             <BookMarked className="w-5 h-5 text-amber-600 dark:text-amber-500 mb-2" />
             <div className="text-sm font-medium text-stone-800 dark:text-stone-200 mb-1">Bibliothek</div>
-            <div className="text-xs text-stone-500 dark:text-stone-400">Alle deine Bücher</div>
+            <div className="text-xs text-stone-500 dark:text-stone-400">Alle Bücher</div>
           </button>
         </div>
 
