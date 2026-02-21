@@ -181,13 +181,19 @@ If you cannot identify a book from this image, return {"error": "not_a_book"}.`,
               {error && (
                 <div className="mb-4 p-3 bg-red-50 rounded-lg text-sm text-red-700">{error}</div>
               )}
-              <div className="flex gap-3">
-                <Button variant="outline" onClick={() => setPhase('upload')} className="flex-1">
+              <div className="flex flex-col gap-2">
+                <div className="flex gap-2">
+                  <Button onClick={() => saveBook(false)} className="flex-1 bg-amber-600 hover:bg-amber-700 text-white gap-2">
+                    <BookPlus className="w-4 h-4" />
+                    Möchte ich lesen
+                  </Button>
+                  <Button onClick={() => saveBook(true)} className="flex-1 bg-green-600 hover:bg-green-700 text-white gap-2">
+                    <Check className="w-4 h-4" />
+                    Bereits gelesen
+                  </Button>
+                </div>
+                <Button variant="outline" onClick={() => setPhase('upload')} className="w-full">
                   Erneut scannen
-                </Button>
-                <Button onClick={saveBook} className="flex-1 bg-amber-600 hover:bg-amber-700 text-white gap-2">
-                  <BookPlus className="w-4 h-4" />
-                  Zu Bibliothek
                 </Button>
               </div>
             </motion.div>
