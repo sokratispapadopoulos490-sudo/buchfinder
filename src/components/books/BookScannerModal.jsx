@@ -61,29 +61,30 @@ If you cannot identify a book from this image, return {"error": "not_a_book"}.`,
     }
   };
 
-  const saveBook = async () => {
+  const saveBook = async (completed = false) => {
     if (!scannedBook) return;
     setPhase('saving');
 
     try {
       await base44.entities.SavedBook.create({
-        book_id: Date.now(), // Unique ID für manuell hinzugefügte Bücher
+        book_id: Math.floor(Date.now() / 1000), // numeric ID
         book_data: {
           title: scannedBook.title,
           author: scannedBook.author,
-          isbn: scannedBook.isbn,
+          isbn: scannedBook.isbn || null,
           description: scannedBook.description,
-          pageCount: scannedBook.pageCount,
+          pageCount: scannedBook.pageCount || null,
           genre: scannedBook.genre,
           coverColor: 'bg-amber-100',
         },
-        is_completed: false,
+        is_completed: completed,
+        completed_date: completed ? new Date().toISOString().split('T')[0] : null,
       });
       setSaved(true);
       setTimeout(() => {
         onBookAdded?.();
         onClose();
-      }, 1200);
+      }, 1000);
     } catch (err) {
       setError('Fehler beim Speichern. Bitte versuche es erneut.');
       setPhase('result');
