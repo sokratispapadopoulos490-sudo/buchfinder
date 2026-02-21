@@ -184,13 +184,23 @@ export default function Compass() {
             <p className="text-stone-600 dark:text-stone-400 mb-8">
               Lass uns gemeinsam das richtige Buch für dich finden.
             </p>
-            <Button
-              onClick={() => navigate('/Home')}
-              className="bg-amber-600 hover:bg-amber-700 text-white gap-2"
-            >
-              <Sparkles className="w-4 h-4" />
-              Empfehlung erhalten
-            </Button>
+            <div className="flex flex-col gap-3">
+              <Button
+                onClick={() => navigate('/Home')}
+                className="bg-amber-600 hover:bg-amber-700 text-white gap-2"
+              >
+                <Sparkles className="w-4 h-4" />
+                Empfehlung erhalten
+              </Button>
+              <Button
+                onClick={() => setShowScanner(true)}
+                variant="outline"
+                className="gap-2 border-amber-300 text-amber-800"
+              >
+                <Camera className="w-4 h-4" />
+                Buch scannen
+              </Button>
+            </div>
           </motion.div>
 
           {/* Letzte Empfehlungen auch ohne aktuelles Buch anzeigen */}
