@@ -30,7 +30,7 @@ export const books = [
     difficulty: "einsteiger",
     timeEffort: "kurz",
     style: ["praktisch", "kurz"],
-    description: "52 Denkfehler, die man besser anderen überlässt.",
+    description: "Rolf Dobelli beleuchtet 52 kognitive Verzerrungen – von Bestätigungsfehlern bis zu Survivorship Bias – und zeigt, wie wir sie im Alltag erkennen und vermeiden können.",
     coverColor: "bg-slate-100",
     ageGroup: "erwachsene"
   },
