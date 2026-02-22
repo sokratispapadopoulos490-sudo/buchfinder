@@ -307,7 +307,7 @@ export const books = [
     difficulty: "fortgeschritten",
     timeEffort: "mittel",
     style: ["wissenschaftlich"],
-    description: "Warum Generalisten in einer spezialisierten Welt erfolgreicher sind.",
+    description: "David Epstein widerlegt mit überraschenden Daten den Mythos der frühen Spezialisierung: Menschen mit breitem Erfahrungsschatz und 'Umwegkarrieren' lösen komplexe Probleme oft besser als enge Experten.",
     coverColor: "bg-teal-100",
     ageGroup: "erwachsene"
   },
