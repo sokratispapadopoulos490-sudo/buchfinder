@@ -234,8 +234,3 @@ html.dark .hover\:text-stone-900:hover {
 html.dark svg {
   color: inherit !important;
 }
-
-/* Shadows */
-html.dark [class*="shadow"] {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3) !important;
-}
