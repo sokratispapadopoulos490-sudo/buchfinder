@@ -166,30 +166,16 @@ export default function BookCard({ book, reasons, index, isContrast }) {
           {/* Book cover - clickable */}
           <button
             onClick={() => setShowDetailModal(true)}
-            className="group relative"
+            className="group relative flex-shrink-0"
           >
-            {book.coverUrl ? (
-              <img
-                src={book.coverUrl}
-                alt={`Cover von ${book.title}`}
-                className="w-24 h-36 md:w-28 md:h-42 rounded-lg shadow-md object-cover flex-shrink-0 transition-transform group-hover:scale-105 group-hover:shadow-xl"
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                  e.target.nextSibling.style.display = 'flex';
-                }}
-              />
-            ) : null}
-            <div 
-              className={cn(
-                "w-24 h-36 md:w-28 md:h-42 rounded-lg flex-shrink-0 flex items-center justify-center shadow-md transition-transform group-hover:scale-105",
-                book.coverColor || "bg-stone-100",
-                book.coverUrl && "hidden"
-              )}
-            >
-              <span className="text-3xl md:text-4xl font-serif text-stone-400">
-                {book.title.charAt(0)}
-              </span>
-            </div>
+            <BookCover
+              bookData={book}
+              width="w-24 md:w-28"
+              height="h-36"
+              textSize="text-3xl md:text-4xl"
+              className="shadow-md transition-transform group-hover:scale-105 group-hover:shadow-xl"
+              placeholderClassName="shadow-md transition-transform group-hover:scale-105 group-hover:shadow-xl"
+            />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 rounded-lg transition-colors flex items-center justify-center">
               <Info className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
