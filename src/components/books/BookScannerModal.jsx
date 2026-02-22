@@ -100,7 +100,7 @@ If you cannot identify a book from this image, return {"error": "not_a_book"}.`,
         initial={{ opacity: 0, y: 60 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 60 }}
-        className="bg-white dark:bg-[#1a1a1a] rounded-t-2xl sm:rounded-2xl w-full max-w-md p-6 pb-10"
+        className="bg-white dark:bg-[#1a1a1a] rounded-t-2xl sm:rounded-2xl w-full max-w-md p-6 pb-28 max-h-[85vh] overflow-y-auto"
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
