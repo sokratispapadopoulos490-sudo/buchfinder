@@ -99,6 +99,13 @@ function BookItem({ saved, onToggleComplete, onDelete, onProgressClick, onFolder
           <Trash2 className="w-3.5 h-3.5" />
         </button>
       </div>
+
+      {showDetail && (
+        <BookDetailModal
+          book={saved.book_data}
+          onClose={() => setShowDetail(false)}
+        />
+      )}
     </div>
   );
 }
