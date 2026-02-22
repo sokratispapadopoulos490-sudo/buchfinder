@@ -125,7 +125,7 @@ export const books = [
     difficulty: "einsteiger",
     timeEffort: "kurz",
     style: ["reflektierend", "kurz"],
-    description: "Das japanische Geheimnis für ein langes, glückliches Leben.",
+    description: "Zwei Forscher reisten nach Okinawa, um das Geheimnis der dort lebenden Hundertjährigen zu ergründen – und fanden im japanischen Konzept des Ikigai, dem 'Grund, morgens aufzustehen', einen Schlüssel zu Langlebigkeit und Sinn.",
     coverColor: "bg-pink-100",
     ageGroup: "erwachsene"
   },
