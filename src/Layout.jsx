@@ -111,6 +111,16 @@ export default function Layout({ children, currentPageName }) {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Dark Mode sofort aus localStorage anwenden (kein Flackern)
+  useEffect(() => {
+    const cached = localStorage.getItem('darkMode');
+    if (cached === 'true') {
+      document.documentElement.classList.add('dark');
+      document.documentElement.style.backgroundColor = '#0a0a0a';
+      document.body.style.backgroundColor = '#0a0a0a';
+    }
+  }, []);
+
   // Dark Mode initialisieren SOFORT
   useEffect(() => {
     const initDarkMode = async () => {
@@ -120,10 +130,14 @@ export default function Layout({ children, currentPageName }) {
           const user = await base44.auth.me();
           if (user?.dark_mode) {
             document.documentElement.classList.add('dark');
-            document.body.style.backgroundColor = '#141414';
+            document.documentElement.style.backgroundColor = '#0a0a0a';
+            document.body.style.backgroundColor = '#0a0a0a';
+            localStorage.setItem('darkMode', 'true');
           } else {
             document.documentElement.classList.remove('dark');
+            document.documentElement.style.backgroundColor = '';
             document.body.style.backgroundColor = '';
+            localStorage.setItem('darkMode', 'false');
           }
         }
       } catch (error) {
