@@ -424,146 +424,24 @@ function AccountContent() {
 
         {/* Bibliothek Tab */}
         {activeTab === 'library' && (
-          <div className="space-y-8">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-light text-stone-800">Deine Bibliothek</h2>
-            </div>
-
-            {savedBooks.length > 0 && (
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
-                <input
-                  type="text"
-                  placeholder="Bücher durchsuchen..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-stone-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white"
-                />
-              </div>
-            )}
-
-            {filteredLibraryBooks.length === 0 ? (
-              <div className="text-center py-12 bg-white rounded-2xl border border-stone-200">
+          <div className="space-y-4">
+            <h2 className="text-2xl font-light text-stone-800 dark:text-stone-200">Deine Bibliothek</h2>
+            {savedBooks.length === 0 ? (
+              <div className="text-center py-12 bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700">
                 <LibraryIcon className="w-12 h-12 text-stone-300 mx-auto mb-4" />
                 <p className="text-stone-500 mb-4">Noch keine Bücher in deiner Bibliothek</p>
-                <Button
-                  onClick={() => navigate('/')}
-                  className="bg-stone-800 hover:bg-stone-700 text-white"
-                >
+                <Button onClick={() => navigate('/')} className="bg-stone-800 hover:bg-stone-700 text-white">
                   Bücher entdecken
                 </Button>
               </div>
             ) : (
-              <div className="space-y-8">
-                {inProgressBooks.length > 0 && (
-                  <div className="bg-white rounded-2xl border border-stone-200 p-6">
-                    <h3 className="text-lg font-medium text-stone-800 mb-4">
-                      Aktuell im Lesen ({inProgressBooks.length})
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {inProgressBooks.map((saved) => (
-                        <div key={saved.id} className="relative group border border-stone-200 rounded-lg p-4 hover:border-stone-300 transition-colors">
-                          <div className="flex items-start gap-3 mb-3">
-                            <div className={`w-12 h-16 rounded ${saved.book_data.coverColor || 'bg-stone-100'} flex items-center justify-center flex-shrink-0`}>
-                              <span className="text-xl font-serif text-stone-400">
-                                {saved.book_data.title.charAt(0)}
-                              </span>
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <h4 className="font-medium text-stone-800 text-sm truncate">{saved.book_data.title}</h4>
-                              <p className="text-xs text-stone-500 truncate">{saved.book_data.author}</p>
-                            </div>
-                          </div>
-                          
-                          <div className="mb-3">
-                            <div className="flex justify-between text-xs text-stone-500 mb-1">
-                              <span>Fortschritt</span>
-                              <span>{calculateReadingProgress(saved.book_id)}%</span>
-                            </div>
-                            <div className="w-full bg-stone-100 rounded-full h-1.5">
-                              <div 
-                                className="bg-amber-600 h-1.5 rounded-full transition-all"
-                                style={{ width: `${calculateReadingProgress(saved.book_id)}%` }}
-                              />
-                            </div>
-                          </div>
-
-                          <div className="flex gap-1">
-                            <Button
-                              size="sm"
-                              onClick={() => setSelectedBookForProgress({ book: saved.book_data, savedBookId: saved.id })}
-                              className="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-xs h-8"
-                            >
-                              <Plus className="w-3 h-3" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              onClick={() => handleToggleCompleted(saved)}
-                              className="flex-1 bg-green-500 hover:bg-green-600 text-white text-xs h-8"
-                            >
-                              <CheckCircle className="w-3 h-3" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              onClick={() => handleDeleteSavedBook(saved.id)}
-                              className="flex-1 bg-red-500 hover:bg-red-600 text-white text-xs h-8"
-                            >
-                              <Trash2 className="w-3 h-3" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {completedBooks.length > 0 && (
-                  <div className="bg-white rounded-2xl border border-stone-200 p-6">
-                    <h3 className="text-lg font-medium text-stone-800 mb-4">
-                      Abgeschlossene Bücher ({completedBooks.length})
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {completedBooks.map((saved) => (
-                        <div key={saved.id} className="relative group border border-stone-200 rounded-lg p-4 hover:border-stone-300 transition-colors">
-                          <div className="flex items-start gap-3 mb-3">
-                            <div className={`w-12 h-16 rounded ${saved.book_data.coverColor || 'bg-stone-100'} flex items-center justify-center flex-shrink-0`}>
-                              <span className="text-xl font-serif text-stone-400">
-                                {saved.book_data.title.charAt(0)}
-                              </span>
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <h4 className="font-medium text-stone-800 text-sm truncate">{saved.book_data.title}</h4>
-                              <p className="text-xs text-stone-500 truncate">{saved.book_data.author}</p>
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-center gap-1 mb-3 text-xs text-green-600">
-                            <CheckCircle className="w-3 h-3" />
-                            <span>Abgeschlossen</span>
-                          </div>
-
-                          <div className="flex gap-1">
-                            <Button
-                              size="sm"
-                              onClick={() => handleToggleCompleted(saved)}
-                              className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white text-xs h-8"
-                            >
-                              <Sparkles className="w-3 h-3" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              onClick={() => handleDeleteSavedBook(saved.id)}
-                              className="flex-1 bg-red-500 hover:bg-red-600 text-white text-xs h-8"
-                            >
-                              <Trash2 className="w-3 h-3" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
+              <LibraryView
+                savedBooks={savedBooks}
+                onToggleComplete={handleToggleCompleted}
+                onDelete={handleDeleteSavedBook}
+                onProgressClick={(saved) => setSelectedBookForProgress({ book: saved.book_data, savedBookId: saved.id })}
+                onRefresh={loadAccountData}
+              />
             )}
           </div>
         )}
