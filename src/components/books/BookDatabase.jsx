@@ -281,7 +281,7 @@ export const books = [
     difficulty: "einsteiger",
     timeEffort: "mittel",
     style: ["story", "praktisch"],
-    description: "Nimm dein Leben in die Hand und es wird dir gelingen.",
+    description: "Elizabeth Gilbert erkundet, woher kreative Ideen kommen, warum Angst kein Hinderungsgrund sein darf – und wie man ein von Neugier statt von Angst geleitetes Leben führt.",
     coverColor: "bg-pink-100",
     ageGroup: "erwachsene"
   },
