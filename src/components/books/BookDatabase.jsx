@@ -86,7 +86,7 @@ export const books = [
     difficulty: "einsteiger",
     timeEffort: "lang",
     style: ["praktisch", "wissenschaftlich"],
-    description: "Eine Sprache des Lebens für tiefere Verbindungen.",
+    description: "Marshall Rosenberg entwickelte eine Kommunikationsweise, die Urteile und Forderungen durch ehrliche Beobachtungen und Bitten ersetzt – um Konflikte aufzulösen und echte Verbindung zu schaffen.",
     coverColor: "bg-rose-100",
     ageGroup: "erwachsene"
   },
