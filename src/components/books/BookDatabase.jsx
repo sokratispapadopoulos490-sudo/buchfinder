@@ -385,7 +385,7 @@ export const books = [
     difficulty: "fortgeschritten",
     timeEffort: "mittel",
     style: ["story"],
-    description: "Eine wahre Geschichte über Bildung und Selbstfindung.",
+    description: "Tara Westover wuchs ohne Schulbildung bei einer survivalisti schen Familie in Idaho auf und kämpfte sich allein bis an die Universität Cambridge – ein erschütterndes Memoir über Selbstbefreiung und den Preis der Bildung.",
     coverColor: "bg-stone-100",
     ageGroup: "erwachsene"
   },
