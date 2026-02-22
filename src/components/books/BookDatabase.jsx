@@ -13,7 +13,7 @@ export const books = [
     difficulty: "einsteiger",
     timeEffort: "mittel",
     style: ["praktisch", "wissenschaftlich"],
-    description: "Wie kleine Gewohnheiten große Veränderungen bewirken.",
+    description: "James Clear zeigt, wie winzige 1%-Verbesserungen in Gewohnheiten durch den Zinseszinseffekt zu dramatischen Veränderungen führen – und warum das System wichtiger ist als das Ziel.",
     coverColor: "bg-amber-100",
     ageGroup: "erwachsene"
   },
