@@ -359,7 +359,7 @@ export const books = [
     difficulty: "fortgeschritten",
     timeEffort: "lang",
     style: ["wissenschaftlich", "anspruchsvoll"],
-    description: "Das Geheimnis des Glücks.",
+    description: "Mihaly Csikszentmihalyi beschreibt den Zustand des 'Flow' – jenes vollständige Aufgehen in einer Tätigkeit, in dem Zeit vergeht, das Ich verschwindet und tiefe Befriedigung entsteht – und wie man ihn aktiv herbeiführen kann.",
     coverColor: "bg-cyan-100",
     ageGroup: "erwachsene"
   },
