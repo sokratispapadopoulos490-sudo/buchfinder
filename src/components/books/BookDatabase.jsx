@@ -294,7 +294,7 @@ export const books = [
     difficulty: "einsteiger",
     timeEffort: "kurz",
     style: ["praktisch", "kurz"],
-    description: "Ein kontraintuitiver Ansatz für ein gutes Leben.",
+    description: "Mark Manson argumentiert, dass wir nicht mehr positive Gedanken brauchen, sondern eine ehrliche Auseinandersetzung damit, was uns wirklich wichtig ist – und einen anderen Umgang mit Schmerz, Unsicherheit und Misserfolg.",
     coverColor: "bg-orange-100",
     ageGroup: "erwachsene"
   },
