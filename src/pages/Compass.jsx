@@ -431,9 +431,7 @@ export default function Compass() {
             <div className="space-y-3">
               {lastRecommendations.map((book, idx) => (
                 <div key={idx} className="flex items-center gap-3">
-                  <div className={`w-10 h-14 rounded flex items-center justify-center flex-shrink-0 ${book.coverColor || 'bg-stone-100 dark:bg-stone-800'}`}>
-                    <span className="text-lg font-serif text-stone-400">{book.title?.charAt(0)}</span>
-                  </div>
+                  <BookCover bookData={book} width="w-10" height="h-14" textSize="text-lg" />
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-medium text-stone-800 dark:text-stone-200 truncate">{book.title}</div>
                     <div className="text-xs text-stone-500 dark:text-stone-400 truncate">{book.author}</div>
