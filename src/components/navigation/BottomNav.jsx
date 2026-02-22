@@ -52,7 +52,7 @@ export default function BottomNav() {
       paddingTop: '10px',
       paddingLeft: '8px',
       paddingRight: '8px',
-      paddingBottom: '24px',
+      paddingBottom: '16px',
       display: 'block',
       visibility: 'visible',
       opacity: 1,
