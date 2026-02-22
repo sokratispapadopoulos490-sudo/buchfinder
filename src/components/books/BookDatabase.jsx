@@ -242,7 +242,7 @@ export const books = [
     difficulty: "einsteiger",
     timeEffort: "mittel",
     style: ["wissenschaftlich", "story"],
-    description: "Wie der Mut zur Verletzlichkeit unser Leben verändert.",
+    description: "Brené Brown zeigt auf Basis von zwölf Jahren Forschung, dass Verletzlichkeit keine Schwäche ist, sondern die Quelle von Kreativität, Zugehörigkeit und echter menschlicher Verbindung.",
     coverColor: "bg-rose-100",
     ageGroup: "erwachsene"
   },
