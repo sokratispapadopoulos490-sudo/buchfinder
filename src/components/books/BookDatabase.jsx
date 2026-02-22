@@ -73,7 +73,7 @@ export const books = [
     difficulty: "fortgeschritten",
     timeEffort: "mittel",
     style: ["wissenschaftlich", "praktisch"],
-    description: "Regeln für konzentriertes Arbeiten in einer zerstreuten Welt.",
+    description: "Cal Newport argumentiert, dass die Fähigkeit zu tiefem, ablenkungsfreiem Arbeiten zu den wertvollsten Qualitäten unserer Zeit gehört – und zeigt, wie man sie in einer Welt voller Notifications systematisch aufbaut.",
     coverColor: "bg-indigo-100",
     ageGroup: "erwachsene"
   },
