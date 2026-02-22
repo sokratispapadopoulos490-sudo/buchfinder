@@ -74,67 +74,55 @@ export default function BookDetailModal({ book, readCount, onClose }) {
           </div>
 
           {/* Content */}
-          <div className="p-6">
-            <div className="grid md:grid-cols-3 gap-6 mb-6">
-              {/* Cover */}
+          <div className="p-4 md:p-6 overflow-y-auto max-h-[60vh] md:max-h-none">
+            {/* Mobile: Cover + title row, Desktop: grid */}
+            <div className="flex gap-4 mb-5 md:hidden">
+              <div className="w-20 flex-shrink-0">
+                <BookCover bookData={book} width="w-full" height="h-auto aspect-[2/3]" textSize="text-3xl" className="shadow-md w-full" placeholderClassName="shadow-md w-full" />
+              </div>
+              <div className="flex-1 space-y-1 pt-1">
+                {book.publishYear && <p className="text-xs text-stone-500">{book.publishYear}</p>}
+                {book.pageCount && <p className="text-xs text-stone-500">{book.pageCount} Seiten</p>}
+                {book.publisher && <p className="text-xs text-stone-500">{book.publisher}</p>}
+                {readCount > 0 && (
+                  <div className="flex items-center gap-1 text-xs text-stone-500">
+                    <Users className="w-3 h-3" />
+                    <span>{readCount}× gelesen</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="hidden md:grid md:grid-cols-3 gap-6 mb-6">
               <div className="md:col-span-1">
                 <BookCover bookData={book} width="w-full" height="h-auto aspect-[2/3]" textSize="text-6xl" className="shadow-lg w-full" placeholderClassName="shadow-lg w-full" />
               </div>
-
-              {/* Details */}
               <div className="md:col-span-2 space-y-4">
-                <div>
-                  <h3 className="text-sm font-medium text-stone-500 mb-2">Beschreibung</h3>
-                  {translating ? (
-                    <div className="flex items-center gap-2 text-stone-400">
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span className="text-sm">Wird übersetzt…</span>
-                    </div>
-                  ) : (
-                    <p className="text-stone-700 leading-relaxed">{translatedDescription}</p>
-                  )}
-                </div>
-
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <h3 className="text-sm font-medium text-stone-500 mb-1">Autor</h3>
                     <p className="text-stone-700">{book.author}</p>
                   </div>
-                  {book.publishYear && (
-                    <div>
-                      <h3 className="text-sm font-medium text-stone-500 mb-1">Erscheinungsjahr</h3>
-                      <p className="text-stone-700">{book.publishYear}</p>
-                    </div>
-                  )}
-                  {book.pageCount && (
-                    <div>
-                      <h3 className="text-sm font-medium text-stone-500 mb-1">Seitenzahl</h3>
-                      <p className="text-stone-700">{book.pageCount} Seiten</p>
-                    </div>
-                  )}
-                  {book.publisher && (
-                    <div>
-                      <h3 className="text-sm font-medium text-stone-500 mb-1">Verlag</h3>
-                      <p className="text-stone-700">{book.publisher}</p>
-                    </div>
-                  )}
-                  {book.isbn && (
-                    <div>
-                      <h3 className="text-sm font-medium text-stone-500 mb-1">ISBN</h3>
-                      <p className="text-stone-700 text-sm">{book.isbn}</p>
-                    </div>
-                  )}
-                  {readCount > 0 && (
-                    <div>
-                      <h3 className="text-sm font-medium text-stone-500 mb-1">Popularität</h3>
-                      <div className="flex items-center gap-2 text-stone-700">
-                        <Users className="w-4 h-4" />
-                        <span>{readCount}× gelesen</span>
-                      </div>
-                    </div>
-                  )}
+                  {book.publishYear && <div><h3 className="text-sm font-medium text-stone-500 mb-1">Erscheinungsjahr</h3><p className="text-stone-700">{book.publishYear}</p></div>}
+                  {book.pageCount && <div><h3 className="text-sm font-medium text-stone-500 mb-1">Seitenzahl</h3><p className="text-stone-700">{book.pageCount} Seiten</p></div>}
+                  {book.publisher && <div><h3 className="text-sm font-medium text-stone-500 mb-1">Verlag</h3><p className="text-stone-700">{book.publisher}</p></div>}
+                  {book.isbn && <div><h3 className="text-sm font-medium text-stone-500 mb-1">ISBN</h3><p className="text-stone-700 text-sm">{book.isbn}</p></div>}
+                  {readCount > 0 && <div><h3 className="text-sm font-medium text-stone-500 mb-1">Popularität</h3><div className="flex items-center gap-2 text-stone-700"><Users className="w-4 h-4" /><span>{readCount}× gelesen</span></div></div>}
                 </div>
               </div>
+            </div>
+
+            {/* Description - visible on all sizes */}
+            <div className="mb-4 md:mb-6">
+              <h3 className="text-sm font-medium text-stone-500 mb-2">Beschreibung</h3>
+              {translating ? (
+                <div className="flex items-center gap-2 text-stone-400">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span className="text-sm">Wird übersetzt…</span>
+                </div>
+              ) : (
+                <p className="text-stone-700 leading-relaxed text-sm md:text-base">{translatedDescription}</p>
+              )}
             </div>
 
             {/* Leseproben Links */}
