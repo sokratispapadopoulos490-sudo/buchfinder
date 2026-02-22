@@ -190,7 +190,7 @@ export const books = [
     difficulty: "fortgeschritten",
     timeEffort: "mittel",
     style: ["reflektierend", "anspruchsvoll"],
-    description: "Zeitlose Weisheit eines römischen Kaisers.",
+    description: "Die persönlichen Tagebucheintragungen Marc Aurels, des stoischen Kaisers Roms – geschrieben nicht zur Veröffentlichung, sondern als tägliche Erinnerung an Gleichmut, Pflicht und die Vergänglichkeit aller Dinge.",
     coverColor: "bg-amber-100",
     ageGroup: "erwachsene"
   },
