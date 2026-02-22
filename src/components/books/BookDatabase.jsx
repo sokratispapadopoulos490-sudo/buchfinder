@@ -112,7 +112,7 @@ export const books = [
     difficulty: "fortgeschritten",
     timeEffort: "lang",
     style: ["wissenschaftlich", "anspruchsvoll"],
-    description: "Wie wir denken: schnell, intuitiv, langsam, rational.",
+    description: "Nobelpreisträger Daniel Kahneman enthüllt die zwei Systeme unseres Denkens – das schnelle, intuitive System 1 und das langsame, rationale System 2 – und zeigt, wie deren Zusammenspiel unsere Urteile und Entscheidungen formt.",
     coverColor: "bg-emerald-100",
     ageGroup: "erwachsene"
   },
