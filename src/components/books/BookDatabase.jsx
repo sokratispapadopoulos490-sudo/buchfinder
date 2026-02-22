@@ -268,7 +268,7 @@ export const books = [
     difficulty: "einsteiger",
     timeEffort: "mittel",
     style: ["wissenschaftlich", "praktisch"],
-    description: "Die neue Psychologie des Erfolgs.",
+    description: "Carol Dweck zeigt, wie die Überzeugung, ob Talente angeboren oder erlernbar sind, den Unterschied zwischen Stagnation und Wachstum ausmacht – und wie ein 'Growth Mindset' in Erziehung, Sport und Führung entsteht.",
     coverColor: "bg-indigo-100",
     ageGroup: "erwachsene"
   },
