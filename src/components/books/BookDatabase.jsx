@@ -47,7 +47,7 @@ export const books = [
     difficulty: "einsteiger",
     timeEffort: "mittel",
     style: ["praktisch", "reflektierend"],
-    description: "Ein 12-Wochen-Programm zur Entfaltung der kreativen Kräfte.",
+    description: "Julia Cameron bietet mit den 'Morgenseiten' und dem 'Künstler-Date' ein 12-Wochen-Programm, das kreative Blockaden auflöst und die künstlerische Stimme aus der Stille zurückführt.",
     coverColor: "bg-violet-100",
     ageGroup: "erwachsene"
   },
