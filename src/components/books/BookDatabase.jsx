@@ -1097,7 +1097,7 @@ export const books = [
     difficulty: "fortgeschritten",
     timeEffort: "lang",
     style: ["wissenschaftlich", "reflektierend"],
-    description: "Harari analysiert die großen Fragen unserer Zeit.",
+    description: "Yuval Noah Harari beleuchtet 21 drängende Fragen unserer Zeit – von KI und Klimawandel über Terrorismus bis zu Meditation – und fragt, was es bedeutet, heute ein bewusstes Wesen zu sein.",
     coverColor: "bg-blue-100",
     ageGroup: "erwachsene"
   },
