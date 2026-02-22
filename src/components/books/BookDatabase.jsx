@@ -229,7 +229,7 @@ export const books = [
     difficulty: "einsteiger",
     timeEffort: "mittel",
     style: ["reflektierend", "praktisch"],
-    description: "Ein Leitfaden zum spirituellen Erwachen.",
+    description: "Eckhart Tolle beschreibt, wie das unaufhörliche Gedankenkarussell des Geistes uns vom einzigen Ort fernhält, an dem Frieden und Freude tatsächlich existieren: dem gegenwärtigen Moment.",
     coverColor: "bg-purple-100",
     ageGroup: "erwachsene"
   },
