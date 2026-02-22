@@ -275,11 +275,7 @@ export default function Compass() {
 
           {/* Aktuelles Buch */}
           <div className="flex items-start gap-4 mb-6">
-            <div className={`w-20 h-28 rounded ${currentBook.book_data.coverColor || 'bg-stone-100'} flex items-center justify-center flex-shrink-0`}>
-              <span className="text-3xl font-serif text-stone-400">
-                {currentBook.book_data.title.charAt(0)}
-              </span>
-            </div>
+            <BookCover bookData={currentBook.book_data} width="w-20" height="h-28" textSize="text-3xl" className="shadow-md" placeholderClassName="shadow-md" />
             <div className="flex-1">
               <h2 className="text-xl font-medium text-stone-800 dark:text-stone-200 mb-1">
                 {currentBook.book_data.title}
