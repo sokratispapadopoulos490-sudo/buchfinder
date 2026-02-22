@@ -52,12 +52,13 @@ export default function BottomNav() {
       paddingTop: '10px',
       paddingLeft: '8px',
       paddingRight: '8px',
-      paddingBottom: '16px',
+      paddingBottom: 'calc(8px + env(safe-area-inset-bottom, 0px))',
       display: 'block',
       visibility: 'visible',
       opacity: 1,
       transform: 'translateZ(0)',
       WebkitTransform: 'translateZ(0)',
+      WebkitBackfaceVisibility: 'hidden',
     }}>
       <div style={{
         display: 'flex',
