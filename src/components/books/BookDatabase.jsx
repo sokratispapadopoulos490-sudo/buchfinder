@@ -398,7 +398,7 @@ export const books = [
     difficulty: "einsteiger",
     timeEffort: "kurz",
     style: ["praktisch", "kurz"],
-    description: "Gewinne den inneren kreativen Kampf.",
+    description: "Steven Pressfield nennt den inneren Feind jeder kreativen Arbeit beim Namen – den 'Widerstand' – und zeigt, wie Profis ihn täglich überwinden, indem sie einfach anfangen zu arbeiten.",
     coverColor: "bg-violet-100",
     ageGroup: "erwachsene"
   },
