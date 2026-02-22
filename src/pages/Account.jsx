@@ -22,6 +22,7 @@ import GlobalSearch from '@/components/search/GlobalSearch';
 import DarkModeToggle from '@/components/settings/DarkModeToggle';
 import AddQuoteModal from '@/components/quotes/AddQuoteModal';
 import ReadingJourneyTeaser from '@/components/premium/ReadingJourneyTeaser';
+import LibraryView from '@/components/library/LibraryView';
 
 function AccountContent() {
   const [user, setUser] = useState(null);
