@@ -179,7 +179,11 @@ export default function Layout({ children, currentPageName }) {
   };
 
   if (checkingConsent) {
-    return null;
+    return (
+      <div style={{ minHeight: '100dvh', backgroundColor: localStorage.getItem('darkMode') === 'true' ? '#0a0a0a' : '#fff' }}>
+        {children}
+      </div>
+    );
   }
 
   // Navigation immer anzeigen wenn authentifiziert (außer auf bestimmten Seiten)
