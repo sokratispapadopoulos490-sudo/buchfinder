@@ -164,7 +164,7 @@ export const books = [
     difficulty: "fortgeschritten",
     timeEffort: "lang",
     style: ["wissenschaftlich", "anspruchsvoll"],
-    description: "Wie Trauma im Körper gespeichert wird und wie Heilung gelingt.",
+    description: "Psychiater Bessel van der Kolk zeigt anhand jahrzehntelanger Forschung, wie traumatische Erlebnisse buchstäblich im Körper gespeichert werden – und welche Wege, von Yoga über EMDR bis zum Theater, echte Heilung ermöglichen.",
     coverColor: "bg-red-100",
     ageGroup: "erwachsene"
   },
