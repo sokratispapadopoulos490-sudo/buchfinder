@@ -1084,7 +1084,7 @@ export const books = [
     difficulty: "einsteiger",
     timeEffort: "mittel",
     style: ["wissenschaftlich", "praktisch"],
-    description: "Warum wir die Welt systematisch falsch sehen.",
+    description: "Hans Rosling zeigt mit Daten, warum wir die Welt systematisch schlechter einschätzen als sie ist – und wie ein faktenbasiertes Weltbild uns helfen kann, die richtigen Entscheidungen zu treffen.",
     coverColor: "bg-green-100",
     ageGroup: "erwachsene"
   },
