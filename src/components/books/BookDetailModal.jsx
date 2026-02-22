@@ -11,6 +11,15 @@ export default function BookDetailModal({ book, readCount, onClose }) {
   const { language } = useLanguage();
   const [translatedDescription, setTranslatedDescription] = useState(book?.description || '');
   const [translating, setTranslating] = useState(false);
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsDark(document.documentElement.classList.contains('dark'));
+    check();
+    const observer = new MutationObserver(check);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (!book?.description) return;
