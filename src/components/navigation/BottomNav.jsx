@@ -49,10 +49,8 @@ export default function BottomNav() {
       borderTop: `2px solid ${isDark ? '#333333' : '#d6d3d1'}`,
       borderRadius: '16px 16px 0 0',
       boxShadow: isDark ? '0 -4px 6px -1px rgba(0,0,0,0.4)' : '0 -4px 6px -1px rgba(0, 0, 0, 0.1)',
-      paddingTop: '10px',
-      paddingLeft: '8px',
-      paddingRight: '8px',
-      paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 10px)'
+      padding: '10px 8px 10px 8px',
+      paddingBottom: 'max(10px, env(safe-area-inset-bottom))',
     }}>
       <div style={{
         display: 'flex',
