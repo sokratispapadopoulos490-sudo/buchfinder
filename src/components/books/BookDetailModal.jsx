@@ -85,7 +85,14 @@ export default function BookDetailModal({ book, readCount, onClose }) {
               <div className="md:col-span-2 space-y-4">
                 <div>
                   <h3 className="text-sm font-medium text-stone-500 mb-2">Beschreibung</h3>
-                  <p className="text-stone-700 leading-relaxed">{book.description}</p>
+                  {translating ? (
+                    <div className="flex items-center gap-2 text-stone-400">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span className="text-sm">Wird übersetzt…</span>
+                    </div>
+                  ) : (
+                    <p className="text-stone-700 leading-relaxed">{translatedDescription}</p>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
