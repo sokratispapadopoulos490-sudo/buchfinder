@@ -99,7 +99,7 @@ export const books = [
     difficulty: "einsteiger",
     timeEffort: "mittel",
     style: ["story", "reflektierend"],
-    description: "Eine Parabel über die Erfüllung von Träumen.",
+    description: "Ein erfolgreicher Anwalt verkauft seinen Ferrari, zieht sich in ein Himalaya-Kloster zurück und kehrt mit einem einfachen System zurück, das ein erfülltes, ausgeglichenes und bedeutungsvolles Leben ermöglicht.",
     coverColor: "bg-orange-100",
     ageGroup: "erwachsene"
   },
