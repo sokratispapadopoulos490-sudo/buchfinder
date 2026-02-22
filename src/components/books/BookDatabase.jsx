@@ -346,7 +346,7 @@ export const books = [
     difficulty: "einsteiger",
     timeEffort: "mittel",
     style: ["wissenschaftlich", "praktisch"],
-    description: "Die Kraft der Leidenschaft und Ausdauer.",
+    description: "Psychologin Angela Duckworth zeigt, dass der entscheidende Faktor für Erfolg weder Talent noch IQ ist, sondern Grit: die Kombination aus Leidenschaft für ein langfristiges Ziel und der Ausdauer, auch nach Rückschlägen weiterzumachen.",
     coverColor: "bg-red-100",
     ageGroup: "erwachsene"
   },
