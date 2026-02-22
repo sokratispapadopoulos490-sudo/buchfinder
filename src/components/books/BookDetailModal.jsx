@@ -95,11 +95,11 @@ export default function BookDetailModal({ book, readCount, onClose }) {
                 <BookCover bookData={book} width="w-full" height="h-auto aspect-[2/3]" textSize="text-3xl" className="shadow-md w-full" placeholderClassName="shadow-md w-full" />
               </div>
               <div className="flex-1 space-y-1 pt-1">
-                {book.publishYear && <p className="text-xs text-stone-500">{book.publishYear}</p>}
-                {book.pageCount && <p className="text-xs text-stone-500">{book.pageCount} Seiten</p>}
-                {book.publisher && <p className="text-xs text-stone-500">{book.publisher}</p>}
+                {book.publishYear && <p className="text-xs" style={{ color: isDark ? '#aaa' : '#78716c' }}>{book.publishYear}</p>}
+                {book.pageCount && <p className="text-xs" style={{ color: isDark ? '#aaa' : '#78716c' }}>{book.pageCount} Seiten</p>}
+                {book.publisher && <p className="text-xs" style={{ color: isDark ? '#aaa' : '#78716c' }}>{book.publisher}</p>}
                 {readCount > 0 && (
-                  <div className="flex items-center gap-1 text-xs text-stone-500">
+                  <div className="flex items-center gap-1 text-xs" style={{ color: isDark ? '#aaa' : '#78716c' }}>
                     <Users className="w-3 h-3" />
                     <span>{readCount}× gelesen</span>
                   </div>
