@@ -8,6 +8,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { de } from 'date-fns/locale';
 import ReadingProgressModal from '@/components/reading/ReadingProgressModal';
 import BookScannerModal from '@/components/books/BookScannerModal';
+import BookCover from '@/components/books/BookCover';
 
 export default function Compass() {
   const [user, setUser] = useState(null);
