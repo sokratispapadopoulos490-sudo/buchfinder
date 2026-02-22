@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { base44 } from '@/api/base44Client';
 import StarRating from './StarRating';
 import BookDetailModal from './BookDetailModal';
+import BookCover, { getCoverUrl } from './BookCover';
 
 const generateBuyLinks = (book) => {
   const encodedTitle = encodeURIComponent(`${book.title} ${book.author}`);
