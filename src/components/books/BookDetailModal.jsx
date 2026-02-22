@@ -67,7 +67,8 @@ export default function BookDetailModal({ book, readCount, onClose }) {
             </div>
             <button
               onClick={onClose}
-              className="text-stone-400 hover:text-stone-600 transition-colors ml-4"
+              style={{ position: 'relative', zIndex: 2147483648 }}
+              className="text-stone-400 hover:text-stone-600 transition-colors ml-4 flex-shrink-0"
             >
               <X className="w-6 h-6" />
             </button>
