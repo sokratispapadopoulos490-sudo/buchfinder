@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Compass, Users, User } from 'lucide-react';
 import { createPageUrl } from '@/utils';
@@ -6,6 +6,15 @@ import { createPageUrl } from '@/utils';
 export default function BottomNav() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsDark(document.documentElement.classList.contains('dark'));
+    check();
+    const observer = new MutationObserver(check);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
 
   const navItems = [
     {
@@ -36,11 +45,11 @@ export default function BottomNav() {
       left: '0',
       right: '0',
       zIndex: 9999999,
-      backgroundColor: 'white',
-      borderTop: '2px solid #d6d3d1',
+      backgroundColor: isDark ? '#1a1a1a' : 'white',
+      borderTop: `2px solid ${isDark ? '#333333' : '#d6d3d1'}`,
       borderRadius: '16px 16px 0 0',
-      boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.1)',
-      padding: '10px 8px 45px 8px'
+      boxShadow: isDark ? '0 -4px 6px -1px rgba(0,0,0,0.4)' : '0 -4px 6px -1px rgba(0, 0, 0, 0.1)',
+      padding: '10px 8px env(safe-area-inset-bottom, 10px) 8px'
     }}>
       <div style={{
         display: 'flex',
