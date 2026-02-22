@@ -50,28 +50,7 @@ export default function BookDetailModal({ book, readCount, onClose }) {
             <div className="grid md:grid-cols-3 gap-6 mb-6">
               {/* Cover */}
               <div className="md:col-span-1">
-                {book.coverUrl ? (
-                  <img
-                    src={book.coverUrl}
-                    alt={`Cover von ${book.title}`}
-                    className="w-full rounded-lg shadow-lg"
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                      e.target.nextSibling.style.display = 'flex';
-                    }}
-                  />
-                ) : null}
-                <div 
-                  className={cn(
-                    "w-full aspect-[2/3] rounded-lg flex items-center justify-center shadow-lg",
-                    book.coverColor || "bg-stone-100",
-                    book.coverUrl && "hidden"
-                  )}
-                >
-                  <span className="text-6xl font-serif text-stone-400">
-                    {book.title.charAt(0)}
-                  </span>
-                </div>
+                <BookCover bookData={book} width="w-full" height="h-auto aspect-[2/3]" textSize="text-6xl" className="shadow-lg w-full" placeholderClassName="shadow-lg w-full" />
               </div>
 
               {/* Details */}
