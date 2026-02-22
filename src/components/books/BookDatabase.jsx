@@ -320,7 +320,7 @@ export const books = [
     difficulty: "einsteiger",
     timeEffort: "mittel",
     style: ["praktisch"],
-    description: "Der Klassiker über zwischenmenschliche Beziehungen.",
+    description: "Dale Carnegies Klassiker aus 1936 zeigt anhand konkreter Techniken, wie man Menschen für sich gewinnt, Konflikte entschärft und andere zu eigenen Überzeugungen führt – ohne Manipulation, sondern durch echtes Interesse.",
     coverColor: "bg-amber-100",
     ageGroup: "erwachsene"
   },
