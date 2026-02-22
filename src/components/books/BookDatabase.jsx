@@ -1110,7 +1110,7 @@ export const books = [
     difficulty: "einsteiger",
     timeEffort: "mittel",
     style: ["story", "praktisch"],
-    description: "Kings Autobiografie und Schreibratgeber in einem.",
+    description: "Stephen King beschreibt seinen Weg vom armen Schreiber zum Bestsellerautor und gibt dabei handfeste Ratschläge für das Handwerk des Schreibens – ehrlich, unterhaltsam und unverwechselbar.",
     coverColor: "bg-orange-100",
     ageGroup: "erwachsene"
   },
