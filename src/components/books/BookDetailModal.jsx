@@ -55,7 +55,7 @@ export default function BookDetailModal({ book, readCount, onClose }) {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
           onClick={(e) => e.stopPropagation()}
-          className="bg-white rounded-2xl max-w-4xl w-full shadow-2xl my-8"
+          className="bg-white rounded-2xl max-w-4xl w-full shadow-2xl my-8 mb-24"
         >
           {/* Header */}
           <div className="flex items-start justify-between p-6 border-b border-stone-200">
