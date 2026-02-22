@@ -372,7 +372,7 @@ export const books = [
     difficulty: "einsteiger",
     timeEffort: "kurz",
     style: ["story", "reflektierend"],
-    description: "Eine zeitlose Parabel über das Verfolgen der eigenen Träume.",
+    description: "Santiago, ein andalusischer Hirtenjunge, bricht auf der Suche nach einem Schatz auf – und begegnet auf dieser Reise durch die Wüste Nordafrikas dem Alchemisten und lernt, die Sprache der Welt zu lesen.",
     coverColor: "bg-yellow-100",
     ageGroup: "erwachsene"
   },
