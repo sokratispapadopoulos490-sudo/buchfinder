@@ -138,7 +138,7 @@ export const books = [
     difficulty: "einsteiger",
     timeEffort: "mittel",
     style: ["praktisch", "kurz"],
-    description: "Weniger, aber besser: Die disziplinierte Verfolgung des Wesentlichen.",
+    description: "Greg McKeown zeigt, warum 'mehr tun' oft weniger bewirkt und wie man durch konsequentes Nein-Sagen zu allem Unwichtigen den eigentlichen Beitrag leistet, der nur man selbst leisten kann.",
     coverColor: "bg-teal-100",
     ageGroup: "erwachsene"
   },
