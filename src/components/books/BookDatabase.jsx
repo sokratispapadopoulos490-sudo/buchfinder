@@ -203,7 +203,7 @@ export const books = [
     difficulty: "einsteiger",
     timeEffort: "mittel",
     style: ["story", "praktisch"],
-    description: "Wie sie uns mutiger, glücklicher und stärker macht.",
+    description: "Die Schriftstellerin Melanie Raabe erkundet, was Kreativität wirklich ist, woher sie kommt, warum wir sie so oft unterdrücken – und wie wir wieder Zugang zu ihr finden.",
     coverColor: "bg-fuchsia-100",
     ageGroup: "erwachsene"
   },
