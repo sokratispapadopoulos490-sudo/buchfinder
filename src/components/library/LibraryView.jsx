@@ -4,6 +4,7 @@ import { ChevronDown, ChevronRight, Folder, FolderOpen, Plus, Trash2, CheckCircl
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import BookCover from '@/components/books/BookCover';
+import BookDetailModal from '@/components/books/BookDetailModal';
 
 // Mini book card used inside folders
 function BookItem({ saved, onToggleComplete, onDelete, onProgressClick, onFolderAssign, folders }) {
