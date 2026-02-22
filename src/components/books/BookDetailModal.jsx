@@ -73,10 +73,10 @@ export default function BookDetailModal({ book, readCount, onClose }) {
           {/* Header */}
           <div className="flex items-start justify-between p-6" style={{ borderBottom: `1px solid ${isDark ? '#333' : '#e7e5e4'}` }}>
             <div className="flex-1">
-              <h2 className="text-2xl md:text-3xl font-light text-stone-800 mb-2">
-                {book.title}
-              </h2>
-              <p className="text-stone-600">{book.author}</p>
+              <h2 className="text-2xl md:text-3xl font-light mb-2" style={{ color: isDark ? '#f5f5f5' : '#1c1917' }}>
+                  {book.title}
+                </h2>
+                <p style={{ color: isDark ? '#aaa' : '#57534e' }}>{book.author}</p>
             </div>
             <button
               onClick={onClose}
