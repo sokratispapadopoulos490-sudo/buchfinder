@@ -1123,7 +1123,7 @@ export const books = [
     difficulty: "einsteiger",
     timeEffort: "mittel",
     style: ["praktisch", "reflektierend"],
-    description: "Ein ehrlicher Begleiter durch den Trauerprozess.",
+    description: "Megan Devine widersteht falschen Tröstungen und zeigt, dass mancher Schmerz nicht 'überwunden' werden muss – sondern dass es in Ordnung ist, traurig zu sein, und wie man trotzdem weiterleben kann.",
     coverColor: "bg-slate-100",
     ageGroup: "erwachsene"
     },
