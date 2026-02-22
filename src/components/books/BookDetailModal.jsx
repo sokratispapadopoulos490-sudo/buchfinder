@@ -1,11 +1,39 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { X, ExternalLink, Book, Users } from 'lucide-react';
+import { X, ExternalLink, Book, Users, Loader2 } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import BookCover from './BookCover';
+import { useLanguage } from '@/components/language/LanguageContext';
+import { base44 } from '@/api/base44Client';
 
 export default function BookDetailModal({ book, readCount, onClose }) {
+  const { language } = useLanguage();
+  const [translatedDescription, setTranslatedDescription] = useState(book?.description || '');
+  const [translating, setTranslating] = useState(false);
+
+  useEffect(() => {
+    if (!book?.description) return;
+    if (language === 'en') {
+      setTranslatedDescription(book.description);
+      return;
+    }
+    const translate = async () => {
+      setTranslating(true);
+      try {
+        const result = await base44.integrations.Core.InvokeLLM({
+          prompt: `Translate the following book description to the language with code "${language}". Return ONLY the translated text, nothing else.\n\n${book.description}`,
+        });
+        setTranslatedDescription(result);
+      } catch {
+        setTranslatedDescription(book.description);
+      } finally {
+        setTranslating(false);
+      }
+    };
+    translate();
+  }, [book?.description, language]);
+
   if (!book) return null;
 
   const getGoogleBooksPreviewUrl = () => {
