@@ -255,7 +255,7 @@ export const books = [
     difficulty: "einsteiger",
     timeEffort: "lang",
     style: ["praktisch"],
-    description: "Zeitlose Prinzipien für persönlichen und beruflichen Erfolg.",
+    description: "Stephen Covey beschreibt sieben grundlegende Prinzipien – von proaktivem Denken über Win-Win-Haltung bis zum 'Erst verstehen, dann verstanden werden' – die auf Charakter statt auf schnellen Techniken aufbauen.",
     coverColor: "bg-green-100",
     ageGroup: "erwachsene"
   },
