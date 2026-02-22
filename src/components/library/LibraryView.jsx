@@ -297,6 +297,9 @@ function CategorySection({ title, icon, books, folders, allFolders, parentKey, o
 
 export default function LibraryView({ savedBooks, onToggleComplete, onDelete, onProgressClick, onRefresh }) {
   const [folders, setFolders] = useState([]);
+  const [creatingCategory, setCreatingCategory] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [customCategories, setCustomCategories] = useState([]);
 
   useEffect(() => {
     loadFolders();
@@ -305,6 +308,7 @@ export default function LibraryView({ savedBooks, onToggleComplete, onDelete, on
   const loadFolders = async () => {
     const f = await base44.entities.BookFolder.list('-created_date');
     setFolders(f);
+    setCustomCategories(f.filter(fold => fold.parent_category === 'custom'));
   };
 
   const handleCreateFolder = async (name, parentKey) => {
@@ -319,7 +323,6 @@ export default function LibraryView({ savedBooks, onToggleComplete, onDelete, on
 
   const handleDeleteFolder = async (id) => {
     if (confirm('Ordner wirklich löschen? Bücher bleiben erhalten.')) {
-      // Remove folder from all books
       const booksInFolder = savedBooks.filter(b => (b.folder_ids || []).includes(id));
       await Promise.all(booksInFolder.map(b =>
         base44.entities.SavedBook.update(b.id, { folder_ids: (b.folder_ids || []).filter(fid => fid !== id) })
@@ -332,6 +335,15 @@ export default function LibraryView({ savedBooks, onToggleComplete, onDelete, on
 
   const handleFolderAssign = async () => {
     onRefresh();
+  };
+
+  const handleCreateCategory = async () => {
+    if (newCategoryName.trim()) {
+      await base44.entities.BookFolder.create({ name: newCategoryName.trim(), parent_category: 'custom' });
+      setNewCategoryName('');
+      setCreatingCategory(false);
+      await loadFolders();
+    }
   };
 
   const inProgressBooks = savedBooks.filter(b => !b.is_completed);
@@ -353,6 +365,38 @@ export default function LibraryView({ savedBooks, onToggleComplete, onDelete, on
 
   return (
     <div className="space-y-4">
+      {/* Header row with + Ordner and + Kategorie */}
+      <div className="flex items-center justify-end gap-2">
+        <button
+          onClick={() => { setCreatingCategory(true); }}
+          className="flex items-center gap-1 text-xs text-stone-600 dark:text-stone-400 hover:text-amber-700 border border-stone-200 dark:border-stone-700 bg-white dark:bg-[#1a1a1a] px-3 py-1.5 rounded-lg transition-colors"
+        >
+          <Plus className="w-3 h-3" /> Kategorie
+        </button>
+      </div>
+
+      {/* New category input */}
+      <AnimatePresence>
+        {creatingCategory && (
+          <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="flex gap-2">
+            <input
+              autoFocus
+              value={newCategoryName}
+              onChange={e => setNewCategoryName(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') handleCreateCategory(); if (e.key === 'Escape') setCreatingCategory(false); }}
+              placeholder="Kategoriename z.B. Geschenkliste..."
+              className="flex-1 text-sm border border-stone-200 dark:border-stone-700 rounded-lg px-3 py-2 bg-white dark:bg-[#222] outline-none focus:ring-2 focus:ring-amber-500"
+            />
+            <Button size="sm" onClick={handleCreateCategory} className="bg-amber-600 hover:bg-amber-700 text-white">
+              <Check className="w-4 h-4" />
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => setCreatingCategory(false)}>
+              <X className="w-4 h-4" />
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <CategorySection
         title="Noch nicht gelesen"
         icon="📖"
@@ -369,6 +413,19 @@ export default function LibraryView({ savedBooks, onToggleComplete, onDelete, on
         parentKey="completed"
         {...sharedProps}
       />
+
+      {/* Custom categories */}
+      {customCategories.map(cat => (
+        <CategorySection
+          key={cat.id}
+          title={cat.name}
+          icon="📁"
+          books={savedBooks.filter(b => (b.folder_ids || []).includes(cat.id))}
+          folders={[]}
+          parentKey="custom"
+          {...sharedProps}
+        />
+      ))}
     </div>
   );
 }
