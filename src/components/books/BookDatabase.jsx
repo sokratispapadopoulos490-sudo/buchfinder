@@ -216,7 +216,7 @@ export const books = [
     difficulty: "fortgeschritten",
     timeEffort: "lang",
     style: ["wissenschaftlich", "anspruchsvoll"],
-    description: "Eine kurze Geschichte der Menschheit.",
+    description: "Yuval Noah Harari erzählt die Geschichte des Homo sapiens vom kognitiven Durchbruch vor 70.000 Jahren bis zur Gegenwart – und fragt, was uns als Spezies erfolgreich machte: unsere einzigartige Fähigkeit, kollektive Fiktionen zu glauben.",
     coverColor: "bg-blue-100",
     ageGroup: "erwachsene"
   },
