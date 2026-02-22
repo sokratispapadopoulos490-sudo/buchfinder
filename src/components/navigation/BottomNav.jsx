@@ -73,10 +73,10 @@ export default function BottomNav() {
                 gap: '4px',
                 padding: '8px 12px',
                 border: 'none',
-                background: active ? '#fef3c7' : 'transparent',
+                background: active ? (isDark ? '#3a2a00' : '#fef3c7') : 'transparent',
                 borderRadius: '12px',
                 cursor: 'pointer',
-                color: active ? '#d97706' : '#78716c',
+                color: active ? '#d97706' : (isDark ? '#aaaaaa' : '#78716c'),
                 flex: 1,
                 minHeight: '56px',
                 touchAction: 'manipulation'
