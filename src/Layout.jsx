@@ -180,9 +180,12 @@ export default function Layout({ children, currentPageName }) {
 
   if (checkingConsent) {
     return (
-      <div style={{ minHeight: '100dvh', backgroundColor: localStorage.getItem('darkMode') === 'true' ? '#0a0a0a' : '#fff' }}>
-        {children}
-      </div>
+      <LanguageProvider>
+        <LanguageDropdown />
+        <div style={{ minHeight: '100dvh', backgroundColor: localStorage.getItem('darkMode') === 'true' ? '#0a0a0a' : '#fff' }}>
+          {children}
+        </div>
+      </LanguageProvider>
     );
   }
 
