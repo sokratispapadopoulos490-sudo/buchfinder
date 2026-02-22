@@ -72,7 +72,7 @@ export default function BottomNav() {
           const active = isActive(item.path);
           
           return (
-            <button
+            <div
               key={item.path}
               onClick={() => navigate(createPageUrl(item.path))}
               style={{
@@ -82,13 +82,15 @@ export default function BottomNav() {
                 gap: '4px',
                 padding: '8px 12px',
                 border: 'none',
-                background: active ? (isDark ? '#3a2a00' : '#fef3c7') : 'transparent',
+                backgroundColor: active ? (isDark ? '#3a2a00' : '#fef3c7') : 'transparent',
                 borderRadius: '12px',
                 cursor: 'pointer',
                 color: active ? '#d97706' : (isDark ? '#aaaaaa' : '#78716c'),
                 flex: 1,
                 minHeight: '56px',
-                touchAction: 'manipulation'
+                touchAction: 'manipulation',
+                userSelect: 'none',
+                WebkitTapHighlightColor: 'transparent',
               }}
             >
               <Icon style={{ width: '24px', height: '24px', strokeWidth: active ? 2.5 : 2, pointerEvents: 'none' }} />
