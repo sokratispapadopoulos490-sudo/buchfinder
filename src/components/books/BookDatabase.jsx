@@ -1071,7 +1071,7 @@ export const books = [
     difficulty: "fortgeschritten",
     timeEffort: "lang",
     style: ["wissenschaftlich", "anspruchsvoll"],
-    description: "Hawking erklärt das Universum verständlich.",
+    description: "Stephen Hawking erklärt von Urknall über Schwarze Löcher bis zum Pfeil der Zeit die Grundfragen der Kosmologie – auf eine Weise, die auch Nicht-Physiker fesselt.",
     coverColor: "bg-violet-100",
     ageGroup: "erwachsene"
   },
