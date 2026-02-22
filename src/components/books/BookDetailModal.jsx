@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { X, ExternalLink, Book, Users } from 'lucide-react';
 import { cn } from "@/lib/utils";
+import BookCover from './BookCover';
 
 export default function BookDetailModal({ book, readCount, onClose }) {
   if (!book) return null;
