@@ -8,6 +8,7 @@ import BookCover from '@/components/books/BookCover';
 // Mini book card used inside folders
 function BookItem({ saved, onToggleComplete, onDelete, onProgressClick, onFolderAssign, folders }) {
   const [showFolderMenu, setShowFolderMenu] = useState(false);
+  const [showDetail, setShowDetail] = useState(false);
 
   const toggleFolder = async (folderId) => {
     const current = saved.folder_ids || [];
