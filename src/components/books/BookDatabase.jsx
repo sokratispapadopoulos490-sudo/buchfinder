@@ -60,7 +60,7 @@ export const books = [
     difficulty: "einsteiger",
     timeEffort: "kurz",
     style: ["reflektierend", "kurz"],
-    description: "Ein Entdecker über die Stille in einer lauten Welt.",
+    description: "Der Polarforscher Erling Kagge, der allein den Südpol erreichte, erkundet in kurzen Betrachtungen, was Stille bedeutet, wo sie zu finden ist – und warum wir sie so dringend brauchen.",
     coverColor: "bg-sky-100",
     ageGroup: "erwachsene"
   },
