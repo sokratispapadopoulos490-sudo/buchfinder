@@ -128,20 +128,20 @@ export default function BookDetailModal({ book, readCount, onClose }) {
 
             {/* Description - visible on all sizes */}
             <div className="mb-4 md:mb-6">
-              <h3 className="text-sm font-medium text-stone-500 mb-2">Beschreibung</h3>
+              <h3 className="text-sm font-medium mb-2" style={{ color: isDark ? '#aaa' : '#78716c' }}>Beschreibung</h3>
               {translating ? (
-                <div className="flex items-center gap-2 text-stone-400">
+                <div className="flex items-center gap-2" style={{ color: isDark ? '#888' : '#a8a29e' }}>
                   <Loader2 className="w-4 h-4 animate-spin" />
                   <span className="text-sm">Wird übersetzt…</span>
                 </div>
               ) : (
-                <p className="text-stone-700 leading-relaxed text-sm md:text-base">{translatedDescription}</p>
+                <p className="leading-relaxed text-sm md:text-base" style={{ color: isDark ? '#e5e5e5' : '#44403c' }}>{translatedDescription}</p>
               )}
             </div>
 
             {/* Leseproben Links */}
-            <div className="border-t border-stone-200 pt-6">
-              <h3 className="text-lg font-medium text-stone-800 mb-4 flex items-center gap-2">
+            <div className="pt-6" style={{ borderTop: `1px solid ${isDark ? '#333' : '#e7e5e4'}` }}>
+              <h3 className="text-lg font-medium mb-4 flex items-center gap-2" style={{ color: isDark ? '#f5f5f5' : '#1c1917' }}>
                 <Book className="w-5 h-5" />
                 Leseproben & Mehr
               </h3>
@@ -150,34 +150,36 @@ export default function BookDetailModal({ book, readCount, onClose }) {
                   href={getGoogleBooksPreviewUrl()}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between p-4 border border-stone-200 rounded-lg hover:border-amber-400 hover:bg-amber-50 transition-all group"
+                  className="flex items-center justify-between p-4 rounded-lg transition-all group"
+                  style={{ border: `1px solid ${isDark ? '#444' : '#e7e5e4'}`, backgroundColor: 'transparent' }}
                 >
                   <div>
-                    <div className="font-medium text-stone-800 group-hover:text-amber-700">Google Books</div>
-                    <div className="text-xs text-stone-500">Leseprobe & Details anzeigen</div>
+                    <div className="font-medium" style={{ color: isDark ? '#e5e5e5' : '#1c1917' }}>Google Books</div>
+                    <div className="text-xs" style={{ color: isDark ? '#aaa' : '#78716c' }}>Leseprobe & Details anzeigen</div>
                   </div>
-                  <ExternalLink className="w-4 h-4 text-stone-400 group-hover:text-amber-600" />
+                  <ExternalLink className="w-4 h-4" style={{ color: isDark ? '#888' : '#a8a29e' }} />
                 </a>
                 
                 <a
                   href={getAmazonPreviewUrl()}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between p-4 border border-stone-200 rounded-lg hover:border-amber-400 hover:bg-amber-50 transition-all group"
+                  className="flex items-center justify-between p-4 rounded-lg transition-all group"
+                  style={{ border: `1px solid ${isDark ? '#444' : '#e7e5e4'}`, backgroundColor: 'transparent' }}
                 >
                   <div>
-                    <div className="font-medium text-stone-800 group-hover:text-amber-700">Amazon</div>
-                    <div className="text-xs text-stone-500">"Blick ins Buch" Funktion</div>
+                    <div className="font-medium" style={{ color: isDark ? '#e5e5e5' : '#1c1917' }}>Amazon</div>
+                    <div className="text-xs" style={{ color: isDark ? '#aaa' : '#78716c' }}>"Blick ins Buch" Funktion</div>
                   </div>
-                  <ExternalLink className="w-4 h-4 text-stone-400 group-hover:text-amber-600" />
+                  <ExternalLink className="w-4 h-4" style={{ color: isDark ? '#888' : '#a8a29e' }} />
                 </a>
               </div>
             </div>
           </div>
 
           {/* Footer */}
-          <div className="p-6 border-t border-stone-200 flex justify-end">
-            <Button onClick={onClose} className="bg-stone-800 hover:bg-stone-700">
+          <div className="p-6 flex justify-end" style={{ borderTop: `1px solid ${isDark ? '#333' : '#e7e5e4'}` }}>
+            <Button onClick={onClose} style={{ backgroundColor: isDark ? '#d97706' : '#1c1917', color: isDark ? '#000' : '#fff' }}>
               Schließen
             </Button>
           </div>
