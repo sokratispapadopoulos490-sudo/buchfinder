@@ -151,7 +151,7 @@ export const books = [
     difficulty: "fortgeschritten",
     timeEffort: "mittel",
     style: ["story", "reflektierend", "anspruchsvoll"],
-    description: "Ein Überlebender des Holocaust über den Sinn des Lebens.",
+    description: "Viktor Frankl überlebte vier Konzentrationslager und entwickelte daraus die Logotherapie: die Erkenntnis, dass der Mensch alles ertragen kann, solange er ein 'Warum' hat – einen Sinn, dem er sein Leiden widmet.",
     coverColor: "bg-stone-100",
     ageGroup: "erwachsene"
   },
