@@ -106,13 +106,9 @@ html.dark [class*="bg-gradient"] {
   background-color: #0a0a0a !important;
 }
 
-/* ALLE Karten, Boxen und Container */
-html.dark [class*="rounded"],
-html.dark [class*="shadow"],
-html.dark div,
-html.dark section {
-  background-color: #1a1a1a !important;
-  border-color: #333333 !important;
+/* Karten und Boxen mit expliziten Hintergrundklassen */
+html.dark [class*="shadow"] {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3) !important;
 }
 
 /* Aber Buttons sollen ihre Farben behalten */
