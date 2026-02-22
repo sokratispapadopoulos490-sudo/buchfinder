@@ -333,7 +333,7 @@ export const books = [
     difficulty: "fortgeschritten",
     timeEffort: "lang",
     style: ["wissenschaftlich", "anspruchsvoll"],
-    description: "Die neue Wissenschaft vom Schlaf und Träumen.",
+    description: "Schlafspezialist Matthew Walker belegt mit aktueller Forschung, wie Schlafmangel Gedächtnis, Immunsystem, emotionale Stabilität und sogar die Genexpression beeinflusst – und warum acht Stunden keine Luxus, sondern Notwendigkeit sind.",
     coverColor: "bg-blue-100",
     ageGroup: "erwachsene"
   },
