@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ChevronRight, Folder, FolderOpen, Plus, Trash2, CheckCircle, BookOpen, Edit2, X, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
+import BookCover from '@/components/books/BookCover';
 
 // Mini book card used inside folders
 function BookItem({ saved, onToggleComplete, onDelete, onProgressClick, onFolderAssign, folders }) {
