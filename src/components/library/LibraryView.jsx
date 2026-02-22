@@ -20,9 +20,7 @@ function BookItem({ saved, onToggleComplete, onDelete, onProgressClick, onFolder
 
   return (
     <div className="flex items-center gap-3 p-3 border border-stone-200 dark:border-stone-700 rounded-lg bg-white dark:bg-[#1a1a1a] hover:border-stone-300 transition-colors">
-      <div className={`w-10 h-14 rounded flex-shrink-0 ${saved.book_data.coverColor || 'bg-stone-100'} flex items-center justify-center`}>
-        <span className="text-sm font-serif text-stone-400">{saved.book_data.title?.charAt(0)}</span>
-      </div>
+      <BookCover bookData={saved.book_data} width="w-10" height="h-14" textSize="text-sm" />
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-stone-800 dark:text-stone-200 truncate">{saved.book_data.title}</p>
         <p className="text-xs text-stone-500 truncate">{saved.book_data.author}</p>
