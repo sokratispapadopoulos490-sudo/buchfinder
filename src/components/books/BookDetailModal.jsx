@@ -114,14 +114,14 @@ export default function BookDetailModal({ book, readCount, onClose }) {
               <div className="md:col-span-2 space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <h3 className="text-sm font-medium text-stone-500 mb-1">Autor</h3>
-                    <p className="text-stone-700">{book.author}</p>
+                    <h3 className="text-sm font-medium mb-1" style={{ color: isDark ? '#aaa' : '#78716c' }}>Autor</h3>
+                    <p style={{ color: isDark ? '#e5e5e5' : '#44403c' }}>{book.author}</p>
                   </div>
-                  {book.publishYear && <div><h3 className="text-sm font-medium text-stone-500 mb-1">Erscheinungsjahr</h3><p className="text-stone-700">{book.publishYear}</p></div>}
-                  {book.pageCount && <div><h3 className="text-sm font-medium text-stone-500 mb-1">Seitenzahl</h3><p className="text-stone-700">{book.pageCount} Seiten</p></div>}
-                  {book.publisher && <div><h3 className="text-sm font-medium text-stone-500 mb-1">Verlag</h3><p className="text-stone-700">{book.publisher}</p></div>}
-                  {book.isbn && <div><h3 className="text-sm font-medium text-stone-500 mb-1">ISBN</h3><p className="text-stone-700 text-sm">{book.isbn}</p></div>}
-                  {readCount > 0 && <div><h3 className="text-sm font-medium text-stone-500 mb-1">Popularität</h3><div className="flex items-center gap-2 text-stone-700"><Users className="w-4 h-4" /><span>{readCount}× gelesen</span></div></div>}
+                  {book.publishYear && <div><h3 className="text-sm font-medium mb-1" style={{ color: isDark ? '#aaa' : '#78716c' }}>Erscheinungsjahr</h3><p style={{ color: isDark ? '#e5e5e5' : '#44403c' }}>{book.publishYear}</p></div>}
+                  {book.pageCount && <div><h3 className="text-sm font-medium mb-1" style={{ color: isDark ? '#aaa' : '#78716c' }}>Seitenzahl</h3><p style={{ color: isDark ? '#e5e5e5' : '#44403c' }}>{book.pageCount} Seiten</p></div>}
+                  {book.publisher && <div><h3 className="text-sm font-medium mb-1" style={{ color: isDark ? '#aaa' : '#78716c' }}>Verlag</h3><p style={{ color: isDark ? '#e5e5e5' : '#44403c' }}>{book.publisher}</p></div>}
+                  {book.isbn && <div><h3 className="text-sm font-medium mb-1" style={{ color: isDark ? '#aaa' : '#78716c' }}>ISBN</h3><p className="text-sm" style={{ color: isDark ? '#e5e5e5' : '#44403c' }}>{book.isbn}</p></div>}
+                  {readCount > 0 && <div><h3 className="text-sm font-medium mb-1" style={{ color: isDark ? '#aaa' : '#78716c' }}>Popularität</h3><div className="flex items-center gap-2" style={{ color: isDark ? '#e5e5e5' : '#44403c' }}><Users className="w-4 h-4" /><span>{readCount}× gelesen</span></div></div>}
                 </div>
               </div>
             </div>
