@@ -649,18 +649,29 @@ function HomeContent() {
 
   return (
     <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] pb-28">
-      {/* Login Button nur auf Welcome-Phase */}
-      {phase === 'welcome' && !isAuthenticated && (
-        <div style={{ position: 'fixed', top: '12px', right: '160px', zIndex: 9999 }}>
-          <Button
-            onClick={handleLogin}
-            variant="outline"
-            size="sm"
-            className="gap-2 border-amber-300 hover:bg-amber-50 text-amber-900"
-          >
-            <User className="w-4 h-4" />
-            {uiTexts.login}
-          </Button>
+      {/* Buttons oben rechts auf Welcome-Phase */}
+      {phase === 'welcome' && (
+        <div style={{ position: 'fixed', top: '12px', right: '12px', zIndex: 9999, display: 'flex', gap: '8px' }}>
+          {isAuthenticated ? (
+            <Button
+              onClick={() => navigate('/Compass')}
+              size="sm"
+              className="bg-amber-600 hover:bg-amber-700 text-white gap-2"
+            >
+              <Compass className="w-4 h-4" />
+              Zum Kompass
+            </Button>
+          ) : (
+            <Button
+              onClick={handleLogin}
+              variant="outline"
+              size="sm"
+              className="gap-2 border-amber-300 hover:bg-amber-50 text-amber-900"
+            >
+              <User className="w-4 h-4" />
+              {uiTexts.login}
+            </Button>
+          )}
         </div>
       )}
 
