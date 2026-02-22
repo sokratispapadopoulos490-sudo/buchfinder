@@ -177,7 +177,7 @@ export const books = [
     difficulty: "einsteiger",
     timeEffort: "mittel",
     style: ["praktisch"],
-    description: "Mehr Zeit, mehr Geld, mehr Leben.",
+    description: "Timothy Ferriss beschreibt, wie man durch Automatisierung, Outsourcing und die Kunst des Weglassens eine 'Neue Reiche' erschafft – Menschen, die Zeit und Mobilität besitzen, statt auf den Ruhestand zu warten.",
     coverColor: "bg-yellow-100",
     ageGroup: "erwachsene"
   },
