@@ -74,9 +74,9 @@ export default function ChallengesSection() {
     return 'Schwer';
   };
 
-  const availableChallenges = challenges
-    .filter(c => !userChallenges.some(uc => uc.challenge_id === c.id))
-    .sort((a, b) => a.goal_value - b.goal_value);
+  const sortedChallenges = [...challenges].sort((a, b) => a.goal_value - b.goal_value);
+  const availableChallenges = sortedChallenges.filter(c => !userChallenges.some(uc => uc.challenge_id === c.id));
+  const joinedChallenges = sortedChallenges.filter(c => userChallenges.some(uc => uc.challenge_id === c.id));
   const displayedChallenges = showAllChallenges ? availableChallenges : availableChallenges.slice(0, 1);
 
   return (
