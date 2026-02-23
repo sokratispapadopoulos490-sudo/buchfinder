@@ -240,17 +240,6 @@ function AccountContent() {
             Übersicht
           </button>
           <button
-            onClick={() => setActiveTab('library')}
-            className={`flex-1 min-w-[80px] px-3 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
-              activeTab === 'library'
-                ? 'bg-stone-800 dark:bg-amber-600 text-white'
-                : 'text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800'
-            }`}
-          >
-            Bibliothek
-          </button>
-
-          <button
             onClick={() => setActiveTab('history')}
             className={`flex-1 min-w-[80px] px-3 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
               activeTab === 'history'
