@@ -52,6 +52,7 @@ export default function Compass() {
 
         // Streak berechnen
         const allLogs = await base44.entities.ReadingLog.list('-reading_date');
+        setAllReadingLogs(allLogs);
         calculateStreak(allLogs);
       }
 
