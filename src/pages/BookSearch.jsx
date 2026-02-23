@@ -757,65 +757,52 @@ function BookSearchContent() {
               </motion.div>
 
               <div className="space-y-8">
-                {recommendations.place1 && (
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-white font-bold">
-                        1
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-medium text-stone-800">{uiTexts.bestMatch}</h3>
-                        <p className="text-sm text-stone-500">{uiTexts.perfectChoice}</p>
-                      </div>
-                    </div>
-                    <BookCard
-                      book={recommendations.place1}
-                      reasons={generateReasons(recommendations.place1, profile)}
-                      index={0}
-                      isContrast={false}
-                    />
-                  </div>
-                )}
+                {Array.isArray(recommendations) && recommendations.map((book, idx) => {
+                  const isContrast = book.isContrast;
+                  const placement = book.placement || idx + 1;
+                  const badgeColor = idx === 0
+                    ? 'bg-gradient-to-br from-amber-500 to-amber-600'
+                    : idx === 1
+                    ? 'bg-gradient-to-br from-stone-400 to-stone-500'
+                    : isContrast
+                    ? 'bg-gradient-to-br from-purple-400 to-purple-500'
+                    : 'bg-gradient-to-br from-amber-300 to-amber-400';
 
-                {recommendations.place2 && (
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-stone-400 to-stone-500 flex items-center justify-center text-white font-bold">
-                        2
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-medium text-stone-800">{uiTexts.secondBest}</h3>
-                        <p className="text-sm text-stone-500">{uiTexts.deepensTheme}</p>
-                      </div>
-                    </div>
-                    <BookCard
-                      book={recommendations.place2}
-                      reasons={generateReasons(recommendations.place2, profile)}
-                      index={1}
-                      isContrast={false}
-                    />
-                  </div>
-                )}
+                  let title, subtitle;
+                  if (isContrast) {
+                    title = uiTexts.somethingDifferent;
+                    subtitle = uiTexts.expandHorizon;
+                  } else if (idx === 0) {
+                    title = uiTexts.bestMatch;
+                    subtitle = uiTexts.perfectChoice;
+                  } else if (idx === 1) {
+                    title = uiTexts.secondBest;
+                    subtitle = uiTexts.deepensTheme;
+                  } else {
+                    title = `Empfehlung #${placement}`;
+                    subtitle = 'Passt zu deinen Interessen';
+                  }
 
-                {recommendations.place3 && (
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-300 to-amber-400 flex items-center justify-center text-white font-bold">
-                        3
+                  return (
+                    <div key={book.id} className="space-y-3">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold ${badgeColor}`}>
+                          {placement}
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-medium text-stone-800">{title}</h3>
+                          <p className="text-sm text-stone-500">{subtitle}</p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="text-lg font-medium text-stone-800">{uiTexts.somethingDifferent}</h3>
-                        <p className="text-sm text-stone-500">{uiTexts.expandHorizon}</p>
-                      </div>
+                      <BookCard
+                        book={book}
+                        reasons={generateReasons(book, profile)}
+                        index={idx}
+                        isContrast={isContrast}
+                      />
                     </div>
-                    <BookCard
-                      book={recommendations.place3}
-                      reasons={generateReasons(recommendations.place3, profile)}
-                      index={2}
-                      isContrast={true}
-                    />
-                  </div>
-                )}
+                  );
+                })}
               </div>
 
               <motion.div
