@@ -147,11 +147,6 @@ export default function Layout({ children, currentPageName }) {
     initDarkMode();
   }, []);
 
-  // Scroll to top on every page change
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [location.pathname]);
-
   useEffect(() => {
     checkConsentAndRedirect();
   }, []);
