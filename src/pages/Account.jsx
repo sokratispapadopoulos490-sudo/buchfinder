@@ -307,14 +307,6 @@ function AccountContent() {
               <h2 className="text-lg font-medium text-stone-800 dark:text-stone-200 mb-4">Schnellzugriff</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   <button
-                    onClick={() => setActiveTab('library')}
-                    className="flex flex-col items-center justify-center p-4 border border-stone-200 dark:border-stone-700 rounded-xl hover:border-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-all"
-                  >
-                    <LibraryIcon className="w-6 h-6 text-amber-600 dark:text-amber-500 mb-2" />
-                    <span className="text-xs font-medium text-stone-800 dark:text-stone-200 text-center">Bibliothek</span>
-                  </button>
-
-                  <button
                     onClick={() => navigate('/Community')}
                     className="flex flex-col items-center justify-center p-4 border border-stone-200 dark:border-stone-700 rounded-xl hover:border-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-all"
                   >
