@@ -10,6 +10,7 @@ import ReadingProgressModal from '@/components/reading/ReadingProgressModal';
 import BookScannerModal from '@/components/books/BookScannerModal';
 import BookCover from '@/components/books/BookCover';
 import ProgressModule from '@/components/stats/ProgressModule';
+import EventsList from '@/components/compass/EventsList';
 
 export default function Compass() {
   const [user, setUser] = useState(null);
