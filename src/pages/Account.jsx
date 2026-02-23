@@ -8,7 +8,6 @@ import { formatDistanceToNow } from 'date-fns';
 import { de } from 'date-fns/locale';
 import BookCard from '@/components/books/BookCard';
 import StarRating from '@/components/books/StarRating';
-import WeeklyStats from '@/components/reading/WeeklyStats';
 import ReadingProgressModal from '@/components/reading/ReadingProgressModal';
 import { useLanguage, LanguageProvider } from '@/components/language/LanguageContext';
 import ProfileEditModal from '@/components/profile/ProfileEditModal';
