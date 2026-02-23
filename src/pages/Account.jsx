@@ -385,50 +385,7 @@ function AccountContent() {
           </div>
         )}
 
-        {/* Lesefortschritt Tab */}
-        {activeTab === 'reading' && (
-          <div className="space-y-6">
-            <WeeklyStats readingLogs={readingLogs} completedBooksCount={completedBooksCount} />
 
-            {savedBooks.length > 0 && (
-              <div className="bg-white rounded-2xl border border-stone-200 p-6">
-                <h2 className="text-xl font-light text-stone-800 mb-4">Schnellzugriff</h2>
-                <div className="space-y-3">
-                  {savedBooks.slice(0, 3).map((saved) => (
-                    <div key={saved.id} className="flex items-center justify-between p-4 border border-stone-200 rounded-xl hover:border-stone-300 transition-colors">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-10 h-14 rounded ${saved.book_data.coverColor || 'bg-stone-100'} flex items-center justify-center flex-shrink-0`}>
-                          <span className="text-xl font-serif text-stone-400">
-                            {saved.book_data.title.charAt(0)}
-                          </span>
-                        </div>
-                        <div>
-                          <div className="font-medium text-stone-800">{saved.book_data.title}</div>
-                          <div className="text-sm text-stone-500">{saved.book_data.author}</div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {saved.is_completed && (
-                          <div className="text-green-600 text-xs flex items-center gap-1">
-                            <CheckCircle className="w-4 h-4" />
-                          </div>
-                        )}
-                        <Button
-                          onClick={() => setSelectedBookForProgress({ book: saved.book_data, savedBookId: saved.id })}
-                          size="sm"
-                          className="bg-amber-600 hover:bg-amber-700 text-white gap-2"
-                        >
-                          <Plus className="w-4 h-4" />
-                          Fortschritt
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
 
         {/* Verlauf Tab */}
         {activeTab === 'history' && (
