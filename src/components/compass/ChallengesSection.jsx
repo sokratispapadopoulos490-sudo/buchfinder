@@ -191,10 +191,13 @@ export default function ChallengesSection() {
                  >
                    {isLoading ? 'Wird beigetreten...' : 'Beitreten'}
                  </button>
-              </div>
-            );
-          })
-        )}
+                 </div>
+                 );
+                 })
+                 }
+                 </>
+                 )
+                 )}
 
         {availableChallenges.length > 1 && !showAllChallenges && (
           <button
