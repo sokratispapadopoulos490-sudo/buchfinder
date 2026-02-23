@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { TrendingUp, BookOpen, Flame, ChevronRight, X, ChevronLeft, Calendar, BarChart2 } from 'lucide-react';
+import { TrendingUp, BookOpen, Flame, ChevronRight, X, ChevronLeft, Sparkles, BookMarked } from 'lucide-react';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
