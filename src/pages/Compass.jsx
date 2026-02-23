@@ -57,6 +57,10 @@ export default function Compass() {
         setLastRecommendations(recs[0].books.slice(0, 3));
       }
 
+      // Gesamtanzahl aller generierten Bücher über alle Empfehlungs-Anfragen
+      const totalGenerated = recs.reduce((sum, rec) => sum + (rec.books ? rec.books.length : 0), 0);
+      setGeneratedBooksCount(totalGenerated);
+
       if (savedBooks.length > 0) {
         setAllBooks(savedBooks);
         setCurrentBook(savedBooks[0]);
