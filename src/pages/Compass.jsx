@@ -445,7 +445,7 @@ export default function Compass() {
             <div className="text-xs text-stone-500 dark:text-stone-400">Buch hinzufügen</div>
           </button>
           <button
-            onClick={() => navigate('/Account?tab=library')}
+            onClick={() => setShowLibrary(v => !v)}
             className="p-4 bg-white dark:bg-[#1a1a1a] border border-stone-200 dark:border-stone-700 rounded-xl hover:border-amber-300 dark:hover:border-amber-700 transition-colors text-left"
           >
             <BookMarked className="w-5 h-5 text-amber-600 dark:text-amber-500 mb-2" />
