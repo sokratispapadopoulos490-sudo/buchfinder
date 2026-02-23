@@ -513,12 +513,22 @@ export default function Compass() {
         />
       )}
 
-      {/* Progress Modal */}
-      {showProgressModal && (
+      {/* Progress Modal (current book) */}
+      {showProgressModal && currentBook && (
         <ReadingProgressModal
           book={currentBook.book_data}
           savedBookId={currentBook.id}
           onClose={() => setShowProgressModal(false)}
+          onUpdate={loadCompassData}
+        />
+      )}
+
+      {/* Progress Modal (from library) */}
+      {selectedBookForProgress && (
+        <ReadingProgressModal
+          book={selectedBookForProgress.book}
+          savedBookId={selectedBookForProgress.savedBookId}
+          onClose={() => setSelectedBookForProgress(null)}
           onUpdate={loadCompassData}
         />
       )}
