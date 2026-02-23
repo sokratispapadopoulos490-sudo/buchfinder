@@ -266,22 +266,45 @@ export default function ProgressModule({ readingLogs, completedBooksCount }) {
           <ChevronRight className="w-4 h-4 text-stone-400 group-hover:text-amber-500 transition-colors" />
         </div>
 
-        <div className="flex items-end gap-6">
-          <div>
-            <div className="text-3xl font-light text-stone-800 dark:text-stone-200">{weekPages}</div>
-            <div className="text-xs text-stone-500 dark:text-stone-400">Seiten diese Woche</div>
+        <div className="flex items-end justify-between">
+          <div className="flex items-end gap-4">
+            <div>
+              <div className="text-3xl font-light text-stone-800 dark:text-stone-200">{weekPages}</div>
+              <div className="text-xs text-stone-500 dark:text-stone-400">Seiten diese Woche</div>
+            </div>
+            {streak > 0 && (
+              <div className="flex items-center gap-1 pb-0.5">
+                <Flame className="w-4 h-4 text-orange-500" />
+                <span className="text-sm font-medium text-stone-700 dark:text-stone-300">{streak}d</span>
+              </div>
+            )}
+            {/* Motivational trend – no red numbers in compact view */}
+            {weekDiff !== null && (
+              <div className={`pb-0.5 text-sm font-medium ${weekDiff >= 0 ? 'text-green-600 dark:text-green-400' : 'text-amber-600 dark:text-amber-400'}`}>
+                {weekDiff >= 0
+                  ? `+${weekDiff}% 🎉`
+                  : weekPages === 0
+                    ? '📚 Los geht\'s!'
+                    : '💪 Weiter so!'}
+              </div>
+            )}
           </div>
-          {streak > 0 && (
-            <div className="flex items-center gap-1 pb-0.5">
-              <Flame className="w-4 h-4 text-orange-500" />
-              <span className="text-sm font-medium text-stone-700 dark:text-stone-300">{streak} Tage</span>
+
+          {/* Mini-Icons: Empfehlungen, Gespeichert, Seiten */}
+          <div className="flex items-center gap-3 pb-0.5">
+            <div className="flex flex-col items-center gap-0.5">
+              <Sparkles className="w-4 h-4 text-amber-500" />
+              <span className="text-[10px] text-stone-400 dark:text-stone-500">Tipps</span>
             </div>
-          )}
-          {weekDiff !== null && (
-            <div className={`pb-0.5 text-sm font-medium ${weekDiff >= 0 ? 'text-green-600' : 'text-red-500'}`}>
-              {weekDiff >= 0 ? '+' : ''}{weekDiff}% vs. Vorwoche
+            <div className="flex flex-col items-center gap-0.5">
+              <BookMarked className="w-4 h-4 text-blue-500" />
+              <span className="text-[10px] text-stone-400 dark:text-stone-500">Gespeichert</span>
             </div>
-          )}
+            <div className="flex flex-col items-center gap-0.5">
+              <BookOpen className="w-4 h-4 text-green-500" />
+              <span className="text-[10px] text-stone-400 dark:text-stone-500">Seiten</span>
+            </div>
+          </div>
         </div>
       </button>
 
