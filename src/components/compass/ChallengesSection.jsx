@@ -142,7 +142,7 @@ export default function ChallengesSection() {
           </button>
         )}
 
-        {showAllChallenges && availableChallenges.length > 2 && (
+        {showAllChallenges && availableChallenges.length > 1 && (
           <button
             onClick={() => setShowAllChallenges(false)}
             className="w-full px-3 py-2 text-xs text-stone-500 dark:text-stone-400 hover:underline font-medium mt-3"
