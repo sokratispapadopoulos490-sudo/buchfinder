@@ -196,7 +196,7 @@ export default function Layout({ children, currentPageName }) {
   return (
     <LanguageProvider>
       <LanguageDropdown />
-      <div style={{ paddingBottom: showNavigation ? '120px' : '0', minHeight: '100dvh' }}>
+      <div style={{ paddingBottom: showNavigation ? '140px' : '0', minHeight: '100dvh' }}>
         {children}
         {showConsent && (
           <ConsentModal onAccept={() => setShowConsent(false)} />
