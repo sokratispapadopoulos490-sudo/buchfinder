@@ -5,7 +5,7 @@ import { Compass, ArrowRight, ChevronLeft, User, LogOut } from 'lucide-react';
 import QuestionCard from '@/components/books/QuestionCard';
 import ProfileCard from '@/components/books/ProfileCard';
 import BookCard from '@/components/books/BookCard';
-import { getMatchingBooks } from '@/components/books/BookDatabase';
+import { getMatchingBooks } from '@/components/books/BookDatabaseLogic';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { LanguageProvider, useLanguage } from '@/components/language/LanguageContext';
