@@ -1,32 +1,89 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { TrendingUp, BookOpen, Flame, ChevronRight, X } from 'lucide-react';
+import { TrendingUp, BookOpen, Flame, ChevronRight, X, ChevronLeft, Calendar, BarChart2 } from 'lucide-react';
 
-function getWeekPages(readingLogs) {
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+function getWeekDays(readingLogs) {
   const now = new Date();
   const weekStart = new Date(now);
   weekStart.setDate(now.getDate() - now.getDay() + 1);
   weekStart.setHours(0, 0, 0, 0);
-  return readingLogs
-    .filter(log => new Date(log.reading_date) >= weekStart)
-    .reduce((sum, log) => sum + log.pages_read, 0);
+
+  const days = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(weekStart);
+    d.setDate(d.getDate() + i);
+    return { date: d, pages: 0 };
+  });
+
+  readingLogs.forEach(log => {
+    const d = new Date(log.reading_date);
+    d.setHours(0, 0, 0, 0);
+    const idx = days.findIndex(day => day.date.toDateString() === d.toDateString());
+    if (idx >= 0) days[idx].pages += log.pages_read;
+  });
+
+  return days;
 }
 
-function getMonthPages(readingLogs) {
+function getMonthWeeks(readingLogs) {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  const weeks = [
+    { label: 'Woche 1', pages: 0, days: '1–7' },
+    { label: 'Woche 2', pages: 0, days: '8–14' },
+    { label: 'Woche 3', pages: 0, days: '15–21' },
+    { label: 'Woche 4+', pages: 0, days: `22–${daysInMonth}` },
+  ];
+
+  readingLogs.forEach(log => {
+    const d = new Date(log.reading_date);
+    if (d.getMonth() !== month || d.getFullYear() !== year) return;
+    const day = d.getDate();
+    const weekIdx = day <= 7 ? 0 : day <= 14 ? 1 : day <= 21 ? 2 : 3;
+    weeks[weekIdx].pages += log.pages_read;
+  });
+
+  return weeks;
+}
+
+function getYearMonths(readingLogs) {
+  const year = new Date().getFullYear();
+  const monthNames = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
+  const months = monthNames.map((label, i) => ({ label, pages: 0, month: i }));
+
+  readingLogs.forEach(log => {
+    const d = new Date(log.reading_date);
+    if (d.getFullYear() !== year) return;
+    months[d.getMonth()].pages += log.pages_read;
+  });
+
+  return months;
+}
+
+function calcWeekTotal(readingLogs) {
+  const days = getWeekDays(readingLogs);
+  return days.reduce((s, d) => s + d.pages, 0);
+}
+
+function calcMonthTotal(readingLogs) {
   const now = new Date();
   return readingLogs
-    .filter(log => {
-      const d = new Date(log.reading_date);
+    .filter(l => {
+      const d = new Date(l.reading_date);
       return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
     })
-    .reduce((sum, log) => sum + log.pages_read, 0);
+    .reduce((s, l) => s + l.pages_read, 0);
 }
 
-function getYearPages(readingLogs) {
+function calcYearTotal(readingLogs) {
   const year = new Date().getFullYear();
   return readingLogs
-    .filter(log => new Date(log.reading_date).getFullYear() === year)
-    .reduce((sum, log) => sum + log.pages_read, 0);
+    .filter(l => new Date(l.reading_date).getFullYear() === year)
+    .reduce((s, l) => s + l.pages_read, 0);
 }
 
 function getPrevWeekPages(readingLogs) {
@@ -37,36 +94,144 @@ function getPrevWeekPages(readingLogs) {
   const prevWeekStart = new Date(thisWeekStart);
   prevWeekStart.setDate(prevWeekStart.getDate() - 7);
   return readingLogs
-    .filter(log => {
-      const d = new Date(log.reading_date);
-      return d >= prevWeekStart && d < thisWeekStart;
-    })
-    .reduce((sum, log) => sum + log.pages_read, 0);
+    .filter(l => { const d = new Date(l.reading_date); return d >= prevWeekStart && d < thisWeekStart; })
+    .reduce((s, l) => s + l.pages_read, 0);
 }
 
 function calculateStreak(readingLogs) {
   if (!readingLogs.length) return 0;
   const uniqueDates = [...new Set(readingLogs.map(l => l.reading_date))].sort().reverse();
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  let streak = 0;
-  let checkDate = new Date(today);
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  let streak = 0, checkDate = new Date(today);
   for (const dateStr of uniqueDates) {
-    const d = new Date(dateStr);
-    d.setHours(0, 0, 0, 0);
+    const d = new Date(dateStr); d.setHours(0, 0, 0, 0);
     const diff = Math.floor((checkDate - d) / 86400000);
-    if (diff === 0 || diff === 1) { streak++; checkDate = d; }
-    else break;
+    if (diff === 0 || diff === 1) { streak++; checkDate = d; } else break;
   }
   return streak;
 }
 
+// ── Mini Bar Chart ────────────────────────────────────────────────────────────
+
+function MiniBar({ label, pages, max, color = 'bg-amber-500', sublabel }) {
+  const pct = max > 0 ? Math.round((pages / max) * 100) : 0;
+  return (
+    <div className="flex flex-col items-center gap-1 flex-1 min-w-0">
+      <div className="w-full flex flex-col justify-end" style={{ height: 60 }}>
+        <div
+          className={`rounded-t-md ${color} transition-all duration-500`}
+          style={{ height: `${Math.max(pct, pages > 0 ? 4 : 0)}%`, minHeight: pages > 0 ? 4 : 0 }}
+        />
+      </div>
+      <div className="text-[10px] text-stone-500 dark:text-stone-400 truncate w-full text-center">{label}</div>
+      {sublabel && <div className="text-[9px] text-stone-400 dark:text-stone-500 truncate w-full text-center">{sublabel}</div>}
+    </div>
+  );
+}
+
+// ── Level views ──────────────────────────────────────────────────────────────
+
+function WeekView({ readingLogs, onDrillDown }) {
+  const days = useMemo(() => getWeekDays(readingLogs), [readingLogs]);
+  const dayNames = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+  const maxPages = Math.max(...days.map(d => d.pages), 1);
+  const total = days.reduce((s, d) => s + d.pages, 0);
+  const today = new Date();
+
+  return (
+    <div>
+      <div className="flex items-end justify-between mb-1">
+        <span className="text-sm text-stone-500 dark:text-stone-400">Gesamt: <span className="font-semibold text-stone-800 dark:text-stone-200">{total} Seiten</span></span>
+        <button onClick={onDrillDown} className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-0.5 hover:underline">
+          Monatsansicht <ChevronRight className="w-3 h-3" />
+        </button>
+      </div>
+      <div className="flex gap-1 mt-4 items-end">
+        {days.map((day, i) => {
+          const isToday = day.date.toDateString() === today.toDateString();
+          return (
+            <MiniBar
+              key={i}
+              label={dayNames[i]}
+              pages={day.pages}
+              max={maxPages}
+              color={isToday ? 'bg-amber-500' : 'bg-amber-300 dark:bg-amber-700'}
+              sublabel={day.pages > 0 ? String(day.pages) : ''}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function MonthView({ readingLogs, onDrillDown, onBack }) {
+  const weeks = useMemo(() => getMonthWeeks(readingLogs), [readingLogs]);
+  const maxPages = Math.max(...weeks.map(w => w.pages), 1);
+  const total = weeks.reduce((s, w) => s + w.pages, 0);
+  const monthName = new Date().toLocaleString('de-DE', { month: 'long' });
+
+  return (
+    <div>
+      <div className="flex items-end justify-between mb-1">
+        <span className="text-sm text-stone-500 dark:text-stone-400">{monthName}: <span className="font-semibold text-stone-800 dark:text-stone-200">{total} Seiten</span></span>
+        <button onClick={onDrillDown} className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-0.5 hover:underline">
+          Jahresansicht <ChevronRight className="w-3 h-3" />
+        </button>
+      </div>
+      <div className="flex gap-2 mt-4 items-end">
+        {weeks.map((w, i) => (
+          <MiniBar
+            key={i}
+            label={w.label}
+            pages={w.pages}
+            max={maxPages}
+            color="bg-blue-400 dark:bg-blue-600"
+            sublabel={w.pages > 0 ? String(w.pages) : ''}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function YearView({ readingLogs, onBack }) {
+  const months = useMemo(() => getYearMonths(readingLogs), [readingLogs]);
+  const maxPages = Math.max(...months.map(m => m.pages), 1);
+  const total = months.reduce((s, m) => s + m.pages, 0);
+  const currentMonth = new Date().getMonth();
+
+  return (
+    <div>
+      <div className="flex items-end justify-between mb-1">
+        <span className="text-sm text-stone-500 dark:text-stone-400">{new Date().getFullYear()}: <span className="font-semibold text-stone-800 dark:text-stone-200">{total} Seiten</span></span>
+      </div>
+      <div className="flex gap-1 mt-4 items-end">
+        {months.map((m, i) => (
+          <MiniBar
+            key={i}
+            label={m.label}
+            pages={m.pages}
+            max={maxPages}
+            color={i === currentMonth ? 'bg-green-500' : 'bg-green-300 dark:bg-green-700'}
+            sublabel={m.pages > 0 ? String(m.pages) : ''}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Main Component ────────────────────────────────────────────────────────────
+
+const LEVELS = ['week', 'month', 'year'];
+const LEVEL_LABELS = { week: 'Wochenfortschritt', month: 'Monatsfortschritt', year: 'Jahresfortschritt' };
+
 export default function ProgressModule({ readingLogs, completedBooksCount }) {
   const [showDetail, setShowDetail] = useState(false);
+  const [level, setLevel] = useState('week'); // 'week' | 'month' | 'year'
 
-  const weekPages = useMemo(() => getWeekPages(readingLogs), [readingLogs]);
-  const monthPages = useMemo(() => getMonthPages(readingLogs), [readingLogs]);
-  const yearPages = useMemo(() => getYearPages(readingLogs), [readingLogs]);
+  const weekPages = useMemo(() => calcWeekTotal(readingLogs), [readingLogs]);
   const prevWeekPages = useMemo(() => getPrevWeekPages(readingLogs), [readingLogs]);
   const streak = useMemo(() => calculateStreak(readingLogs), [readingLogs]);
 
@@ -74,11 +239,23 @@ export default function ProgressModule({ readingLogs, completedBooksCount }) {
     ? Math.round(((weekPages - prevWeekPages) / prevWeekPages) * 100)
     : null;
 
+  const drillDown = () => {
+    const idx = LEVELS.indexOf(level);
+    if (idx < LEVELS.length - 1) setLevel(LEVELS[idx + 1]);
+  };
+
+  const drillUp = () => {
+    const idx = LEVELS.indexOf(level);
+    if (idx > 0) setLevel(LEVELS[idx - 1]);
+  };
+
+  const canGoBack = level !== 'week';
+
   return (
     <>
-      {/* Kompaktes Modul – anklickbar */}
+      {/* Kompaktes Modul */}
       <button
-        onClick={() => setShowDetail(true)}
+        onClick={() => { setLevel('week'); setShowDetail(true); }}
         className="w-full text-left bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-4 shadow-sm hover:border-amber-300 dark:hover:border-amber-700 transition-colors group"
       >
         <div className="flex items-center justify-between mb-3">
@@ -108,7 +285,7 @@ export default function ProgressModule({ readingLogs, completedBooksCount }) {
         </div>
       </button>
 
-      {/* Detail-Overlay */}
+      {/* Detail-Overlay mit Drill-down */}
       <AnimatePresence>
         {showDetail && (
           <motion.div
@@ -123,11 +300,22 @@ export default function ProgressModule({ readingLogs, completedBooksCount }) {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 60, opacity: 0 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              onClick={(e) => e.stopPropagation()}
+              onClick={e => e.stopPropagation()}
               className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-6 w-full max-w-md shadow-xl"
             >
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-light text-stone-800 dark:text-stone-200">Lesefortschritt</h2>
+              {/* Header */}
+              <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center gap-2">
+                  {canGoBack && (
+                    <button
+                      onClick={drillUp}
+                      className="p-1.5 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
+                    >
+                      <ChevronLeft className="w-5 h-5 text-stone-500" />
+                    </button>
+                  )}
+                  <h2 className="text-lg font-light text-stone-800 dark:text-stone-200">{LEVEL_LABELS[level]}</h2>
+                </div>
                 <button
                   onClick={() => setShowDetail(false)}
                   className="p-1.5 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
@@ -136,46 +324,68 @@ export default function ProgressModule({ readingLogs, completedBooksCount }) {
                 </button>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 mb-4">
-                <div className="bg-amber-50 dark:bg-amber-900/30 rounded-xl p-4">
-                  <div className="text-xs text-stone-500 dark:text-stone-400 mb-1">Diese Woche</div>
-                  <div className="text-2xl font-semibold text-stone-800 dark:text-stone-200">{weekPages}</div>
-                  <div className="text-xs text-stone-500 dark:text-stone-400">Seiten</div>
-                </div>
-                <div className="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-4">
-                  <div className="text-xs text-stone-500 dark:text-stone-400 mb-1">Dieser Monat</div>
-                  <div className="text-2xl font-semibold text-stone-800 dark:text-stone-200">{monthPages}</div>
-                  <div className="text-xs text-stone-500 dark:text-stone-400">Seiten</div>
-                </div>
-                <div className="bg-green-50 dark:bg-green-900/30 rounded-xl p-4">
-                  <div className="text-xs text-stone-500 dark:text-stone-400 mb-1">Dieses Jahr</div>
-                  <div className="text-2xl font-semibold text-stone-800 dark:text-stone-200">{yearPages}</div>
-                  <div className="text-xs text-stone-500 dark:text-stone-400">Seiten</div>
-                </div>
-                <div className="bg-orange-50 dark:bg-orange-900/30 rounded-xl p-4">
-                  <div className="text-xs text-stone-500 dark:text-stone-400 mb-1">Lesestreak</div>
-                  <div className="text-2xl font-semibold text-stone-800 dark:text-stone-200 flex items-center gap-1">
-                    {streak > 0 ? <><Flame className="w-5 h-5 text-orange-500" />{streak}</> : '–'}
-                  </div>
-                  <div className="text-xs text-stone-500 dark:text-stone-400">{streak === 1 ? 'Tag' : 'Tage'}</div>
-                </div>
+              {/* Level tabs */}
+              <div className="flex gap-1 mb-5 bg-stone-100 dark:bg-stone-800 rounded-xl p-1">
+                {LEVELS.map(l => (
+                  <button
+                    key={l}
+                    onClick={() => setLevel(l)}
+                    className={`flex-1 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+                      level === l
+                        ? 'bg-white dark:bg-stone-700 text-stone-800 dark:text-stone-200 shadow-sm'
+                        : 'text-stone-500 dark:text-stone-400 hover:text-stone-700 dark:hover:text-stone-300'
+                    }`}
+                  >
+                    {l === 'week' ? 'Woche' : l === 'month' ? 'Monat' : 'Jahr'}
+                  </button>
+                ))}
               </div>
 
-              {completedBooksCount > 0 && (
-                <div className="bg-stone-50 dark:bg-stone-800 rounded-xl p-4 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <BookOpen className="w-4 h-4 text-stone-500 dark:text-stone-400" />
-                    <span className="text-sm text-stone-700 dark:text-stone-300">Abgeschlossene Bücher</span>
-                  </div>
-                  <span className="text-lg font-semibold text-stone-800 dark:text-stone-200">{completedBooksCount}</span>
-                </div>
-              )}
+              {/* Animated content */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={level}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.18 }}
+                >
+                  {level === 'week' && (
+                    <WeekView readingLogs={readingLogs} onDrillDown={drillDown} />
+                  )}
+                  {level === 'month' && (
+                    <MonthView readingLogs={readingLogs} onDrillDown={drillDown} onBack={drillUp} />
+                  )}
+                  {level === 'year' && (
+                    <YearView readingLogs={readingLogs} onBack={drillUp} />
+                  )}
+                </motion.div>
+              </AnimatePresence>
 
-              {weekDiff !== null && (
-                <div className={`mt-3 text-center text-sm font-medium rounded-xl py-2 ${weekDiff >= 0 ? 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400'}`}>
-                  {weekDiff >= 0 ? '📈' : '📉'} {weekDiff >= 0 ? '+' : ''}{weekDiff}% im Vergleich zur Vorwoche
+              {/* Footer stats */}
+              <div className="mt-5 pt-4 border-t border-stone-100 dark:border-stone-700 grid grid-cols-3 gap-3 text-center">
+                <div>
+                  <div className="text-xs text-stone-500 dark:text-stone-400 mb-0.5">Streak</div>
+                  <div className="flex items-center justify-center gap-1">
+                    {streak > 0 ? (
+                      <><Flame className="w-3.5 h-3.5 text-orange-500" /><span className="text-sm font-semibold text-stone-800 dark:text-stone-200">{streak}d</span></>
+                    ) : <span className="text-sm text-stone-400">–</span>}
+                  </div>
                 </div>
-              )}
+                <div>
+                  <div className="text-xs text-stone-500 dark:text-stone-400 mb-0.5">Bücher</div>
+                  <div className="flex items-center justify-center gap-1">
+                    <BookOpen className="w-3.5 h-3.5 text-stone-400" />
+                    <span className="text-sm font-semibold text-stone-800 dark:text-stone-200">{completedBooksCount}</span>
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs text-stone-500 dark:text-stone-400 mb-0.5">vs. Vorwoche</div>
+                  <div className={`text-sm font-semibold ${weekDiff === null ? 'text-stone-400' : weekDiff >= 0 ? 'text-green-600' : 'text-red-500'}`}>
+                    {weekDiff === null ? '–' : `${weekDiff >= 0 ? '+' : ''}${weekDiff}%`}
+                  </div>
+                </div>
+              </div>
             </motion.div>
           </motion.div>
         )}
