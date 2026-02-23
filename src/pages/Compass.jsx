@@ -28,6 +28,7 @@ export default function Compass() {
   const [loading, setLoading] = useState(true);
   const [showScanner, setShowScanner] = useState(false);
   const [allReadingLogs, setAllReadingLogs] = useState([]);
+  const [generatedBooksCount, setGeneratedBooksCount] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
