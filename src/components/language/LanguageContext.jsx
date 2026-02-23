@@ -31,19 +31,7 @@ export const LanguageProvider = ({ children }) => {
   }, []);
 
   const loadUserLanguage = async () => {
-    try {
-      const isAuth = await base44.auth.isAuthenticated();
-      if (isAuth) {
-        const user = await base44.auth.me();
-        if (user?.language) {
-          setLanguage(user.language);
-        }
-      }
-    } catch (error) {
-      console.error('Error loading language:', error);
-    } finally {
-      setIsLoading(false);
-    }
+    setIsLoading(false);
   };
 
   const changeLanguage = async (newLanguage) => {

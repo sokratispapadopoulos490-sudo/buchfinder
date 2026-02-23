@@ -41,36 +41,20 @@ export default function Compass() {
 
   const loadCompassData = async () => {
     try {
-      // Alle unabhängigen Requests parallel starten
-      const [currentUser, savedBooks, allLogs, recs] = await Promise.all([
-        base44.auth.me(),
-        base44.entities.SavedBook.list('-created_date'),
-        base44.entities.ReadingLog.list('-reading_date'),
-        base44.entities.Recommendation.list('-created_date', 1),
+      // Nur essenzielle Daten beim Start laden
+      const [savedBooks, allLogs] = await Promise.all([
+        base44.entities.SavedBook.list('-created_date', 50),
+        base44.entities.ReadingLog.list('-reading_date', 1000),
       ]);
 
-      setUser(currentUser);
       setAllReadingLogs(allLogs);
       calculateStreak(allLogs);
-
-      if (currentUser.book_reflections) {
-        setBookReflections(currentUser.book_reflections);
-      }
-
-      if (recs.length > 0 && recs[0].books) {
-        setLastRecommendations(recs[0].books.slice(0, 3));
-      }
-
-      // Gesamtanzahl aller generierten Bücher über alle Empfehlungs-Anfragen
-      const totalGenerated = recs.reduce((sum, rec) => sum + (rec.books ? rec.books.length : 0), 0);
-      setGeneratedBooksCount(totalGenerated);
 
       const inProgressBooks = savedBooks.filter(b => !b.is_completed);
       setAllBooks(savedBooks);
       if (inProgressBooks.length > 0) {
         setCurrentBook(inProgressBooks[0]);
 
-        // Fortschritt für erstes Buch laden (einziger sequenzieller Call)
         const logs = allLogs.filter(l => l.book_id === inProgressBooks[0].book_id);
         const totalPages = logs.reduce((sum, log) => sum + log.pages_read, 0);
         const bookPages = inProgressBooks[0].book_data.pageCount || 1;
@@ -78,6 +62,18 @@ export default function Compass() {
       }
 
       generateReflectionQuestion();
+
+      // Empfehlungen im Hintergrund laden
+      try {
+        const recs = await base44.entities.Recommendation.list('-created_date', 1);
+        if (recs.length > 0 && recs[0].books) {
+          setLastRecommendations(recs[0].books.slice(0, 3));
+        }
+        const totalGenerated = recs.reduce((sum, rec) => sum + (rec.books ? rec.books.length : 0), 0);
+        setGeneratedBooksCount(totalGenerated);
+      } catch (e) {
+        console.error('Background recommendation load failed:', e);
+      }
     } catch (error) {
       console.error('Error loading compass:', error);
       navigate('/Onboarding');
