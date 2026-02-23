@@ -498,29 +498,20 @@ function BookSearchContent() {
 
   const handleShowBooks = async () => {
     setLoading(true);
-    const results = getMatchingBooks(profile);
+    let results = getMatchingBooks(profile);
     
     if (language !== 'de') {
-      const translateBook = async (book) => {
-        if (!book) return null;
-        return {
-          ...book,
-          title: await translateObject({ text: book.title }, language).then(r => r.text),
-          description: await translateObject({ text: book.description }, language).then(r => r.text)
-        };
-      };
-      
-      results.place1 = await translateBook(results.place1);
-      results.place2 = await translateBook(results.place2);
-      results.place3 = await translateBook(results.place3);
+      results = await Promise.all(results.map(async (book) => ({
+        ...book,
+        title: await translateObject({ text: book.title }, language).then(r => r.text),
+        description: await translateObject({ text: book.description }, language).then(r => r.text)
+      })));
     }
     
     if (isAuthenticated) {
       try {
-        const allBooks = [results.place1, results.place2, results.place3].filter(Boolean);
-        
         await base44.entities.Recommendation.create({
-          books: allBooks,
+          books: results,
           profile: profile,
           is_premium: isPremium
         });
