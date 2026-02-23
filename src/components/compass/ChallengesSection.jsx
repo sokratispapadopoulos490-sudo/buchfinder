@@ -42,6 +42,22 @@ export default function ChallengesSection() {
     }
   };
 
+  const handleLeaveChallenge = async (challengeId) => {
+    setIsLoading(true);
+    try {
+      const participation = userChallenges.find(uc => uc.challenge_id === challengeId);
+      if (participation) {
+        await base44.entities.ChallengeParticipant.delete(participation.id);
+        toast.success('Challenge verlassen!');
+        loadChallenges();
+      }
+    } catch (error) {
+      toast.error('Fehler beim Verlassen');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const isUserParticipating = (challengeId) => {
     return userChallenges.some((uc) => uc.challenge_id === challengeId);
   };
