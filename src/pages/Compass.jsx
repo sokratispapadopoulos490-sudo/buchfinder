@@ -168,6 +168,21 @@ export default function Compass() {
 
   const currentReflection = currentBook ? bookReflections[String(currentBook.book_id)] : null;
 
+  const handleToggleCompleted = async (savedBook) => {
+    await base44.entities.SavedBook.update(savedBook.id, {
+      is_completed: !savedBook.is_completed,
+      completed_date: !savedBook.is_completed ? new Date().toISOString().split('T')[0] : null
+    });
+    await loadCompassData();
+  };
+
+  const handleDeleteSavedBook = async (savedBookId) => {
+    if (confirm('Möchtest du dieses Buch wirklich aus deiner Bibliothek entfernen?')) {
+      await base44.entities.SavedBook.delete(savedBookId);
+      await loadCompassData();
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] flex items-center justify-center">
