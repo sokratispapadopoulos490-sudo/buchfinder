@@ -193,8 +193,7 @@ export default function ChallengesSection() {
                  </button>
                  </div>
                  );
-                 })
-                 }
+                 })}
                  </>
                  )
                  )}
