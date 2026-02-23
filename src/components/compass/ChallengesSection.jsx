@@ -89,12 +89,59 @@ export default function ChallengesSection() {
       </div>
 
       <div className="space-y-3">
+        {joinedChallenges.length > 0 && (
+          <>
+            <p className="text-xs font-medium text-amber-600 dark:text-amber-500 mb-2">Deine aktiven Challenges:</p>
+            {joinedChallenges.map((challenge) => {
+              const userProgress = userChallenges.find((uc) => uc.challenge_id === challenge.id);
+              return (
+                <div key={challenge.id} className="p-3 bg-amber-50 dark:bg-amber-950/20 rounded-lg border border-amber-200 dark:border-amber-900">
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex-1">
+                      <h4 className="text-sm font-medium text-stone-800 dark:text-stone-200">{challenge.title}</h4>
+                      <p className="text-xs text-stone-600 dark:text-stone-400 mt-1">{challenge.description}</p>
+                    </div>
+                    <span className={`text-xs font-semibold whitespace-nowrap ml-2 ${getDifficultyColor(challenge.goal_value)}`}>
+                      {getDifficultyLabel(challenge.goal_value)}
+                    </span>
+                  </div>
+
+                  {userProgress && (
+                    <div className="mb-3">
+                      <div className="w-full bg-stone-300 dark:bg-stone-700 h-2 rounded-full overflow-hidden">
+                        <div
+                          className="bg-amber-600 h-full transition-all"
+                          style={{ width: `${Math.min((userProgress.current_progress / challenge.goal_value) * 100, 100)}%` }}
+                        />
+                      </div>
+                      <p className="text-xs text-stone-600 dark:text-stone-400 mt-1">
+                        {userProgress.current_progress} / {challenge.goal_value}
+                      </p>
+                    </div>
+                  )}
+
+                  <button
+                    onClick={() => handleLeaveChallenge(challenge.id)}
+                    disabled={isLoading}
+                    className="w-full px-3 py-2 text-xs rounded font-medium transition-colors bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50"
+                  >
+                    Verlassen
+                  </button>
+                </div>
+              );
+            })}
+          </>
+        )}
+
         {challenges.length === 0 ? (
           <p className="text-xs text-stone-500 dark:text-stone-400 text-center py-4">Keine Challenges verfügbar</p>
         ) : (
           displayedChallenges.length === 0 && availableChallenges.length > 0 ? null : displayedChallenges.length === 0 ? (
             <p className="text-xs text-stone-500 dark:text-stone-400 text-center py-4">Du hast an allen Challenges teilgenommen 🎉</p>
-          ) : displayedChallenges.map((challenge) => {
+          ) : (
+            <>
+              {joinedChallenges.length > 0 && <p className="text-xs font-medium text-stone-600 dark:text-stone-400 mt-4">Weitere Challenges:</p>}
+              {displayedChallenges.map((challenge) => {
             const isParticipating = isUserParticipating(challenge.id);
             const userProgress = userChallenges.find((uc) => uc.challenge_id === challenge.id);
             
