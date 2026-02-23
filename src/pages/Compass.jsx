@@ -396,6 +396,11 @@ export default function Compass() {
           />
         </div>
 
+        {/* Lese-Termine */}
+        <div className="mb-6">
+          <EventsList />
+        </div>
+
         {/* Quick Links */}
         <div className="grid grid-cols-3 gap-3 mb-6">
           <button
