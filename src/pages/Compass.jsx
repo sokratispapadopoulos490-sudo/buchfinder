@@ -399,7 +399,7 @@ export default function Compass() {
             readingLogs={allReadingLogs}
             completedBooksCount={allBooks.filter(b => b.is_completed).length}
             savedBooksCount={allBooks.length}
-            recommendationsCount={lastRecommendations.length}
+            generatedBooksCount={generatedBooksCount}
           />
         </div>
 
