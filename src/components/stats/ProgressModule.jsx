@@ -227,7 +227,7 @@ function YearView({ readingLogs, onBack }) {
 const LEVELS = ['week', 'month', 'year'];
 const LEVEL_LABELS = { week: 'Wochenfortschritt', month: 'Monatsfortschritt', year: 'Jahresfortschritt' };
 
-export default function ProgressModule({ readingLogs, completedBooksCount }) {
+export default function ProgressModule({ readingLogs, completedBooksCount, savedBooksCount = 0, recommendationsCount = 0 }) {
   const [showDetail, setShowDetail] = useState(false);
   const [level, setLevel] = useState('week'); // 'week' | 'month' | 'year'
 
