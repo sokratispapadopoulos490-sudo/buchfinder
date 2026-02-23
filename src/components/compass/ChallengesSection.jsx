@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Zap, Plus } from 'lucide-react';
+import { Zap, ChevronDown } from 'lucide-react';
 import { toast } from 'sonner';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 export default function ChallengesSection() {
   const [challenges, setChallenges] = useState([]);
