@@ -64,9 +64,10 @@ export default function Compass() {
       const totalGenerated = recs.reduce((sum, rec) => sum + (rec.books ? rec.books.length : 0), 0);
       setGeneratedBooksCount(totalGenerated);
 
-      if (savedBooks.length > 0) {
-        setAllBooks(savedBooks);
-        setCurrentBook(savedBooks[0]);
+      const inProgressBooks = savedBooks.filter(b => !b.is_completed);
+      setAllBooks(savedBooks);
+      if (inProgressBooks.length > 0) {
+        setCurrentBook(inProgressBooks[0]);
 
         // Fortschritt für erstes Buch laden (einziger sequenzieller Call)
         const logs = allLogs.filter(l => l.book_id === savedBooks[0].book_id);
