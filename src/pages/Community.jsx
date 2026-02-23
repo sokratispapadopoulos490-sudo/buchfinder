@@ -202,13 +202,34 @@ Gib eine hilfreiche, freundliche Antwort (max. 150 Wörter). Sei persönlich und
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <button
-            onClick={() => navigate('/Account')}
-            className="flex items-center gap-2 text-stone-500 hover:text-stone-700 mb-4 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm">Zurück zum Account</span>
-          </button>
+          <div className="space-y-4">
+           <button
+             onClick={() => navigate('/Account')}
+             className="flex items-center gap-2 text-stone-500 hover:text-stone-700 transition-colors"
+           >
+             <ArrowLeft className="w-4 h-4" />
+             <span className="text-sm">Zurück zum Account</span>
+           </button>
+
+           {/* Clubs Shortcut */}
+           <div className="bg-white rounded-xl border border-stone-200 p-4">
+             <button
+               onClick={() => navigate('/Clubs')}
+               className="w-full flex items-center justify-between p-4 rounded-lg hover:bg-stone-50 transition-colors"
+             >
+               <div className="flex items-center gap-3">
+                 <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center">
+                   <Users className="w-5 h-5 text-amber-600" />
+                 </div>
+                 <div className="text-left">
+                   <div className="font-medium text-stone-800">Clubs</div>
+                   <div className="text-xs text-stone-500">Buchclubs durchsuchen</div>
+                 </div>
+               </div>
+               <ArrowLeft className="w-4 h-4 text-stone-400 rotate-180" />
+             </button>
+           </div>
+           </div>
 
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
