@@ -94,13 +94,57 @@ export default function QuotesSection() {
 
       {showAddForm && (
         <form onSubmit={handleAddQuote} className="mb-4 p-4 bg-stone-50 dark:bg-[#0a0a0a] rounded-lg border border-stone-200 dark:border-stone-700">
-          <textarea
-            value={newQuote.quote_text}
-            onChange={(e) => setNewQuote({ ...newQuote, quote_text: e.target.value })}
-            placeholder="Zitat eingeben..."
-            className="w-full p-2 text-sm mb-2 rounded border border-stone-200 dark:border-stone-700 bg-white dark:bg-[#1a1a1a] text-stone-900 dark:text-white resize-none"
-            rows="3"
-          />
+          <div className="flex gap-2 mb-3">
+            <button
+              type="button"
+              onClick={() => setUseCamera(!useCamera)}
+              className={`flex items-center gap-2 px-3 py-2 text-sm rounded transition-colors ${
+                useCamera
+                  ? 'bg-amber-600 text-white'
+                  : 'border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800'
+              }`}
+            >
+              <Camera className="w-4 h-4" />
+              Kamera
+            </button>
+            <button
+              type="button"
+              onClick={() => setUseCamera(false)}
+              className={`flex-1 px-3 py-2 text-sm rounded transition-colors ${
+                !useCamera
+                  ? 'bg-amber-600 text-white'
+                  : 'border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800'
+              }`}
+            >
+              Manuell
+            </button>
+          </div>
+
+          {useCamera ? (
+            <div className="mb-3">
+              <input
+                ref={cameraInputRef}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                onChange={handleCameraCapture}
+                disabled={isLoading}
+                className="w-full"
+              />
+              <p className="text-xs text-stone-500 dark:text-stone-400 mt-2">Fotografiere den Zitat-Text oder lade ein Bild hoch</p>
+            </div>
+          ) : (
+            <>
+              <textarea
+                value={newQuote.quote_text}
+                onChange={(e) => setNewQuote({ ...newQuote, quote_text: e.target.value })}
+                placeholder="Zitat eingeben..."
+                className="w-full p-2 text-sm mb-2 rounded border border-stone-200 dark:border-stone-700 bg-white dark:bg-[#1a1a1a] text-stone-900 dark:text-white resize-none"
+                rows="3"
+              />
+            </>
+          )}
+
           <input
             type="number"
             value={newQuote.page_number}
@@ -111,14 +155,18 @@ export default function QuotesSection() {
           <div className="flex gap-2">
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || !newQuote.quote_text.trim()}
               className="flex-1 px-3 py-2 text-sm bg-amber-600 hover:bg-amber-700 text-white rounded disabled:opacity-50"
             >
-              Speichern
+              {isLoading ? 'Wird bearbeitet...' : 'Speichern'}
             </button>
             <button
               type="button"
-              onClick={() => setShowAddForm(false)}
+              onClick={() => {
+                setShowAddForm(false);
+                setUseCamera(false);
+                setCameraImage(null);
+              }}
               className="flex-1 px-3 py-2 text-sm border border-stone-200 dark:border-stone-700 rounded hover:bg-stone-50 dark:hover:bg-[#0a0a0a]"
             >
               Abbrechen
