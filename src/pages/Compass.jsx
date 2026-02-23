@@ -12,6 +12,8 @@ import ProgressModule from '@/components/stats/ProgressModule';
 import EventsList from '@/components/compass/EventsList';
 import ReadingProgressModal from '@/components/reading/ReadingProgressModal';
 import LibraryView from '@/components/library/LibraryView';
+import QuotesSection from '@/components/compass/QuotesSection';
+import ChallengesSection from '@/components/compass/ChallengesSection';
 
 
 export default function Compass() {
