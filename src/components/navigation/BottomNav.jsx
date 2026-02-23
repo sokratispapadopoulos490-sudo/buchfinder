@@ -24,7 +24,7 @@ export default function BottomNav() {
     },
     {
       icon: Compass,
-      label: 'Kompass',
+      label: 'Compass',
       path: 'Compass'
     },
     {
