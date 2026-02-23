@@ -7,6 +7,7 @@ export default function ChallengesSection() {
   const [challenges, setChallenges] = useState([]);
   const [userChallenges, setUserChallenges] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [showAllChallenges, setShowAllChallenges] = useState(false);
 
   useEffect(() => {
     loadChallenges();
