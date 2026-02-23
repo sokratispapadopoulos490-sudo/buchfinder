@@ -454,6 +454,29 @@ export default function Compass() {
           </button>
         </div>
 
+        {/* Bibliothek */}
+        {showLibrary && (
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-xl font-light text-stone-800 dark:text-stone-200">Deine Bibliothek</h2>
+            </div>
+            {allBooks.length === 0 ? (
+              <div className="text-center py-12 bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700">
+                <BookMarked className="w-12 h-12 text-stone-300 mx-auto mb-4" />
+                <p className="text-stone-500">Noch keine Bücher in deiner Bibliothek</p>
+              </div>
+            ) : (
+              <LibraryView
+                savedBooks={allBooks}
+                onToggleComplete={handleToggleCompleted}
+                onDelete={handleDeleteSavedBook}
+                onProgressClick={(saved) => setSelectedBookForProgress({ book: saved.book_data, savedBookId: saved.id })}
+                onRefresh={loadCompassData}
+              />
+            )}
+          </div>
+        )}
+
         {/* Letzte Empfehlungen */}
         {lastRecommendations.length > 0 && (
           <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-5 shadow-sm">
