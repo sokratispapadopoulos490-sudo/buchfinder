@@ -227,50 +227,7 @@ function AccountContent() {
             )}
           </div>
 
-          {/* Nutzungsstatistik */}
-          <div className="grid grid-cols-3 gap-3 p-4 bg-white dark:bg-[#1a1a1a]">
-            <div className="text-center">
-              <div className="w-12 h-12 mx-auto mb-2 rounded-xl bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-                <Compass className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-              </div>
-              <div className="text-xl font-semibold text-stone-800 dark:text-stone-200 mb-0.5">
-                {isPremium ? usedRecommendations : `${usedRecommendations}/${freeLimit}`}
-              </div>
-              <div className="text-xs text-stone-500 dark:text-stone-400 leading-tight">
-                {isPremium ? 'Empfehlungen' : 'von 3'}
-              </div>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-12 h-12 mx-auto mb-2 rounded-xl bg-amber-100 dark:bg-amber-900 flex items-center justify-center">
-                <Bookmark className="w-6 h-6 text-amber-600 dark:text-amber-400" />
-              </div>
-              <div className="text-xl font-semibold text-stone-800 dark:text-stone-200 mb-0.5">{savedBooks.length}</div>
-              <div className="text-xs text-stone-500 dark:text-stone-400 leading-tight">
-                {completedBooksCount > 0 ? `${completedBooksCount} fertig` : 'Bücher'}
-              </div>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-12 h-12 mx-auto mb-2 rounded-xl bg-green-100 dark:bg-green-900 flex items-center justify-center">
-                <Target className="w-6 h-6 text-green-600 dark:text-green-400" />
-              </div>
-              <div className="text-xl font-semibold text-stone-800 dark:text-stone-200 mb-0.5">
-                {readingLogs
-                  .filter(log => {
-                    const logDate = new Date(log.reading_date);
-                    const now = new Date();
-                    const weekStart = new Date(now.setDate(now.getDate() - now.getDay() + 1));
-                    return logDate >= weekStart;
-                  })
-                  .reduce((sum, log) => sum + log.pages_read, 0)}
-                {user.reading_goal_pages > 0 && `/${user.reading_goal_pages}`}
-              </div>
-              <div className="text-xs text-stone-500 dark:text-stone-400 leading-tight">
-                {user.reading_goal_pages > 0 ? 'Ziel/Woche' : 'Seiten/Woche'}
-              </div>
-            </div>
-          </div>
+
         </div>
 
         {/* Navigation Tabs */}
