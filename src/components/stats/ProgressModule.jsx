@@ -292,7 +292,7 @@ export default function ProgressModule({ readingLogs, completedBooksCount }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/40 flex items-end sm:items-center justify-center px-4 pb-8 sm:pb-0"
+            className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center px-4"
             onClick={() => setShowDetail(false)}
           >
             <motion.div
