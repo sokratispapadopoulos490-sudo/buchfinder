@@ -129,6 +129,63 @@ export default function CreateEventModal({ onClose, onCreated }) {
               </div>
             </div>
 
+            {/* Buch auswählen (optional) */}
+            <div>
+              <button
+                type="button"
+                onClick={() => setShowBookPicker(p => !p)}
+                className="flex items-center gap-1.5 text-xs font-medium text-stone-600 dark:text-stone-400 hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
+              >
+                <BookOpen className="w-3 h-3" />
+                Buch verknüpfen (optional)
+                {showBookPicker ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+              </button>
+
+              {showBookPicker && (
+                <div className="mt-2 max-h-40 overflow-y-auto rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-900">
+                  {/* Keine Auswahl */}
+                  <button
+                    onClick={() => setSelectedBook(null)}
+                    className={`w-full flex items-center gap-3 px-3 py-2 text-left text-xs transition-colors ${
+                      !selectedBook
+                        ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
+                        : 'text-stone-500 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800'
+                    }`}
+                  >
+                    <span className="w-6 h-8 flex items-center justify-center text-stone-400">—</span>
+                    Kein Buch
+                  </button>
+                  {savedBooks.map(sb => (
+                    <button
+                      key={sb.id}
+                      onClick={() => setSelectedBook(sb)}
+                      className={`w-full flex items-center gap-3 px-3 py-2 text-left text-xs transition-colors ${
+                        selectedBook?.id === sb.id
+                          ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
+                          : 'hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-700 dark:text-stone-300'
+                      }`}
+                    >
+                      <BookCover bookData={sb.book_data} width="w-6" height="h-8" textSize="text-xs" />
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium truncate">{sb.book_data?.title}</div>
+                        <div className="text-stone-400 truncate">{sb.book_data?.author}</div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {selectedBook && !showBookPicker && (
+                <div className="mt-2 flex items-center gap-2 px-3 py-2 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700">
+                  <BookCover bookData={selectedBook.book_data} width="w-6" height="h-8" textSize="text-xs" />
+                  <span className="text-xs text-amber-800 dark:text-amber-300 truncate font-medium">{selectedBook.book_data?.title}</span>
+                  <button onClick={() => setSelectedBook(null)} className="ml-auto text-amber-400 hover:text-amber-600">
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              )}
+            </div>
+
             {/* Notizen */}
             <div>
               <label className="text-xs font-medium text-stone-600 dark:text-stone-400 mb-1 block flex items-center gap-1">
