@@ -350,32 +350,6 @@ function AccountContent() {
           </div>
         )}
 
-        {/* Bibliothek Tab */}
-        {activeTab === 'library' && (
-          <div className="space-y-4">
-            <h2 className="text-2xl font-light text-stone-800 dark:text-stone-200">Deine Bibliothek</h2>
-            {savedBooks.length === 0 ? (
-              <div className="text-center py-12 bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700">
-                <LibraryIcon className="w-12 h-12 text-stone-300 mx-auto mb-4" />
-                <p className="text-stone-500 mb-4">Noch keine Bücher in deiner Bibliothek</p>
-                <Button onClick={() => navigate('/')} className="bg-stone-800 hover:bg-stone-700 text-white">
-                  Bücher entdecken
-                </Button>
-              </div>
-            ) : (
-              <LibraryView
-                savedBooks={savedBooks}
-                onToggleComplete={handleToggleCompleted}
-                onDelete={handleDeleteSavedBook}
-                onProgressClick={(saved) => setSelectedBookForProgress({ book: saved.book_data, savedBookId: saved.id })}
-                onRefresh={loadAccountData}
-              />
-            )}
-          </div>
-        )}
-
-
-
         {/* Verlauf Tab */}
         {activeTab === 'history' && (
           <div className="bg-white rounded-2xl border border-stone-200 p-8">
