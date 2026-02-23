@@ -73,10 +73,10 @@ export default function ChallengesSection() {
       <div className="space-y-3">
         {challenges.length === 0 ? (
           <p className="text-xs text-stone-500 dark:text-stone-400 text-center py-4">Keine Challenges verfügbar</p>
-        ) : availableChallenges.length === 0 ? (
-          <p className="text-xs text-stone-500 dark:text-stone-400 text-center py-4">Du hast an allen Challenges teilgenommen 🎉</p>
         ) : (
-          displayedChallenges.map((challenge) => {
+          displayedChallenges.length === 0 && availableChallenges.length > 0 ? null : displayedChallenges.length === 0 ? (
+            <p className="text-xs text-stone-500 dark:text-stone-400 text-center py-4">Du hast an allen Challenges teilgenommen 🎉</p>
+          ) : displayedChallenges.map((challenge) => {
             const isParticipating = isUserParticipating(challenge.id);
             const userProgress = userChallenges.find((uc) => uc.challenge_id === challenge.id);
             
