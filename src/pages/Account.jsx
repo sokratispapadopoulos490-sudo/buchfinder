@@ -322,12 +322,6 @@ function AccountContent() {
               />
             )}
 
-            {/* Stats Grid */}
-            <div className="grid gap-6 md:grid-cols-2">
-              <YearlyStats savedBooks={savedBooks} readingLogs={readingLogs} />
-              <ReadingStreak readingLogs={readingLogs} />
-            </div>
-
             {/* Schnellzugriff */}
             <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-6">
               <h2 className="text-lg font-medium text-stone-800 dark:text-stone-200 mb-4">Schnellzugriff</h2>
