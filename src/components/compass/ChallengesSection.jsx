@@ -133,7 +133,7 @@ export default function ChallengesSection() {
           })
         )}
 
-        {availableChallenges.length > 2 && !showAllChallenges && (
+        {availableChallenges.length > 1 && !showAllChallenges && (
           <button
             onClick={() => setShowAllChallenges(true)}
             className="w-full px-3 py-2 text-xs text-amber-600 dark:text-amber-500 hover:underline font-medium mt-3"
