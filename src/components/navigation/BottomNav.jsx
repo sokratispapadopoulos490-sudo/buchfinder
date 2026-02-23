@@ -53,7 +53,7 @@ export default function BottomNav() {
       paddingLeft: '8px',
       paddingRight: '8px',
       paddingBottom: 'max(24px, env(safe-area-inset-bottom, 24px))',
-      minHeight: '100px',
+      minHeight: '140px',
       display: 'block',
       visibility: 'visible',
       opacity: 1,
