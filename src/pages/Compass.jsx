@@ -35,39 +35,37 @@ export default function Compass() {
 
   const loadCompassData = async () => {
     try {
-      const currentUser = await base44.auth.me();
+      // Alle unabhängigen Requests parallel starten
+      const [currentUser, savedBooks, allLogs, recs] = await Promise.all([
+        base44.auth.me(),
+        base44.entities.SavedBook.filter({ is_completed: false }, '-created_date'),
+        base44.entities.ReadingLog.list('-reading_date'),
+        base44.entities.Recommendation.list('-created_date', 1),
+      ]);
+
       setUser(currentUser);
+      setAllReadingLogs(allLogs);
+      calculateStreak(allLogs);
 
-      // Alle Bücher laden
-      const savedBooks = await base44.entities.SavedBook.filter({ is_completed: false }, '-created_date');
-      if (savedBooks.length > 0) {
-        setAllBooks(savedBooks);
-        setCurrentBook(savedBooks[0]);
-
-        // Fortschritt berechnen
-        const logs = await base44.entities.ReadingLog.filter({ book_id: savedBooks[0].book_id });
-        const totalPages = logs.reduce((sum, log) => sum + log.pages_read, 0);
-        const bookPages = savedBooks[0].book_data.pageCount || 1;
-        setProgress(Math.min(100, Math.round((totalPages / bookPages) * 100)));
-
-        // Streak berechnen
-        const allLogs = await base44.entities.ReadingLog.list('-reading_date');
-        setAllReadingLogs(allLogs);
-        calculateStreak(allLogs);
-      }
-
-      // Buchspezifische Reflexionen laden
       if (currentUser.book_reflections) {
         setBookReflections(currentUser.book_reflections);
       }
 
-      // Letzte Empfehlungen laden
-      const recs = await base44.entities.Recommendation.list('-created_date', 1);
       if (recs.length > 0 && recs[0].books) {
         setLastRecommendations(recs[0].books.slice(0, 3));
       }
 
-      // Reflexionsfrage generieren
+      if (savedBooks.length > 0) {
+        setAllBooks(savedBooks);
+        setCurrentBook(savedBooks[0]);
+
+        // Fortschritt für erstes Buch laden (einziger sequenzieller Call)
+        const logs = allLogs.filter(l => l.book_id === savedBooks[0].book_id);
+        const totalPages = logs.reduce((sum, log) => sum + log.pages_read, 0);
+        const bookPages = savedBooks[0].book_data.pageCount || 1;
+        setProgress(Math.min(100, Math.round((totalPages / bookPages) * 100)));
+      }
+
       generateReflectionQuestion();
     } catch (error) {
       console.error('Error loading compass:', error);
