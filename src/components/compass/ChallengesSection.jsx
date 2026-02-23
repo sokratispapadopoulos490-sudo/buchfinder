@@ -130,6 +130,24 @@ export default function ChallengesSection() {
             );
           })
         )}
+
+        {availableChallenges.length > 2 && !showAllChallenges && (
+          <button
+            onClick={() => setShowAllChallenges(true)}
+            className="w-full px-3 py-2 text-xs text-amber-600 dark:text-amber-500 hover:underline font-medium mt-3"
+          >
+            Alle Challenges anzeigen ({availableChallenges.length})
+          </button>
+        )}
+
+        {showAllChallenges && availableChallenges.length > 2 && (
+          <button
+            onClick={() => setShowAllChallenges(false)}
+            className="w-full px-3 py-2 text-xs text-stone-500 dark:text-stone-400 hover:underline font-medium mt-3"
+          >
+            Weniger anzeigen
+          </button>
+        )}
       </div>
     </div>
   );
