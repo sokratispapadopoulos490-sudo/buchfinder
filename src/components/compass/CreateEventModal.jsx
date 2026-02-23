@@ -21,11 +21,25 @@ export default function CreateEventModal({ onClose, onCreated }) {
   const [time, setTime] = useState('');
   const [notes, setNotes] = useState('');
   const [saving, setSaving] = useState(false);
+  const [savedBooks, setSavedBooks] = useState([]);
+  const [selectedBook, setSelectedBook] = useState(null);
+  const [showBookPicker, setShowBookPicker] = useState(false);
+
+  useEffect(() => {
+    base44.entities.SavedBook.list('-created_date', 50).then(setSavedBooks);
+  }, []);
 
   const handleSave = async () => {
     if (!title.trim() || !date) return;
     setSaving(true);
-    await base44.entities.ReadingEvent.create({ title, category, date, time, notes });
+    await base44.entities.ReadingEvent.create({
+      title,
+      category,
+      date,
+      time,
+      notes,
+      book_data: selectedBook ? selectedBook.book_data : undefined,
+    });
     setSaving(false);
     onCreated();
     onClose();
