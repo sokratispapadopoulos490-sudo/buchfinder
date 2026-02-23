@@ -393,6 +393,8 @@ export default function Compass() {
           <ProgressModule
             readingLogs={allReadingLogs}
             completedBooksCount={allBooks.filter(b => b.is_completed).length}
+            savedBooksCount={allBooks.length}
+            recommendationsCount={lastRecommendations.length}
           />
         </div>
 
