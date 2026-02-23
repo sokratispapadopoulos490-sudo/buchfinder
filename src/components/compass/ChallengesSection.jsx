@@ -58,6 +58,9 @@ export default function ChallengesSection() {
     return 'Schwer';
   };
 
+  const availableChallenges = challenges.filter(c => !userChallenges.some(uc => uc.challenge_id === c.id));
+  const displayedChallenges = showAllChallenges ? availableChallenges : availableChallenges.slice(0, 2);
+
   return (
     <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-5 shadow-sm">
       <div className="flex items-center justify-between mb-4">
@@ -70,8 +73,10 @@ export default function ChallengesSection() {
       <div className="space-y-3">
         {challenges.length === 0 ? (
           <p className="text-xs text-stone-500 dark:text-stone-400 text-center py-4">Keine Challenges verfügbar</p>
+        ) : availableChallenges.length === 0 ? (
+          <p className="text-xs text-stone-500 dark:text-stone-400 text-center py-4">Du hast an allen Challenges teilgenommen 🎉</p>
         ) : (
-          challenges.map((challenge) => {
+          displayedChallenges.map((challenge) => {
             const isParticipating = isUserParticipating(challenge.id);
             const userProgress = userChallenges.find((uc) => uc.challenge_id === challenge.id);
             
