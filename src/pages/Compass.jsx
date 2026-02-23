@@ -389,6 +389,14 @@ export default function Compass() {
           </Button>
         </motion.div>
 
+        {/* Fortschritts-Modul */}
+        <div className="mb-6">
+          <ProgressModule
+            readingLogs={allReadingLogs}
+            completedBooksCount={allBooks.filter(b => b.is_completed).length}
+          />
+        </div>
+
         {/* Quick Links */}
         <div className="grid grid-cols-3 gap-3 mb-6">
           <button
