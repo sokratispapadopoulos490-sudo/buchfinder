@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Calendar, Clock, Tag, FileText, BookOpen, ChevronDown, ChevronUp } from 'lucide-react';
+import { X, Calendar, Clock, Tag, FileText, BookOpen } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import BookCover from '@/components/books/BookCover';
