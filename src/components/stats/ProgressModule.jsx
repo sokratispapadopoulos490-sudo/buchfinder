@@ -294,14 +294,17 @@ export default function ProgressModule({ readingLogs, completedBooksCount, saved
           <div className="flex items-center gap-3 pb-0.5">
             <div className="flex flex-col items-center gap-0.5">
               <Sparkles className="w-4 h-4 text-amber-500" />
+              <span className="text-sm font-semibold text-stone-700 dark:text-stone-200">{recommendationsCount}</span>
               <span className="text-[10px] text-stone-400 dark:text-stone-500">Tipps</span>
             </div>
             <div className="flex flex-col items-center gap-0.5">
               <BookMarked className="w-4 h-4 text-blue-500" />
+              <span className="text-sm font-semibold text-stone-700 dark:text-stone-200">{savedBooksCount}</span>
               <span className="text-[10px] text-stone-400 dark:text-stone-500">Gespeichert</span>
             </div>
             <div className="flex flex-col items-center gap-0.5">
               <BookOpen className="w-4 h-4 text-green-500" />
+              <span className="text-sm font-semibold text-stone-700 dark:text-stone-200">{weekPages}</span>
               <span className="text-[10px] text-stone-400 dark:text-stone-500">Seiten</span>
             </div>
           </div>
