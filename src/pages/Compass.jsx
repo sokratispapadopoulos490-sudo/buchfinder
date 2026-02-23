@@ -70,9 +70,9 @@ export default function Compass() {
         setCurrentBook(inProgressBooks[0]);
 
         // Fortschritt für erstes Buch laden (einziger sequenzieller Call)
-        const logs = allLogs.filter(l => l.book_id === savedBooks[0].book_id);
+        const logs = allLogs.filter(l => l.book_id === inProgressBooks[0].book_id);
         const totalPages = logs.reduce((sum, log) => sum + log.pages_read, 0);
-        const bookPages = savedBooks[0].book_data.pageCount || 1;
+        const bookPages = inProgressBooks[0].book_data.pageCount || 1;
         setProgress(Math.min(100, Math.round((totalPages / bookPages) * 100)));
       }
 
