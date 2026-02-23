@@ -43,7 +43,7 @@ export default function Compass() {
       // Alle unabhängigen Requests parallel starten
       const [currentUser, savedBooks, allLogs, recs] = await Promise.all([
         base44.auth.me(),
-        base44.entities.SavedBook.filter({ is_completed: false }, '-created_date'),
+        base44.entities.SavedBook.list('-created_date'),
         base44.entities.ReadingLog.list('-reading_date'),
         base44.entities.Recommendation.list('-created_date', 1),
       ]);
