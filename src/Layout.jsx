@@ -121,58 +121,42 @@ export default function Layout({ children, currentPageName }) {
     }
   }, []);
 
-  // Dark Mode initialisieren SOFORT
   useEffect(() => {
-    const initDarkMode = async () => {
-      try {
-        const isAuth = await base44.auth.isAuthenticated();
-        if (isAuth) {
-          const user = await base44.auth.me();
-          if (user?.dark_mode) {
-            document.documentElement.classList.add('dark');
-            document.documentElement.style.backgroundColor = '#0a0a0a';
-            document.body.style.backgroundColor = '#0a0a0a';
-            localStorage.setItem('darkMode', 'true');
-          } else {
-            document.documentElement.classList.remove('dark');
-            document.documentElement.style.backgroundColor = '';
-            document.body.style.backgroundColor = '';
-            localStorage.setItem('darkMode', 'false');
-          }
-        }
-      } catch (error) {
-        console.error('Dark mode init error:', error);
-      }
-    };
-    initDarkMode();
+    initApp();
   }, []);
 
-  useEffect(() => {
-    checkConsentAndRedirect();
-  }, []);
-
-  const checkConsentAndRedirect = async () => {
+  const initApp = async () => {
     try {
-      const isAuth = await base44.auth.isAuthenticated();
-      setIsAuthenticated(isAuth);
-      
-      if (isAuth) {
-        const user = await base44.auth.me();
-        
-        if (!user.terms_accepted || !user.privacy_accepted) {
-          setShowConsent(true);
-        }
+      // Einen einzigen me()-Call machen – schneller als isAuthenticated() + me()
+      const user = await base44.auth.me();
+      setIsAuthenticated(true);
 
-        if (location.pathname === '/') {
-          // Neuer Hauptnutzerpfad: Immer zu Compass nach Login
-          navigate('/Compass');
-        }
-      } else if (location.pathname === '/') {
-        navigate('/Onboarding');
+      // Dark Mode aus Nutzerprofil setzen
+      if (user?.dark_mode) {
+        document.documentElement.classList.add('dark');
+        document.documentElement.style.backgroundColor = '#0a0a0a';
+        document.body.style.backgroundColor = '#0a0a0a';
+        localStorage.setItem('darkMode', 'true');
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.style.backgroundColor = '';
+        document.body.style.backgroundColor = '';
+        localStorage.setItem('darkMode', 'false');
+      }
+
+      if (!user.terms_accepted || !user.privacy_accepted) {
+        setShowConsent(true);
+      }
+
+      if (location.pathname === '/') {
+        navigate('/Compass');
       }
     } catch (error) {
-      console.error('Error checking consent:', error);
+      // Nicht eingeloggt
       setIsAuthenticated(false);
+      if (location.pathname === '/') {
+        navigate('/Onboarding');
+      }
     } finally {
       setCheckingConsent(false);
     }
