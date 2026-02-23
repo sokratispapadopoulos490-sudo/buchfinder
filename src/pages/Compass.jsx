@@ -4,8 +4,6 @@ import { Button } from "@/components/ui/button";
 import { BookOpen, Sparkles, Target, MessageCircle, Plus, BookMarked, ChevronLeft, ChevronRight, X, ChevronDown, ChevronUp, Camera } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
-import { formatDistanceToNow } from 'date-fns';
-import { de } from 'date-fns/locale';
 import BookScannerModal from '@/components/books/BookScannerModal';
 import BookCover from '@/components/books/BookCover';
 import ProgressModule from '@/components/stats/ProgressModule';
