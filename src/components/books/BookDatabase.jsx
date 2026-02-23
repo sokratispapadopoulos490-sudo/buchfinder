@@ -1283,7 +1283,8 @@ export const books = [
     }
     ];
 
-export const getMatchingBooks = (profile) => {
+// getMatchingBooks is now in BookDatabaseLogic.js
+export const getMatchingBooksLegacy = (profile) => {
   const { mainTopics, secondaryTopics, style, difficulty, ageGroup, readBooks = [], savedBookIds = [] } = profile;
   
   // Zuerst nach Altersgruppe filtern
