@@ -58,8 +58,10 @@ export default function ChallengesSection() {
     return 'Schwer';
   };
 
-  const availableChallenges = challenges.filter(c => !userChallenges.some(uc => uc.challenge_id === c.id));
-  const displayedChallenges = showAllChallenges ? availableChallenges : availableChallenges.slice(0, 2);
+  const availableChallenges = challenges
+    .filter(c => !userChallenges.some(uc => uc.challenge_id === c.id))
+    .sort((a, b) => a.goal_value - b.goal_value);
+  const displayedChallenges = showAllChallenges ? availableChallenges : availableChallenges.slice(0, 1);
 
   return (
     <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-5 shadow-sm">
