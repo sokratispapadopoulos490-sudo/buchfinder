@@ -30,6 +30,8 @@ export default function Compass() {
   const [showScanner, setShowScanner] = useState(false);
   const [allReadingLogs, setAllReadingLogs] = useState([]);
   const [generatedBooksCount, setGeneratedBooksCount] = useState(0);
+  const [showLibrary, setShowLibrary] = useState(false);
+  const [selectedBookForProgress, setSelectedBookForProgress] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
