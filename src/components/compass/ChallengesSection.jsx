@@ -116,16 +116,16 @@ export default function ChallengesSection() {
                 )}
 
                 <button
-                  onClick={() => handleJoinChallenge(challenge.id)}
-                  disabled={isParticipating || isLoading}
-                  className={`w-full px-3 py-2 text-xs rounded font-medium transition-colors ${
-                    isParticipating
-                      ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 cursor-default'
-                      : 'bg-amber-600 hover:bg-amber-700 text-white'
-                  }`}
-                >
-                  {isParticipating ? '✓ Beigetreten' : 'Beitreten'}
-                </button>
+                   onClick={() => handleJoinChallenge(challenge.id)}
+                   disabled={isLoading}
+                   className={`w-full px-3 py-2 text-xs rounded font-medium transition-colors ${
+                     isLoading
+                       ? 'bg-stone-300 dark:bg-stone-700 text-stone-500 cursor-not-allowed'
+                       : 'bg-amber-600 hover:bg-amber-700 text-white cursor-pointer'
+                   }`}
+                 >
+                   {isLoading ? 'Wird beigetreten...' : 'Beitreten'}
+                 </button>
               </div>
             );
           })
