@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Calendar, Clock, Tag, FileText } from 'lucide-react';
+import { X, Calendar, Clock, Tag, FileText, BookOpen, ChevronDown, ChevronUp } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
+import BookCover from '@/components/books/BookCover';
 
 const CATEGORIES = [
   { value: 'lesen', label: '📖 Buch lesen', color: 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300' },
