@@ -260,9 +260,12 @@ export default function Compass() {
   return (
     <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] px-4 py-8 md:py-12">
       <div className="max-w-2xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-light text-stone-800 dark:text-stone-200">Dein Lesekompass</h1>
+        {/* Header mit Logo */}
+        <div className="mb-8 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center text-white text-xl shadow-md">
+            📖
+          </div>
+          <span className="text-lg font-medium text-stone-800 dark:text-stone-200">Book Compass</span>
         </div>
 
         {/* Hauptkarte */}
