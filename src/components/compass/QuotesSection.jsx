@@ -25,6 +25,32 @@ export default function QuotesSection() {
     }
   };
 
+  const handleCameraCapture = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsLoading(true);
+    try {
+      const uploadedFile = await base44.integrations.Core.UploadFile({ file });
+      
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: 'Extrahiere den Text aus diesem Bild. Gib NUR den Text zurück, den du siehst, ohne Erklärungen oder Formatierung.',
+        file_urls: [uploadedFile.file_url],
+      });
+
+      if (result) {
+        setNewQuote({ ...newQuote, quote_text: result });
+        setUseCamera(false);
+        setCameraImage(null);
+        toast.success('Text erfolgreich erfasst');
+      }
+    } catch (error) {
+      toast.error('Fehler beim Erfassen des Textes');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleAddQuote = async (e) => {
     e.preventDefault();
     if (!newQuote.quote_text.trim()) {
