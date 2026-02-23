@@ -15,8 +15,6 @@ import NotificationBell from '@/components/notifications/NotificationBell';
 import ConversationList from '@/components/messages/ConversationList';
 import ChatWindow from '@/components/messages/ChatWindow';
 import NewMessageModal from '@/components/messages/NewMessageModal';
-import YearlyStats from '@/components/stats/YearlyStats';
-import ReadingStreak from '@/components/stats/ReadingStreak';
 import GlobalSearch from '@/components/search/GlobalSearch';
 import DarkModeToggle from '@/components/settings/DarkModeToggle';
 import AddQuoteModal from '@/components/quotes/AddQuoteModal';
