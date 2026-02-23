@@ -429,6 +429,16 @@ export default function Compass() {
           <EventsList />
         </div>
 
+        {/* Zitate */}
+        <div className="mb-6">
+          <QuotesSection />
+        </div>
+
+        {/* Challenges */}
+        <div className="mb-6">
+          <ChallengesSection />
+        </div>
+
         {/* Quick Links */}
         <div className="grid grid-cols-3 gap-3 mb-6">
           <button
