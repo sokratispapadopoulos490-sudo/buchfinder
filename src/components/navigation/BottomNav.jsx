@@ -82,7 +82,7 @@ export default function BottomNav() {
                 cursor: 'pointer',
                 color: active ? '#d97706' : (isDark ? '#aaaaaa' : '#78716c'),
                 flex: 1,
-                minHeight: '56px',
+                minHeight: '48px',
                 touchAction: 'manipulation',
                 userSelect: 'none',
                 WebkitTapHighlightColor: 'transparent',
