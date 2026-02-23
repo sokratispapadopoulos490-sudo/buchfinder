@@ -60,12 +60,13 @@ export default function Onboarding() {
               className="bg-white rounded-2xl border border-stone-200 p-8 shadow-sm"
             >
               <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center mx-auto mb-4 shadow-lg">
                   <BookOpen className="w-8 h-8 text-white" />
                 </div>
-                <h1 className="text-2xl font-light text-stone-800 mb-2">
-                  Willkommen bei Book Compass
+                <h1 className="text-2xl font-light text-stone-800 mb-1">
+                  Book Compass
                 </h1>
+                <p className="text-amber-700 text-xs uppercase tracking-wider font-medium mb-2">Dein Wegweiser zum perfekten Buch</p>
                 <p className="text-stone-600">
                   Wir helfen dir, bewusster zu lesen und aus jedem Buch etwas mitzunehmen.
                 </p>
