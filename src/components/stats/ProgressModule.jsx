@@ -404,8 +404,8 @@ export default function ProgressModule({ readingLogs, completedBooksCount }) {
                 </div>
                 <div>
                   <div className="text-xs text-stone-500 dark:text-stone-400 mb-0.5">vs. Vorwoche</div>
-                  <div className={`text-sm font-semibold ${weekDiff === null ? 'text-stone-400' : weekDiff >= 0 ? 'text-green-600' : 'text-red-500'}`}>
-                    {weekDiff === null ? '–' : `${weekDiff >= 0 ? '+' : ''}${weekDiff}%`}
+                  <div className={`text-sm font-semibold ${weekDiff === null ? 'text-stone-400' : weekDiff >= 0 ? 'text-green-600' : 'text-amber-500'}`}>
+                    {weekDiff === null ? '–' : weekDiff >= 0 ? `+${weekDiff}%` : `${weekDiff}%`}
                   </div>
                 </div>
               </div>
