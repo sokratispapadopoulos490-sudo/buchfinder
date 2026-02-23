@@ -1037,5 +1037,9 @@ function HomeContent() {
 }
 
 export default function Home() {
-  return <HomeContent />;
+  return (
+    <LanguageProvider>
+      <HomeContent />
+    </LanguageProvider>
+  );
 }
