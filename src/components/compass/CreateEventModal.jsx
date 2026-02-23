@@ -23,7 +23,7 @@ export default function CreateEventModal({ onClose, onCreated }) {
   const [saving, setSaving] = useState(false);
   const [savedBooks, setSavedBooks] = useState([]);
   const [selectedBook, setSelectedBook] = useState(null);
-  const [showBookPicker, setShowBookPicker] = useState(false);
+
 
   useEffect(() => {
     base44.entities.SavedBook.list('-created_date', 50).then(setSavedBooks);
