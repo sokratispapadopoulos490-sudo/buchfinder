@@ -5,101 +5,46 @@ import { base44 } from '@/api/base44Client';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { LanguageProvider, useLanguage } from '@/components/language/LanguageContext';
 
-const SUPPORTED_LANGUAGES = [
-  { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
-  { code: 'en', name: 'English', flag: '🇬🇧' },
-  { code: 'fr', name: 'Français', flag: '🇫🇷' },
-  { code: 'es', name: 'Español', flag: '🇪🇸' },
-  { code: 'it', name: 'Italiano', flag: '🇮🇹' },
-  { code: 'tr', name: 'Türkçe', flag: '🇹🇷' },
-  { code: 'ar', name: 'العربية', flag: '🇸🇦' },
-  { code: 'uk', name: 'Українська', flag: '🇺🇦' },
-];
-
-function LanguageDropdown() {
-  const { language, changeLanguage } = useLanguage();
-  const [open, setOpen] = useState(false);
-  const ref = useRef(null);
-  const currentLang = SUPPORTED_LANGUAGES.find(l => l.code === language) || SUPPORTED_LANGUAGES[0];
-
-  useEffect(() => {
-    const handleClick = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
-    };
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, []);
-
+function AppLogo() {
   return (
     <div
-      ref={ref}
       style={{
         position: 'fixed',
-        top: '10px',
-        left: '10px',
+        top: '12px',
+        left: '12px',
         zIndex: 2147483647,
         pointerEvents: 'auto',
       }}
     >
-      {/* Flag button */}
-      <button
-        onClick={() => setOpen(o => !o)}
-        style={{
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        padding: '4px 8px',
+      }}>
+        <div style={{
+          width: '36px',
+          height: '36px',
+          borderRadius: '8px',
+          background: 'linear-gradient(135deg, #b45309 0%, #92400e 100%)',
           display: 'flex',
           alignItems: 'center',
-          gap: '3px',
-          background: 'rgba(255,255,255,0.92)',
-          border: '1px solid #d6d3d1',
-          borderRadius: '8px',
-          padding: '4px 7px',
-          fontSize: '18px',
-          cursor: 'pointer',
-          boxShadow: '0 1px 4px rgba(0,0,0,0.12)',
-          lineHeight: 1,
-        }}
-      >
-        <span>{currentLang.flag}</span>
-        <span style={{ fontSize: '9px', color: '#78716c' }}>▾</span>
-      </button>
-
-      {/* Dropdown list */}
-      {open && (
-        <div style={{
-          position: 'fixed',
-          top: '46px',
-          left: '10px',
-          background: 'white',
-          border: '1px solid #e7e5e4',
-          borderRadius: '10px',
-          boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
-          minWidth: '160px',
-          overflow: 'hidden',
-          zIndex: 2147483647,
+          justifyContent: 'center',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
         }}>
-          {SUPPORTED_LANGUAGES.map((lang) => (
-            <button
-              key={lang.code}
-              onClick={() => { changeLanguage(lang.code); setOpen(false); }}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                width: '100%',
-                padding: '9px 14px',
-                background: lang.code === language ? '#fef3c7' : 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: '14px',
-                color: '#1c1917',
-                textAlign: 'left',
-              }}
-            >
-              <span style={{ fontSize: '18px' }}>{lang.flag}</span>
-              <span>{lang.name}</span>
-            </button>
-          ))}
+          <span style={{
+            fontSize: '20px',
+            fontWeight: '300',
+            color: 'white',
+          }}>📖</span>
         </div>
-      )}
+        <span style={{
+          fontSize: '14px',
+          fontWeight: '500',
+          color: '#292524',
+          letterSpacing: '0.3px',
+        }}>Book Compass</span>
+      </div>
     </div>
   );
 }
@@ -165,7 +110,7 @@ export default function Layout({ children, currentPageName }) {
   if (checkingConsent) {
     return (
       <LanguageProvider>
-        <LanguageDropdown />
+        <AppLogo />
         <div style={{ minHeight: '100dvh', backgroundColor: localStorage.getItem('darkMode') === 'true' ? '#0a0a0a' : '#fff' }}>
           {children}
         </div>
@@ -176,10 +121,12 @@ export default function Layout({ children, currentPageName }) {
   // Navigation immer anzeigen wenn authentifiziert (außer auf bestimmten Seiten)
   const pagesWithoutNav = ['Onboarding', 'Legal'];
   const showNavigation = isAuthenticated && !pagesWithoutNav.includes(currentPageName);
+  // Logo nur auf Onboarding anzeigen
+  const showLogo = currentPageName === 'Onboarding';
 
   return (
     <LanguageProvider>
-      <LanguageDropdown />
+      {showLogo && <AppLogo />}
       <div style={{ paddingBottom: showNavigation ? '180px' : '0', minHeight: '100dvh' }}>
         {children}
         {showConsent && (
