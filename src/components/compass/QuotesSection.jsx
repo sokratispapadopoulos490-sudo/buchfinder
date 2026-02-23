@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Quote, Plus } from 'lucide-react';
+import { Quote, Plus, Camera } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function QuotesSection() {
@@ -8,6 +8,9 @@ export default function QuotesSection() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [newQuote, setNewQuote] = useState({ book_data: null, quote_text: '', page_number: '' });
   const [isLoading, setIsLoading] = useState(false);
+  const [useCamera, setUseCamera] = useState(false);
+  const [cameraImage, setCameraImage] = useState(null);
+  const cameraInputRef = useRef(null);
 
   useEffect(() => {
     loadQuotes();
