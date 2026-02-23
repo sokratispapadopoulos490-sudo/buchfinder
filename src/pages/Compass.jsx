@@ -6,7 +6,6 @@ import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import { de } from 'date-fns/locale';
-import ReadingProgressModal from '@/components/reading/ReadingProgressModal';
 import BookScannerModal from '@/components/books/BookScannerModal';
 import BookCover from '@/components/books/BookCover';
 import ProgressModule from '@/components/stats/ProgressModule';
