@@ -167,7 +167,7 @@ function CommunityContent() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50 dark:bg-[#0a0a0a]">
+    <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a]">
       <div className="max-w-4xl mx-auto px-4 py-8">
 
         {/* Header */}
