@@ -117,7 +117,9 @@ function AccountContent() {
               </div>
               <div className="flex-1 min-w-0">
                 <h1 className="text-xl font-semibold text-stone-800 dark:text-stone-100 truncate">{user.full_name}</h1>
-                <p className="text-stone-500 dark:text-stone-400 text-sm truncate">{user.email}</p>
+                <p className="text-stone-500 dark:text-stone-400 text-sm truncate">
+                  @{user.username || user.email?.split('@')[0]}
+                </p>
                 {user.bio && (
                   <p className="text-stone-600 dark:text-stone-400 text-sm mt-1 line-clamp-2">{user.bio}</p>
                 )}

@@ -6,7 +6,9 @@ import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 
 export default function Onboarding() {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0);
+  const [username, setUsername] = useState('');
+  const [usernameError, setUsernameError] = useState('');
   const [readingIdentity, setReadingIdentity] = useState('');
   const [whatDrawsYou, setWhatDrawsYou] = useState([]);
   const [currentBook, setCurrentBook] = useState('');
