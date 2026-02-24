@@ -112,20 +112,6 @@ function AccountContent() {
               </div>
             </div>
 
-            {/* Stats row */}
-            <div className="grid grid-cols-3 gap-3 mb-4">
-              {[
-                { label: 'Gespeichert', value: savedBooks.length },
-                { label: 'Gelesen', value: completedBooks.length },
-                { label: 'Empfehlungen', value: recommendations.length },
-              ].map(({ label, value }) => (
-                <div key={label} className="bg-stone-50 dark:bg-[#262626] rounded-xl p-3 text-center">
-                  <div className="text-xl font-bold text-stone-800 dark:text-stone-100">{value}</div>
-                  <div className="text-xs text-stone-500 mt-0.5">{label}</div>
-                </div>
-              ))}
-            </div>
-
             {/* Profil bearbeiten */}
             <button
               onClick={() => setShowProfileEdit(true)}
