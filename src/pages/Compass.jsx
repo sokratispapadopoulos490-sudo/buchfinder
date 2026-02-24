@@ -440,6 +440,9 @@ export default function Compass() {
           <ChallengesSection />
         </div>
 
+        {/* Mein Netzwerk */}
+        <FollowingSection />
+
         {/* Quick Links */}
         <div className="grid grid-cols-3 gap-3 mb-6">
           <button

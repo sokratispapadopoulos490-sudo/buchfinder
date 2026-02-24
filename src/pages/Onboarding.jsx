@@ -15,6 +15,19 @@ export default function Onboarding() {
   const [processing, setProcessing] = useState(false);
   const navigate = useNavigate();
 
+  const handleUsernameSubmit = async () => {
+    if (!username.trim() || username.trim().length < 3) {
+      setUsernameError('Mindestens 3 Zeichen erforderlich.');
+      return;
+    }
+    if (!/^[a-zA-Z0-9_]+$/.test(username.trim())) {
+      setUsernameError('Nur Buchstaben, Zahlen und _ erlaubt.');
+      return;
+    }
+    await base44.auth.updateMe({ username: username.trim() });
+    setStep(1);
+  };
+
   const handleIdentitySelect = (selected) => {
     setReadingIdentity(selected);
     setStep(2);
