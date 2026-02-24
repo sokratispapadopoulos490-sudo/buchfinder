@@ -36,7 +36,6 @@ export default function FollowingSection() {
   };
 
   if (loading) return null;
-  if (following.length === 0 && followers.length === 0) return null;
 
   const list = tab === 'following' ? following : followers;
 
