@@ -240,6 +240,8 @@ function AccountContent() {
           </CollapsibleTrigger>
           <CollapsibleContent>
             <div className="bg-white dark:bg-[#1a1a1a] border border-t-0 border-stone-200 dark:border-stone-700 rounded-b-2xl p-4 space-y-3">
+
+              {/* Sprache */}
               <div className="flex items-center justify-between p-3 border border-stone-200 dark:border-stone-700 rounded-xl">
                 <div className="flex items-center gap-3">
                   <Globe className="w-4 h-4 text-stone-500" />
@@ -259,8 +261,58 @@ function AccountContent() {
                 </select>
               </div>
 
+              {/* Dark Mode */}
               <DarkModeToggle />
 
+              {/* Profil öffentlich */}
+              <div className="flex items-center justify-between p-3 border border-stone-200 dark:border-stone-700 rounded-xl">
+                <div className="flex items-center gap-3">
+                  <Lock className="w-4 h-4 text-stone-500" />
+                  <div>
+                    <div className="text-sm font-medium text-stone-800 dark:text-stone-200">Profil öffentlich</div>
+                    <div className="text-xs text-stone-500">Andere Nutzer können dein Profil sehen</div>
+                  </div>
+                </div>
+                <button
+                  onClick={async () => {
+                    const newVal = !user.profile_is_public;
+                    await base44.auth.updateMe({ profile_is_public: newVal });
+                    setUser(prev => ({ ...prev, profile_is_public: newVal }));
+                  }}
+                  className={`w-11 h-6 rounded-full transition-colors relative ${user.profile_is_public !== false ? 'bg-amber-600' : 'bg-stone-300 dark:bg-stone-600'}`}
+                >
+                  <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${user.profile_is_public !== false ? 'translate-x-5' : 'translate-x-0.5'}`} />
+                </button>
+              </div>
+
+              {/* Benachrichtigungen */}
+              <div className="p-3 border border-stone-200 dark:border-stone-700 rounded-xl space-y-3">
+                <div className="flex items-center gap-2 mb-1">
+                  <Bell className="w-4 h-4 text-stone-500" />
+                  <span className="text-sm font-medium text-stone-800 dark:text-stone-200">Benachrichtigungen</span>
+                </div>
+                {[
+                  { key: 'notification_comments', label: 'Kommentare' },
+                  { key: 'notification_likes', label: 'Likes' },
+                  { key: 'notification_messages', label: 'Nachrichten' },
+                ].map(({ key, label }) => (
+                  <div key={key} className="flex items-center justify-between">
+                    <span className="text-sm text-stone-600 dark:text-stone-400">{label}</span>
+                    <button
+                      onClick={async () => {
+                        const newVal = !(user[key] !== false);
+                        await base44.auth.updateMe({ [key]: newVal });
+                        setUser(prev => ({ ...prev, [key]: newVal }));
+                      }}
+                      className={`w-10 h-5 rounded-full transition-colors relative ${user[key] !== false ? 'bg-amber-600' : 'bg-stone-300 dark:bg-stone-600'}`}
+                    >
+                      <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${user[key] !== false ? 'translate-x-5' : 'translate-x-0.5'}`} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              {/* Daten exportieren */}
               <button
                 onClick={async () => {
                   if (confirm('Möchtest du alle deine Daten exportieren?')) {
@@ -280,6 +332,15 @@ function AccountContent() {
                   <div className="text-sm font-medium text-stone-800 dark:text-stone-200">Daten exportieren</div>
                   <div className="text-xs text-stone-500">Alle deine Daten herunterladen</div>
                 </div>
+              </button>
+
+              {/* Abmelden */}
+              <button
+                onClick={() => base44.auth.logout()}
+                className="w-full flex items-center gap-3 p-3 border border-red-200 dark:border-red-900 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-left"
+              >
+                <LogOut className="w-4 h-4 text-red-500" />
+                <div className="text-sm font-medium text-red-500">Abmelden</div>
               </button>
             </div>
           </CollapsibleContent>
