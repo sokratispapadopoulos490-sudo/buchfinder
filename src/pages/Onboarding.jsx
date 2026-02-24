@@ -46,7 +46,6 @@ export default function Onboarding() {
   const handleComplete = async () => {
     setProcessing(true);
     try {
-      // Speichere Profildaten
       await base44.auth.updateMe({
         reading_identity: readingIdentity,
         what_draws_you: whatDrawsYou,
