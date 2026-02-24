@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { Compass, Crown, Clock, Search, Trash2, Globe, Edit, Download, ChevronDown, ChevronRight } from 'lucide-react';
+import { Compass, Crown, Clock, Search, Trash2, Globe, Edit, Download, ChevronDown, ChevronRight, Camera, Bell, Lock, LogOut } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
