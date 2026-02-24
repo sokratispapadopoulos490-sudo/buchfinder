@@ -356,11 +356,6 @@ function AccountContent() {
               Rechtliche Hinweise
             </button>
           </div>
-          <div className="text-center">
-            <Button onClick={() => base44.auth.logout()} variant="ghost" className="text-stone-500 hover:text-stone-700">
-              Abmelden
-            </Button>
-          </div>
         </div>
       </div>
 
