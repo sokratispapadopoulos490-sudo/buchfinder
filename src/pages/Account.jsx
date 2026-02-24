@@ -24,6 +24,7 @@ function AccountContent() {
   const [showGlobalSearch, setShowGlobalSearch] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const navigate = useNavigate();
   const { language, changeLanguage, supportedLanguages } = useLanguage();
 
