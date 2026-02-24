@@ -49,6 +49,16 @@ function AccountContent() {
     }
   };
 
+  const handlePhotoUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploadingPhoto(true);
+    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+    await base44.auth.updateMe({ profile_picture_url: file_url });
+    setUser(prev => ({ ...prev, profile_picture_url: file_url }));
+    setUploadingPhoto(false);
+  };
+
   const handleDeleteRecommendation = async (recId) => {
     if (confirm('Möchtest du diese Empfehlung wirklich löschen?')) {
       await base44.entities.Recommendation.delete(recId);
