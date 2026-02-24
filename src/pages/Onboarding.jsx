@@ -65,6 +65,50 @@ export default function Onboarding() {
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50 flex items-center justify-center px-4">
       <div className="max-w-lg w-full">
         <AnimatePresence mode="wait">
+          {step === 0 && (
+            <motion.div
+              key="step0"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="bg-white rounded-2xl border border-stone-200 p-8 shadow-sm"
+            >
+              <div className="text-center mb-8">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center mx-auto mb-4 shadow-lg">
+                  <BookOpen className="w-8 h-8 text-white" />
+                </div>
+                <h1 className="text-2xl font-light text-stone-800 mb-1">Willkommen bei Book Compass</h1>
+                <p className="text-stone-600 text-sm">Wähle zuerst deinen Benutzernamen</p>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium text-stone-700 mb-1 block">Benutzername</label>
+                  <div className="flex items-center border border-stone-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-amber-500">
+                    <span className="pl-4 text-stone-400 text-sm">@</span>
+                    <input
+                      type="text"
+                      value={username}
+                      onChange={(e) => { setUsername(e.target.value); setUsernameError(''); }}
+                      placeholder="dein_name"
+                      className="flex-1 px-2 py-3 focus:outline-none text-stone-800 text-sm bg-transparent"
+                      onKeyDown={(e) => e.key === 'Enter' && handleUsernameSubmit()}
+                    />
+                  </div>
+                  {usernameError && <p className="text-red-500 text-xs mt-1">{usernameError}</p>}
+                  <p className="text-xs text-stone-400 mt-1">Nur Buchstaben, Zahlen und _ (min. 3 Zeichen)</p>
+                </div>
+
+                <Button
+                  onClick={handleUsernameSubmit}
+                  className="w-full bg-amber-600 hover:bg-amber-700 text-white"
+                >
+                  Weiter
+                </Button>
+              </div>
+            </motion.div>
+          )}
+
           {step === 1 && (
             <motion.div
               key="step1"
