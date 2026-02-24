@@ -96,8 +96,24 @@ function AccountContent() {
         <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 overflow-hidden mb-4 shadow-sm">
           <div className="p-6">
             <div className="flex items-start gap-4 mb-5">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center text-white text-2xl font-light shadow-lg flex-shrink-0">
-                {user.full_name?.charAt(0) || 'U'}
+              <div className="relative flex-shrink-0">
+                <label className="cursor-pointer group">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center text-white text-2xl font-light shadow-lg overflow-hidden">
+                    {user.profile_picture_url ? (
+                      <img src={user.profile_picture_url} alt="Profilbild" className="w-full h-full object-cover" />
+                    ) : (
+                      user.full_name?.charAt(0) || 'U'
+                    )}
+                  </div>
+                  <div className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    {uploadingPhoto ? (
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <Camera className="w-5 h-5 text-white" />
+                    )}
+                  </div>
+                  <input type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} disabled={uploadingPhoto} />
+                </label>
               </div>
               <div className="flex-1 min-w-0">
                 <h1 className="text-xl font-semibold text-stone-800 dark:text-stone-100 truncate">{user.full_name}</h1>
