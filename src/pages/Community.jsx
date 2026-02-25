@@ -182,13 +182,12 @@ function CommunityContent() {
             {isAdmin && (
               <Button onClick={() => navigate('/Moderation')} variant="outline" size="sm" className="gap-2">
                 <Shield className="w-4 h-4" />
-                <span className="hidden sm:inline">Moderation</span>
+                Moderation
               </Button>
             )}
-            {/* Clubs Button */}
             <Button onClick={() => navigate('/Clubs')} variant="outline" size="sm" className="gap-2">
               <Users className="w-4 h-4" />
-              <span className="hidden sm:inline">Clubs</span>
+              Clubs
             </Button>
           </div>
         </div>
