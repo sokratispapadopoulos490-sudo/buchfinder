@@ -189,6 +189,7 @@ function CommunityContent() {
               <Users className="w-4 h-4" />
               Clubs
             </Button>
+
           </div>
         </div>
 
