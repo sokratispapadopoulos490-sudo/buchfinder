@@ -364,11 +364,14 @@ function HomeContent() {
 
   useEffect(() => {
     const init = async () => {
-      await checkAuth();
-      await loadRecommendationCount();
+      const isAuth = await checkAuth();
+      
+      if (isAuth) {
+        await loadRecommendationCount();
+      }
       
       const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('showLastRecommendation') === 'true') {
+      if (urlParams.get('showLastRecommendation') === 'true' && isAuth) {
         setCameFromCompass(true);
         await loadLastRecommendation();
       } else if (urlParams.get('startQuestions') === 'true') {
