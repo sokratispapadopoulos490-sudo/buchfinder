@@ -403,27 +403,21 @@ function HomeContent() {
 
   const checkAuth = async () => {
     try {
-      const isAuth = await base44.auth.isAuthenticated();
-      if (isAuth) {
-        const currentUser = await base44.auth.me();
-        setUser(currentUser);
-        setIsAuthenticated(true);
-        setIsPremium(currentUser.is_premium || currentUser.role === 'admin');
-      } else {
-        setIsAuthenticated(false);
-      }
+      const currentUser = await base44.auth.me();
+      setUser(currentUser);
+      setIsAuthenticated(true);
+      setIsPremium(currentUser.is_premium || currentUser.role === 'admin');
+      return true;
     } catch (error) {
       setIsAuthenticated(false);
+      return false;
     }
   };
 
   const loadRecommendationCount = async () => {
     try {
-      const isAuth = await base44.auth.isAuthenticated();
-      if (isAuth) {
-        const recommendations = await base44.entities.Recommendation.list();
-        setRecommendationCount(recommendations.length);
-      }
+      const recommendations = await base44.entities.Recommendation.list();
+      setRecommendationCount(recommendations.length);
     } catch (error) {
       console.error('Fehler beim Laden der Empfehlungen:', error);
     }
@@ -431,15 +425,12 @@ function HomeContent() {
 
   const loadLastRecommendation = async () => {
     try {
-      const isAuth = await base44.auth.isAuthenticated();
-      if (isAuth) {
-        const recs = await base44.entities.Recommendation.list('-created_date', 1);
-        if (recs.length > 0) {
-          const lastRec = recs[0];
-          setProfile(lastRec.profile || { mainTopics: [], secondaryTopics: [], style: [] });
-          setRecommendations(lastRec.books || []);
-          setPhase('results');
-        }
+      const recs = await base44.entities.Recommendation.list('-created_date', 1);
+      if (recs.length > 0) {
+        const lastRec = recs[0];
+        setProfile(lastRec.profile || { mainTopics: [], secondaryTopics: [], style: [] });
+        setRecommendations(lastRec.books || []);
+        setPhase('results');
       }
     } catch (error) {
       console.error('Fehler beim Laden der letzten Empfehlung:', error);
