@@ -123,16 +123,47 @@ export default function Layout({ children, currentPageName }) {
   // Logo nur auf Onboarding anzeigen
   const showLogo = currentPageName === 'Onboarding';
 
+  // Debug-Info für Diagnose auf echten Geräten
+  const hideNavReason = !isAuthenticated ? 'notLoggedIn' : pagesWithoutNav.includes(currentPageName) ? currentPageName.toLowerCase() : 'none';
+  const showDebug = false; // auf true setzen zum Debuggen
+
   return (
     <LanguageProvider>
       {showLogo && <AppLogo />}
-      <div style={{ paddingBottom: showNavigation ? 'calc(56px + env(safe-area-inset-bottom, 0px))' : '0', minHeight: '100dvh' }}>
+      {/* Content-Wrapper: kein overflow:hidden, kein transform, kein filter */}
+      <div style={{
+        paddingBottom: showNavigation ? 'calc(56px + env(safe-area-inset-bottom, 0px))' : '0',
+        minHeight: '100dvh',
+      }}>
         {children}
         {showConsent && (
           <ConsentModal onAccept={() => setShowConsent(false)} />
         )}
       </div>
+      {/* BottomNav direkt im Root, außerhalb jedes Containers */}
       {showNavigation && <BottomNav />}
+      {/* Debug-Overlay – showDebug auf true setzen zum Testen auf echten Geräten */}
+      {showDebug && (
+        <div style={{
+          position: 'fixed',
+          bottom: 'calc(60px + env(safe-area-inset-bottom, 0px))',
+          left: 8,
+          zIndex: 99999,
+          background: 'rgba(0,0,0,0.75)',
+          color: '#fff',
+          fontSize: '10px',
+          padding: '6px 10px',
+          borderRadius: 8,
+          lineHeight: 1.6,
+          pointerEvents: 'none',
+        }}>
+          <div>path: {location.pathname}</div>
+          <div>page: {currentPageName}</div>
+          <div>loggedIn: {String(isAuthenticated)}</div>
+          <div>showNav: {String(showNavigation)}</div>
+          <div>hideReason: {hideNavReason}</div>
+        </div>
+      )}
     </LanguageProvider>
   );
 }
