@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import ReactDOM from 'react-dom';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Compass, Users, User } from 'lucide-react';
 import { createPageUrl } from '@/utils';
