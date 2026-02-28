@@ -123,10 +123,6 @@ export default function Layout({ children, currentPageName }) {
   // Logo nur auf Onboarding anzeigen
   const showLogo = currentPageName === 'Onboarding';
 
-  // Debug-Info für Diagnose auf echten Geräten
-  const hideNavReason = !isAuthenticated ? 'notLoggedIn' : pagesWithoutNav.includes(currentPageName) ? currentPageName.toLowerCase() : 'none';
-  const showDebug = false; // auf true setzen zum Debuggen
-
   return (
     <LanguageProvider>
       {showLogo && <AppLogo />}
