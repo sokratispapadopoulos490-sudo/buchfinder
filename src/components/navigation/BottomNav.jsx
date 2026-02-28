@@ -69,7 +69,7 @@ export default function BottomNav() {
     transform: 'translateZ(0)',
   };
 
-  return (
+  const navContent = (
     <nav style={navStyle}>
       {navItems.map((item) => {
         const Icon = item.icon;
@@ -104,4 +104,7 @@ export default function BottomNav() {
       })}
     </nav>
   );
+
+  // Portal direkt in document.body rendern – umgeht alle CSS-Stacking-Kontexte
+  return ReactDOM.createPortal(navContent, document.body);
 }
