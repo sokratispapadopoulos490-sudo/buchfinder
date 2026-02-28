@@ -1,76 +1,45 @@
 import React, { useEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
+import { createPortal } from 'react-dom';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Compass, Users, User } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 
-export default function BottomNav() {
+function NavUI({ isDark }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    const check = () => {
-      const hasDarkClass = document.documentElement.classList.contains('dark');
-      const darkFromStorage = localStorage.getItem('darkMode') === 'true';
-      setIsDark(hasDarkClass || darkFromStorage);
-    };
-    check();
-    const observer = new MutationObserver(check);
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-    return () => observer.disconnect();
-  }, []);
 
   const navItems = [
-    {
-      icon: Users,
-      label: 'Community',
-      path: 'Community'
-    },
-    {
-      icon: Compass,
-      label: 'Compass',
-      path: 'Compass'
-    },
-    {
-      icon: User,
-      label: 'Account',
-      path: 'Account'
-    }
+    { icon: Users, label: 'Community', path: 'Community' },
+    { icon: Compass, label: 'Compass', path: 'Compass' },
+    { icon: User, label: 'Account', path: 'Account' },
   ];
 
-  const isActive = (path) => {
-    return location.pathname === `/${path}` || (path === 'Home' && location.pathname === '/');
-  };
+  const isActive = (path) =>
+    location.pathname === `/${path}` || (path === 'Home' && location.pathname === '/');
 
-  const navStyle = {
-    position: 'fixed',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    zIndex: 2147483647,
-    backgroundColor: isDark ? '#1f1f1f' : '#ffffff',
-    borderTop: `2px solid ${isDark ? '#444444' : '#d6d3d1'}`,
-    borderRadius: '16px 16px 0 0',
-    boxShadow: isDark ? '0 -4px 20px rgba(0,0,0,0.8)' : '0 -4px 6px -1px rgba(0,0,0,0.1)',
-    paddingTop: '8px',
-    paddingLeft: '8px',
-    paddingRight: '8px',
-    paddingBottom: 'env(safe-area-inset-bottom, 8px)',
-    minHeight: '56px',
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    visibility: 'visible',
-    opacity: 1,
-    pointerEvents: 'auto',
-    WebkitTransform: 'translateZ(0)',
-    transform: 'translateZ(0)',
-  };
-
-  const navContent = (
-    <nav style={navStyle}>
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 2147483647,
+        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+        pointerEvents: 'auto',
+        backgroundColor: isDark ? '#1f1f1f' : '#ffffff',
+        borderTop: `2px solid ${isDark ? '#444444' : '#d6d3d1'}`,
+        borderRadius: '16px 16px 0 0',
+        boxShadow: isDark
+          ? '0 -4px 20px rgba(0,0,0,0.8)'
+          : '0 -4px 6px -1px rgba(0,0,0,0.1)',
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-around',
+        height: '56px',
+      }}
+    >
       {navItems.map((item) => {
         const Icon = item.icon;
         const active = isActive(item.path);
@@ -85,11 +54,14 @@ export default function BottomNav() {
               justifyContent: 'center',
               gap: '3px',
               flex: 1,
+              height: '100%',
               padding: '6px 4px',
               borderRadius: '10px',
               cursor: 'pointer',
-              color: active ? '#d97706' : (isDark ? '#aaaaaa' : '#78716c'),
-              backgroundColor: active ? (isDark ? '#3a2a00' : '#fef3c7') : 'transparent',
+              color: active ? '#d97706' : isDark ? '#aaaaaa' : '#78716c',
+              backgroundColor: active
+                ? isDark ? '#3a2a00' : '#fef3c7'
+                : 'transparent',
               touchAction: 'manipulation',
               userSelect: 'none',
               WebkitTapHighlightColor: 'transparent',
@@ -102,8 +74,31 @@ export default function BottomNav() {
           </div>
         );
       })}
-    </nav>
+    </div>
   );
+}
 
-  return ReactDOM.createPortal(navContent, document.body);
+export default function BottomNav() {
+  const [mounted, setMounted] = useState(false);
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+
+    const check = () => {
+      setIsDark(
+        document.documentElement.classList.contains('dark') ||
+          localStorage.getItem('darkMode') === 'true'
+      );
+    };
+    check();
+
+    const observer = new MutationObserver(check);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
+
+  if (!mounted) return null;
+
+  return createPortal(<NavUI isDark={isDark} />, document.body);
 }
