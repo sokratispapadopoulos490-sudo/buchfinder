@@ -105,6 +105,5 @@ export default function BottomNav() {
     </nav>
   );
 
-  // Portal direkt in document.body rendern – umgeht alle CSS-Stacking-Kontexte
   return ReactDOM.createPortal(navContent, document.body);
 }
