@@ -117,10 +117,8 @@ export default function Layout({ children, currentPageName }) {
     );
   }
 
-  // Navigation immer anzeigen wenn authentifiziert (außer auf bestimmten Seiten)
   const pagesWithoutNav = ['Onboarding', 'Legal'];
   const showNavigation = isAuthenticated && !pagesWithoutNav.includes(currentPageName);
-  // Logo nur auf Onboarding anzeigen
   const showLogo = currentPageName === 'Onboarding';
 
   return (
@@ -135,7 +133,8 @@ export default function Layout({ children, currentPageName }) {
           <ConsentModal onAccept={() => setShowConsent(false)} />
         )}
       </div>
-      {showNavigation && <BottomNav />}
+      {/* BottomNav rendert sich selbst via Portal in document.body */}
+      <BottomNav />
     </LanguageProvider>
   );
 }
