@@ -126,7 +126,7 @@ export default function Layout({ children, currentPageName }) {
   return (
     <LanguageProvider>
       {showLogo && <AppLogo />}
-      <div style={{ paddingBottom: showNavigation ? '180px' : '0', minHeight: '100dvh' }}>
+      <div style={{ paddingBottom: showNavigation ? 'calc(56px + env(safe-area-inset-bottom, 0px))' : '0', minHeight: '100dvh' }}>
         {children}
         {showConsent && (
           <ConsentModal onAccept={() => setShowConsent(false)} />
