@@ -56,6 +56,9 @@ export default function BottomNav() {
       height: 'calc(56px + env(safe-area-inset-bottom, 0px))',
       display: 'flex',
       alignItems: 'flex-start',
+      visibility: 'visible',
+      opacity: 1,
+      // Kein transform, kein filter, kein backdrop-filter – verhindert Stacking-Context-Probleme
     }}>
       <div style={{
         display: 'flex',
