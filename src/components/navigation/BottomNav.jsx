@@ -39,12 +39,27 @@ export default function BottomNav() {
   };
 
   return (
+    <>
+    {/* DEBUG BADGE – temporär */}
+    <div style={{
+      position: 'fixed',
+      bottom: 64,
+      right: 8,
+      zIndex: 2147483647,
+      background: 'red',
+      color: 'white',
+      fontSize: '10px',
+      fontWeight: 'bold',
+      padding: '4px 8px',
+      borderRadius: 6,
+      pointerEvents: 'none',
+    }}>NAV RENDERED</div>
     <nav style={{
       position: 'fixed',
       bottom: 0,
       left: 0,
       right: 0,
-      zIndex: 9999,
+      zIndex: 2147483647,
       backgroundColor: isDark ? '#1a1a1a' : '#ffffff',
       borderTop: `2px solid ${isDark ? '#333333' : '#d6d3d1'}`,
       borderRadius: '16px 16px 0 0',
@@ -58,7 +73,7 @@ export default function BottomNav() {
       alignItems: 'flex-start',
       visibility: 'visible',
       opacity: 1,
-      // Kein transform, kein filter, kein backdrop-filter – verhindert Stacking-Context-Probleme
+      pointerEvents: 'auto',
     }}>
       <div style={{
         display: 'flex',
