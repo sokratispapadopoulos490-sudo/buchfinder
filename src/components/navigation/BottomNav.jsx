@@ -9,7 +9,11 @@ export default function BottomNav() {
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
-    const check = () => setIsDark(document.documentElement.classList.contains('dark'));
+    const check = () => {
+      const hasDarkClass = document.documentElement.classList.contains('dark');
+      const darkFromStorage = localStorage.getItem('darkMode') === 'true';
+      setIsDark(hasDarkClass || darkFromStorage);
+    };
     check();
     const observer = new MutationObserver(check);
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
