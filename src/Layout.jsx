@@ -140,8 +140,8 @@ export default function Layout({ children, currentPageName }) {
           <ConsentModal onAccept={() => setShowConsent(false)} />
         )}
       </div>
-      {/* BottomNav direkt im Root, außerhalb jedes Containers */}
-      {showNavigation && <BottomNav />}
+      {/* DEBUG: BottomNav immer rendern – unabhängig von Login/Seite */}
+      <BottomNav />
       {/* Debug-Overlay – showDebug auf true setzen zum Testen auf echten Geräten */}
       {showDebug && (
         <div style={{
