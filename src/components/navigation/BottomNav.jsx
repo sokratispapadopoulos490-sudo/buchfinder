@@ -64,44 +64,38 @@ export default function BottomNav() {
   };
 
   return (
-    <div>
-      <div style={{ position: 'fixed', bottom: 64, right: 8, zIndex: 2147483647, background: 'red', color: 'white', fontSize: '10px', fontWeight: 'bold', padding: '4px 8px', borderRadius: 6, pointerEvents: 'none' }}>NAV RENDERED</div>
-      <nav style={navStyle}>
-        <div style={{ display: 'flex', justifyContent: 'space-around', width: '100%', maxWidth: '600px', margin: '0 auto', gap: '4px' }}>
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const active = isActive(item.path);
-            return (
-              <div
-                key={item.path}
-                onClick={() => navigate(createPageUrl(item.path))}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: '4px',
-                  padding: '8px 12px',
-                  border: 'none',
-                  backgroundColor: active ? (isDark ? '#3a2a00' : '#fef3c7') : 'transparent',
-                  borderRadius: '12px',
-                  cursor: 'pointer',
-                  color: active ? '#d97706' : (isDark ? '#aaaaaa' : '#78716c'),
-                  flex: 1,
-                  minHeight: '48px',
-                  touchAction: 'manipulation',
-                  userSelect: 'none',
-                  WebkitTapHighlightColor: 'transparent',
-                }}
-              >
-                <Icon style={{ width: '24px', height: '24px', strokeWidth: active ? 2.5 : 2, pointerEvents: 'none' }} />
-                <span style={{ fontSize: '11px', fontWeight: active ? 600 : 500, textAlign: 'center', lineHeight: '1.2', pointerEvents: 'none' }}>
-                  {item.label}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-      </nav>
-    </div>
+    <nav style={navStyle}>
+      {navItems.map((item) => {
+        const Icon = item.icon;
+        const active = isActive(item.path);
+        return (
+          <div
+            key={item.path}
+            onClick={() => navigate(createPageUrl(item.path))}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '3px',
+              flex: 1,
+              padding: '6px 4px',
+              borderRadius: '10px',
+              cursor: 'pointer',
+              color: active ? '#d97706' : (isDark ? '#aaaaaa' : '#78716c'),
+              backgroundColor: active ? (isDark ? '#3a2a00' : '#fef3c7') : 'transparent',
+              touchAction: 'manipulation',
+              userSelect: 'none',
+              WebkitTapHighlightColor: 'transparent',
+            }}
+          >
+            <Icon style={{ width: '22px', height: '22px', strokeWidth: active ? 2.5 : 2 }} />
+            <span style={{ fontSize: '10px', fontWeight: active ? 600 : 500, lineHeight: 1.2 }}>
+              {item.label}
+            </span>
+          </div>
+        );
+      })}
+    </nav>
   );
 }
