@@ -59,11 +59,13 @@ export default function BottomNav() {
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'stretch',
-        height: `calc(56px + env(safe-area-inset-bottom, 0px))`,
+        height: `calc(64px + env(safe-area-inset-bottom, 0px))`,
         paddingBottom: 'env(safe-area-inset-bottom, 0px)',
         backgroundColor: bg,
         borderTop: `1px solid ${border}`,
-        boxShadow: '0 -2px 12px rgba(0,0,0,0.12)',
+        boxShadow: '0 -2px 12px rgba(0,0,0,0.25)',
+        WebkitBackfaceVisibility: 'hidden',
+        backfaceVisibility: 'hidden',
       }}
     >
       {navItems.map((item) => {
