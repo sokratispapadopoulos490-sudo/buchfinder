@@ -31,7 +31,6 @@ export default function BottomNav() {
     location.pathname === '/' ||
     PAGES_WITHOUT_NAV.some((p) => pathLower.includes(p));
 
-  if (hide) return null;
 
   const navItems = [
     { icon: Users, label: 'Community', path: 'Community' },
