@@ -11,6 +11,10 @@ export default function BottomNav() {
       ? document.documentElement.classList.contains('dark') || localStorage.getItem('darkMode') === 'true'
       : false
   );
+  // Auth-Status direkt aus localStorage lesen – kein Abhängigkeit vom Parent
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    () => localStorage.getItem('isAuthenticated') === 'true'
+  );
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -20,14 +24,27 @@ export default function BottomNav() {
         document.documentElement.classList.contains('dark') ||
         localStorage.getItem('darkMode') === 'true'
       );
+      // Auth-Status ebenfalls aktuell halten
+      setIsAuthenticated(localStorage.getItem('isAuthenticated') === 'true');
     };
     const observer = new MutationObserver(check);
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-    return () => observer.disconnect();
+
+    // Auf storage-Änderungen hören (wenn Login/Logout passiert)
+    window.addEventListener('storage', check);
+    // Auch beim Focus (nach Orientierungswechsel) prüfen
+    window.addEventListener('focus', check);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('storage', check);
+      window.removeEventListener('focus', check);
+    };
   }, []);
 
   const pathLower = location.pathname.toLowerCase();
   const hide =
+    !isAuthenticated ||
     location.pathname === '/' ||
     PAGES_WITHOUT_NAV.some((p) => pathLower.includes(p));
 
