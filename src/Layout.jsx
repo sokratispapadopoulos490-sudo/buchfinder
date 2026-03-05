@@ -78,6 +78,7 @@ export default function Layout({ children, currentPageName }) {
       // Einen einzigen me()-Call machen – schneller als isAuthenticated() + me()
       const user = await base44.auth.me();
       setIsAuthenticated(true);
+      localStorage.setItem('isAuthenticated', 'true');
 
       // Dark Mode aus Nutzerprofil setzen
       if (user?.dark_mode) {
