@@ -55,7 +55,7 @@ export default function BottomNav() {
         right: 0,
         bottom: 0,
         zIndex: 99999,
-        display: 'flex',
+        display: hide ? 'none' : 'flex',
         flexDirection: 'row',
         alignItems: 'stretch',
         height: `calc(64px + env(safe-area-inset-bottom, 0px))`,
@@ -63,8 +63,6 @@ export default function BottomNav() {
         backgroundColor: bg,
         borderTop: `1px solid ${border}`,
         boxShadow: '0 -2px 12px rgba(0,0,0,0.25)',
-        WebkitBackfaceVisibility: 'hidden',
-        backfaceVisibility: 'hidden',
       }}
     >
       {navItems.map((item) => {
