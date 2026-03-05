@@ -103,6 +103,7 @@ export default function Layout({ children, currentPageName }) {
     } catch (error) {
       // Nicht eingeloggt
       setIsAuthenticated(false);
+      localStorage.setItem('isAuthenticated', 'false');
       if (location.pathname === '/') {
         navigate('/Onboarding');
       }
