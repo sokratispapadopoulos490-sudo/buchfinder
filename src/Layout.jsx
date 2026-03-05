@@ -112,16 +112,6 @@ export default function Layout({ children, currentPageName }) {
     }
   };
 
-  if (checkingConsent) {
-    return (
-      <LanguageProvider>
-        <div style={{ minHeight: '100dvh', backgroundColor: localStorage.getItem('darkMode') === 'true' ? '#0a0a0a' : '#fff' }}>
-          {children}
-        </div>
-      </LanguageProvider>
-    );
-  }
-
   const pagesWithoutNav = ['Onboarding', 'Legal'];
   const showNavigation = isAuthenticated && !pagesWithoutNav.includes(currentPageName);
   const showLogo = currentPageName === 'Onboarding';
@@ -130,15 +120,14 @@ export default function Layout({ children, currentPageName }) {
     <LanguageProvider>
       {showLogo && <AppLogo />}
       <div style={{
-        paddingBottom: showNavigation ? 'calc(56px + env(safe-area-inset-bottom, 0px))' : '0',
+        paddingBottom: showNavigation ? 'calc(64px + env(safe-area-inset-bottom, 0px))' : '0',
         minHeight: '100dvh',
       }}>
         {children}
-        {showConsent && (
+        {!checkingConsent && showConsent && (
           <ConsentModal onAccept={() => setShowConsent(false)} />
         )}
       </div>
-      {/* BottomNav rendert sich selbst via Portal in document.body */}
       <BottomNav />
     </LanguageProvider>
   );
