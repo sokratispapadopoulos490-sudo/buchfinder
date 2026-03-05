@@ -52,7 +52,10 @@ function AppLogo() {
 export default function Layout({ children, currentPageName }) {
   const [showConsent, setShowConsent] = useState(false);
   const [checkingConsent, setCheckingConsent] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // Sofort aus Cache laden, um Flackern beim Drehen zu vermeiden
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    () => localStorage.getItem('isAuthenticated') === 'true'
+  );
   const navigate = useNavigate();
   const location = useLocation();
 
