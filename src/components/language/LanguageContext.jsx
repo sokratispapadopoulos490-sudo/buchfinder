@@ -22,17 +22,12 @@ const SUPPORTED_LANGUAGES = [
 ];
 
 export const LanguageProvider = ({ children }) => {
-  const [language, setLanguage] = useState('de');
+  const [language, setLanguage] = useState(
+    () => localStorage.getItem('appLanguage') || 'de'
+  );
   const [translationCache, setTranslationCache] = useState({});
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    loadUserLanguage();
-  }, []);
-
-  const loadUserLanguage = async () => {
-    setIsLoading(false);
-  };
+  // isLoading ist immer false – kein async beim Start
+  const isLoading = false;
 
   const changeLanguage = async (newLanguage) => {
     setLanguage(newLanguage);
