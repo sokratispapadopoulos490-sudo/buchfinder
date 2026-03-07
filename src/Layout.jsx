@@ -3,47 +3,32 @@ import ConsentModal from '@/components/legal/ConsentModal';
 import BottomNav from '@/components/navigation/BottomNav';
 import { base44 } from '@/api/base44Client';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { LanguageProvider, useLanguage } from '@/components/language/LanguageContext';
+import { LanguageProvider } from '@/components/language/LanguageContext';
+
+// Dark Mode sofort anwenden – noch bevor React rendert
+(function applyDarkModeFromCache() {
+  try {
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.documentElement.classList.add('dark');
+      document.documentElement.style.backgroundColor = '#0a0a0a';
+      document.body.style.backgroundColor = '#0a0a0a';
+    }
+  } catch (e) {}
+})();
 
 function AppLogo() {
   return (
-    <div
-      style={{
-        position: 'fixed',
-        top: '12px',
-        left: '12px',
-        zIndex: 2147483647,
-        pointerEvents: 'auto',
-      }}
-    >
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px',
-        padding: '4px 8px',
-      }}>
+    <div style={{ position: 'fixed', top: '12px', left: '12px', zIndex: 2147483647, pointerEvents: 'auto' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '4px 8px' }}>
         <div style={{
-          width: '36px',
-          height: '36px',
-          borderRadius: '8px',
+          width: '36px', height: '36px', borderRadius: '8px',
           background: 'linear-gradient(135deg, #b45309 0%, #92400e 100%)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
           boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
         }}>
-          <span style={{
-            fontSize: '20px',
-            fontWeight: '300',
-            color: 'white',
-          }}>📖</span>
+          <span style={{ fontSize: '20px', fontWeight: '300', color: 'white' }}>📖</span>
         </div>
-        <span style={{
-          fontSize: '14px',
-          fontWeight: '500',
-          color: '#292524',
-          letterSpacing: '0.3px',
-        }}>Book Compass</span>
+        <span style={{ fontSize: '14px', fontWeight: '500', color: '#292524', letterSpacing: '0.3px' }}>Book Compass</span>
       </div>
     </div>
   );
@@ -51,27 +36,18 @@ function AppLogo() {
 
 export default function Layout({ children, currentPageName }) {
   const [showConsent, setShowConsent] = useState(false);
-  const [checkingConsent, setCheckingConsent] = useState(
-    // Wenn wir den Auth-Status schon kennen (z.B. nach Drehen), sofort false
-    () => localStorage.getItem('isAuthenticated') !== null ? false : true
-  );
+  // Auth-Status sofort aus Cache – kein Flackern beim Drehen
   const [isAuthenticated, setIsAuthenticated] = useState(
     () => localStorage.getItem('isAuthenticated') === 'true'
   );
+  const initDoneRef = useRef(false);
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Dark Mode sofort aus localStorage anwenden (kein Flackern)
   useEffect(() => {
-    const cached = localStorage.getItem('darkMode');
-    if (cached === 'true') {
-      document.documentElement.classList.add('dark');
-      document.documentElement.style.backgroundColor = '#0a0a0a';
-      document.body.style.backgroundColor = '#0a0a0a';
-    }
-  }, []);
-
-  useEffect(() => {
+    // Nur einmal pro Session initialisieren (nicht bei jedem Re-Mount)
+    if (initDoneRef.current) return;
+    initDoneRef.current = true;
     initApp();
   }, []);
 
@@ -87,11 +63,16 @@ export default function Layout({ children, currentPageName }) {
         document.documentElement.style.backgroundColor = '#0a0a0a';
         document.body.style.backgroundColor = '#0a0a0a';
         localStorage.setItem('darkMode', 'true');
-      } else {
+      } else if (localStorage.getItem('darkMode') !== 'true') {
         document.documentElement.classList.remove('dark');
         document.documentElement.style.backgroundColor = '';
         document.body.style.backgroundColor = '';
         localStorage.setItem('darkMode', 'false');
+      }
+
+      // Sprache aus Nutzerprofil setzen
+      if (user?.language && user.language !== localStorage.getItem('appLanguage')) {
+        localStorage.setItem('appLanguage', user.language);
       }
 
       if (!user.terms_accepted || !user.privacy_accepted) {
@@ -107,8 +88,6 @@ export default function Layout({ children, currentPageName }) {
       if (location.pathname === '/') {
         navigate('/Onboarding');
       }
-    } finally {
-      setCheckingConsent(false);
     }
   };
 
@@ -124,7 +103,7 @@ export default function Layout({ children, currentPageName }) {
         minHeight: '100dvh',
       }}>
         {children}
-        {!checkingConsent && showConsent && (
+        {showConsent && (
           <ConsentModal onAccept={() => setShowConsent(false)} />
         )}
       </div>
