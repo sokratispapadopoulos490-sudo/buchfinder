@@ -366,10 +366,18 @@ function HomeContent() {
 
   useEffect(() => {
     const init = async () => {
-      const isAuth = await checkAuth();
+      // checkAuth nur wenn noch kein gültiger Cache vorhanden
+      const cachedAuth = localStorage.getItem('isAuthenticated') === 'true';
+      let isAuth = cachedAuth;
+
+      if (!cachedAuth) {
+        isAuth = await checkAuth();
+      }
       
-      if (isAuth) {
-        await loadRecommendationCount();
+      if (isAuth && user === null) {
+        // User-Daten im Hintergrund laden (kein Blockieren)
+        checkAuth();
+        loadRecommendationCount();
       }
       
       const urlParams = new URLSearchParams(window.location.search);
