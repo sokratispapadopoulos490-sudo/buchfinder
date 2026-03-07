@@ -351,7 +351,9 @@ function HomeContent() {
   const [ageGroup, setAgeGroup] = useState('erwachsene');
   const [questions, setQuestions] = useState(questionSets.erwachsene);
   const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    () => localStorage.getItem('isAuthenticated') === 'true'
+  );
   const [showBookOpen, setShowBookOpen] = useState(true);
   const [recommendationCount, setRecommendationCount] = useState(0);
   const [isPremium, setIsPremium] = useState(false);
