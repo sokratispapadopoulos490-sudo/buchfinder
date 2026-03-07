@@ -31,6 +31,7 @@ export const LanguageProvider = ({ children }) => {
 
   const changeLanguage = async (newLanguage) => {
     setLanguage(newLanguage);
+    localStorage.setItem('appLanguage', newLanguage);
     try {
       const isAuth = await base44.auth.isAuthenticated();
       if (isAuth) {
