@@ -40,14 +40,13 @@ export default function Layout({ children, currentPageName }) {
   const [isAuthenticated, setIsAuthenticated] = useState(
     () => localStorage.getItem('isAuthenticated') === 'true'
   );
-  const initDoneRef = useRef(false);
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    // Nur einmal pro Session initialisieren (nicht bei jedem Re-Mount)
-    if (initDoneRef.current) return;
-    initDoneRef.current = true;
+    // sessionStorage überlebt Orientation-Changes aber nicht Tab-Close
+    if (sessionStorage.getItem('appInitDone') === 'true') return;
+    sessionStorage.setItem('appInitDone', 'true');
     initApp();
   }, []);
 
