@@ -8,7 +8,7 @@ import BookCard from '@/components/books/BookCard';
 import { getMatchingBooks } from '@/components/books/BookDatabaseLogic';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
-import { LanguageProvider, useLanguage } from '@/components/language/LanguageContext';
+import { useLanguage } from '@/components/language/LanguageContext';
 import LanguageSelector from '@/components/language/LanguageSelector';
 import { useTranslatedText } from '@/components/language/useTranslatedText';
 
