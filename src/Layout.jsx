@@ -51,8 +51,10 @@ function AppLogo() {
 
 export default function Layout({ children, currentPageName }) {
   const [showConsent, setShowConsent] = useState(false);
-  const [checkingConsent, setCheckingConsent] = useState(true);
-  // Sofort aus Cache laden, um Flackern beim Drehen zu vermeiden
+  const [checkingConsent, setCheckingConsent] = useState(
+    // Wenn wir den Auth-Status schon kennen (z.B. nach Drehen), sofort false
+    () => localStorage.getItem('isAuthenticated') !== null ? false : true
+  );
   const [isAuthenticated, setIsAuthenticated] = useState(
     () => localStorage.getItem('isAuthenticated') === 'true'
   );
@@ -75,7 +77,6 @@ export default function Layout({ children, currentPageName }) {
 
   const initApp = async () => {
     try {
-      // Einen einzigen me()-Call machen – schneller als isAuthenticated() + me()
       const user = await base44.auth.me();
       setIsAuthenticated(true);
       localStorage.setItem('isAuthenticated', 'true');
@@ -101,7 +102,6 @@ export default function Layout({ children, currentPageName }) {
         navigate('/Compass');
       }
     } catch (error) {
-      // Nicht eingeloggt
       setIsAuthenticated(false);
       localStorage.setItem('isAuthenticated', 'false');
       if (location.pathname === '/') {
