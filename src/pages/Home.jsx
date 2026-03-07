@@ -633,14 +633,6 @@ function HomeContent() {
 
 
 
-  if (langLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50 flex items-center justify-center">
-        <div className="text-stone-500">Loading...</div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] pb-28">
       {/* Buttons oben rechts auf Welcome-Phase */}
