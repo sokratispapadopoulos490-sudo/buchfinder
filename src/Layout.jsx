@@ -44,8 +44,14 @@ export default function Layout({ children, currentPageName }) {
   const location = useLocation();
 
   useEffect(() => {
-    // sessionStorage überlebt Orientation-Changes aber nicht Tab-Close
-    if (sessionStorage.getItem('appInitDone') === 'true') return;
+    // sessionStorage überlebt Orientation-Changes, Tab-Close setzt es zurück
+    const alreadyInit = sessionStorage.getItem('appInitDone') === 'true';
+    if (alreadyInit) {
+      // Beim Re-Mount durch Rotation: Auth-Status aus Cache übernehmen – kein API Call
+      const cached = localStorage.getItem('isAuthenticated') === 'true';
+      setIsAuthenticated(cached);
+      return;
+    }
     sessionStorage.setItem('appInitDone', 'true');
     initApp();
   }, []);
