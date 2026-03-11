@@ -354,7 +354,9 @@ function HomeContent() {
   const [isAuthenticated, setIsAuthenticated] = useState(
     () => localStorage.getItem('isAuthenticated') === 'true'
   );
-  const [showBookOpen, setShowBookOpen] = useState(true);
+  const [showBookOpen, setShowBookOpen] = useState(
+    () => sessionStorage.getItem('bookAnimShown') !== 'true'
+  );
   const [recommendationCount, setRecommendationCount] = useState(0);
   const [isPremium, setIsPremium] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -390,9 +392,10 @@ function HomeContent() {
     };
     init();
     
-    // Buch-Animation nach 2 Sekunden ausblenden
+    // Buch-Animation nur einmal zeigen
     const timer = setTimeout(() => {
       setShowBookOpen(false);
+      sessionStorage.setItem('bookAnimShown', 'true');
     }, 2000);
     return () => clearTimeout(timer);
   }, []);
@@ -422,8 +425,12 @@ function HomeContent() {
       setIsPremium(currentUser.is_premium || currentUser.role === 'admin');
       return true;
     } catch (error) {
-      setIsAuthenticated(false);
-      return false;
+      // Nur ausloggen wenn noch nie eingeloggt – nicht bei Netzwerkfehlern
+      const wasPreviouslyAuth = localStorage.getItem('isAuthenticated') === 'true';
+      if (!wasPreviouslyAuth) {
+        setIsAuthenticated(false);
+      }
+      return wasPreviouslyAuth;
     }
   };
 
