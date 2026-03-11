@@ -22,28 +22,33 @@ import FollowingSection from '@/components/compass/FollowingSection';
 
 export default function Compass() {
   const [user, setUser] = useState(null);
-  const [currentBook, setCurrentBook] = useState(null);
+
+  // State aus Cache initialisieren wenn vorhanden
+  const [currentBook, setCurrentBook] = useState(() => _compassCache?.currentBook ?? null);
   const [bookReflections, setBookReflections] = useState({}); // { bookId: { text, date } }
   const [todayReflection, setTodayReflection] = useState('');
   const [reflectionExpanded, setReflectionExpanded] = useState(false);
-  const [streak, setStreak] = useState(0);
-  const [progress, setProgress] = useState(0);
+  const [streak, setStreak] = useState(() => _compassCache?.streak ?? 0);
+  const [progress, setProgress] = useState(() => _compassCache?.progress ?? 0);
   const [showProgressModal, setShowProgressModal] = useState(false);
   const [reflectionQuestion, setReflectionQuestion] = useState('');
-  const [lastRecommendations, setLastRecommendations] = useState([]);
-  const [allBooks, setAllBooks] = useState([]);
+  const [lastRecommendations, setLastRecommendations] = useState(() => _compassCache?.lastRecommendations ?? []);
+  const [allBooks, setAllBooks] = useState(() => _compassCache?.allBooks ?? []);
   const [currentBookIndex, setCurrentBookIndex] = useState(0);
-  const [loading, setLoading] = useState(
-    () => sessionStorage.getItem('compassLoaded') !== 'true'
-  );
+  const [loading, setLoading] = useState(() => _compassCache === null);
   const [showScanner, setShowScanner] = useState(false);
-  const [allReadingLogs, setAllReadingLogs] = useState([]);
-  const [generatedBooksCount, setGeneratedBooksCount] = useState(0);
+  const [allReadingLogs, setAllReadingLogs] = useState(() => _compassCache?.allReadingLogs ?? []);
+  const [generatedBooksCount, setGeneratedBooksCount] = useState(() => _compassCache?.generatedBooksCount ?? 0);
   const [showLibrary, setShowLibrary] = useState(false);
   const [selectedBookForProgress, setSelectedBookForProgress] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Wenn Cache vorhanden: kein Reload beim Orientation-Change
+    if (_compassCache !== null) {
+      generateReflectionQuestion();
+      return;
+    }
     loadCompassData();
   }, []);
 
