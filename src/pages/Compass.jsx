@@ -202,12 +202,14 @@ export default function Compass() {
       is_completed: !savedBook.is_completed,
       completed_date: !savedBook.is_completed ? new Date().toISOString().split('T')[0] : null
     });
+    _compassCache = null; // Cache invalidieren
     await loadCompassData();
   };
 
   const handleDeleteSavedBook = async (savedBookId) => {
     if (confirm('Möchtest du dieses Buch wirklich aus deiner Bibliothek entfernen?')) {
       await base44.entities.SavedBook.delete(savedBookId);
+      _compassCache = null; // Cache invalidieren
       await loadCompassData();
     }
   };
