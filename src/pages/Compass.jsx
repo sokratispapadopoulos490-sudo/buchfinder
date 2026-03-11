@@ -29,33 +29,41 @@ import FollowingSection from '@/components/compass/FollowingSection';
 export default function Compass() {
   const [user, setUser] = useState(null);
 
-  // State aus Cache initialisieren wenn vorhanden
-  const [currentBook, setCurrentBook] = useState(() => _compassCache?.currentBook ?? null);
-  const [bookReflections, setBookReflections] = useState({}); // { bookId: { text, date } }
+  // Sofort aus Cache (Modul oder localStorage) initialisieren – kein Flackern
+  const _initial = _compassCache ?? getSnap();
+  const [currentBook, setCurrentBook] = useState(() => _initial?.currentBook ?? null);
+  const [bookReflections, setBookReflections] = useState({});
   const [todayReflection, setTodayReflection] = useState('');
   const [reflectionExpanded, setReflectionExpanded] = useState(false);
-  const [streak, setStreak] = useState(() => _compassCache?.streak ?? 0);
-  const [progress, setProgress] = useState(() => _compassCache?.progress ?? 0);
+  const [streak, setStreak] = useState(() => _initial?.streak ?? 0);
+  const [progress, setProgress] = useState(() => _initial?.progress ?? 0);
   const [showProgressModal, setShowProgressModal] = useState(false);
   const [reflectionQuestion, setReflectionQuestion] = useState('');
-  const [lastRecommendations, setLastRecommendations] = useState(() => _compassCache?.lastRecommendations ?? []);
-  const [allBooks, setAllBooks] = useState(() => _compassCache?.allBooks ?? []);
+  const [lastRecommendations, setLastRecommendations] = useState(() => _initial?.lastRecommendations ?? []);
+  const [allBooks, setAllBooks] = useState(() => _initial?.allBooks ?? []);
   const [currentBookIndex, setCurrentBookIndex] = useState(0);
-  const [loading, setLoading] = useState(() => _compassCache === null);
+  // Wenn wir Daten aus Cache haben → kein Ladespinner
+  const [loading, setLoading] = useState(() => _initial === null);
   const [showScanner, setShowScanner] = useState(false);
-  const [allReadingLogs, setAllReadingLogs] = useState(() => _compassCache?.allReadingLogs ?? []);
-  const [generatedBooksCount, setGeneratedBooksCount] = useState(() => _compassCache?.generatedBooksCount ?? 0);
+  const [allReadingLogs, setAllReadingLogs] = useState(() => _initial?.allReadingLogs ?? []);
+  const [generatedBooksCount, setGeneratedBooksCount] = useState(() => _initial?.generatedBooksCount ?? 0);
   const [showLibrary, setShowLibrary] = useState(false);
   const [selectedBookForProgress, setSelectedBookForProgress] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Wenn Cache vorhanden: kein Reload beim Orientation-Change
+    generateReflectionQuestion();
+    // Wenn Modul-Cache vorhanden → Daten im Hintergrund still aktualisieren (kein Spinner)
     if (_compassCache !== null) {
-      generateReflectionQuestion();
+      loadCompassData(true);
       return;
     }
-    loadCompassData();
+    // Beim Page-Reload: localStorage-Snapshot vorhanden → sofort anzeigen, dann stille Aktualisierung
+    if (getSnap() !== null) {
+      loadCompassData(true); // still (kein Spinner)
+    } else {
+      loadCompassData(false);
+    }
   }, []);
 
   const loadCompassData = async () => {
