@@ -82,11 +82,16 @@ export default function Layout({ children, currentPageName }) {
         navigate('/Compass');
       }
     } catch (error) {
-      setIsAuthenticated(false);
-      localStorage.setItem('isAuthenticated', 'false');
-      if (location.pathname === '/') {
-        navigate('/Onboarding');
+      // Nicht ausloggen bei vorübergehenden Fehlern (z.B. Netzwerk beim Drehen)
+      // Auth nur löschen wenn der Nutzer noch nie angemeldet war
+      const wasPreviouslyAuth = localStorage.getItem('isAuthenticated') === 'true';
+      if (!wasPreviouslyAuth) {
+        setIsAuthenticated(false);
+        if (location.pathname === '/') {
+          navigate('/Onboarding');
+        }
       }
+      // War vorher eingeloggt → cachedState behalten, kein Logout
     }
   };
 
