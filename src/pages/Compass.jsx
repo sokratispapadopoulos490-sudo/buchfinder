@@ -54,7 +54,6 @@ export default function Compass() {
 
   const loadCompassData = async () => {
     try {
-      // Nur essenzielle Daten beim Start laden
       const [savedBooks, allLogs] = await Promise.all([
         base44.entities.SavedBook.list('-created_date', 50),
         base44.entities.ReadingLog.list('-reading_date', 1000),
@@ -65,34 +64,52 @@ export default function Compass() {
 
       const inProgressBooks = savedBooks.filter(b => !b.is_completed);
       setAllBooks(savedBooks);
+      let activeBook = null;
+      let activeProgress = 0;
       if (inProgressBooks.length > 0) {
-        setCurrentBook(inProgressBooks[0]);
-
+        activeBook = inProgressBooks[0];
+        setCurrentBook(activeBook);
         const logs = allLogs.filter(l => l.book_id === inProgressBooks[0].book_id);
         const totalPages = logs.reduce((sum, log) => sum + log.pages_read, 0);
         const bookPages = inProgressBooks[0].book_data.pageCount || 1;
-        setProgress(Math.min(100, Math.round((totalPages / bookPages) * 100)));
+        activeProgress = Math.min(100, Math.round((totalPages / bookPages) * 100));
+        setProgress(activeProgress);
       }
 
       generateReflectionQuestion();
 
       // Empfehlungen im Hintergrund laden
+      let recs = [];
+      let totalGenerated = 0;
       try {
-        const recs = await base44.entities.Recommendation.list('-created_date', 1);
+        recs = await base44.entities.Recommendation.list('-created_date', 1);
         if (recs.length > 0 && recs[0].books) {
           setLastRecommendations(recs[0].books.slice(0, 3));
         }
-        const totalGenerated = recs.reduce((sum, rec) => sum + (rec.books ? rec.books.length : 0), 0);
+        totalGenerated = recs.reduce((sum, rec) => sum + (rec.books ? rec.books.length : 0), 0);
         setGeneratedBooksCount(totalGenerated);
       } catch (e) {
         console.error('Background recommendation load failed:', e);
       }
+
+      // In Module-Cache speichern
+      _compassCache = {
+        currentBook: activeBook,
+        allBooks: savedBooks,
+        allReadingLogs: allLogs,
+        streak: 0, // wird gleich via calculateStreak gesetzt
+        progress: activeProgress,
+        lastRecommendations: recs.length > 0 && recs[0].books ? recs[0].books.slice(0, 3) : [],
+        generatedBooksCount: totalGenerated,
+      };
     } catch (error) {
       console.error('Error loading compass:', error);
-      navigate('/Onboarding');
+      // Nur zu Onboarding navigieren wenn noch nie geladen
+      if (_compassCache === null) {
+        navigate('/Onboarding');
+      }
     } finally {
       setLoading(false);
-      sessionStorage.setItem('compassLoaded', 'true');
     }
   };
 
