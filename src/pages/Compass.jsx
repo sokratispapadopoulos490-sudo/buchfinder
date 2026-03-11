@@ -1,4 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+
+// Module-level cache – überlebt Orientation-Changes (Component-Remounts), nicht aber Tab-Close
+let _compassCache = null;
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { BookOpen, Sparkles, Target, MessageCircle, Plus, BookMarked, ChevronLeft, ChevronRight, X, ChevronDown, ChevronUp, Camera, Compass as CompassIcon } from 'lucide-react';
