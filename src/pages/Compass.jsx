@@ -565,7 +565,7 @@ export default function Compass() {
           book={currentBook.book_data}
           savedBookId={currentBook.id}
           onClose={() => setShowProgressModal(false)}
-          onUpdate={loadCompassData}
+          onUpdate={() => { _compassCache = null; loadCompassData(); }}
         />
       )}
 
@@ -575,7 +575,7 @@ export default function Compass() {
           book={selectedBookForProgress.book}
           savedBookId={selectedBookForProgress.savedBookId}
           onClose={() => setSelectedBookForProgress(null)}
-          onUpdate={loadCompassData}
+          onUpdate={() => { _compassCache = null; loadCompassData(); }}
         />
       )}
     </div>
