@@ -30,7 +30,9 @@ export default function Compass() {
   const [lastRecommendations, setLastRecommendations] = useState([]);
   const [allBooks, setAllBooks] = useState([]);
   const [currentBookIndex, setCurrentBookIndex] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(
+    () => sessionStorage.getItem('compassLoaded') !== 'true'
+  );
   const [showScanner, setShowScanner] = useState(false);
   const [allReadingLogs, setAllReadingLogs] = useState([]);
   const [generatedBooksCount, setGeneratedBooksCount] = useState(0);
