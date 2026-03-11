@@ -84,6 +84,7 @@ export default function Compass() {
       navigate('/Onboarding');
     } finally {
       setLoading(false);
+      sessionStorage.setItem('compassLoaded', 'true');
     }
   };
 
