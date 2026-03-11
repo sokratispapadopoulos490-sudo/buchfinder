@@ -66,7 +66,8 @@ export default function Compass() {
     }
   }, []);
 
-  const loadCompassData = async () => {
+  const loadCompassData = async (silent = false) => {
+    if (!silent) setLoading(true);
     try {
       const [savedBooks, allLogs] = await Promise.all([
         base44.entities.SavedBook.list('-created_date', 50),
