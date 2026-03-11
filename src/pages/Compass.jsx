@@ -107,20 +107,22 @@ export default function Compass() {
         console.error('Background recommendation load failed:', e);
       }
 
-      // In Module-Cache speichern
-      _compassCache = {
+      // Cache persistieren (Modul + localStorage)
+      const snap = {
         currentBook: activeBook,
         allBooks: savedBooks,
         allReadingLogs: allLogs,
-        streak: 0, // wird gleich via calculateStreak gesetzt
+        streak: 0,
         progress: activeProgress,
         lastRecommendations: recs.length > 0 && recs[0].books ? recs[0].books.slice(0, 3) : [],
         generatedBooksCount: totalGenerated,
       };
+      _compassCache = snap;
+      setSnap(snap);
     } catch (error) {
       console.error('Error loading compass:', error);
-      // Nur zu Onboarding navigieren wenn noch nie geladen
-      if (_compassCache === null) {
+      // Nur zu Onboarding wenn kein Cache existiert (erster Besuch, nicht eingeloggt)
+      if (_compassCache === null && getSnap() === null) {
         navigate('/Onboarding');
       }
     } finally {
