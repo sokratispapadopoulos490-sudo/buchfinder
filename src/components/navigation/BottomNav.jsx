@@ -5,26 +5,14 @@ import { createPageUrl } from '@/utils';
 
 const PAGES_WITHOUT_NAV = ['onboarding', 'legal'];
 
-export default function BottomNav() {
+export default function BottomNav({ isAuthenticated }) {
   const [isDark, setIsDark] = useState(
     typeof document !== 'undefined'
       ? document.documentElement.classList.contains('dark') || localStorage.getItem('darkMode') === 'true'
       : false
   );
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    () => localStorage.getItem('isAuthenticated') === 'true'
-  );
   const navigate = useNavigate();
   const location = useLocation();
-
-  // Bei jeder Navigation neu aus localStorage lesen – der zuverlässigste Trigger
-  useEffect(() => {
-    setIsAuthenticated(localStorage.getItem('isAuthenticated') === 'true');
-    setIsDark(
-      document.documentElement.classList.contains('dark') ||
-      localStorage.getItem('darkMode') === 'true'
-    );
-  }, [location.pathname]);
 
   useEffect(() => {
     const check = () => {
@@ -32,18 +20,10 @@ export default function BottomNav() {
         document.documentElement.classList.contains('dark') ||
         localStorage.getItem('darkMode') === 'true'
       );
-      setIsAuthenticated(localStorage.getItem('isAuthenticated') === 'true');
     };
     const observer = new MutationObserver(check);
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-    window.addEventListener('storage', check);
-    window.addEventListener('authChanged', check);
-
-    return () => {
-      observer.disconnect();
-      window.removeEventListener('storage', check);
-      window.removeEventListener('authChanged', check);
-    };
+    return () => observer.disconnect();
   }, []);
 
   const pathLower = location.pathname.toLowerCase();

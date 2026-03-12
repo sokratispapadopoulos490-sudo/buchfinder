@@ -118,7 +118,7 @@ export default function Layout({ children, currentPageName }) {
           <ConsentModal onAccept={() => setShowConsent(false)} />
         )}
       </div>
-      <BottomNav />
+      <BottomNav isAuthenticated={isAuthenticated} />
     </LanguageProvider>
   );
 }
