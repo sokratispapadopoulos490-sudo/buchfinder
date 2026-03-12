@@ -61,6 +61,7 @@ export default function Layout({ children, currentPageName }) {
       const user = await base44.auth.me();
       setIsAuthenticated(true);
       localStorage.setItem('isAuthenticated', 'true');
+      window.dispatchEvent(new Event('authChanged'));
 
       // Dark Mode aus Nutzerprofil setzen
       if (user?.dark_mode) {
