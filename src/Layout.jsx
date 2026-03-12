@@ -44,14 +44,18 @@ export default function Layout({ children, currentPageName }) {
   const location = useLocation();
 
   useEffect(() => {
-    // sessionStorage überlebt Orientation-Changes, Tab-Close setzt es zurück
     const alreadyInit = sessionStorage.getItem('appInitDone') === 'true';
+    const cached = localStorage.getItem('isAuthenticated') === 'true';
+
     if (alreadyInit) {
-      // Beim Re-Mount durch Rotation: Auth-Status aus Cache übernehmen – kein API Call
-      const cached = localStorage.getItem('isAuthenticated') === 'true';
+      // Nach Rotation/Reload: Cache verwenden, aber Route trotzdem korrigieren
       setIsAuthenticated(cached);
+      if (location.pathname === '/') {
+        navigate(cached ? '/Compass' : '/Onboarding', { replace: true });
+      }
       return;
     }
+
     sessionStorage.setItem('appInitDone', 'true');
     initApp();
   }, []);
