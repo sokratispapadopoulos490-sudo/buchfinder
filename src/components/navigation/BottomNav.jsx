@@ -32,13 +32,15 @@ export default function BottomNav() {
 
     // Auf storage-Änderungen hören (wenn Login/Logout passiert)
     window.addEventListener('storage', check);
-    // Auch beim Focus (nach Orientierungswechsel) prüfen
     window.addEventListener('focus', check);
+    // Custom Event für Same-Tab Auth-Änderungen
+    window.addEventListener('authChanged', check);
 
     return () => {
       observer.disconnect();
       window.removeEventListener('storage', check);
       window.removeEventListener('focus', check);
+      window.removeEventListener('authChanged', check);
     };
   }, []);
 
