@@ -11,12 +11,20 @@ export default function BottomNav() {
       ? document.documentElement.classList.contains('dark') || localStorage.getItem('darkMode') === 'true'
       : false
   );
-  // Auth-Status direkt aus localStorage lesen – kein Abhängigkeit vom Parent
   const [isAuthenticated, setIsAuthenticated] = useState(
     () => localStorage.getItem('isAuthenticated') === 'true'
   );
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Bei jeder Navigation neu aus localStorage lesen – der zuverlässigste Trigger
+  useEffect(() => {
+    setIsAuthenticated(localStorage.getItem('isAuthenticated') === 'true');
+    setIsDark(
+      document.documentElement.classList.contains('dark') ||
+      localStorage.getItem('darkMode') === 'true'
+    );
+  }, [location.pathname]);
 
   useEffect(() => {
     const check = () => {
@@ -24,22 +32,16 @@ export default function BottomNav() {
         document.documentElement.classList.contains('dark') ||
         localStorage.getItem('darkMode') === 'true'
       );
-      // Auth-Status ebenfalls aktuell halten
       setIsAuthenticated(localStorage.getItem('isAuthenticated') === 'true');
     };
     const observer = new MutationObserver(check);
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-
-    // Auf storage-Änderungen hören (wenn Login/Logout passiert)
     window.addEventListener('storage', check);
-    window.addEventListener('focus', check);
-    // Custom Event für Same-Tab Auth-Änderungen
     window.addEventListener('authChanged', check);
 
     return () => {
       observer.disconnect();
       window.removeEventListener('storage', check);
-      window.removeEventListener('focus', check);
       window.removeEventListener('authChanged', check);
     };
   }, []);
