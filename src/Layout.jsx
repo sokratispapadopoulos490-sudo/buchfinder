@@ -6,8 +6,13 @@ import { base44 } from '@/api/base44Client';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { LanguageProvider } from '@/components/language/LanguageContext';
 
-// Dark Mode sofort anwenden – noch bevor React rendert
-(function applyDarkModeFromCache() {
+// ─── Module-level flag ────────────────────────────────────────────────────────
+// Überlebt iOS/Android Orientation Changes (JS-Kontext bleibt am Leben).
+// Wird nur bei echtem Page-Reload oder Tab-Neustart auf false zurückgesetzt.
+let _authInitialized = false;
+
+// Dark Mode sofort anwenden – vor dem ersten React-Render
+(function applyDark() {
   try {
     if (localStorage.getItem('darkMode') === 'true') {
       document.documentElement.classList.add('dark');
@@ -37,70 +42,76 @@ function AppLogo() {
 
 export default function Layout({ children, currentPageName }) {
   const [showConsent, setShowConsent] = useState(false);
-  // Auth-Status sofort aus Cache – kein Flackern beim Drehen
+
+  // Auth-Status sofort aus localStorage – keine Verzögerung, kein Flackern
   const [isAuthenticated, setIsAuthenticated] = useState(
     () => localStorage.getItem('isAuthenticated') === 'true'
   );
+
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    // Immer: sofort Cache zeigen, dann still im Hintergrund prüfen
-    // Kein sessionStorage, kein appInitDone-Flag – das bricht bei iOS-Rotation
-    const cached = localStorage.getItem('isAuthenticated') === 'true';
+    // ── KRITISCH: Nur einmal pro JS-Session ausführen ──────────────────────
+    // Bei Orientation Change bleibt der JS-Kontext erhalten → _authInitialized
+    // bleibt true → dieser Block wird NICHT nochmal ausgeführt → kein Reload.
+    if (_authInitialized) return;
+    _authInitialized = true;
+
+    const wasCached = localStorage.getItem('isAuthenticated') === 'true';
+
+    // Root-Weiterleitung nur beim allerersten Besuch
     if (location.pathname === '/') {
-      // Nur von der Root-Seite navigieren
-      navigate(cached ? '/Compass' : '/Onboarding', { replace: true });
+      navigate(wasCached ? '/Compass' : '/Onboarding', { replace: true });
     }
-    // Im Hintergrund still aktualisieren (kein Spinner, keine Navigation)
-    initApp(cached);
-  }, []);
 
-  const initApp = async (wasCached = false) => {
-    try {
-      const user = await base44.auth.me();
-      setIsAuthenticated(true);
-      localStorage.setItem('isAuthenticated', 'true');
-      window.dispatchEvent(new Event('authChanged'));
+    // Auth im Hintergrund prüfen (kein Spinner, kein Block)
+    base44.auth.me()
+      .then(user => {
+        setIsAuthenticated(true);
+        localStorage.setItem('isAuthenticated', 'true');
+        window.dispatchEvent(new Event('authChanged'));
 
-      // Dark Mode aus Nutzerprofil setzen
-      if (user?.dark_mode) {
-        document.documentElement.classList.add('dark');
-        document.documentElement.style.backgroundColor = '#0a0a0a';
-        document.body.style.backgroundColor = '#0a0a0a';
-        localStorage.setItem('darkMode', 'true');
-      } else if (localStorage.getItem('darkMode') !== 'true') {
-        document.documentElement.classList.remove('dark');
-        document.documentElement.style.backgroundColor = '';
-        document.body.style.backgroundColor = '';
-        localStorage.setItem('darkMode', 'false');
-      }
-
-      // Sprache aus Nutzerprofil setzen
-      if (user?.language && user.language !== localStorage.getItem('appLanguage')) {
-        localStorage.setItem('appLanguage', user.language);
-      }
-
-      if (!user.terms_accepted || !user.privacy_accepted) {
-        setShowConsent(true);
-      }
-
-      // Nur von Root navigieren, und NUR wenn noch nicht navigiert
-      if (!wasCached && location.pathname === '/') {
-        navigate('/Compass');
-      }
-    } catch (error) {
-      // Bei Fehler: nur ausloggen wenn definitiv nicht authentifiziert
-      if (!wasCached) {
-        setIsAuthenticated(false);
-        localStorage.removeItem('isAuthenticated');
-        if (location.pathname === '/') {
-          navigate('/Onboarding');
+        // Dark Mode aus Profil übernehmen
+        if (user?.dark_mode) {
+          document.documentElement.classList.add('dark');
+          document.documentElement.style.backgroundColor = '#0a0a0a';
+          document.body.style.backgroundColor = '#0a0a0a';
+          localStorage.setItem('darkMode', 'true');
+        } else if (localStorage.getItem('darkMode') !== 'true') {
+          document.documentElement.classList.remove('dark');
+          document.documentElement.style.backgroundColor = '';
+          document.body.style.backgroundColor = '';
+          localStorage.setItem('darkMode', 'false');
         }
-      }
-      // War aus Cache → Status behalten, kein Reload, kein Logout
-    }
-  };
+
+        // Sprache aus Profil
+        if (user?.language && user.language !== localStorage.getItem('appLanguage')) {
+          localStorage.setItem('appLanguage', user.language);
+        }
+
+        // Consent
+        if (!user.terms_accepted || !user.privacy_accepted) {
+          setShowConsent(true);
+        }
+
+        // Nur navigieren wenn kein Cache vorhanden war (Erstbesuch ohne Cache)
+        if (!wasCached && location.pathname === '/') {
+          navigate('/Compass');
+        }
+      })
+      .catch(() => {
+        // Fehler: nur ausloggen wenn vorher kein gültiger Cache
+        if (!wasCached) {
+          setIsAuthenticated(false);
+          localStorage.removeItem('isAuthenticated');
+          if (location.pathname === '/') {
+            navigate('/Onboarding');
+          }
+        }
+        // Mit Cache: Status behalten – könnte vorübergehender Netzwerkfehler sein
+      });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const pagesWithoutNav = ['Onboarding', 'Legal'];
   const showNavigation = isAuthenticated && !pagesWithoutNav.includes(currentPageName);
@@ -118,7 +129,11 @@ export default function Layout({ children, currentPageName }) {
           <ConsentModal onAccept={() => setShowConsent(false)} />
         )}
       </div>
-      {createPortal(<BottomNav isAuthenticated={isAuthenticated} />, document.body)}
+      {/* Portal direkt auf document.body – kein transform-Kontext kann position:fixed brechen */}
+      {createPortal(
+        <BottomNav isAuthenticated={isAuthenticated} />,
+        document.body
+      )}
     </LanguageProvider>
   );
 }
