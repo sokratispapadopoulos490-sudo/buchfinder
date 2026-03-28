@@ -6,110 +6,95 @@ import { base44 } from '@/api/base44Client';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { LanguageProvider } from '@/components/language/LanguageContext';
 
-// ─── Dark Mode sofort anwenden – vor dem ersten React-Render ─────────────────
-try {
-  if (localStorage.getItem('darkMode') === 'true') {
-    document.documentElement.classList.add('dark');
-    document.documentElement.style.backgroundColor = '#0a0a0a';
-    document.body.style.backgroundColor = '#0a0a0a';
-  }
-} catch (e) {}
+// ─── Module-level: überlebt Orientation Changes (JS-Modul bleibt in Memory) ──
+let _initialized = false;          // wurde init() bereits ausgeführt?
+let _isAuthenticated = null;       // null = unbekannt, true/false = geprüft
 
-// ─── Module-level Guards ─────────────────────────────────────────────────────
-// Diese Variablen überleben Orientation Changes (JS-Modul bleibt im Speicher).
-// Nur ein echter Browser-Page-Reload setzt sie zurück.
-let _initDone = false;
-let _redirectDone = false;
+// Dark Mode sofort beim Modulload anwenden – vor dem ersten React-Render
+(function applyDark() {
+  try {
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.documentElement.classList.add('dark');
+    }
+  } catch (e) {}
+})();
 
 const PAGES_WITHOUT_NAV = ['Onboarding', 'Legal'];
 
 export default function Layout({ children, currentPageName }) {
   const [showConsent, setShowConsent] = useState(false);
-
-  // isAuthenticated sofort aus localStorage – kein Flackern, kein Warten
   const [isAuthenticated, setIsAuthenticated] = useState(
-    () => localStorage.getItem('auth_ok') === '1'
+    // Sofort aus module-cache oder localStorage – KEIN Flackern
+    () => _isAuthenticated !== null
+      ? _isAuthenticated
+      : localStorage.getItem('isAuthenticated') === 'true'
   );
-
   const navigate = useNavigate();
   const location = useLocation();
-  const isMounted = useRef(true);
+  const locationRef = useRef(location);
+  locationRef.current = location;
 
   useEffect(() => {
-    isMounted.current = true;
-    return () => { isMounted.current = false; };
-  }, []);
+    // ── NUR EINMAL pro JS-Session ausführen ─────────────────────────────────
+    // Bei Orientation Change: JS-Kontext bleibt, _initialized = true → SKIP
+    if (_initialized) return;
+    _initialized = true;
 
-  useEffect(() => {
-    const alreadyAuth = localStorage.getItem('auth_ok') === '1';
+    const cachedAuth = localStorage.getItem('isAuthenticated') === 'true';
 
-    // ── 1. Initial-Redirect (nur einmal pro Session) ──────────────────────────
-    if (!_redirectDone) {
-      _redirectDone = true;
-      if (location.pathname === '/') {
-        navigate(alreadyAuth ? '/Compass' : '/Onboarding', { replace: true });
-      }
+    // Erste Navigation (nur wenn noch auf Root)
+    if (locationRef.current.pathname === '/') {
+      navigate(cachedAuth ? '/Compass' : '/Onboarding', { replace: true });
     }
 
-    // ── 2. Auth-Check (nur einmal pro Modul-Leben) ────────────────────────────
-    if (_initDone) return;
-    _initDone = true;
-
-    // Hintergrund-Check – blockiert nie den Render
+    // Auth still im Hintergrund prüfen – KEIN Spinner, KEINE Unterbrechung
     base44.auth.me()
       .then(user => {
-        if (!isMounted.current) return;
-
+        _isAuthenticated = true;
         setIsAuthenticated(true);
-        localStorage.setItem('auth_ok', '1');
+        localStorage.setItem('isAuthenticated', 'true');
 
-        // Dark Mode aus Profil synchronisieren
+        // Dark Mode aus Profil
         if (user?.dark_mode) {
           document.documentElement.classList.add('dark');
-          document.documentElement.style.backgroundColor = '#0a0a0a';
-          document.body.style.backgroundColor = '#0a0a0a';
           localStorage.setItem('darkMode', 'true');
+        } else if (user?.dark_mode === false) {
+          document.documentElement.classList.remove('dark');
+          localStorage.setItem('darkMode', 'false');
         }
 
         // Sprache aus Profil
-        if (user?.language && user.language !== localStorage.getItem('appLanguage')) {
+        if (user?.language) {
           localStorage.setItem('appLanguage', user.language);
         }
 
         // Consent prüfen
-        if (!user.terms_accepted || !user.privacy_accepted) {
+        if (!user?.terms_accepted || !user?.privacy_accepted) {
           setShowConsent(true);
+        }
+
+        // Nur navigieren wenn wir noch auf Root stehen und kein Cache
+        if (!cachedAuth && locationRef.current.pathname === '/') {
+          navigate('/Compass', { replace: true });
         }
       })
       .catch(() => {
-        // Netzwerkfehler: Cache erhalten – nicht ausloggen
-        // Nur wenn definitiv kein Cache → Onboarding
-        if (!alreadyAuth && isMounted.current) {
+        // Netzwerkfehler: Cache behalten wenn vorhanden (Orientation, kurzes Offline)
+        if (!cachedAuth) {
+          _isAuthenticated = false;
           setIsAuthenticated(false);
-          localStorage.removeItem('auth_ok');
+          localStorage.removeItem('isAuthenticated');
+          if (locationRef.current.pathname === '/') {
+            navigate('/Onboarding', { replace: true });
+          }
         }
       });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const showNavigation = isAuthenticated && !PAGES_WITHOUT_NAV.includes(currentPageName);
-  const showLogo = currentPageName === 'Onboarding';
 
   return (
     <LanguageProvider>
-      {showLogo && (
-        <div style={{ position: 'fixed', top: '12px', left: '12px', zIndex: 2147483647 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '4px 8px' }}>
-            <div style={{
-              width: '36px', height: '36px', borderRadius: '8px',
-              background: 'linear-gradient(135deg, #b45309 0%, #92400e 100%)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
-              <span style={{ fontSize: '20px', color: 'white' }}>📖</span>
-            </div>
-          </div>
-        </div>
-      )}
-
       <div style={{
         paddingBottom: showNavigation ? 'calc(64px + env(safe-area-inset-bottom, 0px))' : '0',
         minHeight: '100dvh',
@@ -119,8 +104,6 @@ export default function Layout({ children, currentPageName }) {
           <ConsentModal onAccept={() => setShowConsent(false)} />
         )}
       </div>
-
-      {/* createPortal auf document.body verhindert, dass CSS-Transforms die Nav kaputt machen */}
       {createPortal(
         <BottomNav isAuthenticated={isAuthenticated} />,
         document.body

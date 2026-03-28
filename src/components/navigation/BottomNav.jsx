@@ -29,7 +29,6 @@ export default function BottomNav({ isAuthenticated }) {
   const pathLower = location.pathname.toLowerCase();
   const hide =
     !isAuthenticated ||
-    location.pathname === '/' ||
     PAGES_WITHOUT_NAV.some((p) => pathLower.includes(p));
 
 
