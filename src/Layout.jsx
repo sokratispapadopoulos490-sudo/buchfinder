@@ -45,22 +45,18 @@ export default function Layout({ children, currentPageName }) {
   const location = useLocation();
 
   useEffect(() => {
-    const alreadyInit = localStorage.getItem('appInitDone') === 'true';
+    // Immer: sofort Cache zeigen, dann still im Hintergrund prüfen
+    // Kein sessionStorage, kein appInitDone-Flag – das bricht bei iOS-Rotation
     const cached = localStorage.getItem('isAuthenticated') === 'true';
-
-    if (alreadyInit) {
-      setIsAuthenticated(cached);
-      if (location.pathname === '/') {
-        navigate(cached ? '/Compass' : '/Onboarding', { replace: true });
-      }
-      return;
+    if (location.pathname === '/') {
+      // Nur von der Root-Seite navigieren
+      navigate(cached ? '/Compass' : '/Onboarding', { replace: true });
     }
-
-    localStorage.setItem('appInitDone', 'true');
-    initApp();
+    // Im Hintergrund still aktualisieren (kein Spinner, keine Navigation)
+    initApp(cached);
   }, []);
 
-  const initApp = async () => {
+  const initApp = async (wasCached = false) => {
     try {
       const user = await base44.auth.me();
       setIsAuthenticated(true);
@@ -89,20 +85,20 @@ export default function Layout({ children, currentPageName }) {
         setShowConsent(true);
       }
 
-      if (location.pathname === '/') {
+      // Nur von Root navigieren, und NUR wenn noch nicht navigiert
+      if (!wasCached && location.pathname === '/') {
         navigate('/Compass');
       }
     } catch (error) {
-      // Nicht ausloggen bei vorübergehenden Fehlern (z.B. Netzwerk beim Drehen)
-      // Auth nur löschen wenn der Nutzer noch nie angemeldet war
-      const wasPreviouslyAuth = localStorage.getItem('isAuthenticated') === 'true';
-      if (!wasPreviouslyAuth) {
+      // Bei Fehler: nur ausloggen wenn definitiv nicht authentifiziert
+      if (!wasCached) {
         setIsAuthenticated(false);
+        localStorage.removeItem('isAuthenticated');
         if (location.pathname === '/') {
           navigate('/Onboarding');
         }
       }
-      // War vorher eingeloggt → cachedState behalten, kein Logout
+      // War aus Cache → Status behalten, kein Reload, kein Logout
     }
   };
 
