@@ -17,7 +17,8 @@ export const AuthProvider = ({ children }) => {
   // If we have a cached result, skip loading states entirely
   const [isLoadingAuth, setIsLoadingAuth] = useState(_cache ? false : true);
   const [isLoadingPublicSettings, setIsLoadingPublicSettings] = useState(_cache ? false : true);
-  const [appPublicSettings, setAppPublicSettings] = useState(_cache?.appPublicSettings ?? null); // Contains only { id, public_settings }
+  const [appPublicSettings, setAppPublicSettings] = useState(_cache?.appPublicSettings ?? null);
+  const [authError, setAuthError] = useState(null); // Contains only { id, public_settings }
 
   useEffect(() => {
     // Skip full check if we already have a cached auth state from this session
