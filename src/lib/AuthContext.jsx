@@ -15,17 +15,28 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(_cache?.user ?? null);
   const [isAuthenticated, setIsAuthenticated] = useState(_cache?.isAuthenticated ?? false);
   // If we have a cached result, skip loading states entirely
-  const [isLoadingAuth, setIsLoadingAuth] = useState(_cache ? false : true);
-  const [isLoadingPublicSettings, setIsLoadingPublicSettings] = useState(_cache ? false : true);
+  const [isLoadingAuth, setIsLoadingAuth] = useState(false); // Never show loading – Layout handles this
+  const [isLoadingPublicSettings, setIsLoadingPublicSettings] = useState(false); // Never block render
   const [appPublicSettings, setAppPublicSettings] = useState(_cache?.appPublicSettings ?? null);
-  const [authError, setAuthError] = useState(null); // Contains only { id, public_settings }
+  const [authError, setAuthError] = useState(null);
 
   useEffect(() => {
-    // Skip full check if we already have a cached auth state from this session
-    if (getCache()) return;
-    checkAppState();
+    // AuthContext intentionally does NOT trigger navigation or loading states.
+    // The Layout component owns auth-based navigation (with module-level guards
+    // that survive orientation changes). Here we only populate user data for
+    // components that need it via useAuth().
+    if (getCache()) return; // Already have data – nothing to do
+    // Silently fetch user in background
+    base44.auth.me().then(currentUser => {
+      setUser(currentUser);
+      setIsAuthenticated(true);
+      setCache({ user: currentUser, isAuthenticated: true, appPublicSettings: null });
+    }).catch(() => {
+      // Silently ignore – Layout handles auth errors
+    });
   }, []);
 
+  // Kept for compatibility but no longer used internally
   const checkAppState = async () => {
     try {
       setIsLoadingPublicSettings(true);
