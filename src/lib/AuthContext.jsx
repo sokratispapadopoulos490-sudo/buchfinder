@@ -5,15 +5,23 @@ import { createAxiosClient } from '@base44/sdk/dist/utils/axios-client';
 
 const AuthContext = createContext();
 
+// Cache helpers – survive orientation changes, reset on tab close
+const SESSION_KEY = 'authCtx_v1';
+function getCache() { try { return JSON.parse(sessionStorage.getItem(SESSION_KEY) || 'null'); } catch { return null; } }
+function setCache(v) { try { sessionStorage.setItem(SESSION_KEY, JSON.stringify(v)); } catch {} }
+
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoadingAuth, setIsLoadingAuth] = useState(true);
-  const [isLoadingPublicSettings, setIsLoadingPublicSettings] = useState(true);
-  const [authError, setAuthError] = useState(null);
-  const [appPublicSettings, setAppPublicSettings] = useState(null); // Contains only { id, public_settings }
+  const _cache = getCache();
+  const [user, setUser] = useState(_cache?.user ?? null);
+  const [isAuthenticated, setIsAuthenticated] = useState(_cache?.isAuthenticated ?? false);
+  // If we have a cached result, skip loading states entirely
+  const [isLoadingAuth, setIsLoadingAuth] = useState(_cache ? false : true);
+  const [isLoadingPublicSettings, setIsLoadingPublicSettings] = useState(_cache ? false : true);
+  const [appPublicSettings, setAppPublicSettings] = useState(_cache?.appPublicSettings ?? null); // Contains only { id, public_settings }
 
   useEffect(() => {
+    // Skip full check if we already have a cached auth state from this session
+    if (getCache()) return;
     checkAppState();
   }, []);
 
@@ -39,7 +47,7 @@ export const AuthProvider = ({ children }) => {
         
         // If we got the app public settings successfully, check if user is authenticated
         if (appParams.token) {
-          await checkUserAuth();
+          await checkUserAuth(publicSettings);
         } else {
           setIsLoadingAuth(false);
           setIsAuthenticated(false);
@@ -87,25 +95,21 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const checkUserAuth = async () => {
+  const checkUserAuth = async (publicSettings) => {
     try {
-      // Now check if the user is authenticated
       setIsLoadingAuth(true);
       const currentUser = await base44.auth.me();
       setUser(currentUser);
       setIsAuthenticated(true);
       setIsLoadingAuth(false);
+      // Cache result so orientation changes don't re-trigger loading
+      setCache({ user: currentUser, isAuthenticated: true, appPublicSettings: publicSettings ?? null });
     } catch (error) {
       console.error('User auth check failed:', error);
       setIsLoadingAuth(false);
       setIsAuthenticated(false);
-      
-      // If user auth fails, it might be an expired token
       if (error.status === 401 || error.status === 403) {
-        setAuthError({
-          type: 'auth_required',
-          message: 'Authentication required'
-        });
+        setAuthError({ type: 'auth_required', message: 'Authentication required' });
       }
     }
   };
@@ -113,6 +117,8 @@ export const AuthProvider = ({ children }) => {
   const logout = (shouldRedirect = true) => {
     setUser(null);
     setIsAuthenticated(false);
+    setCache(null);
+    try { sessionStorage.removeItem(SESSION_KEY); } catch {}
     
     if (shouldRedirect) {
       // Use the SDK's logout method which handles token cleanup and redirect
