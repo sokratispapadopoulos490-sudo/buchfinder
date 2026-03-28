@@ -5,10 +5,10 @@ import { createAxiosClient } from '@base44/sdk/dist/utils/axios-client';
 
 const AuthContext = createContext();
 
-// Cache helpers – survive orientation changes, reset on tab close
-const SESSION_KEY = 'authCtx_v1';
-function getCache() { try { return JSON.parse(sessionStorage.getItem(SESSION_KEY) || 'null'); } catch { return null; } }
-function setCache(v) { try { sessionStorage.setItem(SESSION_KEY, JSON.stringify(v)); } catch {} }
+// Cache helpers – survive orientation changes AND page reloads
+const LS_KEY = 'authCtx_v1';
+function getCache() { try { return JSON.parse(localStorage.getItem(LS_KEY) || 'null'); } catch { return null; } }
+function setCache(v) { try { if (v === null) { localStorage.removeItem(LS_KEY); } else { localStorage.setItem(LS_KEY, JSON.stringify(v)); } } catch {} }
 
 export const AuthProvider = ({ children }) => {
   const _cache = getCache();
@@ -119,7 +119,7 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setIsAuthenticated(false);
     setCache(null);
-    try { sessionStorage.removeItem(SESSION_KEY); } catch {}
+    setCache(null);
     
     if (shouldRedirect) {
       // Use the SDK's logout method which handles token cleanup and redirect

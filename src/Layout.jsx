@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import ConsentModal from '@/components/legal/ConsentModal';
 import BottomNav from '@/components/navigation/BottomNav';
 import { base44 } from '@/api/base44Client';
@@ -44,11 +45,10 @@ export default function Layout({ children, currentPageName }) {
   const location = useLocation();
 
   useEffect(() => {
-    const alreadyInit = sessionStorage.getItem('appInitDone') === 'true';
+    const alreadyInit = localStorage.getItem('appInitDone') === 'true';
     const cached = localStorage.getItem('isAuthenticated') === 'true';
 
     if (alreadyInit) {
-      // Nach Rotation/Reload: Cache verwenden, aber Route trotzdem korrigieren
       setIsAuthenticated(cached);
       if (location.pathname === '/') {
         navigate(cached ? '/Compass' : '/Onboarding', { replace: true });
@@ -56,7 +56,7 @@ export default function Layout({ children, currentPageName }) {
       return;
     }
 
-    sessionStorage.setItem('appInitDone', 'true');
+    localStorage.setItem('appInitDone', 'true');
     initApp();
   }, []);
 
@@ -122,7 +122,7 @@ export default function Layout({ children, currentPageName }) {
           <ConsentModal onAccept={() => setShowConsent(false)} />
         )}
       </div>
-      <BottomNav isAuthenticated={isAuthenticated} />
+      {createPortal(<BottomNav isAuthenticated={isAuthenticated} />, document.body)}
     </LanguageProvider>
   );
 }
