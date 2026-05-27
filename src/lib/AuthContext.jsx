@@ -7,8 +7,9 @@ const LS_KEY = 'authCtx_v1';
 function getCache() { try { return JSON.parse(localStorage.getItem(LS_KEY) || 'null'); } catch { return null; } }
 function setCache(v) { try { if (v === null) { localStorage.removeItem(LS_KEY); } else { localStorage.setItem(LS_KEY, JSON.stringify(v)); } } catch {} }
 
-// Module-level: überlebt Orientation Changes
-let _fetchStarted = false;
+// Session-level flag: überlebt Orientation Changes & React-Remounts
+function _getFetchStarted() { try { return sessionStorage.getItem('auth_fetch') === '1'; } catch { return false; } }
+function _setFetchStarted() { try { sessionStorage.setItem('auth_fetch', '1'); } catch {} }
 
 export const AuthProvider = ({ children }) => {
   const _cache = getCache();
@@ -22,9 +23,9 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     // Nur einmal fetchen (überlebt Orientation Change durch module-level flag)
-    if (_fetchStarted) return;
+    if (_getFetchStarted()) return;
     if (getCache()) return;
-    _fetchStarted = true;
+    _setFetchStarted();
 
     base44.auth.me()
       .then(currentUser => {
@@ -41,7 +42,8 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setIsAuthenticated(false);
     setCache(null);
-    _fetchStarted = false;
+    try { sessionStorage.removeItem('auth_fetch'); } catch {}
+    try { sessionStorage.removeItem('layout_init'); } catch {}
     localStorage.removeItem('isAuthenticated');
     if (shouldRedirect) {
       base44.auth.logout(window.location.href);

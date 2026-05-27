@@ -6,9 +6,11 @@ import { base44 } from '@/api/base44Client';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { LanguageProvider } from '@/components/language/LanguageContext';
 
-// ─── Module-level: überlebt Orientation Changes (JS-Modul bleibt in Memory) ──
-let _initialized = false;          // wurde init() bereits ausgeführt?
-let _isAuthenticated = null;       // null = unbekannt, true/false = geprüft
+// ─── Session-level flags: überleben Orientation Changes & React-Remounts ──────
+// sessionStorage statt module-var, da iOS Safari manchmal Module neu evaluiert
+function _getInit() { try { return sessionStorage.getItem('layout_init') === '1'; } catch { return false; } }
+function _setInit() { try { sessionStorage.setItem('layout_init', '1'); } catch {} }
+let _isAuthenticated = null; // module-var reicht für in-memory state
 
 // Dark Mode sofort beim Modulload anwenden – vor dem ersten React-Render
 (function applyDark() {
@@ -37,8 +39,8 @@ export default function Layout({ children, currentPageName }) {
   useEffect(() => {
     // ── NUR EINMAL pro JS-Session ausführen ─────────────────────────────────
     // Bei Orientation Change: JS-Kontext bleibt, _initialized = true → SKIP
-    if (_initialized) return;
-    _initialized = true;
+    if (_getInit()) return;
+    _setInit();
 
     const cachedAuth = localStorage.getItem('isAuthenticated') === 'true';
 
