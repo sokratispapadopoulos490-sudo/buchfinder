@@ -1,0 +1,203 @@
+{
+  "name": "Book",
+  "type": "object",
+  "properties": {
+    "isbn13": {
+      "type": "string",
+      "description": "ISBN-13 \u2013 prim\u00e4rer eindeutiger Bezeichner"
+    },
+    "isbn10": {
+      "type": "string",
+      "description": "ISBN-10 \u2013 Legacy-Kompatibilit\u00e4t"
+    },
+    "title": {
+      "type": "string",
+      "description": "Originaltitel des Buches"
+    },
+    "subtitle": {
+      "type": "string",
+      "description": "Untertitel"
+    },
+    "authors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Liste der Autoren"
+    },
+    "publisher": {
+      "type": "string",
+      "description": "Verlag"
+    },
+    "published_date": {
+      "type": "string",
+      "description": "Erstver\u00f6ffentlichungsdatum (YYYY oder YYYY-MM-DD)"
+    },
+    "page_count": {
+      "type": "integer",
+      "description": "Seitenanzahl"
+    },
+    "language": {
+      "type": "string",
+      "description": "Originalsprache (ISO 639-1, z.B. 'de', 'en', 'fr')"
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Genres/Kategorien (z.B. 'persoenliche_entwicklung', 'fantasy_scifi')"
+    },
+    "age_group": {
+      "type": "string",
+      "enum": [
+        "kinder",
+        "jugendliche",
+        "erwachsene"
+      ],
+      "description": "Zielgruppe"
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": [
+        "einsteiger",
+        "fortgeschritten",
+        "erfahren"
+      ],
+      "description": "Leseschwierigkeit"
+    },
+    "reading_style": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Lesestile (praktisch, wissenschaftlich, story, reflektierend, kurz, anspruchsvoll)"
+    },
+    "time_effort": {
+      "type": "string",
+      "enum": [
+        "kurz",
+        "mittel",
+        "lang"
+      ],
+      "description": "Leseaufwand"
+    },
+    "description": {
+      "type": "string",
+      "description": "Buchbeschreibung in Originalsprache"
+    },
+    "cover_front_url": {
+      "type": "string",
+      "description": "URL des Frontcovers (bevorzugt hochaufl\u00f6send)"
+    },
+    "cover_back_url": {
+      "type": "string",
+      "description": "URL des R\u00fcckcovers (optional)"
+    },
+    "cover_color": {
+      "type": "string",
+      "description": "Fallback-Hintergrundfarbe (Tailwind-Klasse, z.B. bg-amber-100)"
+    },
+    "preview_link": {
+      "type": "string",
+      "description": "Link zur Leseprobe (z.B. Google Books Preview)"
+    },
+    "rating": {
+      "type": "number",
+      "description": "Durchschnittliche externe Bewertung (0.0\u20135.0)"
+    },
+    "ratings_count": {
+      "type": "integer",
+      "description": "Anzahl externer Bewertungen"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "local",
+        "google_books",
+        "open_library",
+        "manual"
+      ],
+      "default": "local",
+      "description": "Datenquelle des Eintrags"
+    },
+    "source_id": {
+      "type": "string",
+      "description": "ID in der Quelldatenbank (z.B. Google Books volumeId)"
+    },
+    "translations": {
+      "type": "object",
+      "description": "\u00dcbersetzungen pro Sprachcode: { 'en': { title, subtitle, description, isbn13, cover_front_url, publisher } }",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "subtitle": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "isbn13": {
+            "type": "string"
+          },
+          "cover_front_url": {
+            "type": "string"
+          },
+          "publisher": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "alternate_titles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Alternative Titel und fr\u00fchere Titel (f\u00fcr Suche)"
+    },
+    "affiliate_providers": {
+      "type": "object",
+      "description": "Affiliate-Links pro Land und Anbieter: { 'DE': { 'amazon': 'https://...', 'thalia': 'https://...' }, 'US': { 'amazon': '...' } }",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string"
+        }
+      }
+    },
+    "country_availability": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "L\u00e4ndercodes, in denen das Buch verf\u00fcgbar ist (ISO 3166-1 alpha-2). Leer = global verf\u00fcgbar."
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Ob das Buch in Empfehlungen erscheint"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Interne Such-Tags \u2013 Synonym zu categories, f\u00fcr R\u00fcckw\u00e4rtskompatibilit\u00e4t"
+    },
+    "style": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Alias f\u00fcr reading_style \u2013 R\u00fcckw\u00e4rtskompatibilit\u00e4t"
+    }
+  },
+  "required": [
+    "title",
+    "authors"
+  ]
+}
