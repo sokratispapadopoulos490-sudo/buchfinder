@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Compass, Users, User } from 'lucide-react';
+import { Compass, Users, User, Search } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 
 const PAGES_WITHOUT_NAV = ['onboarding', 'legal'];
@@ -35,6 +35,7 @@ export default function BottomNav({ isAuthenticated }) {
   const navItems = [
     { icon: Users, label: 'Community', path: 'Community' },
     { icon: Compass, label: 'Compass', path: 'Compass' },
+    { icon: Search, label: 'Entdecken', path: 'BookDiscover' },
     { icon: User, label: 'Account', path: 'Account' },
   ];
 

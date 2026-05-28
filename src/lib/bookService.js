@@ -1,20 +1,16 @@
 /**
  * bookService.js – Zentrale Abstraktionsschicht für alle Buchoperationen.
  *
- * Hierarchie der Datenquellen (Fallback-Kette):
+ * Fallback-Hierarchie:
  *   1. Book-Entität (Base44 DB) – primär, persistiert, affiliate-ready
- *   2. Google Books API          – Live-Lookup bei fehlenden Büchern
+ *   2. Google Books API          – Live-Lookup
  *   3. BookDatabase.js (lokal)  – Legacy-Fallback während Migration
- *
- * Alle Komponenten sollen NUR noch diesen Service verwenden,
- * niemals direkt BookDatabase.js importieren.
  */
 
 import { base44 } from '@/api/base44Client';
 import { books as localBooks } from '@/components/books/BookDatabase';
 
 // ─── Normalisierung ────────────────────────────────────────────────────────────
-// Wandelt ein lokales Legacy-Buch in das neue Book-Schema um.
 export function normalizeLocalBook(localBook) {
   return {
     id: localBook.id,
@@ -23,6 +19,7 @@ export function normalizeLocalBook(localBook) {
     title: localBook.title,
     subtitle: null,
     authors: localBook.author ? [localBook.author] : [],
+    author: localBook.author,
     publisher: localBook.publisher || null,
     published_date: localBook.publishYear ? String(localBook.publishYear) : null,
     page_count: localBook.pageCount || null,
@@ -30,14 +27,16 @@ export function normalizeLocalBook(localBook) {
     categories: localBook.tags || [],
     tags: localBook.tags || [],
     age_group: localBook.ageGroup || 'erwachsene',
+    ageGroup: localBook.ageGroup || 'erwachsene',
     difficulty: localBook.difficulty || 'einsteiger',
     reading_style: localBook.style || [],
     style: localBook.style || [],
     time_effort: localBook.timeEffort || 'mittel',
     description: localBook.description || '',
     cover_front_url: localBook.coverUrl || null,
-    cover_back_url: null,
+    coverUrl: localBook.coverUrl || null,
     cover_color: localBook.coverColor || 'bg-amber-100',
+    coverColor: localBook.coverColor || 'bg-amber-100',
     preview_link: null,
     rating: null,
     ratings_count: null,
@@ -47,25 +46,28 @@ export function normalizeLocalBook(localBook) {
     alternate_titles: [],
     source: 'local',
     is_active: true,
-    // Rückwärtskompatibilität mit alten Komponenten
-    author: localBook.author,
-    coverUrl: localBook.coverUrl,
-    coverColor: localBook.coverColor,
+    // Legacy fields
     isbn: localBook.isbn,
     pageCount: localBook.pageCount,
     publishYear: localBook.publishYear,
-    ageGroup: localBook.ageGroup,
   };
 }
 
-// Wandelt ein Google Books API Volume in das neue Book-Schema um.
 export function normalizeGoogleBook(volume) {
   const info = volume.volumeInfo || {};
   const ids = info.industryIdentifiers || [];
   const isbn13 = ids.find(i => i.type === 'ISBN_13')?.identifier || null;
   const isbn10 = ids.find(i => i.type === 'ISBN_10')?.identifier || null;
+  const authorStr = info.authors?.join(', ') || 'Unbekannt';
+
+  // Bessere Cover-URL: zoom=2 für höhere Auflösung, https statt http
+  const rawCover = info.imageLinks?.thumbnail || info.imageLinks?.smallThumbnail || null;
+  const coverUrl = rawCover
+    ? rawCover.replace('http://', 'https://').replace('zoom=1', 'zoom=2')
+    : null;
 
   return {
+    // New schema
     isbn13,
     isbn10,
     title: info.title || 'Unbekannter Titel',
@@ -78,13 +80,13 @@ export function normalizeGoogleBook(volume) {
     categories: info.categories || [],
     tags: info.categories || [],
     age_group: 'erwachsene',
+    ageGroup: 'erwachsene',
     difficulty: 'einsteiger',
     reading_style: [],
     style: [],
     time_effort: 'mittel',
     description: info.description || '',
-    cover_front_url: info.imageLinks?.thumbnail?.replace('http://', 'https://') || null,
-    cover_back_url: null,
+    cover_front_url: coverUrl,
     cover_color: 'bg-amber-100',
     preview_link: info.previewLink || null,
     rating: info.averageRating || null,
@@ -96,17 +98,130 @@ export function normalizeGoogleBook(volume) {
     source: 'google_books',
     source_id: volume.id,
     is_active: true,
-    // Rückwärtskompatibilität
-    author: info.authors?.join(', ') || 'Unbekannt',
-    coverUrl: info.imageLinks?.thumbnail?.replace('http://', 'https://') || null,
+    // Legacy fields for full backward compat
+    id: isbn13 ? parseInt(isbn13.slice(-6)) : Math.floor(Math.random() * 999999),
+    author: authorStr,
+    coverUrl: coverUrl,
     coverColor: 'bg-amber-100',
     isbn: isbn13 || isbn10,
     pageCount: info.pageCount || null,
-    ageGroup: 'erwachsene',
+    publishYear: info.publishedDate ? parseInt(info.publishedDate) : null,
   };
 }
 
-// ─── Affiliate-Link-Generierung ────────────────────────────────────────────────
+// ─── Google Books API ──────────────────────────────────────────────────────────
+const GOOGLE_BOOKS_BASE = 'https://www.googleapis.com/books/v1';
+const MAX_RETRIES = 2;
+const THROTTLE_MS = 300;
+
+let _lastRequestTime = 0;
+
+async function throttledFetch(url) {
+  const now = Date.now();
+  const wait = THROTTLE_MS - (now - _lastRequestTime);
+  if (wait > 0) await new Promise(r => setTimeout(r, wait));
+  _lastRequestTime = Date.now();
+
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    const res = await fetch(url);
+    if (res.status === 429) {
+      // Rate limited – exponential backoff
+      await new Promise(r => setTimeout(r, 1000 * Math.pow(2, attempt)));
+      continue;
+    }
+    if (!res.ok) throw new Error(`Google Books API error: ${res.status}`);
+    return res.json();
+  }
+  throw new Error('Google Books API: max retries exceeded');
+}
+
+/**
+ * Sucht Bücher via Google Books API.
+ * Unterstützt: Titel, Autor, ISBN, Kategorie, Sprachfilter.
+ */
+export async function searchGoogleBooks(query, options = {}) {
+  const {
+    maxResults = 20,
+    startIndex = 0,
+    langRestrict,
+    orderBy = 'relevance', // 'relevance' | 'newest'
+    filter,               // 'ebooks' | 'free-ebooks' | 'full' | 'paid-ebooks' | 'partial'
+  } = options;
+
+  const params = new URLSearchParams({
+    q: query,
+    maxResults: String(Math.min(maxResults, 40)), // API max = 40
+    startIndex: String(startIndex),
+    orderBy,
+    printType: 'books',
+  });
+  if (langRestrict) params.set('langRestrict', langRestrict);
+  if (filter) params.set('filter', filter);
+
+  const data = await throttledFetch(`${GOOGLE_BOOKS_BASE}/volumes?${params}`);
+  const totalItems = data.totalItems || 0;
+  const items = (data.items || []).map(normalizeGoogleBook);
+  return { items, totalItems, nextStartIndex: startIndex + items.length };
+}
+
+/**
+ * Dedizierter ISBN-Lookup – holt genau ein Buch.
+ */
+export async function fetchGoogleBookByISBN(isbn) {
+  const clean = isbn.replace(/[-\s]/g, '');
+  const data = await throttledFetch(`${GOOGLE_BOOKS_BASE}/volumes?q=isbn:${clean}&maxResults=1`);
+  const items = data.items || [];
+  return items.length > 0 ? normalizeGoogleBook(items[0]) : null;
+}
+
+// ─── DB-Caching ────────────────────────────────────────────────────────────────
+/**
+ * Speichert ein Google-Buch in der Book-Entität, wenn noch nicht vorhanden.
+ * Stille Operation – wirft keine Fehler.
+ */
+export async function cacheBookToDB(book) {
+  try {
+    if (book.isbn13) {
+      const existing = await base44.entities.Book.filter({ isbn13: book.isbn13 });
+      if (existing.length > 0) return existing[0];
+    }
+    return await base44.entities.Book.create({
+      isbn13: book.isbn13,
+      isbn10: book.isbn10,
+      title: book.title,
+      subtitle: book.subtitle,
+      authors: book.authors,
+      publisher: book.publisher,
+      published_date: book.published_date,
+      page_count: book.page_count,
+      language: book.language,
+      categories: book.categories,
+      tags: book.tags,
+      age_group: book.age_group,
+      difficulty: book.difficulty,
+      reading_style: book.reading_style,
+      style: book.style,
+      time_effort: book.time_effort,
+      description: book.description,
+      cover_front_url: book.cover_front_url,
+      cover_color: book.cover_color,
+      preview_link: book.preview_link,
+      rating: book.rating,
+      ratings_count: book.ratings_count,
+      source: book.source,
+      source_id: book.source_id,
+      affiliate_providers: {},
+      country_availability: [],
+      translations: {},
+      alternate_titles: [],
+      is_active: true,
+    });
+  } catch {
+    return null;
+  }
+}
+
+// ─── Affiliate-Links ───────────────────────────────────────────────────────────
 const AFFILIATE_TEMPLATES = {
   DE: {
     amazon: (isbn) => `https://www.amazon.de/dp/${isbn}`,
@@ -131,90 +246,25 @@ const AFFILIATE_TEMPLATES = {
   },
   DEFAULT: {
     amazon: (isbn) => `https://www.amazon.com/dp/${isbn}`,
-    bookshop: (isbn) => `https://bookshop.org/books?keywords=${isbn}`,
   }
 };
 
-/**
- * Gibt Affiliate-Links für ein Buch zurück, basierend auf Ländercode.
- * Nutzt zuerst gespeicherte Links in book.affiliate_providers,
- * generiert bei Fehlen dynamisch via ISBN.
- */
 export function getAffiliateLinks(book, countryCode = 'DE') {
   const isbn = book.isbn13 || book.isbn10 || book.isbn;
   const stored = book.affiliate_providers?.[countryCode];
   if (stored && Object.keys(stored).length > 0) return stored;
-
-  if (!isbn) return {};
+  if (!isbn) {
+    // Fallback: Titelsuche
+    const encoded = encodeURIComponent(`${book.title} ${book.author || (book.authors || [])[0] || ''}`);
+    return { amazon: `https://www.amazon.de/s?k=${encoded}`, thalia: `https://www.thalia.de/suche?sq=${encoded}` };
+  }
   const templates = AFFILIATE_TEMPLATES[countryCode] || AFFILIATE_TEMPLATES.DEFAULT;
-  return Object.fromEntries(
-    Object.entries(templates).map(([provider, fn]) => [provider, fn(isbn)])
-  );
+  return Object.fromEntries(Object.entries(templates).map(([p, fn]) => [p, fn(isbn)]));
 }
 
-// ─── Google Books API ──────────────────────────────────────────────────────────
-const GOOGLE_BOOKS_BASE = 'https://www.googleapis.com/books/v1';
-
+// ─── Matching-Engine ───────────────────────────────────────────────────────────
 /**
- * Sucht Bücher via Google Books API.
- * Gibt normalisierte Book-Objekte zurück.
- */
-export async function searchGoogleBooks(query, options = {}) {
-  const { maxResults = 10, langRestrict, country } = options;
-  const params = new URLSearchParams({
-    q: query,
-    maxResults: String(maxResults),
-    printType: 'books',
-    ...(langRestrict ? { langRestrict } : {}),
-    ...(country ? { country } : {}),
-  });
-
-  const res = await fetch(`${GOOGLE_BOOKS_BASE}/volumes?${params}`);
-  if (!res.ok) throw new Error(`Google Books API error: ${res.status}`);
-  const data = await res.json();
-  return (data.items || []).map(normalizeGoogleBook);
-}
-
-/**
- * Holt ein einzelnes Buch von Google Books via ISBN.
- */
-export async function fetchGoogleBookByISBN(isbn) {
-  const res = await searchGoogleBooks(`isbn:${isbn}`, { maxResults: 1 });
-  return res[0] || null;
-}
-
-// ─── Zentrale Book-Lookup-Funktion ─────────────────────────────────────────────
-/**
- * Sucht ein Buch mit Fallback-Kette:
- *   Book-DB → Google Books API → Lokale DB
- */
-export async function findBookByISBN(isbn) {
-  // 1. Aus Book-Entität (DB)
-  try {
-    const results = await base44.entities.Book.filter({ isbn13: isbn });
-    if (results.length > 0) return results[0];
-    const results10 = await base44.entities.Book.filter({ isbn10: isbn });
-    if (results10.length > 0) return results10[0];
-  } catch (e) { /* Entität noch nicht befüllt */ }
-
-  // 2. Google Books API
-  try {
-    const googleBook = await fetchGoogleBookByISBN(isbn);
-    if (googleBook) return googleBook;
-  } catch (e) { /* API nicht verfügbar */ }
-
-  // 3. Lokale Legacy-DB
-  const local = localBooks.find(b => b.isbn === isbn || b.isbn === isbn);
-  if (local) return normalizeLocalBook(local);
-
-  return null;
-}
-
-// ─── Matching-Engine (migriert von BookDatabaseLogic.js) ──────────────────────
-/**
- * Findet passende Bücher für ein Leserprofil.
- * Quelle: Book-Entität (wenn befüllt), sonst lokale DB.
- * Drop-in-Ersatz für getMatchingBooks() aus BookDatabaseLogic.js
+ * Async: DB-first, Fallback auf lokale Bücher.
  */
 export async function getMatchingBooksFromDB(profile) {
   const { mainTopics, secondaryTopics, style, difficulty, ageGroup, readBooks = [], savedBookIds = [] } = profile;
@@ -227,82 +277,64 @@ export async function getMatchingBooksFromDB(profile) {
     pool = localBooks.map(normalizeLocalBook).filter(b => b.age_group === ageGroup);
   }
 
-  // Bereits gespeicherte/gelesene Bücher herausfiltern
   pool = pool.filter(b => !savedBookIds.includes(b.id));
   if (readBooks.length > 0) {
     pool = pool.filter(book => {
-      const titleLower = book.title.toLowerCase();
-      const authorLower = (book.authors?.[0] || book.author || '').toLowerCase();
+      const tl = book.title.toLowerCase();
+      const al = (book.authors?.[0] || book.author || '').toLowerCase();
       return !readBooks.some(rb => {
-        const rbL = rb.toLowerCase();
-        return titleLower.includes(rbL) || rbL.includes(titleLower) ||
-               authorLower.includes(rbL) || rbL.includes(authorLower);
+        const rbl = rb.toLowerCase();
+        return tl.includes(rbl) || rbl.includes(tl) || al.includes(rbl);
       });
     });
   }
 
-  // Scoring
   const scored = pool.map(book => {
     let score = 0;
     const bookTags = book.tags || book.categories || [];
     const bookStyle = book.style || book.reading_style || [];
-
     mainTopics.forEach(t => { if (bookTags.includes(t)) score += 5; });
     secondaryTopics.forEach(t => { if (bookTags.includes(t)) score += 2; });
     style.forEach(s => { if (bookStyle.includes(s)) score += 3; });
-
     if (book.difficulty === difficulty) score += 4;
     if ((difficulty === 'fortgeschritten' && book.difficulty === 'einsteiger') ||
         (difficulty === 'einsteiger' && book.difficulty === 'fortgeschritten')) score -= 2;
-
     return { ...book, score };
-  });
+  }).sort((a, b) => b.score - a.score);
 
-  const sorted = scored.sort((a, b) => b.score - a.score);
-  const topBooks = sorted.slice(0, 10).map((b, i) => ({ ...b, placement: i + 1, isContrast: false }));
+  const topBooks = scored.slice(0, 10).map((b, i) => ({ ...b, placement: i + 1, isContrast: false }));
   const topIds = new Set(topBooks.map(b => b.id || b.isbn13));
-  const remaining = sorted.filter(b => !topIds.has(b.id || b.isbn13));
-
+  const remaining = scored.filter(b => !topIds.has(b.id || b.isbn13));
   const contrastBooks = remaining
-    .filter(b => {
-      const bTags = b.tags || b.categories || [];
-      return !mainTopics.some(t => bTags.includes(t));
-    })
+    .filter(b => !mainTopics.some(t => (b.tags || b.categories || []).includes(t)))
     .slice(0, 3)
     .map((b, i) => ({ ...b, placement: 11 + i, isContrast: true }));
 
   if (contrastBooks.length < 3) {
-    const contrastIds = new Set(contrastBooks.map(b => b.id || b.isbn13));
-    const filler = remaining
-      .filter(b => !contrastIds.has(b.id || b.isbn13))
+    const cIds = new Set(contrastBooks.map(b => b.id || b.isbn13));
+    const filler = remaining.filter(b => !cIds.has(b.id || b.isbn13))
       .slice(0, 3 - contrastBooks.length)
       .map((b, i) => ({ ...b, placement: 11 + contrastBooks.length + i, isContrast: true }));
     contrastBooks.push(...filler);
   }
-
   return [...topBooks, ...contrastBooks];
 }
 
-/**
- * Synchroner Fallback (für Komponenten die noch nicht async sind).
- * Nutzt ausschließlich die lokale DB – identisch mit altem getMatchingBooks().
- */
+/** Synchroner Legacy-Fallback */
 export function getMatchingBooksSync(profile) {
   const { mainTopics, secondaryTopics, style, difficulty, ageGroup, readBooks = [], savedBookIds = [] } = profile;
-
   let pool = localBooks.map(normalizeLocalBook).filter(b => b.age_group === ageGroup);
   pool = pool.filter(b => !savedBookIds.includes(b.id));
   if (readBooks.length > 0) {
     pool = pool.filter(book => {
-      const titleLower = book.title.toLowerCase();
-      const authorLower = (book.authors?.[0] || '').toLowerCase();
+      const tl = book.title.toLowerCase();
+      const al = (book.authors?.[0] || '').toLowerCase();
       return !readBooks.some(rb => {
-        const rbL = rb.toLowerCase();
-        return titleLower.includes(rbL) || rbL.includes(titleLower) || authorLower.includes(rbL);
+        const rbl = rb.toLowerCase();
+        return tl.includes(rbl) || rbl.includes(tl) || al.includes(rbl);
       });
     });
   }
-
   const scored = pool.map(book => {
     let score = 0;
     mainTopics.forEach(t => { if ((book.tags || []).includes(t)) score += 5; });
@@ -319,6 +351,5 @@ export function getMatchingBooksSync(profile) {
     .filter(b => !mainTopics.some(t => (b.tags || []).includes(t)))
     .slice(0, 3)
     .map((b, i) => ({ ...b, placement: 11 + i, isContrast: true }));
-
   return [...topBooks, ...contrastBooks];
 }

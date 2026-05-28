@@ -6,16 +6,14 @@ import { cn } from '@/lib/utils';
  * Gibt null zurück wenn keine ISBN oder bekannte Cover-URL vorhanden.
  */
 export function getCoverUrl(bookData) {
+  // Neues Schema zuerst
+  if (bookData?.cover_front_url) return bookData.cover_front_url;
+  // Legacy
   if (bookData?.coverUrl) return bookData.coverUrl;
   if (bookData?.cover_image_url) return bookData.cover_image_url;
-  if (bookData?.isbn) {
-    return `https://covers.openlibrary.org/b/isbn/${bookData.isbn}-L.jpg`;
-  }
-  // Google Books fallback via Titel+Autor
-  if (bookData?.title) {
-    const q = encodeURIComponent(`${bookData.title} ${bookData.author || ''}`);
-    return `https://books.google.com/books/content?id=&printsec=frontcover&img=1&zoom=1&source=gbs_api&q=${q}`;
-  }
+  // ISBN → OpenLibrary
+  const isbn = bookData?.isbn13 || bookData?.isbn10 || bookData?.isbn;
+  if (isbn) return `https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg`;
   return null;
 }
 
