@@ -9,8 +9,10 @@ import BookDetailModal from './BookDetailModal';
 import BookCover, { getCoverUrl } from './BookCover';
 
 const generateBuyLinks = (book) => {
-  const encodedTitle = encodeURIComponent(`${book.title} ${book.author}`);
-  const encodedISBN = encodeURIComponent(book.isbn);
+  const displayAuthor = book.author || (book.authors || []).join(', ') || '';
+  const isbn = book.isbn13 || book.isbn10 || book.isbn || '';
+  const encodedTitle = encodeURIComponent(`${book.title} ${displayAuthor}`);
+  const encodedISBN = encodeURIComponent(isbn);
   
   return [
     {
@@ -20,12 +22,12 @@ const generateBuyLinks = (book) => {
     },
     {
       name: "Amazon",
-      url: `https://www.amazon.de/s?k=${encodedISBN}`,
+      url: isbn ? `https://www.amazon.de/dp/${isbn}` : `https://www.amazon.de/s?k=${encodedTitle}`,
       description: "Neu & gebraucht"
     },
     {
       name: "Thalia",
-      url: `https://www.thalia.de/suche?sq=${encodedTitle}`,
+      url: isbn ? `https://www.thalia.de/suche?sq=${isbn}` : `https://www.thalia.de/suche?sq=${encodedTitle}`,
       description: "Online & in Filialen"
     },
     {
@@ -191,13 +193,16 @@ export default function BookCard({ book, reasons, index, isContrast }) {
                 {book.title}
               </h3>
             </button>
-            <p className="text-stone-600 dark:text-stone-300 text-sm mb-2">{book.author}</p>
+            <p className="text-stone-600 dark:text-stone-300 text-sm mb-2">
+              {book.author || (book.authors || []).join(', ') || 'Unbekannter Autor'}
+            </p>
             
             {/* Buchdetails */}
             <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-stone-500 dark:text-stone-400 mb-3">
-              {book.publishYear && <span>{book.publishYear}</span>}
-              {book.pageCount && <span>• {book.pageCount} Seiten</span>}
+              {(book.publishYear || book.published_date) && <span>{book.publishYear || String(book.published_date).slice(0, 4)}</span>}
+              {(book.pageCount || book.page_count) && <span>• {book.pageCount || book.page_count} Seiten</span>}
               {book.publisher && <span>• {book.publisher}</span>}
+              {book.language && book.language !== 'de' && <span>• {book.language.toUpperCase()}</span>}
             </div>
 
             {readCount > 0 && (
