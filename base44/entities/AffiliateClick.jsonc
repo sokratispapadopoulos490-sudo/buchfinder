@@ -1,0 +1,35 @@
+{
+  "name": "AffiliateClick",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "User email or ID"
+    },
+    "isbn13": {
+      "type": "string",
+      "description": "ISBN-13 of the clicked book"
+    },
+    "book_title": {
+      "type": "string",
+      "description": "Book title for display"
+    },
+    "provider": {
+      "type": "string",
+      "description": "Provider key (e.g. amazon_de, thalia)"
+    },
+    "country": {
+      "type": "string",
+      "description": "Detected country code (ISO 3166-1 alpha-2)"
+    },
+    "url": {
+      "type": "string",
+      "description": "Generated affiliate URL"
+    }
+  },
+  "required": [
+    "isbn13",
+    "provider",
+    "country"
+  ]
+}

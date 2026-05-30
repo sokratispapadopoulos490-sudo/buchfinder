@@ -7,8 +7,8 @@ import React, { useState, useEffect } from 'react';
 import { Bookmark, BookmarkCheck, ShoppingCart, Star, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { base44 } from '@/api/base44Client';
-import { getAffiliateLinks } from '@/lib/bookService';
 import BookCover from './BookCover';
+import AffiliateButtons from './AffiliateButtons';
 
 export default function LiveBookCard({ book, user }) {
   const [isSaved, setIsSaved] = useState(false);
@@ -16,8 +16,6 @@ export default function LiveBookCard({ book, user }) {
   const [saving, setSaving] = useState(false);
   const [showBuy, setShowBuy] = useState(false);
   const [expanded, setExpanded] = useState(false);
-
-  const affiliateLinks = getAffiliateLinks(book, 'DE');
   const displayAuthor = book.author || (book.authors || []).join(', ') || 'Unbekannter Autor';
   const description = book.description || '';
   const shortDesc = description.length > 160 ? description.slice(0, 160) + '…' : description;
@@ -159,23 +157,8 @@ export default function LiveBookCard({ book, user }) {
           )}
         </div>
 
-        {/* Buy options */}
-        {showBuy && (
-          <div className="mt-3 grid grid-cols-2 gap-2">
-            {Object.entries(affiliateLinks).map(([provider, url]) => (
-              <a
-                key={provider}
-                href={url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between p-2.5 rounded-xl border border-stone-200 dark:border-stone-700 hover:border-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-colors"
-              >
-                <span className="text-sm font-medium text-stone-800 dark:text-stone-200 capitalize">{provider}</span>
-                <ExternalLink className="w-3 h-3 text-stone-400" />
-              </a>
-            ))}
-          </div>
-        )}
+        {/* Buy options – dynamic by country */}
+        {showBuy && <AffiliateButtons book={book} user={user} className="mt-3" />}
       </div>
     </div>
   );
