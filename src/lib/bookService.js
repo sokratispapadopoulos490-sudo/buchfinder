@@ -123,9 +123,12 @@ async function throttledFetch(url) {
   _lastRequestTime = Date.now();
 
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
-    const res = await fetch(url);
+    const res = await fetch(url, { 
+      method: 'GET',
+      headers: { 'Accept': 'application/json' },
+      mode: 'cors',
+    });
     if (res.status === 429) {
-      // Rate limited – exponential backoff
       await new Promise(r => setTimeout(r, 1000 * Math.pow(2, attempt)));
       continue;
     }
@@ -144,13 +147,13 @@ export async function searchGoogleBooks(query, options = {}) {
     maxResults = 20,
     startIndex = 0,
     langRestrict,
-    orderBy = 'relevance', // 'relevance' | 'newest'
-    filter,               // 'ebooks' | 'free-ebooks' | 'full' | 'paid-ebooks' | 'partial'
+    orderBy = 'relevance',
+    filter,
   } = options;
 
   const params = new URLSearchParams({
     q: query,
-    maxResults: String(Math.min(maxResults, 40)), // API max = 40
+    maxResults: String(Math.min(maxResults, 40)),
     startIndex: String(startIndex),
     orderBy,
     printType: 'books',
@@ -158,10 +161,78 @@ export async function searchGoogleBooks(query, options = {}) {
   if (langRestrict) params.set('langRestrict', langRestrict);
   if (filter) params.set('filter', filter);
 
-  const data = await throttledFetch(`${GOOGLE_BOOKS_BASE}/volumes?${params}`);
-  const totalItems = data.totalItems || 0;
-  const items = (data.items || []).map(normalizeGoogleBook);
-  return { items, totalItems, nextStartIndex: startIndex + items.length };
+  try {
+    const data = await throttledFetch(`${GOOGLE_BOOKS_BASE}/volumes?${params}`);
+    const totalItems = data.totalItems || 0;
+    const items = (data.items || []).map(normalizeGoogleBook);
+    return { items, totalItems, nextStartIndex: startIndex + items.length };
+  } catch (googleErr) {
+    console.warn('Google Books API failed, trying Open Library:', googleErr.message);
+    // Fallback: Open Library Search API (kein API-Key nötig, breite CORS-Unterstützung)
+    return searchOpenLibrary(query, { maxResults, startIndex });
+  }
+}
+
+async function searchOpenLibrary(query, { maxResults = 20, startIndex = 0 } = {}) {
+  const params = new URLSearchParams({
+    q: query,
+    limit: String(maxResults),
+    offset: String(startIndex),
+    fields: 'key,title,author_name,isbn,publisher,first_publish_year,number_of_pages_median,language,subject,cover_i,ia',
+  });
+  const res = await fetch(`https://openlibrary.org/search.json?${params}`);
+  if (!res.ok) throw new Error(`Open Library API error: ${res.status}`);
+  const data = await res.json();
+  const items = (data.docs || []).map(normalizeOpenLibraryBook);
+  return { items, totalItems: data.numFound || 0, nextStartIndex: startIndex + items.length };
+}
+
+function normalizeOpenLibraryBook(doc) {
+  const isbn13 = (doc.isbn || []).find(i => i.length === 13) || null;
+  const isbn10 = (doc.isbn || []).find(i => i.length === 10) || null;
+  const coverId = doc.cover_i;
+  const coverUrl = coverId ? `https://covers.openlibrary.org/b/id/${coverId}-M.jpg` : null;
+  const authorStr = (doc.author_name || []).join(', ') || 'Unbekannt';
+
+  return {
+    isbn13,
+    isbn10,
+    title: doc.title || 'Unbekannter Titel',
+    subtitle: null,
+    authors: doc.author_name || [],
+    author: authorStr,
+    publisher: (doc.publisher || [])[0] || null,
+    published_date: doc.first_publish_year ? String(doc.first_publish_year) : null,
+    page_count: doc.number_of_pages_median || null,
+    language: (doc.language || [])[0] || 'de',
+    categories: (doc.subject || []).slice(0, 5),
+    tags: (doc.subject || []).slice(0, 5),
+    age_group: 'erwachsene',
+    ageGroup: 'erwachsene',
+    difficulty: 'einsteiger',
+    reading_style: [],
+    style: [],
+    time_effort: 'mittel',
+    description: '',
+    cover_front_url: coverUrl,
+    coverUrl,
+    cover_color: 'bg-amber-100',
+    coverColor: 'bg-amber-100',
+    preview_link: doc.key ? `https://openlibrary.org${doc.key}` : null,
+    rating: null,
+    ratings_count: null,
+    affiliate_providers: {},
+    country_availability: [],
+    translations: {},
+    alternate_titles: [],
+    source: 'open_library',
+    source_id: doc.key,
+    is_active: true,
+    id: isbn13 ? parseInt(isbn13.slice(-6)) : Math.floor(Math.random() * 999999),
+    isbn: isbn13 || isbn10,
+    pageCount: doc.number_of_pages_median || null,
+    publishYear: doc.first_publish_year || null,
+  };
 }
 
 /**

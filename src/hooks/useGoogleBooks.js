@@ -76,12 +76,12 @@ export function useGoogleBooks() {
 
     } catch (err) {
       if (err.name === 'AbortError') return;
-      console.warn('Google Books API failed, using local fallback:', err);
-      setError('Live-Suche nicht verfügbar. Lokale Bücher werden angezeigt.');
+      console.warn('All book APIs failed, using local fallback:', err);
+      setError('Suche nicht verfügbar. Lokale Bücher werden angezeigt.');
       setUsingFallback(true);
       setHasMore(false);
 
-      // Fallback: lokale Bücher filtern
+      // Letzter Fallback: lokale Bücher filtern
       const { normalizeLocalBook } = await import('@/lib/bookService');
       const { books: localBooks } = await import('@/components/books/BookDatabase');
       const q = searchQuery.toLowerCase();
