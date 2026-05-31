@@ -56,7 +56,7 @@ function CommunityContent() {
       setUser(currentUser);
       const [postsData, booksData, likesData] = await Promise.all([
         base44.entities.CommunityPost.list('-created_date'),
-        base44.entities.SavedBook.list(),
+        base44.entities.SavedBook.filter({ created_by: currentUser.email }, '-created_date'),
         base44.entities.CommunityLike.filter({ created_by: currentUser.email })
       ]);
       setPosts(postsData);
@@ -128,7 +128,23 @@ function CommunityContent() {
     await loadData();
   };
 
+  const AI_DAILY_LIMIT = 5;
+
   const handleAskAI = async (post) => {
+    // Rate limiting: check AI usage stored on user object (resets each UTC day)
+    const today = new Date().toISOString().split('T')[0];
+    const aiUsageKey = `ai_usage_${today}`;
+    const currentUsage = user?.[aiUsageKey] || 0;
+
+    if (currentUsage >= AI_DAILY_LIMIT) {
+      alert(`Du hast dein tägliches KI-Limit von ${AI_DAILY_LIMIT} Antworten erreicht. Morgen kannst du wieder KI-Antworten anfordern.`);
+      return;
+    }
+
+    // Increment counter on user before calling LLM (prevents double-spend on error)
+    await base44.auth.updateMe({ [aiUsageKey]: currentUsage + 1 });
+    setUser(prev => ({ ...prev, [aiUsageKey]: currentUsage + 1 }));
+
     const prompt = `Du bist der Book Compass KI-Assistent. Ein Nutzer hat folgenden Post geschrieben:\n\nTitel: ${post.title}\n${post.book_title ? `Buch: ${post.book_title}` : ''}\nInhalt: ${post.content}\n\nGib eine hilfreiche, freundliche Antwort (max. 150 Wörter). Sei persönlich und auf Bücher fokussiert.`;
     const response = await base44.integrations.Core.InvokeLLM({ prompt });
     await handleAddComment(post.id, response, true);

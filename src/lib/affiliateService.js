@@ -6,61 +6,75 @@
  *
  * Architecture is Geniuslink-ready: swap PROVIDER_CONFIG entries with
  * Geniuslink destination URLs when keys are available.
+ *
+ * Partner IDs are configured in lib/affiliateConfig.js — never hardcode them here.
  */
 
 import { base44 } from '@/api/base44Client';
+import { AFFILIATE_IDS, wrapWithGeniuslink } from '@/lib/affiliateConfig';
 
 // ─── Provider Registry ─────────────────────────────────────────────────────────
 // Each provider has a `build(isbn, title, author)` factory.
 // `logo` is an emoji fallback; swap with real logo URLs when available.
 // `label` is the localized display name.
 
+// Helper: build Amazon URL with optional affiliate tag
+function amazonUrl(domain, isbn, title, providerKey) {
+  const tag = AFFILIATE_IDS[providerKey];
+  const tagParam = tag ? `?tag=${tag}` : '';
+  return isbn
+    ? `https://www.amazon.${domain}/dp/${isbn}${tagParam}`
+    : `https://www.amazon.${domain}/s?k=${encodeURIComponent(title)}${tag ? `&tag=${tag}` : ''}`;
+}
+
 const PROVIDERS = {
   amazon_de: {
     label: 'Amazon.de',
     logo: '🛒',
-    build: (isbn, title) =>
-      isbn
-        ? `https://www.amazon.de/dp/${isbn}`
-        : `https://www.amazon.de/s?k=${encodeURIComponent(title)}`,
+    build: (isbn, title) => amazonUrl('de', isbn, title, 'amazon_de'),
   },
   thalia: {
     label: 'Thalia',
     logo: '📚',
-    build: (isbn, title) =>
-      isbn
+    build: (isbn, title) => {
+      const base = isbn
         ? `https://www.thalia.de/suche?sq=${isbn}`
-        : `https://www.thalia.de/suche?sq=${encodeURIComponent(title)}`,
+        : `https://www.thalia.de/suche?sq=${encodeURIComponent(title)}`;
+      const pid = AFFILIATE_IDS.thalia;
+      return pid ? `${base}&ref=${pid}` : base;
+    },
   },
   hugendubel: {
     label: 'Hugendubel',
     logo: '📖',
-    build: (isbn, title) =>
-      `https://www.hugendubel.de/de/taschenbuch/${isbn || encodeURIComponent(title)}.html`,
+    build: (isbn, title) => {
+      const base = isbn
+        ? `https://www.hugendubel.de/de/taschenbuch/${isbn}.html`
+        : `https://www.hugendubel.de/de/suche/?q=${encodeURIComponent(title)}`;
+      const pid = AFFILIATE_IDS.hugendubel;
+      return pid ? `${base}?wkz=${pid}` : base;
+    },
   },
   amazon_uk: {
     label: 'Amazon.co.uk',
     logo: '🛒',
-    build: (isbn, title) =>
-      isbn
-        ? `https://www.amazon.co.uk/dp/${isbn}`
-        : `https://www.amazon.co.uk/s?k=${encodeURIComponent(title)}`,
+    build: (isbn, title) => amazonUrl('co.uk', isbn, title, 'amazon_uk'),
   },
   bookshop_uk: {
     label: 'Bookshop.org',
     logo: '🏪',
-    build: (isbn, title) =>
-      isbn
+    build: (isbn, title) => {
+      const base = isbn
         ? `https://uk.bookshop.org/books/${isbn}`
-        : `https://uk.bookshop.org/books?keywords=${encodeURIComponent(title)}`,
+        : `https://uk.bookshop.org/books?keywords=${encodeURIComponent(title)}`;
+      const pid = AFFILIATE_IDS.bookshop_uk;
+      return pid ? `${base}?ean=${isbn || ''}&affiliate=${pid}` : base;
+    },
   },
   amazon_us: {
     label: 'Amazon.com',
     logo: '🛒',
-    build: (isbn, title) =>
-      isbn
-        ? `https://www.amazon.com/dp/${isbn}`
-        : `https://www.amazon.com/s?k=${encodeURIComponent(title)}`,
+    build: (isbn, title) => amazonUrl('com', isbn, title, 'amazon_us'),
   },
   barnes_noble: {
     label: 'Barnes & Noble',
@@ -85,18 +99,17 @@ const PROVIDERS = {
   amazon_at: {
     label: 'Amazon.de (AT)',
     logo: '🛒',
-    build: (isbn, title) =>
-      isbn
-        ? `https://www.amazon.de/dp/${isbn}`
-        : `https://www.amazon.de/s?k=${encodeURIComponent(title)}`,
+    build: (isbn, title) => amazonUrl('de', isbn, title, 'amazon_at'),
   },
   thalia_at: {
     label: 'Thalia.at',
     logo: '📚',
-    build: (isbn, title) =>
-      isbn
+    build: (isbn, title) => {
+      const base = isbn
         ? `https://www.thalia.at/suche?sq=${isbn}`
-        : `https://www.thalia.at/suche?sq=${encodeURIComponent(title)}`,
+        : `https://www.thalia.at/suche?sq=${encodeURIComponent(title)}`;
+      return base;
+    },
   },
   exlibris: {
     label: 'Ex Libris',
@@ -207,11 +220,12 @@ export function getProviderLinks(book, countryCode) {
     .filter(key => PROVIDERS[key])
     .map(key => {
       const p = PROVIDERS[key];
+      const rawUrl = p.build(isbn, title, author);
       return {
         providerKey: key,
         label: p.label,
         logo: p.logo,
-        url: p.build(isbn, title, author),
+        url: wrapWithGeniuslink(rawUrl), // no-op if GENIUSLINK_TAG is null
       };
     });
 }

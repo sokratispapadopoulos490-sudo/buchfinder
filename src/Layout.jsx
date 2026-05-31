@@ -75,6 +75,15 @@ export default function Layout({ children, currentPageName }) {
           setShowConsent(true);
         }
 
+        // Onboarding enforcement: redirect to /Onboarding if not completed
+        if (user && !user?.onboarding_completed) {
+          const currentPath = locationRef.current.pathname.toLowerCase();
+          if (currentPath !== '/onboarding') {
+            navigate('/Onboarding', { replace: true });
+            return;
+          }
+        }
+
         // Nur navigieren wenn wir noch auf Root stehen und kein Cache
         if (!cachedAuth && locationRef.current.pathname === '/') {
           navigate('/Compass', { replace: true });

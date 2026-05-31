@@ -1,14 +1,14 @@
 /**
- * useGoogleBooks – React Hook für Live Google Books API Suche mit:
+ * useGoogleBooks – React Hook for live Google Books API search with:
  * - Debouncing (400ms)
- * - Pagination
- * - Deduplication
- * - Caching in Book-Entität (stilles Hintergrund-Write)
- * - Graceful Fallback auf lokale DB
+ * - Pagination (no stale closure bug — uses refs for mutable state)
+ * - Deduplication by ISBN/title
+ * - Silent background caching in Book entity
+ * - Graceful fallback to local DB
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { searchGoogleBooks, cacheBookToDB, getMatchingBooksSync } from '@/lib/bookService';
+import { useState, useCallback, useRef } from 'react';
+import { searchGoogleBooks, cacheBookToDB } from '@/lib/bookService';
 
 const DEBOUNCE_MS = 400;
 const PAGE_SIZE = 20;
@@ -18,60 +18,72 @@ export function useGoogleBooks() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [totalItems, setTotalItems] = useState(0);
-  const [startIndex, setStartIndex] = useState(0);
   const [hasMore, setHasMore] = useState(false);
   const [query, setQuery] = useState('');
   const [usingFallback, setUsingFallback] = useState(false);
 
+  // Use refs for mutable state that search/loadMore closures read — avoids stale closure
+  const startIndexRef = useRef(0);
+  const queryRef = useRef('');
+  const optionsRef = useRef({});
+  const seenKeysRef = useRef(new Set());
   const debounceRef = useRef(null);
   const abortRef = useRef(null);
-  const seenIsbnsRef = useRef(new Set());
+  const loadingRef = useRef(false); // prevent concurrent requests
 
-  const search = useCallback(async (searchQuery, options = {}, append = false) => {
+  const _doSearch = useCallback(async (searchQuery, options = {}, append = false) => {
     if (!searchQuery?.trim()) {
       setResults([]);
       setTotalItems(0);
       setHasMore(false);
       setUsingFallback(false);
+      setQuery('');
       return;
     }
 
-    // Abort laufende Anfrage
-    abortRef.current?.abort();
+    // Prevent concurrent requests
+    if (loadingRef.current && !append) {
+      abortRef.current?.abort();
+    }
+    if (loadingRef.current && append) return;
+
     abortRef.current = new AbortController();
 
     if (!append) {
-      seenIsbnsRef.current = new Set();
+      seenKeysRef.current = new Set();
+      startIndexRef.current = 0;
+      queryRef.current = searchQuery;
+      optionsRef.current = options;
       setResults([]);
-      setStartIndex(0);
     }
 
+    loadingRef.current = true;
     setLoading(true);
     setError(null);
     setUsingFallback(false);
 
     try {
-      const idx = append ? startIndex : 0;
+      const idx = startIndexRef.current;
       const { items, totalItems: total, nextStartIndex } = await searchGoogleBooks(searchQuery, {
         maxResults: PAGE_SIZE,
         startIndex: idx,
         ...options,
       });
 
-      // ISBN-Deduplication
+      // Deduplicate
       const unique = items.filter(book => {
         const key = book.isbn13 || book.isbn10 || book.title;
-        if (seenIsbnsRef.current.has(key)) return false;
-        seenIsbnsRef.current.add(key);
+        if (seenKeysRef.current.has(key)) return false;
+        seenKeysRef.current.add(key);
         return true;
       });
 
+      startIndexRef.current = nextStartIndex;
       setResults(prev => append ? [...prev, ...unique] : unique);
       setTotalItems(total);
-      setStartIndex(nextStartIndex);
       setHasMore(nextStartIndex < total);
 
-      // Stilles Caching in DB (fire-and-forget, kein await)
+      // Silent background caching (fire-and-forget)
       unique.forEach(book => cacheBookToDB(book).catch(() => {}));
 
     } catch (err) {
@@ -81,7 +93,6 @@ export function useGoogleBooks() {
       setUsingFallback(true);
       setHasMore(false);
 
-      // Letzter Fallback: lokale Bücher filtern
       const { normalizeLocalBook } = await import('@/lib/bookService');
       const { books: localBooks } = await import('@/components/books/BookDatabase');
       const q = searchQuery.toLowerCase();
@@ -97,45 +108,44 @@ export function useGoogleBooks() {
       setResults(fallback);
       setTotalItems(fallback.length);
     } finally {
+      loadingRef.current = false;
       setLoading(false);
     }
-  }, [startIndex]);
+  }, []); // no dependencies — all mutable state via refs
 
-  // Debounced search
-  const debouncedSearch = useCallback((q, options = {}) => {
-    setQuery(q);
+  // Debounced external-facing search
+  const search = useCallback((searchQuery, options = {}) => {
+    setQuery(searchQuery);
     clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => search(q, options, false), DEBOUNCE_MS);
-  }, [search]);
+    debounceRef.current = setTimeout(() => _doSearch(searchQuery, options, false), DEBOUNCE_MS);
+  }, [_doSearch]);
 
+  // loadMore reads from refs — no stale closure possible
   const loadMore = useCallback(() => {
-    if (!loading && hasMore && query) {
-      search(query, {}, true);
-    }
-  }, [loading, hasMore, query, search]);
+    if (loadingRef.current || !queryRef.current) return;
+    _doSearch(queryRef.current, optionsRef.current, true);
+  }, [_doSearch]);
 
-  const searchByISBN = useCallback(async (isbn) => {
+  const searchByISBN = useCallback((isbn) => {
     const clean = isbn.replace(/[-\s]/g, '');
-    return search(`isbn:${clean}`, {}, false);
-  }, [search]);
+    return _doSearch(`isbn:${clean}`, {}, false);
+  }, [_doSearch]);
 
-  const searchByAuthor = useCallback((author, options = {}) => {
-    return debouncedSearch(`inauthor:${author}`, options);
-  }, [debouncedSearch]);
-
-  const searchByTitle = useCallback((title, options = {}) => {
-    return debouncedSearch(`intitle:${title}`, options);
-  }, [debouncedSearch]);
-
-  const searchByCategory = useCallback((category, options = {}) => {
-    return debouncedSearch(`subject:${category}`, options);
-  }, [debouncedSearch]);
-
-  useEffect(() => {
-    return () => {
-      clearTimeout(debounceRef.current);
-      abortRef.current?.abort();
-    };
+  const reset = useCallback(() => {
+    clearTimeout(debounceRef.current);
+    abortRef.current?.abort();
+    seenKeysRef.current = new Set();
+    startIndexRef.current = 0;
+    queryRef.current = '';
+    optionsRef.current = {};
+    loadingRef.current = false;
+    setResults([]);
+    setQuery('');
+    setTotalItems(0);
+    setHasMore(false);
+    setError(null);
+    setUsingFallback(false);
+    setLoading(false);
   }, []);
 
   return {
@@ -146,19 +156,9 @@ export function useGoogleBooks() {
     hasMore,
     usingFallback,
     query,
-    search: debouncedSearch,
+    search,
     searchByISBN,
-    searchByAuthor,
-    searchByTitle,
-    searchByCategory,
     loadMore,
-    reset: () => {
-      setResults([]);
-      setQuery('');
-      setTotalItems(0);
-      setHasMore(false);
-      setError(null);
-      setUsingFallback(false);
-    },
+    reset,
   };
 }

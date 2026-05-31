@@ -36,7 +36,7 @@ function AccountContent() {
       setUser(currentUser);
       const [recs, books, logs] = await Promise.all([
         base44.entities.Recommendation.list('-created_date'),
-        base44.entities.SavedBook.list('-created_date'),
+        base44.entities.SavedBook.filter({ created_by: currentUser.email }, '-created_date'),
         base44.entities.ReadingLog.list('-reading_date'),
       ]);
       setRecommendations(recs);

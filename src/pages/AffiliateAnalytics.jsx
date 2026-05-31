@@ -1,30 +1,54 @@
 /**
- * AffiliateAnalytics – Admin page for affiliate click statistics.
+ * AffiliateAnalytics – Admin-only page for affiliate click statistics.
+ * Access is restricted to users with role === 'admin'.
  */
 
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { base44 } from '@/api/base44Client';
 import { getClickAnalytics } from '@/lib/affiliateService';
+import { isMonetized } from '@/lib/affiliateConfig';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { TrendingUp, Globe, ShoppingBag, BookOpen } from 'lucide-react';
+import { TrendingUp, Globe, ShoppingBag, BookOpen, AlertCircle } from 'lucide-react';
 
 const COLORS = ['#d97706', '#92400e', '#b45309', '#78350f', '#fbbf24', '#f59e0b', '#fcd34d'];
 
 export default function AffiliateAnalytics() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [authChecked, setAuthChecked] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    getClickAnalytics()
-      .then(setData)
-      .catch(() => setData({ topBooks: [], topProviders: [], countryStats: [], totalClicks: 0 }))
+    base44.auth.me()
+      .then(user => {
+        if (!user) {
+          base44.auth.redirectToLogin(window.location.href);
+          return;
+        }
+        if (user.role !== 'admin') {
+          navigate('/Compass', { replace: true });
+          return;
+        }
+        setAuthChecked(true);
+        return getClickAnalytics();
+      })
+      .then(analytics => {
+        if (analytics) setData(analytics);
+      })
+      .catch(() => {
+        base44.auth.redirectToLogin(window.location.href);
+      })
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return (
+  if (loading || !authChecked) return (
     <div className="flex items-center justify-center min-h-screen">
       <div className="w-8 h-8 border-4 border-amber-200 border-t-amber-600 rounded-full animate-spin" />
     </div>
   );
+
+  if (!data) return null;
 
   return (
     <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] p-4 pb-24">
@@ -38,6 +62,19 @@ export default function AffiliateAnalytics() {
             {data.totalClicks} Klicks insgesamt
           </p>
         </div>
+
+        {/* Monetization warning if no IDs are set */}
+        {!isMonetized('amazon_de') && (
+          <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4 flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">Keine Affiliate-IDs konfiguriert</p>
+              <p className="text-xs text-amber-700 dark:text-amber-400 mt-1">
+                Links sind aktiv aber nicht monetarisiert. Trage deine Partner-IDs in <code className="font-mono">lib/affiliateConfig.js</code> ein.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Provider Stats */}
         <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-4">
