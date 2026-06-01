@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { Compass, ArrowRight, ChevronLeft, User, LogOut } from 'lucide-react';
+import { Compass, ArrowRight, ChevronLeft } from 'lucide-react';
 import QuestionCard from '@/components/books/QuestionCard';
 import ProfileCard from '@/components/books/ProfileCard';
 import BookCard from '@/components/books/BookCard';
 import { getMatchingBooks } from '@/components/books/BookDatabaseLogic';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
-import { LanguageProvider, useLanguage } from '@/components/language/LanguageContext';
-import LanguageSelector from '@/components/language/LanguageSelector';
-import { useTranslatedText } from '@/components/language/useTranslatedText';
+import { useLanguage } from '@/components/language/LanguageContext';
 
 // Erste Frage für alle - Altersgruppe ermitteln
 const ageQuestion = {
@@ -216,30 +214,7 @@ const questionSets = {
   ]
 };
 
-// Statische UI-Texte außerhalb der Komponente definieren
-const UI_TEXTS = {
-  pageTitle: "Buchsuche",
-  pageSubtitle: "Finde dein perfektes nächstes Buch",
-  startSearch: "Neue Suche starten",
-  backButton: "Zurück",
-  backToStart: "Zum Start",
-  backToProfile: "Zurück zum Profil",
-  analysisComplete: "Analyse abgeschlossen",
-  myRecommendationsButton: "Meine Buchempfehlungen",
-  loading: "Wird geladen...",
-  yourRecommendations: "Deine Empfehlungen",
-  selectedByNeeds: "Ausgewählt nach deinen Bedürfnissen und deinem Lesestil",
-  freeVersion: "Kostenlose Version:",
-  recommendationsUsed: "von 3 Empfehlungen genutzt",
-  upgradePremium: "Auf Premium upgraden",
-  bestMatch: "Passt am besten zu deinem Thema",
-  perfectChoice: "Deine perfekte Wahl für genau jetzt",
-  secondBest: "Ebenfalls eine starke Wahl",
-  deepensTheme: "Vertieft dein Thema aus einem anderen Blickwinkel",
-  somethingDifferent: "Wenn du etwas ganz anderes lesen willst",
-  expandHorizon: "Erweitert deinen Horizont mit neuen Perspektiven",
-  newAnalysis: "Neue Analyse starten"
-};
+
 
 const generateReasons = (book, profile) => {
   const topicMatch = profile.mainTopics.find(t => book.tags.includes(t));
@@ -348,9 +323,7 @@ function BookSearchContent() {
   const [isPremium, setIsPremium] = useState(false);
   const [loading, setLoading] = useState(false);
   const [translatedQuestions, setTranslatedQuestions] = useState(questionSets.erwachsene);
-  const { language, changeLanguage, translateObject, isLoading: langLoading, supportedLanguages } = useLanguage();
-  
-  const uiTexts = useTranslatedText(UI_TEXTS);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const init = async () => {
@@ -564,10 +537,10 @@ function BookSearchContent() {
                 <Compass className="w-10 h-10 text-white" />
               </div>
               <h1 className="text-4xl md:text-5xl font-light text-stone-800 mb-3">
-                {uiTexts.pageTitle}
+                {t('booksearch.title')}
               </h1>
               <p className="text-stone-500 text-lg">
-                {uiTexts.pageSubtitle}
+                {t('booksearch.subtitle')}
               </p>
             </motion.div>
 
@@ -576,7 +549,7 @@ function BookSearchContent() {
               size="lg"
               className="bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white px-8 py-6 text-lg rounded-xl gap-2"
             >
-              {uiTexts.startSearch}
+              {t('btn.startSearch')}
               <ArrowRight className="w-5 h-5" />
             </Button>
           </motion.div>
@@ -596,7 +569,7 @@ function BookSearchContent() {
               className="flex items-center gap-2 text-stone-500 hover:text-stone-700 mb-8 transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
-              <span className="text-sm">{currentQuestion > 0 ? uiTexts.backButton : uiTexts.backToStart}</span>
+              <span className="text-sm">{currentQuestion > 0 ? t('btn.back') : t('btn.backToStart')}</span>
             </button>
 
             <div className="flex-1 flex items-center justify-center">
@@ -635,7 +608,7 @@ function BookSearchContent() {
               className="flex items-center gap-2 text-stone-500 hover:text-stone-700 mb-8 transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
-              <span className="text-sm">{uiTexts.backButton}</span>
+              <span className="text-sm">{t('btn.back')}</span>
             </button>
 
             <div className="flex-1 flex flex-col items-center justify-center">
@@ -644,7 +617,7 @@ function BookSearchContent() {
                 animate={{ y: 0, opacity: 1 }}
                 className="text-stone-500 text-sm uppercase tracking-wide mb-6"
               >
-                {uiTexts.analysisComplete}
+                {t('results.analysisComplete')}
               </motion.p>
 
               <ProfileCard profile={profile} />
@@ -661,7 +634,7 @@ function BookSearchContent() {
                   disabled={loading}
                   className="bg-stone-800 hover:bg-stone-700 text-white px-8 py-6 text-lg rounded-xl gap-2"
                 >
-                  {loading ? uiTexts.loading : uiTexts.myRecommendationsButton}
+                  {loading ? t('status.loading') : t('btn.myRecommendations')}
                   <ArrowRight className="w-5 h-5" />
                 </Button>
               </motion.div>
@@ -685,7 +658,7 @@ function BookSearchContent() {
                   className="flex items-center gap-2 text-stone-500 hover:text-stone-700 transition-colors"
                 >
                   <ChevronLeft className="w-4 h-4" />
-                  <span className="text-sm">{uiTexts.backToProfile}</span>
+                  <span className="text-sm">{t('btn.backToProfile')}</span>
                 </button>
               </div>
 
@@ -695,17 +668,17 @@ function BookSearchContent() {
                 className="text-center mb-12"
               >
                 <h2 className="text-3xl md:text-4xl font-light text-stone-800 mb-3">
-                  {uiTexts.yourRecommendations}
+                  {t('results.title')}
                 </h2>
                 <p className="text-stone-500 font-light">
-                  {uiTexts.selectedByNeeds}
+                  {t('results.subtitle')}
                 </p>
                 
                 {!isPremium && isAuthenticated && (
                   <div className="mt-6 inline-block">
                     <div className="bg-amber-50 border border-amber-200 rounded-lg px-6 py-4">
                       <p className="text-sm text-amber-800 mb-2">
-                        <strong>{uiTexts.freeVersion}</strong> {recommendationCount} {uiTexts.recommendationsUsed}
+                        <strong>{t('results.freeVersion')}</strong> {recommendationCount} {t('results.recommendationsUsed')}
                       </p>
                       {recommendationCount >= 3 && (
                         <Button
@@ -713,7 +686,7 @@ function BookSearchContent() {
                           size="sm"
                           className="bg-amber-600 hover:bg-amber-700 text-white"
                         >
-                          {uiTexts.upgradePremium}
+                          {t('btn.upgradePremium')}
                         </Button>
                       )}
                     </div>
@@ -735,17 +708,17 @@ function BookSearchContent() {
 
                   let title, subtitle;
                   if (isContrast) {
-                    title = uiTexts.somethingDifferent;
-                    subtitle = uiTexts.expandHorizon;
+                    title = t('results.somethingDifferent');
+                    subtitle = t('results.expandHorizon');
                   } else if (idx === 0) {
-                    title = uiTexts.bestMatch;
-                    subtitle = uiTexts.perfectChoice;
+                    title = t('results.bestMatch');
+                    subtitle = t('results.perfectChoice');
                   } else if (idx === 1) {
-                    title = uiTexts.secondBest;
-                    subtitle = uiTexts.deepensTheme;
+                    title = t('results.secondBest');
+                    subtitle = t('results.deepensTheme');
                   } else {
-                    title = `Empfehlung #${placement}`;
-                    subtitle = 'Passt zu deinen Interessen';
+                    title = `${t('results.recommendation')} #${placement}`;
+                    subtitle = t('results.fitsInterests');
                   }
 
                   return (
@@ -780,7 +753,7 @@ function BookSearchContent() {
                   onClick={handleRestart}
                   className="text-stone-500 hover:text-stone-700 text-sm underline underline-offset-4 transition-colors"
                 >
-                  {uiTexts.newAnalysis}
+                  {t('btn.newAnalysis')}
                 </button>
               </motion.div>
             </div>
@@ -792,9 +765,5 @@ function BookSearchContent() {
 }
 
 export default function BookSearch() {
-  return (
-    <LanguageProvider>
-      <BookSearchContent />
-    </LanguageProvider>
-  );
+  return <BookSearchContent />;
 }

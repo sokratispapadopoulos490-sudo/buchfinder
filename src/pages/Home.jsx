@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { Compass, ArrowRight, ChevronLeft, User, LogOut } from 'lucide-react';
+import { Compass, ArrowRight, ChevronLeft, User } from 'lucide-react';
 import QuestionCard from '@/components/books/QuestionCard';
 import ProfileCard from '@/components/books/ProfileCard';
 import BookCard from '@/components/books/BookCard';
@@ -9,8 +9,6 @@ import { getMatchingBooks } from '@/components/books/BookDatabaseLogic';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/components/language/LanguageContext';
-import LanguageSelector from '@/components/language/LanguageSelector';
-import { useTranslatedText } from '@/components/language/useTranslatedText';
 
 // Erste Frage für alle - Altersgruppe ermitteln
 const ageQuestion = {
@@ -216,37 +214,7 @@ const questionSets = {
   ]
 };
 
-// Statische UI-Texte außerhalb der Komponente definieren
-const UI_TEXTS = {
-  welcomeTitle: "Book Compass",
-  welcomeSubtitle: "Dein Wegweiser zum perfekten Buch",
-  welcomeDescription: "Wenige einfache Fragen führen dich zu Büchern, die genau zu dir passen – für jedes Alter.",
-  freeStart: "Kostenlos starten",
-  freeDescription: "3 personalisierte Empfehlungen – komplett kostenlos, keine Kreditkarte nötig",
-  premiumTitle: "Premium für 4,99€/Monat",
-  premiumDescription: "Unbegrenzte Empfehlungen, erweiterte Profile und regelmäßig neue Bücher",
-  startButton: "Entdeckungsreise starten",
-  backButton: "Zurück",
-  backToStart: "Zum Start",
-  backToProfile: "Zurück zum Profil",
-  analysisComplete: "Analyse abgeschlossen",
-  myRecommendationsButton: "Meine Buchempfehlungen",
-  loading: "Wird geladen...",
-  yourRecommendations: "Deine Empfehlungen",
-  selectedByNeeds: "Ausgewählt nach deinen Bedürfnissen und deinem Lesestil",
-  freeVersion: "Kostenlose Version:",
-  recommendationsUsed: "von 3 Empfehlungen genutzt",
-  upgradePremium: "Auf Premium upgraden",
-  bestMatch: "Passt am besten zu deinem Thema",
-  perfectChoice: "Deine perfekte Wahl für genau jetzt",
-  secondBest: "Ebenfalls eine starke Wahl",
-  deepensTheme: "Vertieft dein Thema aus einem anderen Blickwinkel",
-  somethingDifferent: "Wenn du etwas ganz anderes lesen willst",
-  expandHorizon: "Erweitert deinen Horizont mit neuen Perspektiven",
-  newAnalysis: "Neue Analyse starten",
-  myAccount: "Mein Account",
-  login: "Anmelden"
-};
+
 
 const generateReasons = (book, profile) => {
   const topicMatch = profile.mainTopics.find(t => book.tags.includes(t));
@@ -362,9 +330,7 @@ function HomeContent() {
   const [loading, setLoading] = useState(false);
   const [translatedQuestions, setTranslatedQuestions] = useState(questionSets.erwachsene);
   const [cameFromCompass, setCameFromCompass] = useState(false);
-  const { language, changeLanguage, translateObject, isLoading: langLoading, supportedLanguages } = useLanguage();
-  
-  const uiTexts = useTranslatedText(UI_TEXTS);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const init = async () => {
@@ -653,7 +619,7 @@ function HomeContent() {
               className="gap-2 border-amber-300 hover:bg-amber-50 text-amber-900"
             >
               <User className="w-4 h-4" />
-              {uiTexts.login}
+              {t('btn.login')}
             </Button>
           )}
         </div>
@@ -732,7 +698,7 @@ function HomeContent() {
               transition={{ delay: showBookOpen ? 1.6 : 0.3 }}
               className="text-4xl md:text-5xl font-light text-stone-800 dark:text-stone-200 text-center mb-2"
             >
-              {uiTexts.welcomeTitle}
+              {t('home.title')}
             </motion.h1>
 
             <motion.p
@@ -741,7 +707,7 @@ function HomeContent() {
               transition={{ delay: showBookOpen ? 1.7 : 0.4 }}
               className="text-amber-700 dark:text-amber-500 text-center text-sm uppercase tracking-wider mb-8 font-medium"
             >
-              {uiTexts.welcomeSubtitle}
+              {t('home.subtitle')}
             </motion.p>
 
             <motion.p
@@ -750,7 +716,7 @@ function HomeContent() {
               transition={{ delay: showBookOpen ? 1.8 : 0.5 }}
               className="text-stone-500 dark:text-stone-400 text-center max-w-md mb-8 text-base font-light"
             >
-              {uiTexts.welcomeDescription}
+              {t('home.description')}
             </motion.p>
 
             {/* Freemium Info */}
@@ -763,10 +729,10 @@ function HomeContent() {
               <div className="space-y-4">
                 <div className="text-center">
                   <div className="inline-flex items-center gap-2 bg-amber-100 text-amber-800 px-4 py-2 rounded-full text-sm font-medium mb-3">
-                    ✨ {uiTexts.freeStart}
+                    ✨ {t('home.freeStart')}
                   </div>
                   <p className="text-stone-700 dark:text-stone-300 text-sm">
-                    {uiTexts.freeDescription}
+                    {t('home.freeDescription')}
                   </p>
                 </div>
                 
@@ -774,9 +740,9 @@ function HomeContent() {
                   <div className="flex items-start gap-3 text-sm text-stone-600 dark:text-stone-400">
                     <Compass className="w-5 h-5 text-amber-600 dark:text-amber-500 flex-shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-medium text-stone-800 dark:text-stone-200 mb-1">{uiTexts.premiumTitle}</p>
+                      <p className="font-medium text-stone-800 dark:text-stone-200 mb-1">{t('home.premiumTitle')}</p>
                       <p className="text-xs leading-relaxed">
-                        {uiTexts.premiumDescription}
+                        {t('home.premiumDescription')}
                       </p>
                     </div>
                   </div>
@@ -795,7 +761,7 @@ function HomeContent() {
                 size="lg"
                 className="bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white px-8 py-6 text-lg rounded-xl gap-2 transition-all shadow-lg"
               >
-                {uiTexts.startButton}
+                {t('btn.start')}
                 <ArrowRight className="w-5 h-5" />
               </Button>
             </motion.div>
@@ -820,7 +786,7 @@ function HomeContent() {
               className="flex items-center gap-2 text-stone-500 dark:text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 mb-8 transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
-              <span className="text-sm">{currentQuestion > 0 ? uiTexts.backButton : uiTexts.backToStart}</span>
+              <span className="text-sm">{currentQuestion > 0 ? t('btn.back') : t('btn.backToStart')}</span>
             </button>
 
             <div className="flex-1 flex items-center justify-center">
@@ -859,7 +825,7 @@ function HomeContent() {
               className="flex items-center gap-2 text-stone-500 dark:text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 mb-8 transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
-              <span className="text-sm">{uiTexts.backButton}</span>
+              <span className="text-sm">{t('btn.back')}</span>
             </button>
 
             <div className="flex-1 flex flex-col items-center justify-center">
@@ -868,7 +834,7 @@ function HomeContent() {
                 animate={{ y: 0, opacity: 1 }}
                 className="text-stone-500 text-sm uppercase tracking-wide mb-6"
               >
-                {uiTexts.analysisComplete}
+                {t('results.analysisComplete')}
               </motion.p>
 
               <ProfileCard profile={profile} />
@@ -885,7 +851,7 @@ function HomeContent() {
                   disabled={loading}
                   className="bg-stone-800 hover:bg-stone-700 text-white px-8 py-6 text-lg rounded-xl gap-2"
                 >
-                  {loading ? uiTexts.loading : uiTexts.myRecommendationsButton}
+                  {loading ? t('status.loading') : t('btn.myRecommendations')}
                   <ArrowRight className="w-5 h-5" />
                 </Button>
               </motion.div>
@@ -911,7 +877,7 @@ function HomeContent() {
                     className="flex items-center gap-2 text-stone-500 dark:text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 transition-colors"
                   >
                     <ChevronLeft className="w-4 h-4" />
-                    <span className="text-sm">{cameFromCompass ? 'Zurück zum Kompass' : uiTexts.backToProfile}</span>
+                    <span className="text-sm">{cameFromCompass ? t('btn.backToCompass') : t('btn.backToProfile')}</span>
                   </button>
 
                   </div>
@@ -923,10 +889,10 @@ function HomeContent() {
                 className="text-center mb-12"
               >
                 <h2 className="text-3xl md:text-4xl font-light text-stone-800 dark:text-stone-200 mb-3">
-                  {uiTexts.yourRecommendations}
+                  {t('results.title')}
                 </h2>
                 <p className="text-stone-500 dark:text-stone-400 font-light">
-                  {uiTexts.selectedByNeeds}
+                  {t('results.subtitle')}
                 </p>
                 
                 {/* Freemium-Hinweis */}
@@ -934,7 +900,7 @@ function HomeContent() {
                   <div className="mt-6 inline-block">
                     <div className="bg-amber-50 border border-amber-200 rounded-lg px-6 py-4">
                       <p className="text-sm text-amber-800 mb-2">
-                        <strong>{uiTexts.freeVersion}</strong> {recommendationCount} {uiTexts.recommendationsUsed}
+                        <strong>{t('results.freeVersion')}</strong> {recommendationCount} {t('results.recommendationsUsed')}
                       </p>
                       {recommendationCount >= 3 && (
                         <Button
@@ -942,7 +908,7 @@ function HomeContent() {
                           size="sm"
                           className="bg-amber-600 hover:bg-amber-700 text-white"
                         >
-                          {uiTexts.upgradePremium}
+                          {t('btn.upgradePremium')}
                         </Button>
                       )}
                     </div>
@@ -964,17 +930,17 @@ function HomeContent() {
 
                   let title, subtitle;
                   if (isContrast) {
-                    title = uiTexts.somethingDifferent;
-                    subtitle = uiTexts.expandHorizon;
+                    title = t('results.somethingDifferent');
+                    subtitle = t('results.expandHorizon');
                   } else if (idx === 0) {
-                    title = uiTexts.bestMatch;
-                    subtitle = uiTexts.perfectChoice;
+                    title = t('results.bestMatch');
+                    subtitle = t('results.perfectChoice');
                   } else if (idx === 1) {
-                    title = uiTexts.secondBest;
-                    subtitle = uiTexts.deepensTheme;
+                    title = t('results.secondBest');
+                    subtitle = t('results.deepensTheme');
                   } else {
-                    title = `Empfehlung #${placement}`;
-                    subtitle = 'Passt zu deinen Interessen';
+                    title = `${t('results.recommendation')} #${placement}`;
+                    subtitle = t('results.fitsInterests');
                   }
 
                   return (
@@ -1009,7 +975,7 @@ function HomeContent() {
                   onClick={handleRestart}
                   className="text-stone-500 dark:text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 text-sm underline underline-offset-4 transition-colors"
                 >
-                  {uiTexts.newAnalysis}
+                  {t('btn.newAnalysis')}
                 </button>
               </motion.div>
             </div>

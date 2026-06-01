@@ -12,6 +12,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
+import { t as _t } from '@/lib/i18n';
 
 const LanguageContext = createContext();
 
@@ -74,6 +75,9 @@ export const LanguageProvider = ({ children }) => {
     } catch {}
   }, []);
 
+  // t(key, fallback?) – synchron, kein async, kein LLM
+  const t = useCallback((key, fallback) => _t(key, language, fallback), [language]);
+
   // Reine Passthrough-Funktionen – kein InvokeLLM
   const translate = useCallback(async (text) => text, []);
   const translateObject = useCallback(async (obj) => obj, []);
@@ -86,6 +90,7 @@ export const LanguageProvider = ({ children }) => {
     <LanguageContext.Provider value={{
       language,
       changeLanguage,
+      t,
       translate,
       translateObject,
       supportedLanguages: SUPPORTED_LANGUAGES,

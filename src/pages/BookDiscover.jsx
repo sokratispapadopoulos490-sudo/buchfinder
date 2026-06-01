@@ -12,28 +12,29 @@ import BookCover from '@/components/books/BookCover';
 import LiveBookCard from '@/components/books/LiveBookCard';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '@/components/language/LanguageContext';
 
 const LANGUAGE_OPTIONS = [
-  { code: '', label: 'Alle Sprachen' },
-  { code: 'de', label: '🇩🇪 Deutsch' },
-  { code: 'en', label: '🇬🇧 Englisch' },
-  { code: 'fr', label: '🇫🇷 Französisch' },
-  { code: 'es', label: '🇪🇸 Spanisch' },
-  { code: 'it', label: '🇮🇹 Italienisch' },
-  { code: 'pt', label: '🇧🇷 Portugiesisch' },
-  { code: 'ja', label: '🇯🇵 Japanisch' },
-  { code: 'zh', label: '🇨🇳 Chinesisch' },
+  { code: '', flag: '', name: '🌐' },
+  { code: 'de', flag: '🇩🇪', name: 'Deutsch' },
+  { code: 'en', flag: '🇬🇧', name: 'English' },
+  { code: 'fr', flag: '🇫🇷', name: 'Français' },
+  { code: 'es', flag: '🇪🇸', name: 'Español' },
+  { code: 'it', flag: '🇮🇹', name: 'Italiano' },
+  { code: 'pt', flag: '🇧🇷', name: 'Português' },
+  { code: 'ja', flag: '🇯🇵', name: '日本語' },
+  { code: 'zh', flag: '🇨🇳', name: '中文' },
 ];
 
-const QUICK_SEARCHES = [
-  { label: 'Persönliche Entwicklung', query: 'subject:self-help' },
-  { label: 'Philosophie', query: 'subject:philosophy' },
-  { label: 'Fantasy', query: 'subject:fantasy fiction' },
-  { label: 'Thriller', query: 'subject:thriller' },
-  { label: 'Geschichte', query: 'subject:history' },
-  { label: 'Wissenschaft', query: 'subject:science' },
-  { label: 'Biografien', query: 'subject:biography' },
-  { label: 'Romantik', query: 'subject:romance' },
+const QUICK_SEARCH_KEYS = [
+  { key: 'discover.qs.selfHelp',   query: 'subject:self-help' },
+  { key: 'discover.qs.philosophy', query: 'subject:philosophy' },
+  { key: 'discover.qs.fantasy',    query: 'subject:fantasy fiction' },
+  { key: 'discover.qs.thriller',   query: 'subject:thriller' },
+  { key: 'discover.qs.history',    query: 'subject:history' },
+  { key: 'discover.qs.science',    query: 'subject:science' },
+  { key: 'discover.qs.biography',  query: 'subject:biography' },
+  { key: 'discover.qs.romance',    query: 'subject:romance' },
 ];
 
 export default function BookDiscover() {
@@ -45,6 +46,7 @@ export default function BookDiscover() {
   const observerRef = useRef(null);
   const loadMoreRef = useRef(null);
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const { results, loading, error, totalItems, hasMore, usingFallback, query, search, searchByISBN, loadMore, reset } = useGoogleBooks();
 
@@ -93,7 +95,7 @@ export default function BookDiscover() {
         <div className="max-w-2xl mx-auto px-4 py-4">
           <div className="flex items-center gap-3 mb-3">
             <Globe className="w-5 h-5 text-amber-600 dark:text-amber-500 flex-shrink-0" />
-            <h1 className="text-lg font-semibold text-stone-900 dark:text-white">Bücher entdecken</h1>
+            <h1 className="text-lg font-semibold text-stone-900 dark:text-white">{t('discover.title')}</h1>
             <span className="text-xs text-stone-400 dark:text-stone-500 ml-auto">via Google Books</span>
           </div>
 
@@ -106,7 +108,7 @@ export default function BookDiscover() {
                 value={inputValue}
                 onChange={e => setInputValue(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Titel, Autor oder ISBN suchen…"
+                placeholder={t('discover.searchPlaceholder')}
                 className="w-full pl-9 pr-9 py-2.5 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-[#1a1a1a] text-sm text-stone-800 dark:text-stone-200 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
               />
               {inputValue && (
@@ -144,7 +146,7 @@ export default function BookDiscover() {
               >
                 <div className="pt-3">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-xs text-stone-500 dark:text-stone-400 flex-shrink-0">Sprache:</span>
+                    <span className="text-xs text-stone-500 dark:text-stone-400 flex-shrink-0">{t('discover.languageFilter')}</span>
                     {LANGUAGE_OPTIONS.map(opt => (
                       <button
                         key={opt.code}
@@ -155,7 +157,7 @@ export default function BookDiscover() {
                             : 'border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-400 bg-white dark:bg-[#1a1a1a] hover:border-amber-400'
                         }`}
                       >
-                        {opt.label}
+                        {opt.code === '' ? t('discover.allLanguages') : `${opt.flag} ${opt.name}`}
                       </button>
                     ))}
                   </div>
@@ -170,15 +172,15 @@ export default function BookDiscover() {
         {/* Quick searches – nur wenn keine aktive Suche */}
         {!query && (
           <div className="mb-6">
-            <p className="text-xs text-stone-500 dark:text-stone-400 mb-3 uppercase tracking-wider">Themen entdecken</p>
+            <p className="text-xs text-stone-500 dark:text-stone-400 mb-3 uppercase tracking-wider">{t('discover.topicsLabel')}</p>
             <div className="flex flex-wrap gap-2">
-              {QUICK_SEARCHES.map(qs => (
+              {QUICK_SEARCH_KEYS.map(qs => (
                 <button
                   key={qs.query}
                   onClick={() => handleQuickSearch(qs.query)}
                   className="text-sm px-4 py-2 rounded-full bg-white dark:bg-[#1a1a1a] border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-colors"
                 >
-                  {qs.label}
+                  {t(qs.key)}
                 </button>
               ))}
             </div>
@@ -189,7 +191,7 @@ export default function BookDiscover() {
         {query && !loading && totalItems > 0 && (
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm text-stone-500 dark:text-stone-400">
-              {usingFallback ? 'Lokale Ergebnisse' : `~${totalItems.toLocaleString()} Bücher gefunden`}
+              {usingFallback ? t('discover.localResults') : `~${totalItems.toLocaleString()} ${t('discover.results')}`}
             </p>
             {!usingFallback && <span className="text-xs text-green-600 dark:text-green-500 flex items-center gap-1"><Globe className="w-3 h-3" />Live</span>}
           </div>
@@ -241,11 +243,11 @@ export default function BookDiscover() {
               {loading && hasMore && <Loader2 className="w-6 h-6 text-amber-600 animate-spin" />}
               {!loading && hasMore && (
                 <button onClick={loadMore} className="text-sm text-amber-600 dark:text-amber-500 hover:underline flex items-center gap-1">
-                  Mehr laden <ChevronDown className="w-4 h-4" />
+                  {t('btn.loadMore')} <ChevronDown className="w-4 h-4" />
                 </button>
               )}
               {!hasMore && results.length > 0 && !usingFallback && (
-                <p className="text-xs text-stone-400 dark:text-stone-500">Alle Ergebnisse geladen</p>
+                <p className="text-xs text-stone-400 dark:text-stone-500">{t('status.allLoaded')}</p>
               )}
             </div>
           </div>
@@ -255,8 +257,8 @@ export default function BookDiscover() {
         {!loading && query && results.length === 0 && (
           <div className="text-center py-16">
             <BookOpen className="w-12 h-12 text-stone-300 mx-auto mb-4" />
-            <p className="text-stone-500 dark:text-stone-400 mb-2">Keine Bücher gefunden</p>
-            <p className="text-sm text-stone-400">Versuche andere Suchbegriffe</p>
+            <p className="text-stone-500 dark:text-stone-400 mb-2">{t('discover.empty')}</p>
+            <p className="text-sm text-stone-400">{t('discover.emptyHint')}</p>
           </div>
         )}
 
@@ -264,7 +266,7 @@ export default function BookDiscover() {
         {!query && !loading && (
           <div className="text-center py-12 text-stone-400 dark:text-stone-600">
             <Search className="w-12 h-12 mx-auto mb-3 opacity-40" />
-            <p className="text-sm">Suche in Millionen von Büchern weltweit</p>
+            <p className="text-sm">{t('discover.startHint')}</p>
           </div>
         )}
       </div>

@@ -12,19 +12,21 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Compass, Users, User, Search } from 'lucide-react';
+import { useLanguage } from '@/components/language/LanguageContext';
 
 const PAGES_WITHOUT_NAV = ['onboarding', 'legal'];
 
-const NAV_ITEMS = [
-  { icon: Users,   label: 'Community', path: '/Community' },
-  { icon: Compass, label: 'Compass',   path: '/Compass' },
-  { icon: Search,  label: 'Entdecken', path: '/BookDiscover' },
-  { icon: User,    label: 'Account',   path: '/Account' },
+const NAV_PATHS = [
+  { icon: Users,   key: 'nav.community', path: '/Community' },
+  { icon: Compass, key: 'nav.compass',   path: '/Compass' },
+  { icon: Search,  key: 'nav.discover',  path: '/BookDiscover' },
+  { icon: User,    key: 'nav.account',   path: '/Account' },
 ];
 
 export default function BottomNav({ isAuthenticated, currentPageName }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useLanguage();
 
   const [isDark, setIsDark] = useState(() => {
     try {
@@ -80,7 +82,8 @@ export default function BottomNav({ isAuthenticated, currentPageName }) {
         willChange: 'transform',
       }}
     >
-      {NAV_ITEMS.map(({ icon: Icon, label, path }) => {
+      {NAV_PATHS.map(({ icon: Icon, key, path }) => {
+        const label = t(key);
         const current = isActive(path);
         return (
           <button
