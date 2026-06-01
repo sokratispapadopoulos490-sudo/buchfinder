@@ -1,108 +1,81 @@
+/**
+ * Layout – Wrapper für alle Seiten.
+ *
+ * Verantwortlichkeiten:
+ * - Liest Auth-State NUR aus AuthContext (kein eigener isAuthenticated-State)
+ * - Kein sessionStorage-Init-Flag mehr (layout_init entfernt)
+ * - Kein Vollbild-Spinner (isLoadingAuth/isLoadingPublicSettings sind immer false)
+ * - Einmalige Navigation: Home → Compass wenn eingeloggt, → Onboarding wenn nicht
+ * - Onboarding-Enforcement: Nutzer ohne onboarding_completed → /Onboarding
+ * - ConsentModal für Nutzer ohne AGB-Akzeptanz
+ * - BottomNav via createPortal – immer gemountet, nur per CSS sichtbar/versteckt
+ * - Dark Mode wird in AuthContext gesetzt, hier nur beim Start aus localStorage gelesen
+ */
+
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import ConsentModal from '@/components/legal/ConsentModal';
 import BottomNav from '@/components/navigation/BottomNav';
-import { base44 } from '@/api/base44Client';
+import { useAuth } from '@/lib/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { LanguageProvider } from '@/components/language/LanguageContext';
 
-// ─── Session-level flags: überleben Orientation Changes & React-Remounts ──────
-// sessionStorage statt module-var, da iOS Safari manchmal Module neu evaluiert
-function _getInit() { try { return sessionStorage.getItem('layout_init') === '1'; } catch { return false; } }
-function _setInit() { try { sessionStorage.setItem('layout_init', '1'); } catch {} }
-let _isAuthenticated = null; // module-var reicht für in-memory state
-
-// Dark Mode sofort beim Modulload anwenden – vor dem ersten React-Render
-(function applyDark() {
+// Dark Mode sofort vor dem ersten React-Render anwenden – verhindert FOUC
+(function applyDarkModeImmediately() {
   try {
     if (localStorage.getItem('darkMode') === 'true') {
       document.documentElement.classList.add('dark');
     }
-  } catch (e) {}
+  } catch {}
 })();
 
-const PAGES_WITHOUT_NAV = ['Onboarding', 'Legal'];
+const PAGES_WITHOUT_NAV = ['onboarding', 'legal'];
 
 export default function Layout({ children, currentPageName }) {
+  const { isAuthenticated, user } = useAuth();
   const [showConsent, setShowConsent] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    // Sofort aus module-cache oder localStorage – KEIN Flackern
-    () => _isAuthenticated !== null
-      ? _isAuthenticated
-      : localStorage.getItem('isAuthenticated') === 'true'
-  );
   const navigate = useNavigate();
   const location = useLocation();
   const locationRef = useRef(location);
   locationRef.current = location;
 
+  // Einmalige initiale Navigation (nur beim allerersten Render auf '/')
+  const didInitRef = useRef(false);
   useEffect(() => {
-    // ── NUR EINMAL pro JS-Session ausführen ─────────────────────────────────
-    // Bei Orientation Change: JS-Kontext bleibt, _initialized = true → SKIP
-    if (_getInit()) return;
-    _setInit();
+    if (didInitRef.current) return;
+    didInitRef.current = true;
 
-    const cachedAuth = localStorage.getItem('isAuthenticated') === 'true';
+    if (locationRef.current.pathname !== '/') return;
 
-    // Erste Navigation (nur wenn noch auf Root)
-    if (locationRef.current.pathname === '/') {
-      navigate(cachedAuth ? '/Compass' : '/Onboarding', { replace: true });
-    }
-
-    // Auth still im Hintergrund prüfen – KEIN Spinner, KEINE Unterbrechung
-    base44.auth.me()
-      .then(user => {
-        _isAuthenticated = true;
-        setIsAuthenticated(true);
-        localStorage.setItem('isAuthenticated', 'true');
-
-        // Dark Mode aus Profil
-        if (user?.dark_mode) {
-          document.documentElement.classList.add('dark');
-          localStorage.setItem('darkMode', 'true');
-        } else if (user?.dark_mode === false) {
-          document.documentElement.classList.remove('dark');
-          localStorage.setItem('darkMode', 'false');
-        }
-
-        // Sprache aus Profil
-        if (user?.language) {
-          localStorage.setItem('appLanguage', user.language);
-        }
-
-        // Consent prüfen
-        if (!user?.terms_accepted || !user?.privacy_accepted) {
-          setShowConsent(true);
-        }
-
-        // Onboarding enforcement: redirect to /Onboarding if not completed
-        if (user && !user?.onboarding_completed) {
-          const currentPath = locationRef.current.pathname.toLowerCase();
-          if (currentPath !== '/onboarding') {
-            navigate('/Onboarding', { replace: true });
-            return;
-          }
-        }
-
-        // Nur navigieren wenn wir noch auf Root stehen und kein Cache
-        if (!cachedAuth && locationRef.current.pathname === '/') {
-          navigate('/Compass', { replace: true });
-        }
-      })
-      .catch(() => {
-        // Netzwerkfehler: Cache behalten wenn vorhanden (Orientation, kurzes Offline)
-        if (!cachedAuth) {
-          _isAuthenticated = false;
-          setIsAuthenticated(false);
-          localStorage.removeItem('isAuthenticated');
-          if (locationRef.current.pathname === '/') {
-            navigate('/Onboarding', { replace: true });
-          }
-        }
-      });
+    // Optimistisch aus Cache navigieren – Auth-Validierung läuft in AuthContext
+    const cachedAuth = (() => {
+      try { return JSON.parse(localStorage.getItem('bc_auth_v2') || 'null')?.isAuthenticated; } catch { return false; }
+    })();
+    navigate(cachedAuth ? '/Compass' : '/Onboarding', { replace: true });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const showNavigation = isAuthenticated && !PAGES_WITHOUT_NAV.includes(currentPageName);
+  // Onboarding-Enforcement: reagiert auf User-Änderungen aus AuthContext
+  useEffect(() => {
+    if (!user) return;
+    if (user.onboarding_completed) return;
+    const path = locationRef.current.pathname.toLowerCase();
+    if (!path.includes('onboarding')) {
+      navigate('/Onboarding', { replace: true });
+    }
+  }, [user, navigate]);
+
+  // Consent-Check: reagiert auf User-Änderungen
+  useEffect(() => {
+    if (!user) return;
+    if (!user.terms_accepted || !user.privacy_accepted) {
+      setShowConsent(true);
+    } else {
+      setShowConsent(false);
+    }
+  }, [user]);
+
+  const pageLower = (currentPageName || '').toLowerCase();
+  const showNavigation = isAuthenticated && !PAGES_WITHOUT_NAV.some(p => pageLower.includes(p));
 
   return (
     <LanguageProvider>
@@ -116,7 +89,7 @@ export default function Layout({ children, currentPageName }) {
         )}
       </div>
       {createPortal(
-        <BottomNav isAuthenticated={isAuthenticated} />,
+        <BottomNav isAuthenticated={isAuthenticated} currentPageName={currentPageName} />,
         document.body
       )}
     </LanguageProvider>

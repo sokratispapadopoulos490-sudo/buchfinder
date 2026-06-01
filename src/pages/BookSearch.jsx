@@ -361,20 +361,10 @@ function BookSearchContent() {
   }, []);
 
   useEffect(() => {
-    const translateQuestions = async () => {
-      if (language === 'de') {
-        setTranslatedQuestions(questionSets[ageGroup]);
-        return;
-      }
-
-      const translated = await translateObject(questionSets[ageGroup], language);
-      setTranslatedQuestions(translated);
-    };
-
     if (questionSets[ageGroup]) {
-      translateQuestions();
+      setTranslatedQuestions(questionSets[ageGroup]);
     }
-  }, [language, ageGroup]);
+  }, [ageGroup]);
 
   const checkAuth = async () => {
     try {
@@ -500,14 +490,6 @@ function BookSearchContent() {
     setLoading(true);
     let results = getMatchingBooks(profile);
     
-    if (language !== 'de') {
-      results = await Promise.all(results.map(async (book) => ({
-        ...book,
-        title: await translateObject({ text: book.title }, language).then(r => r.text),
-        description: await translateObject({ text: book.description }, language).then(r => r.text)
-      })));
-    }
-    
     if (isAuthenticated) {
       try {
         await base44.entities.Recommendation.create({
@@ -560,14 +542,6 @@ function BookSearchContent() {
   const handleUpgrade = () => {
     navigate('/Premium');
   };
-
-  if (langLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50 flex items-center justify-center pb-20">
-        <div className="text-stone-500">Loading...</div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50 pb-20">

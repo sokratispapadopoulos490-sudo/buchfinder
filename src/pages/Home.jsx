@@ -400,22 +400,12 @@ function HomeContent() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Übersetze Fragen wenn sich die Sprache ändert
+  // Fragen aktualisieren wenn sich die Altersgruppe ändert
   useEffect(() => {
-    const translateQuestions = async () => {
-      if (language === 'de') {
-        setTranslatedQuestions(questionSets[ageGroup]);
-        return;
-      }
-
-      const translated = await translateObject(questionSets[ageGroup], language);
-      setTranslatedQuestions(translated);
-    };
-
     if (questionSets[ageGroup]) {
-      translateQuestions();
+      setTranslatedQuestions(questionSets[ageGroup]);
     }
-  }, [language, ageGroup]);
+  }, [ageGroup]);
 
   const checkAuth = async () => {
     try {
@@ -583,15 +573,6 @@ function HomeContent() {
 
     const profileWithSaved = { ...profile, savedBookIds };
     let results = getMatchingBooks(profileWithSaved);
-    
-    // Übersetze Bücher wenn nicht auf Deutsch
-    if (language !== 'de') {
-      results = await Promise.all(results.map(async (book) => ({
-        ...book,
-        title: await translateObject({ text: book.title }, language).then(r => r.text),
-        description: await translateObject({ text: book.description }, language).then(r => r.text)
-      })));
-    }
     
     // Speichere Empfehlung (wenn authentifiziert)
     if (isAuthenticated) {

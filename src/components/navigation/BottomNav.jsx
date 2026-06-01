@@ -1,78 +1,93 @@
+/**
+ * BottomNav – Persistente Bottom-Navigation.
+ *
+ * Design:
+ * - Immer im DOM (gemountet via createPortal in Layout)
+ * - Sichtbarkeit über CSS display:none/flex – kein Unmount/Remount
+ * - Safe-area-inset-bottom für iOS (Notch, Home-Indicator) in Portrait UND Landscape
+ * - Dark Mode per MutationObserver auf document.documentElement.classList
+ * - Kein eigener Auth-State – bekommt isAuthenticated als Prop
+ */
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Compass, Users, User, Search } from 'lucide-react';
-import { createPageUrl } from '@/utils';
 
 const PAGES_WITHOUT_NAV = ['onboarding', 'legal'];
 
-export default function BottomNav({ isAuthenticated }) {
-  const [isDark, setIsDark] = useState(
-    typeof document !== 'undefined'
-      ? document.documentElement.classList.contains('dark') || localStorage.getItem('darkMode') === 'true'
-      : false
-  );
+const NAV_ITEMS = [
+  { icon: Users,   label: 'Community', path: '/Community' },
+  { icon: Compass, label: 'Compass',   path: '/Compass' },
+  { icon: Search,  label: 'Entdecken', path: '/BookDiscover' },
+  { icon: User,    label: 'Account',   path: '/Account' },
+];
+
+export default function BottomNav({ isAuthenticated, currentPageName }) {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const [isDark, setIsDark] = useState(() => {
+    try {
+      return document.documentElement.classList.contains('dark')
+        || localStorage.getItem('darkMode') === 'true';
+    } catch { return false; }
+  });
+
+  // Dark Mode per MutationObserver – reagiert auf Klassen-Änderungen
   useEffect(() => {
-    const check = () => {
-      setIsDark(
-        document.documentElement.classList.contains('dark') ||
-        localStorage.getItem('darkMode') === 'true'
-      );
-    };
+    const check = () => setIsDark(
+      document.documentElement.classList.contains('dark')
+      || localStorage.getItem('darkMode') === 'true'
+    );
     const observer = new MutationObserver(check);
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
     return () => observer.disconnect();
   }, []);
 
-  const pathLower = location.pathname.toLowerCase();
-  const hide =
-    !isAuthenticated ||
-    PAGES_WITHOUT_NAV.some((p) => pathLower.includes(p));
+  const pageLower = (currentPageName || location.pathname.slice(1) || '').toLowerCase();
+  const onExcludedPage = PAGES_WITHOUT_NAV.some(p => pageLower.includes(p));
+  const visible = isAuthenticated && !onExcludedPage;
 
-
-  const navItems = [
-    { icon: Users, label: 'Community', path: 'Community' },
-    { icon: Compass, label: 'Compass', path: 'Compass' },
-    { icon: Search, label: 'Entdecken', path: 'BookDiscover' },
-    { icon: User, label: 'Account', path: 'Account' },
-  ];
+  const bg       = isDark ? '#1a1a1a' : '#ffffff';
+  const border   = isDark ? '#333333' : '#e5e7eb';
+  const active   = '#d97706';
+  const inactive = isDark ? '#888888' : '#78716c';
+  const activeBg = isDark ? '#2d1f00' : '#fef3c7';
 
   const isActive = (path) =>
-    location.pathname.toLowerCase() === `/${path.toLowerCase()}`;
-
-  const bg = isDark ? '#1a1a1a' : '#ffffff';
-  const border = isDark ? '#333333' : '#e5e7eb';
-  const activeColor = '#d97706';
-  const inactiveColor = isDark ? '#888888' : '#78716c';
-  const activeBg = isDark ? '#2d1f00' : '#fef3c7';
+    location.pathname.toLowerCase() === path.toLowerCase();
 
   return (
     <div
+      aria-hidden={!visible}
       style={{
+        // Immer fixed, immer im DOM – nur display wechselt
         position: 'fixed',
         left: 0,
         right: 0,
         bottom: 0,
         zIndex: 99999,
-        display: hide ? 'none' : 'flex',
+        display: visible ? 'flex' : 'none',
         flexDirection: 'row',
         alignItems: 'stretch',
-        height: `calc(64px + env(safe-area-inset-bottom, 0px))`,
+        // Höhe: 64px Inhalt + iOS safe-area – funktioniert in Portrait UND Landscape
+        height: 'calc(64px + env(safe-area-inset-bottom, 0px))',
         paddingBottom: 'env(safe-area-inset-bottom, 0px)',
         backgroundColor: bg,
         borderTop: `1px solid ${border}`,
-        boxShadow: '0 -2px 12px rgba(0,0,0,0.25)',
+        boxShadow: '0 -2px 12px rgba(0,0,0,0.15)',
+        // Verhindert Layout-Shifts durch Viewport-Einheiten
+        willChange: 'transform',
       }}
     >
-      {navItems.map((item) => {
-        const Icon = item.icon;
-        const active = isActive(item.path);
+      {NAV_ITEMS.map(({ icon: Icon, label, path }) => {
+        const current = isActive(path);
         return (
           <button
-            key={item.path}
-            onClick={() => navigate(createPageUrl(item.path))}
+            key={path}
+            onClick={() => navigate(path)}
+            aria-label={label}
+            aria-current={current ? 'page' : undefined}
             style={{
               display: 'flex',
               flexDirection: 'column',
@@ -83,16 +98,17 @@ export default function BottomNav({ isAuthenticated }) {
               border: 'none',
               outline: 'none',
               cursor: 'pointer',
-              backgroundColor: active ? activeBg : bg,
-              color: active ? activeColor : inactiveColor,
+              backgroundColor: current ? activeBg : bg,
+              color: current ? active : inactive,
               padding: '6px 0',
               WebkitTapHighlightColor: 'transparent',
               touchAction: 'manipulation',
+              transition: 'background-color 0.15s, color 0.15s',
             }}
           >
-            <Icon style={{ width: '22px', height: '22px', strokeWidth: active ? 2.5 : 2 }} />
-            <span style={{ fontSize: '10px', fontWeight: active ? 600 : 500 }}>
-              {item.label}
+            <Icon style={{ width: '22px', height: '22px', strokeWidth: current ? 2.5 : 2 }} />
+            <span style={{ fontSize: '10px', fontWeight: current ? 600 : 500, lineHeight: 1.2 }}>
+              {label}
             </span>
           </button>
         );
