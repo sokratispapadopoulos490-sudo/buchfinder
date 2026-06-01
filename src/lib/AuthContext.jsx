@@ -4,17 +4,23 @@
  * Designprinzipien:
  * - localStorage ist NUR optimistischer UI-Cache (sofortiges Render ohne Flackern)
  * - base44.auth.me() validiert immer still im Hintergrund – KEIN Vollbild-Spinner
- * - Kein sessionStorage-Flag mehr – Orientation Change darf niemals Auth blockieren
- * - Stale Cache: wenn me() 401/403 liefert, Cache leeren + Redirect zu Onboarding
- * - Multi-User-Sicherheit: Logout löscht alle Keys sauber
+ * - Kein sessionStorage-Flag – Orientation Change blockiert Auth nicht mehr
+ * - Stale Cache (401/403): Cache leeren + Redirect zu Onboarding
+ * - Multi-User-Sicherheit: Logout löscht ALLE relevanten Keys inkl. appLanguage
+ * - Modul-Variable _fetchStarted verhindert parallele me()-Calls über StrictMode-Remounts
+ * - Sprach-Sync: nach me() wird appLanguage via CustomEvent an LanguageContext gemeldet
  */
 
-import React, { createContext, useState, useContext, useEffect, useRef } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 
 const AuthContext = createContext();
 
 const LS_AUTH_KEY = 'bc_auth_v2';
+
+// Modul-Variable: überlebt React StrictMode double-invoke sicher
+// (nicht useRef – Ref-Instanz wird bei jedem Provider-Mount neu erstellt)
+let _fetchStarted = false;
 
 function readCache() {
   try { return JSON.parse(localStorage.getItem(LS_AUTH_KEY) || 'null'); } catch { return null; }
@@ -25,10 +31,12 @@ function writeCache(v) {
     else localStorage.setItem(LS_AUTH_KEY, JSON.stringify(v));
   } catch {}
 }
-function clearAllAuthStorage() {
+
+export function clearAllAuthStorage() {
   try {
     localStorage.removeItem(LS_AUTH_KEY);
-    // Legacy keys aus früheren Versionen mitbereinigen
+    localStorage.removeItem('appLanguage');
+    // Legacy keys aus früheren Versionen
     localStorage.removeItem('isAuthenticated');
     localStorage.removeItem('authCtx_v1');
     sessionStorage.removeItem('auth_fetch');
@@ -36,10 +44,17 @@ function clearAllAuthStorage() {
   } catch {}
 }
 
+/** Teilt LanguageContext im selben Tab mit, dass sich die Sprache geändert hat. */
+function dispatchLanguageChange(lang) {
+  try {
+    window.dispatchEvent(new CustomEvent('bc:language', { detail: { language: lang } }));
+  } catch {}
+}
+
 export const AuthProvider = ({ children }) => {
   const cache = readCache();
 
-  // Optimistischer Initialzustand aus Cache – kein Flackern, kein Spinner
+  // Optimistischer Initialzustand – sofortiges Render ohne Flackern
   const [user, setUser] = useState(cache?.user ?? null);
   const [isAuthenticated, setIsAuthenticated] = useState(cache?.isAuthenticated ?? false);
 
@@ -48,14 +63,10 @@ export const AuthProvider = ({ children }) => {
   const isLoadingPublicSettings = false;
   const authError = null;
 
-  // Verhindert parallele me()-Calls (z.B. React StrictMode double-invoke)
-  const fetchingRef = useRef(false);
-
   useEffect(() => {
-    // Hintergrund-Validierung – läuft bei jedem Mount (inkl. Orientation Change)
-    // aber nur ein paralleler Request gleichzeitig
-    if (fetchingRef.current) return;
-    fetchingRef.current = true;
+    // Nur einen parallelen me()-Call zulassen
+    if (_fetchStarted) return;
+    _fetchStarted = true;
 
     base44.auth.me()
       .then(currentUser => {
@@ -63,7 +74,7 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(true);
         writeCache({ user: currentUser, isAuthenticated: true });
 
-        // Dark Mode aus Profil synchronisieren
+        // Dark Mode aus Profil
         if (currentUser?.dark_mode === true) {
           document.documentElement.classList.add('dark');
           localStorage.setItem('darkMode', 'true');
@@ -72,41 +83,43 @@ export const AuthProvider = ({ children }) => {
           localStorage.setItem('darkMode', 'false');
         }
 
-        // Sprache aus Profil in localStorage schreiben (LanguageContext liest das)
+        // Sprache aus Profil – in localStorage UND via CustomEvent an LanguageContext
         if (currentUser?.language) {
           localStorage.setItem('appLanguage', currentUser.language);
+          dispatchLanguageChange(currentUser.language);
         }
       })
       .catch((err) => {
         const hadCachedAuth = !!readCache()?.isAuthenticated;
 
-        // 401/403 = Session wirklich abgelaufen → Cache leeren
-        const isAuthError = err?.status === 401 || err?.status === 403
-          || err?.message?.includes('401') || err?.message?.includes('403')
-          || err?.message?.includes('Unauthorized') || err?.message?.includes('Forbidden');
+        // 401/403 = Session abgelaufen oder fremder Account
+        const isAuthError =
+          err?.status === 401 || err?.status === 403 ||
+          String(err?.message).includes('401') ||
+          String(err?.message).includes('403') ||
+          String(err?.message).toLowerCase().includes('unauthorized') ||
+          String(err?.message).toLowerCase().includes('forbidden');
 
         if (isAuthError && hadCachedAuth) {
-          // Stale cache: fremder Account oder abgelaufene Session
           clearAllAuthStorage();
           setUser(null);
           setIsAuthenticated(false);
-          // Sanfter Redirect – nur wenn nicht schon auf Onboarding/Legal
+          _fetchStarted = false; // Reset damit nach erneutem Login frisch geladen wird
           const path = window.location.pathname.toLowerCase();
           if (!path.includes('onboarding') && !path.includes('legal')) {
             window.location.replace('/Onboarding');
           }
           return;
         }
-
-        // Netzwerkfehler (kein Internet, Timeout) → Cache behalten, State nicht ändern
-        // User bleibt optimistisch eingeloggt
+        // Netzwerkfehler → Cache behalten, User bleibt optimistisch eingeloggt
       })
       .finally(() => {
-        fetchingRef.current = false;
+        _fetchStarted = false;
       });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const logout = () => {
+    _fetchStarted = false; // Reset für nächsten Login
     clearAllAuthStorage();
     setUser(null);
     setIsAuthenticated(false);

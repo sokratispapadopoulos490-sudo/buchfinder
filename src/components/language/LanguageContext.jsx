@@ -1,18 +1,16 @@
 /**
  * LanguageContext – Sprachverwaltung ohne LLM-Kosten.
  *
- * Architektur:
- * - Sprache wird aus localStorage gelesen (AuthContext schreibt sie aus dem Profil)
- * - translate() / translateObject() rufen KEIN InvokeLLM mehr auf
- *   → alle LLM-Übersetzungskosten entfallen
- * - Stattdessen: passthrough – Text bleibt wie er ist
- *   (UI ist auf Deutsch, Buchinhalte kommen nativ von Google Books)
- * - changeLanguage() speichert in localStorage UND im User-Profil (still)
- * - Multi-User: bei Logout muss localStorage.appLanguage gecleared werden
- *   (geschieht in AuthContext.clearAllAuthStorage)
+ * Sync-Strategie:
+ * - Initialsprache aus localStorage (AuthContext schreibt sie nach me())
+ * - Sprach-Updates vom selben Tab: CustomEvent 'bc:language' (von AuthContext)
+ * - Sprach-Updates aus anderen Tabs: window 'storage' event
+ * - translate()/translateObject() sind reine Passthrough-Funktionen (kein LLM)
+ * - changeLanguage() speichert in localStorage + User-Profil (still)
+ * - Multi-User: clearAllAuthStorage() in AuthContext löscht auch appLanguage
  */
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
 
 const LanguageContext = createContext();
@@ -42,38 +40,47 @@ function readLanguage() {
 export const LanguageProvider = ({ children }) => {
   const [language, setLanguage] = useState(readLanguage);
 
-  // Wenn AuthContext die Sprache im localStorage aktualisiert (nach me()-Call),
-  // soll LanguageContext das aufnehmen – ohne eigenes me()-Call
+  // Sync: CustomEvent vom selben Tab (AuthContext nach me()-Call)
+  useEffect(() => {
+    const onBcLanguage = (e) => {
+      const lang = e.detail?.language;
+      if (lang && lang !== language) setLanguage(lang);
+    };
+    window.addEventListener('bc:language', onBcLanguage);
+    return () => window.removeEventListener('bc:language', onBcLanguage);
+  }, [language]);
+
+  // Sync: storage-Event aus anderen Tabs
   useEffect(() => {
     const onStorage = (e) => {
       if (e.key === 'appLanguage' && e.newValue && e.newValue !== language) {
         setLanguage(e.newValue);
+      }
+      // Logout in anderem Tab → zurück zu Deutsch
+      if (e.key === 'bc_auth_v2' && e.newValue === null) {
+        setLanguage('de');
       }
     };
     window.addEventListener('storage', onStorage);
     return () => window.removeEventListener('storage', onStorage);
   }, [language]);
 
-  const changeLanguage = async (newLanguage) => {
+  const changeLanguage = useCallback(async (newLanguage) => {
     setLanguage(newLanguage);
     try { localStorage.setItem('appLanguage', newLanguage); } catch {}
-    // Still im Hintergrund im Profil speichern
     try {
       const isAuth = await base44.auth.isAuthenticated();
       if (isAuth) base44.auth.updateMe({ language: newLanguage }).catch(() => {});
     } catch {}
-  };
+  }, []);
 
-  // translate / translateObject: KEIN LLM-Call mehr.
-  // Text wird unverändert zurückgegeben.
-  // Buchinhalt kommt nativ von Google Books in der jeweiligen Sprache.
-  // UI-Texte sind statisch auf Deutsch.
-  const translate = async (text) => text;
-
-  const translateObject = async (obj) => obj;
-
-  const getLanguageName = (code) =>
-    SUPPORTED_LANGUAGES.find(l => l.code === code)?.name || code;
+  // Reine Passthrough-Funktionen – kein InvokeLLM
+  const translate = useCallback(async (text) => text, []);
+  const translateObject = useCallback(async (obj) => obj, []);
+  const getLanguageName = useCallback(
+    (code) => SUPPORTED_LANGUAGES.find(l => l.code === code)?.name || code,
+    []
+  );
 
   return (
     <LanguageContext.Provider value={{
