@@ -1,0 +1,33 @@
+{
+  "name": "ReadingLog",
+  "type": "object",
+  "properties": {
+    "book_id": {
+      "type": "integer",
+      "description": "Die ID des Buches aus der Buchdatenbank"
+    },
+    "saved_book_id": {
+      "type": "string",
+      "description": "Die ID des gespeicherten Buches"
+    },
+    "pages_read": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Anzahl der gelesenen Seiten in dieser Session"
+    },
+    "reading_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Datum der Lesesession"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Optionale Notizen zur Lesesession"
+    }
+  },
+  "required": [
+    "book_id",
+    "pages_read",
+    "reading_date"
+  ]
+}

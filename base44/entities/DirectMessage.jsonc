@@ -1,0 +1,28 @@
+{
+  "name": "DirectMessage",
+  "type": "object",
+  "properties": {
+    "recipient_email": {
+      "type": "string",
+      "description": "Email of the message recipient"
+    },
+    "content": {
+      "type": "string",
+      "description": "Message content"
+    },
+    "is_read": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the message has been read"
+    },
+    "conversation_id": {
+      "type": "string",
+      "description": "ID to group messages in a conversation"
+    }
+  },
+  "required": [
+    "recipient_email",
+    "content",
+    "conversation_id"
+  ]
+}

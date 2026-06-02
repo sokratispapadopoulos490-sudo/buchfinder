@@ -1,0 +1,28 @@
+{
+  "name": "ChallengeParticipant",
+  "type": "object",
+  "properties": {
+    "challenge_id": {
+      "type": "string",
+      "description": "ID der Challenge"
+    },
+    "current_progress": {
+      "type": "integer",
+      "default": 0,
+      "description": "Aktueller Fortschritt"
+    },
+    "completed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Challenge abgeschlossen"
+    },
+    "completed_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Abschlussdatum"
+    }
+  },
+  "required": [
+    "challenge_id"
+  ]
+}

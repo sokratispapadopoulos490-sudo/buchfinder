@@ -1,0 +1,43 @@
+{
+  "name": "Report",
+  "type": "object",
+  "properties": {
+    "post_id": {
+      "type": "string",
+      "description": "ID des gemeldeten Posts"
+    },
+    "reason": {
+      "type": "string",
+      "enum": [
+        "spam",
+        "inappropriate",
+        "harassment",
+        "misinformation",
+        "other"
+      ],
+      "description": "Grund der Meldung"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detaillierte Beschreibung"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "reviewed",
+        "resolved"
+      ],
+      "default": "pending",
+      "description": "Status der Meldung"
+    },
+    "resolved_by": {
+      "type": "string",
+      "description": "Admin der die Meldung bearbeitet hat"
+    }
+  },
+  "required": [
+    "post_id",
+    "reason"
+  ]
+}

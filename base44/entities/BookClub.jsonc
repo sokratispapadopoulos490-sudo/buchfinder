@@ -1,0 +1,35 @@
+{
+  "name": "BookClub",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name des Clubs"
+    },
+    "description": {
+      "type": "string",
+      "description": "Beschreibung des Clubs"
+    },
+    "is_private": {
+      "type": "boolean",
+      "default": false,
+      "description": "Ob der Club privat ist"
+    },
+    "member_count": {
+      "type": "integer",
+      "default": 1,
+      "description": "Anzahl Mitglieder"
+    },
+    "cover_color": {
+      "type": "string",
+      "description": "Farbe f\u00fcr Club-Cover"
+    },
+    "current_book": {
+      "type": "object",
+      "description": "Aktuelles Buch des Clubs"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

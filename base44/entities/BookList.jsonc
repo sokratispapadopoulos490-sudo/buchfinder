@@ -1,0 +1,33 @@
+{
+  "name": "BookList",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name der Liste"
+    },
+    "description": {
+      "type": "string",
+      "description": "Beschreibung"
+    },
+    "book_ids": {
+      "type": "array",
+      "items": {
+        "type": "integer"
+      },
+      "description": "IDs der B\u00fccher in der Liste"
+    },
+    "is_public": {
+      "type": "boolean",
+      "default": false,
+      "description": "\u00d6ffentlich sichtbar"
+    },
+    "cover_color": {
+      "type": "string",
+      "description": "Farbe f\u00fcr die Liste"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

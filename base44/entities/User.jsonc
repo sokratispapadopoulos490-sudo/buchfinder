@@ -1,0 +1,82 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "role": {
+      "type": "string",
+      "enum": [
+        "admin",
+        "user"
+      ],
+      "default": "user"
+    },
+    "username": {
+      "type": "string",
+      "description": "Eindeutiger Benutzername"
+    },
+    "profile_picture_url": {
+      "type": "string",
+      "description": "URL des Profilbilds"
+    },
+    "bio": {
+      "type": "string",
+      "description": "Kurze Biografie"
+    },
+    "favorite_genres": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Lieblingsgenres"
+    },
+    "weekly_reading_goal": {
+      "type": "integer",
+      "description": "W\u00f6chentliches Leseziel in Seiten"
+    },
+    "is_premium": {
+      "type": "boolean",
+      "default": false,
+      "description": "Premium-Status"
+    },
+    "dark_mode": {
+      "type": "boolean",
+      "default": false,
+      "description": "Dark Mode aktiviert"
+    },
+    "terms_accepted": {
+      "type": "boolean",
+      "default": false
+    },
+    "privacy_accepted": {
+      "type": "boolean",
+      "default": false
+    },
+    "notification_comments": {
+      "type": "boolean",
+      "default": true,
+      "description": "Benachrichtigungen bei Kommentaren"
+    },
+    "notification_likes": {
+      "type": "boolean",
+      "default": true,
+      "description": "Benachrichtigungen bei Likes"
+    },
+    "notification_messages": {
+      "type": "boolean",
+      "default": true,
+      "description": "Benachrichtigungen bei Nachrichten"
+    },
+    "profile_is_public": {
+      "type": "boolean",
+      "default": true,
+      "description": "Profil \u00f6ffentlich sichtbar"
+    }
+  },
+  "required": [
+    "username",
+    "profile_picture_url",
+    "bio",
+    "favorite_genres",
+    "weekly_reading_goal"
+  ]
+}

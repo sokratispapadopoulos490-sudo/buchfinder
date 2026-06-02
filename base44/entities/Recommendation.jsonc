@@ -1,0 +1,26 @@
+{
+  "name": "Recommendation",
+  "type": "object",
+  "properties": {
+    "books": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "description": "Die empfohlenen B\u00fccher"
+    },
+    "profile": {
+      "type": "object",
+      "description": "Das Benutzerprofil f\u00fcr diese Empfehlung"
+    },
+    "is_premium": {
+      "type": "boolean",
+      "default": false,
+      "description": "Ob dies eine Premium-Empfehlung ist"
+    }
+  },
+  "required": [
+    "books",
+    "profile"
+  ]
+}

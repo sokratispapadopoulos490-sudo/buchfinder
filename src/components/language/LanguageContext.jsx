@@ -13,6 +13,11 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
 import { t as _t } from '@/lib/i18n';
+import {
+  getBookLanguage, setBookLanguage,
+  getShoppingRegion, setShoppingRegion,
+  loadPreferencesFromProfile,
+} from '@/lib/shoppingRegion';
 
 const LanguageContext = createContext();
 
@@ -40,6 +45,8 @@ function readLanguage() {
 
 export const LanguageProvider = ({ children }) => {
   const [language, setLanguage] = useState(readLanguage);
+  const [bookLanguage, setBookLanguageState] = useState(getBookLanguage);
+  const [shoppingRegion, setShoppingRegionState] = useState(getShoppingRegion);
 
   // Sync: CustomEvent vom selben Tab (AuthContext nach me()-Call)
   useEffect(() => {
@@ -51,15 +58,23 @@ export const LanguageProvider = ({ children }) => {
     return () => window.removeEventListener('bc:language', onBcLanguage);
   }, [language]);
 
-  // Sync: storage-Event aus anderen Tabs
+  // Sync: storage-Event aus anderen Tabs + bookLanguage/shoppingRegion
   useEffect(() => {
     const onStorage = (e) => {
       if (e.key === 'appLanguage' && e.newValue && e.newValue !== language) {
         setLanguage(e.newValue);
       }
+      if (e.key === 'bc_book_lang') {
+        setBookLanguageState(e.newValue || '');
+      }
+      if (e.key === 'bc_shop_region' && e.newValue) {
+        setShoppingRegionState(e.newValue);
+      }
       // Logout in anderem Tab → zurück zu Deutsch
       if (e.key === 'bc_auth_v2' && e.newValue === null) {
         setLanguage('de');
+        setBookLanguageState('');
+        setShoppingRegionState(getShoppingRegion());
       }
     };
     window.addEventListener('storage', onStorage);
@@ -72,6 +87,21 @@ export const LanguageProvider = ({ children }) => {
     try {
       const isAuth = await base44.auth.isAuthenticated();
       if (isAuth) base44.auth.updateMe({ language: newLanguage }).catch(() => {});
+    } catch {}
+  }, []);
+
+  const changeBookLanguage = useCallback((lang) => {
+    setBookLanguageState(lang);
+    setBookLanguage(lang);
+  }, []);
+
+  const changeShoppingRegion = useCallback((region) => {
+    setShoppingRegionState(region);
+    setShoppingRegion(region);
+    try {
+      base44.auth.isAuthenticated().then(isAuth => {
+        if (isAuth) base44.auth.updateMe({ shopping_region: region }).catch(() => {});
+      });
     } catch {}
   }, []);
 
@@ -88,6 +118,7 @@ export const LanguageProvider = ({ children }) => {
 
   return (
     <LanguageContext.Provider value={{
+      // UI-Sprache (App-Oberfläche)
       language,
       changeLanguage,
       t,
@@ -97,6 +128,12 @@ export const LanguageProvider = ({ children }) => {
       isLoading: false,
       isRTL: language === 'ar',
       getLanguageName,
+      // Buchsprache (welche Bücher gesucht werden – langRestrict)
+      bookLanguage,
+      changeBookLanguage,
+      // Einkaufsregion (welche Provider/Shops angezeigt werden)
+      shoppingRegion,
+      changeShoppingRegion,
     }}>
       {children}
     </LanguageContext.Provider>

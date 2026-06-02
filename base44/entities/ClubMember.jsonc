@@ -1,0 +1,28 @@
+{
+  "name": "ClubMember",
+  "type": "object",
+  "properties": {
+    "club_id": {
+      "type": "string",
+      "description": "ID des Clubs"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "admin",
+        "moderator",
+        "member"
+      ],
+      "default": "member",
+      "description": "Rolle im Club"
+    },
+    "joined_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Beitrittsdatum"
+    }
+  },
+  "required": [
+    "club_id"
+  ]
+}

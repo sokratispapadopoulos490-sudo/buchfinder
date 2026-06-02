@@ -1,0 +1,38 @@
+{
+  "name": "BookQuote",
+  "type": "object",
+  "properties": {
+    "book_data": {
+      "type": "object",
+      "description": "Buchdaten"
+    },
+    "quote_text": {
+      "type": "string",
+      "description": "Das Zitat"
+    },
+    "page_number": {
+      "type": "integer",
+      "description": "Seitenzahl"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Pers\u00f6nliche Notizen zum Zitat"
+    },
+    "is_public": {
+      "type": "boolean",
+      "default": false,
+      "description": "\u00d6ffentlich sichtbar"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Tags f\u00fcr das Zitat"
+    }
+  },
+  "required": [
+    "book_data",
+    "quote_text"
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "name": "ClubReading",
+  "type": "object",
+  "properties": {
+    "club_id": {
+      "type": "string",
+      "description": "ID des Clubs"
+    },
+    "book_data": {
+      "type": "object",
+      "description": "Buchdaten"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "current",
+        "upcoming",
+        "completed"
+      ],
+      "default": "upcoming",
+      "description": "Status"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Startdatum"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Enddatum"
+    },
+    "discussion_notes": {
+      "type": "string",
+      "description": "Diskussionsnotizen"
+    }
+  },
+  "required": [
+    "club_id",
+    "book_data"
+  ]
+}

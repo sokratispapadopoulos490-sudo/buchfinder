@@ -1,0 +1,28 @@
+{
+  "name": "CommunityComment",
+  "type": "object",
+  "properties": {
+    "post_id": {
+      "type": "string",
+      "description": "ID des zugeh\u00f6rigen Posts"
+    },
+    "content": {
+      "type": "string",
+      "description": "Inhalt des Kommentars"
+    },
+    "is_ai_response": {
+      "type": "boolean",
+      "default": false,
+      "description": "Ob der Kommentar von der KI stammt"
+    },
+    "likes_count": {
+      "type": "integer",
+      "default": 0,
+      "description": "Anzahl der Likes"
+    }
+  },
+  "required": [
+    "post_id",
+    "content"
+  ]
+}

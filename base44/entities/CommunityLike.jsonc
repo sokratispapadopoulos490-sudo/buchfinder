@@ -1,0 +1,15 @@
+{
+  "name": "CommunityLike",
+  "type": "object",
+  "properties": {
+    "post_id": {
+      "type": "string",
+      "description": "Optional: ID des gelikten Posts"
+    },
+    "comment_id": {
+      "type": "string",
+      "description": "Optional: ID des gelikten Kommentars"
+    }
+  },
+  "required": []
+}

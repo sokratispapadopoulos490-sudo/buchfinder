@@ -1,0 +1,32 @@
+{
+  "name": "ClubDiscussion",
+  "type": "object",
+  "properties": {
+    "club_id": {
+      "type": "string",
+      "description": "ID des Clubs"
+    },
+    "title": {
+      "type": "string",
+      "description": "Titel der Diskussion"
+    },
+    "content": {
+      "type": "string",
+      "description": "Inhalt"
+    },
+    "book_reference": {
+      "type": "object",
+      "description": "Optional: Bezug zu einem Buch"
+    },
+    "comments_count": {
+      "type": "integer",
+      "default": 0,
+      "description": "Anzahl Kommentare"
+    }
+  },
+  "required": [
+    "club_id",
+    "title",
+    "content"
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "name": "CommunityPost",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Titel des Posts"
+    },
+    "content": {
+      "type": "string",
+      "description": "Inhalt des Posts"
+    },
+    "book_id": {
+      "type": "integer",
+      "description": "Optional: Verkn\u00fcpftes Buch"
+    },
+    "book_title": {
+      "type": "string",
+      "description": "Optional: Buchtitel f\u00fcr Anzeige"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "allgemein",
+        "buchempfehlung",
+        "diskussion",
+        "frage"
+      ],
+      "default": "allgemein",
+      "description": "Kategorie des Posts"
+    },
+    "likes_count": {
+      "type": "integer",
+      "default": 0,
+      "description": "Anzahl der Likes"
+    },
+    "comments_count": {
+      "type": "integer",
+      "default": 0,
+      "description": "Anzahl der Kommentare"
+    }
+  },
+  "required": [
+    "title",
+    "content"
+  ]
+}

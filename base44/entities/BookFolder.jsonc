@@ -1,0 +1,27 @@
+{
+  "name": "BookFolder",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name des Ordners"
+    },
+    "parent_category": {
+      "type": "string",
+      "enum": [
+        "reading",
+        "completed",
+        "custom"
+      ],
+      "description": "Elternkategorie: reading = Noch nicht gelesen, completed = Schon gelesen, custom = Eigene"
+    },
+    "color": {
+      "type": "string",
+      "description": "Farbe des Ordners (Tailwind-Klasse)"
+    }
+  },
+  "required": [
+    "name",
+    "parent_category"
+  ]
+}

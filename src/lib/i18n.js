@@ -289,6 +289,94 @@ const dict = {
     de: 'Mein Account', en: 'My Account', el: 'Ο λογαριασμός μου',
     tr: 'Hesabım', fr: 'Mon compte', es: 'Mi cuenta', it: 'Il mio account',
   },
+
+  // ── Phase 2: Buchsprache (bookLanguage) ───────────────────────────────────
+  'bookLang.label': {
+    de: 'Buchsprache:', en: 'Book language:', el: 'Γλώσσα βιβλίου:',
+    tr: 'Kitap dili:', fr: 'Langue du livre :', es: 'Idioma del libro:', it: 'Lingua del libro:',
+  },
+  'bookLang.all': {
+    de: 'Alle Sprachen', en: 'All languages', el: 'Όλες οι γλώσσες',
+    tr: 'Tüm diller', fr: 'Toutes les langues', es: 'Todos los idiomas', it: 'Tutte le lingue',
+  },
+  'bookLang.de': {
+    de: 'Deutsch', en: 'German', el: 'Γερμανικά', tr: 'Almanca', fr: 'Allemand', es: 'Alemán', it: 'Tedesco',
+  },
+  'bookLang.en': {
+    de: 'Englisch', en: 'English', el: 'Αγγλικά', tr: 'İngilizce', fr: 'Anglais', es: 'Inglés', it: 'Inglese',
+  },
+  'bookLang.el': {
+    de: 'Griechisch', en: 'Greek', el: 'Ελληνικά', tr: 'Yunanca', fr: 'Grec', es: 'Griego', it: 'Greco',
+  },
+  'bookLang.tr': {
+    de: 'Türkisch', en: 'Turkish', el: 'Τουρκικά', tr: 'Türkçe', fr: 'Turc', es: 'Turco', it: 'Turco',
+  },
+  'bookLang.fr': {
+    de: 'Französisch', en: 'French', el: 'Γαλλικά', tr: 'Fransızca', fr: 'Français', es: 'Francés', it: 'Francese',
+  },
+  'bookLang.es': {
+    de: 'Spanisch', en: 'Spanish', el: 'Ισπανικά', tr: 'İspanyolca', fr: 'Espagnol', es: 'Español', it: 'Spagnolo',
+  },
+  'bookLang.it': {
+    de: 'Italienisch', en: 'Italian', el: 'Ιταλικά', tr: 'İtalyanca', fr: 'Italien', es: 'Italiano', it: 'Italiano',
+  },
+
+  // ── Phase 2: Shopping-Region ──────────────────────────────────────────────
+  'region.label': {
+    de: 'Einkaufsregion:', en: 'Shopping region:', el: 'Περιοχή αγορών:',
+    tr: 'Alışveriş bölgesi:', fr: 'Région d\'achat :', es: 'Región de compra:', it: 'Regione di acquisto:',
+  },
+  'region.de': {
+    de: 'Deutschland', en: 'Germany', el: 'Γερμανία', tr: 'Almanya', fr: 'Allemagne', es: 'Alemania', it: 'Germania',
+  },
+  'region.at': {
+    de: 'Österreich', en: 'Austria', el: 'Αυστρία', tr: 'Avusturya', fr: 'Autriche', es: 'Austria', it: 'Austria',
+  },
+  'region.ch': {
+    de: 'Schweiz', en: 'Switzerland', el: 'Ελβετία', tr: 'İsviçre', fr: 'Suisse', es: 'Suiza', it: 'Svizzera',
+  },
+  'region.gr': {
+    de: 'Griechenland', en: 'Greece', el: 'Ελλάδα', tr: 'Yunanistan', fr: 'Grèce', es: 'Grecia', it: 'Grecia',
+  },
+  'region.tr': {
+    de: 'Türkei', en: 'Turkey', el: 'Τουρκία', tr: 'Türkiye', fr: 'Turquie', es: 'Turquía', it: 'Turchia',
+  },
+  'region.fr': {
+    de: 'Frankreich', en: 'France', el: 'Γαλλία', tr: 'Fransa', fr: 'France', es: 'Francia', it: 'Francia',
+  },
+  'region.es': {
+    de: 'Spanien', en: 'Spain', el: 'Ισπανία', tr: 'İspanya', fr: 'Espagne', es: 'España', it: 'Spagna',
+  },
+  'region.it': {
+    de: 'Italien', en: 'Italy', el: 'Ιταλία', tr: 'İtalya', fr: 'Italie', es: 'Italia', it: 'Italia',
+  },
+  'region.uk': {
+    de: 'Großbritannien', en: 'United Kingdom', el: 'Ηνωμένο Βασίλειο', tr: 'Birleşik Krallık',
+    fr: 'Royaume-Uni', es: 'Reino Unido', it: 'Regno Unito',
+  },
+  'region.us': {
+    de: 'USA', en: 'United States', el: 'ΗΠΑ', tr: 'ABD', fr: 'États-Unis', es: 'EE.UU.', it: 'Stati Uniti',
+  },
+  'region.hint': {
+    de: 'Bestimmt welche Buchläden angezeigt werden',
+    en: 'Determines which bookstores are shown',
+    el: 'Καθορίζει ποια βιβλιοπωλεία εμφανίζονται',
+    tr: 'Hangi kitabevlerinin gösterileceğini belirler',
+    fr: 'Détermine quelles librairies sont affichées',
+    es: 'Determina qué librerías se muestran',
+    it: 'Determina quali librerie vengono mostrate',
+  },
+
+  // ── Phase 2: Hinweise / Info ──────────────────────────────────────────────
+  'discover.bookLangHint': {
+    de: 'Hinweis: Für Griechisch und Türkisch sind weniger Bücher indexiert.',
+    en: 'Note: Fewer books are indexed for Greek and Turkish.',
+    el: 'Σημείωση: Λιγότερα βιβλία είναι διαθέσιμα για Ελληνικά.',
+    tr: 'Not: Türkçe için daha az kitap dizine eklendi.',
+    fr: 'Remarque : Moins de livres sont indexés pour le grec et le turc.',
+    es: 'Nota: Hay menos libros indexados para griego y turco.',
+    it: 'Nota: Meno libri sono indicizzati per greco e turco.',
+  },
 };
 
 /**

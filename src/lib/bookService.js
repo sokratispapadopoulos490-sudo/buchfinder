@@ -9,6 +9,7 @@
 
 import { base44 } from '@/api/base44Client';
 import { books as localBooks } from '@/components/books/BookDatabase';
+import { getProviderLinks } from '@/lib/providerRegistry';
 
 // ─── Normalisierung ────────────────────────────────────────────────────────────
 export function normalizeLocalBook(localBook) {
@@ -66,13 +67,14 @@ export function normalizeGoogleBook(volume) {
     ? rawCover.replace('http://', 'https://').replace('zoom=1', 'zoom=2')
     : null;
 
-  return {
-    // New schema
+  const bookBase = {
     isbn13,
     isbn10,
+    isbn: isbn13 || isbn10,
     title: info.title || 'Unbekannter Titel',
     subtitle: info.subtitle || null,
     authors: info.authors || [],
+    author: authorStr,
     publisher: info.publisher || null,
     published_date: info.publishedDate || null,
     page_count: info.pageCount || null,
@@ -87,7 +89,9 @@ export function normalizeGoogleBook(volume) {
     time_effort: 'mittel',
     description: info.description || '',
     cover_front_url: coverUrl,
+    coverUrl,
     cover_color: 'bg-amber-100',
+    coverColor: 'bg-amber-100',
     preview_link: info.previewLink || null,
     rating: info.averageRating || null,
     ratings_count: info.ratingsCount || null,
@@ -98,15 +102,20 @@ export function normalizeGoogleBook(volume) {
     source: 'google_books',
     source_id: volume.id,
     is_active: true,
-    // Legacy fields for full backward compat
+    // BookResult Phase 2 Felder
     id: isbn13 ? parseInt(isbn13.slice(-6)) : Math.floor(Math.random() * 999999),
-    author: authorStr,
-    coverUrl: coverUrl,
-    coverColor: 'bg-amber-100',
-    isbn: isbn13 || isbn10,
+    thumbnail: coverUrl,
+    publishedDate: info.publishedDate || null,
     pageCount: info.pageCount || null,
     publishYear: info.publishedDate ? parseInt(info.publishedDate) : null,
+    format: 'book',
+    raw: { volumeId: volume.id, accessInfo: volume.accessInfo },
   };
+
+  // Provider-Links vorab generieren (Lazy: nur DE als Default)
+  bookBase.providerLinks = getProviderLinks(bookBase, 'DE');
+
+  return bookBase;
 }
 
 // ─── Google Books API ──────────────────────────────────────────────────────────
@@ -292,45 +301,20 @@ export async function cacheBookToDB(book) {
   }
 }
 
-// ─── Affiliate-Links ───────────────────────────────────────────────────────────
-const AFFILIATE_TEMPLATES = {
-  DE: {
-    amazon: (isbn) => `https://www.amazon.de/dp/${isbn}`,
-    thalia: (isbn) => `https://www.thalia.de/suche?sq=${isbn}`,
-    hugendubel: (isbn) => `https://www.hugendubel.de/de/buch/${isbn}`,
-  },
-  AT: {
-    amazon: (isbn) => `https://www.amazon.de/dp/${isbn}`,
-    thalia: (isbn) => `https://www.thalia.at/suche?sq=${isbn}`,
-  },
-  CH: {
-    exlibris: (isbn) => `https://www.exlibris.ch/de/buecher-shop/deutschsprachige-buecher/p/${isbn}`,
-    orellfuessli: (isbn) => `https://www.orellfuessli.ch/suche?searchterm=${isbn}`,
-  },
-  US: {
-    amazon: (isbn) => `https://www.amazon.com/dp/${isbn}`,
-    bookshop: (isbn) => `https://bookshop.org/books?keywords=${isbn}`,
-  },
-  UK: {
-    amazon: (isbn) => `https://www.amazon.co.uk/dp/${isbn}`,
-    bookshop: (isbn) => `https://uk.bookshop.org/books?keywords=${isbn}`,
-  },
-  DEFAULT: {
-    amazon: (isbn) => `https://www.amazon.com/dp/${isbn}`,
-  }
-};
-
+// ─── Affiliate-Links (Phase 2: leitet an providerRegistry weiter) ─────────────
+/**
+ * Gibt Kauf-Links für ein Buch zurück.
+ * Phase 2: Nutzt providerRegistry.getProviderLinks statt harter Templates.
+ * Rückwärtskompatibel: gibt auch ein flaches { providerId: url }-Objekt zurück.
+ */
 export function getAffiliateLinks(book, countryCode = 'DE') {
-  const isbn = book.isbn13 || book.isbn10 || book.isbn;
-  const stored = book.affiliate_providers?.[countryCode];
-  if (stored && Object.keys(stored).length > 0) return stored;
-  if (!isbn) {
-    // Fallback: Titelsuche
-    const encoded = encodeURIComponent(`${book.title} ${book.author || (book.authors || [])[0] || ''}`);
-    return { amazon: `https://www.amazon.de/s?k=${encoded}`, thalia: `https://www.thalia.de/suche?sq=${encoded}` };
+  const links = getProviderLinks(book, countryCode);
+  if (links.length === 0) {
+    // Minimal-Fallback für Bücher ohne ISBN
+    const q = encodeURIComponent(book.title);
+    return { amazon: `https://www.amazon.de/s?k=${q}`, thalia: `https://www.thalia.de/suche?sq=${q}` };
   }
-  const templates = AFFILIATE_TEMPLATES[countryCode] || AFFILIATE_TEMPLATES.DEFAULT;
-  return Object.fromEntries(Object.entries(templates).map(([p, fn]) => [p, fn(isbn)]));
+  return Object.fromEntries(links.map(l => [l.providerId, l.url]));
 }
 
 // ─── Matching-Engine ───────────────────────────────────────────────────────────

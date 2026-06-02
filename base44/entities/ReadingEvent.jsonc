@@ -1,0 +1,49 @@
+{
+  "name": "ReadingEvent",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Titel des Termins"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "lesen",
+        "challenge",
+        "club",
+        "diskussion",
+        "geschenk",
+        "sonstiges"
+      ],
+      "description": "Kategorie des Termins"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Datum des Termins"
+    },
+    "time": {
+      "type": "string",
+      "description": "Uhrzeit (HH:MM)"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Optionale Notizen"
+    },
+    "book_data": {
+      "type": "object",
+      "description": "Optional: verkn\u00fcpftes Buch"
+    },
+    "is_done": {
+      "type": "boolean",
+      "default": false,
+      "description": "Erledigt"
+    }
+  },
+  "required": [
+    "title",
+    "category",
+    "date"
+  ]
+}

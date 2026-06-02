@@ -1,0 +1,54 @@
+{
+  "name": "ReadingChallenge",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Titel der Challenge"
+    },
+    "description": {
+      "type": "string",
+      "description": "Beschreibung der Challenge"
+    },
+    "goal_type": {
+      "type": "string",
+      "enum": [
+        "books",
+        "pages",
+        "genres"
+      ],
+      "description": "Art des Ziels"
+    },
+    "goal_value": {
+      "type": "integer",
+      "description": "Zielwert (z.B. 10 B\u00fccher)"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Startdatum"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Enddatum"
+    },
+    "is_public": {
+      "type": "boolean",
+      "default": true,
+      "description": "\u00d6ffentlich sichtbar"
+    },
+    "participant_count": {
+      "type": "integer",
+      "default": 0,
+      "description": "Anzahl Teilnehmer"
+    }
+  },
+  "required": [
+    "title",
+    "goal_type",
+    "goal_value",
+    "start_date",
+    "end_date"
+  ]
+}
