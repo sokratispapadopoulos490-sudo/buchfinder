@@ -73,6 +73,18 @@ const dict = {
     de: 'Anmelden', en: 'Login', el: 'Σύνδεση',
     tr: 'Giriş yap', fr: 'Connexion', es: 'Iniciar sesión', it: 'Accedi',
   },
+  'btn.save': {
+    de: 'Speichern', en: 'Save', el: 'Αποθήκευση',
+    tr: 'Kaydet', fr: 'Enregistrer', es: 'Guardar', it: 'Salva',
+  },
+  'btn.saved': {
+    de: 'Gespeichert', en: 'Saved', el: 'Αποθηκεύτηκε',
+    tr: 'Kaydedildi', fr: 'Enregistré', es: 'Guardado', it: 'Salvato',
+  },
+  'book.unknownAuthor': {
+    de: 'Unbekannter Autor', en: 'Unknown Author', el: 'Άγνωστος συγγραφέας',
+    tr: 'Bilinmeyen yazar', fr: 'Auteur inconnu', es: 'Autor desconocido', it: 'Autore sconosciuto',
+  },
   'btn.loadMore': {
     de: 'Mehr laden', en: 'Load more', el: 'Φόρτωση περισσότερων',
     tr: 'Daha fazla', fr: 'Charger plus', es: 'Cargar más', it: 'Carica altri',
@@ -365,6 +377,38 @@ const dict = {
     fr: 'Détermine quelles librairies sont affichées',
     es: 'Determina qué librerías se muestran',
     it: 'Determina quali librerie vengono mostrate',
+  },
+
+  // ── Phase 3: Provider-Typen ───────────────────────────────────────────────
+  'provider.new': {
+    de: 'Neu', en: 'New', el: 'Νέο', tr: 'Yeni', fr: 'Neuf', es: 'Nuevo', it: 'Nuovo',
+  },
+  'provider.used': {
+    de: 'Gebraucht', en: 'Used', el: 'Μεταχειρισμένο', tr: 'İkinci el', fr: 'Occasion', es: 'Usado', it: 'Usato',
+  },
+  'provider.marketplace': {
+    de: 'Marktplatz', en: 'Marketplace', el: 'Αγορά', tr: 'Pazar yeri', fr: 'Marketplace', es: 'Mercado', it: 'Marketplace',
+  },
+  'provider.ebook': {
+    de: 'E-Book', en: 'E-Book', el: 'E-Book', tr: 'E-Kitap', fr: 'Numérique', es: 'E-Book', it: 'E-Book',
+  },
+  'provider.audiobook': {
+    de: 'Hörbuch', en: 'Audiobook', el: 'Ακουστικό', tr: 'Sesli kitap', fr: 'Audio', es: 'Audiolibro', it: 'Audiolibro',
+  },
+  'provider.discovery': {
+    de: 'Vorschau', en: 'Preview', el: 'Προεπισκόπηση', tr: 'Önizleme', fr: 'Aperçu', es: 'Vista previa', it: 'Anteprima',
+  },
+  'provider.showUsed': {
+    de: 'Gebraucht anzeigen', en: 'Show used', el: 'Μεταχειρισμένα', tr: 'İkinci el göster', fr: 'Voir occasion', es: 'Ver usados', it: 'Vedi usati',
+  },
+  'provider.hideUsed': {
+    de: 'Gebraucht ausblenden', en: 'Hide used', el: 'Απόκρυψη', tr: 'Gizle', fr: 'Masquer', es: 'Ocultar', it: 'Nascondi',
+  },
+  'provider.buyNew': {
+    de: 'Neu kaufen', en: 'Buy new', el: 'Αγορά νέου', tr: 'Yeni al', fr: 'Acheter neuf', es: 'Comprar nuevo', it: 'Acquista nuovo',
+  },
+  'provider.buyUsed': {
+    de: 'Gebraucht kaufen', en: 'Buy used', el: 'Μεταχειρισμένο', tr: 'İkinci el al', fr: 'Acheter d\'occasion', es: 'Comprar usado', it: 'Acquista usato',
   },
 
   // ── Phase 2: Hinweise / Info ──────────────────────────────────────────────

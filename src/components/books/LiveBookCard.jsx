@@ -8,15 +8,18 @@ import { Bookmark, BookmarkCheck, ShoppingCart, Star, ExternalLink, ChevronDown,
 import { cn } from '@/lib/utils';
 import { base44 } from '@/api/base44Client';
 import BookCover from './BookCover';
-import AffiliateButtons from './AffiliateButtons';
+import ProviderLinks from './ProviderLinks';
+import { useLanguage } from '@/components/language/LanguageContext';
 
-export default function LiveBookCard({ book, user }) {
+export default function LiveBookCard({ book, user, shoppingRegion }) {
+  const { shoppingRegion: ctxRegion, t } = useLanguage();
+  const region = shoppingRegion || ctxRegion || 'DE';
   const [isSaved, setIsSaved] = useState(false);
   const [savedId, setSavedId] = useState(null);
   const [saving, setSaving] = useState(false);
   const [showBuy, setShowBuy] = useState(false);
   const [expanded, setExpanded] = useState(false);
-  const displayAuthor = book.author || (book.authors || []).join(', ') || 'Unbekannter Autor';
+  const displayAuthor = book.author || (book.authors || []).join(', ') || t('book.unknownAuthor', 'Unbekannter Autor');
   const description = book.description || '';
   const shortDesc = description.length > 160 ? description.slice(0, 160) + '…' : description;
   const hasLongDesc = description.length > 160;
@@ -136,14 +139,14 @@ export default function LiveBookCard({ book, user }) {
             )}
           >
             {isSaved ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
-            {isSaved ? 'Gespeichert' : 'Speichern'}
+            {isSaved ? t('btn.saved', 'Gespeichert') : t('btn.save', 'Speichern')}
           </button>
           <button
             onClick={() => setShowBuy(v => !v)}
             className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-sm font-medium bg-stone-900 dark:bg-amber-600 text-white hover:bg-stone-800 dark:hover:bg-amber-700 transition-colors"
           >
             <ShoppingCart className="w-4 h-4" />
-            Kaufen
+            {t('provider.buyNew', 'Kaufen')}
           </button>
           {book.preview_link && (
             <a
@@ -157,8 +160,8 @@ export default function LiveBookCard({ book, user }) {
           )}
         </div>
 
-        {/* Buy options – dynamic by country */}
-        {showBuy && <AffiliateButtons book={book} user={user} className="mt-3" />}
+        {/* Kauf-Links via Provider-Registry – nutzt shoppingRegion */}
+        {showBuy && <ProviderLinks book={book} shoppingRegion={region} className="mt-3" />}
       </div>
     </div>
   );
