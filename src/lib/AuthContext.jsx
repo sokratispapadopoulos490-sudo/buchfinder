@@ -13,6 +13,7 @@
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
+import { cacheClear } from '@/lib/clientCache';
 
 const AuthContext = createContext();
 
@@ -52,7 +53,7 @@ export function clearAllAuthStorage() {
     keysToRemove.forEach(k => localStorage.removeItem(k));
   } catch {}
   // In-Memory-Cache leeren (verhindert Cross-User-Cache)
-  try { import('@/lib/clientCache').then(m => m.cacheClear()); } catch {}
+  try { cacheClear(); } catch {}
 }
 
 /** Teilt LanguageContext im selben Tab mit, dass sich die Sprache geändert hat. */

@@ -13,6 +13,14 @@ import ChatWindow from '@/components/messages/ChatWindow';
 import NewMessageModal from '@/components/messages/NewMessageModal';
 import { LanguageProvider } from '@/components/language/LanguageContext';
 
+/** Rate-Limit-Zähler im localStorage – Modul-Level damit kein Re-Create bei Render */
+function getAiUsageToday(userId) {
+  const today = new Date().toISOString().split('T')[0];
+  const key = `ai_limit_${today}_${userId || 'anon'}`;
+  const stored = parseInt(localStorage.getItem(key) || '0', 10);
+  return { count: stored, key };
+}
+
 function CommunityContent() {
   const [posts, setPosts] = useState([]);
   const [savedBooks, setSavedBooks] = useState([]);
@@ -56,8 +64,8 @@ function CommunityContent() {
       setUser(currentUser);
       const [postsData, booksData, likesData] = await Promise.all([
         base44.entities.CommunityPost.list('-created_date'),
-        base44.entities.SavedBook.filter({ created_by: currentUser.email }, '-created_date'),
-        base44.entities.CommunityLike.filter({ created_by: currentUser.email })
+        base44.entities.SavedBook.list('-created_date', 50), // base44 API scopet auf currentUser
+        base44.entities.CommunityLike.list() // base44 API scopet auf currentUser
       ]);
       setPosts(postsData);
       setSavedBooks(booksData);
@@ -130,14 +138,6 @@ function CommunityContent() {
 
   const AI_DAILY_LIMIT = 5;
   const AI_TIMEOUT_MS = 20000;
-
-  /** Rate-Limit-Zähler im localStorage – wird bei Logout/User-Wechsel geleert. */
-  function getAiUsageToday(userId) {
-    const today = new Date().toISOString().split('T')[0];
-    const key = `ai_limit_${today}_${userId || 'anon'}`;
-    const stored = parseInt(localStorage.getItem(key) || '0', 10);
-    return { count: stored, key };
-  }
 
   const handleAskAI = async (post) => {
     if (!user?.id && !user?.email) return; // kein User – kein AI
