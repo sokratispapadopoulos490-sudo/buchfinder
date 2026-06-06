@@ -36,12 +36,23 @@ export function clearAllAuthStorage() {
   try {
     localStorage.removeItem(LS_AUTH_KEY);
     localStorage.removeItem('appLanguage');
+    localStorage.removeItem('bc_book_lang');
+    localStorage.removeItem('bc_shop_region');
     // Legacy keys aus früheren Versionen
     localStorage.removeItem('isAuthenticated');
     localStorage.removeItem('authCtx_v1');
     sessionStorage.removeItem('auth_fetch');
     sessionStorage.removeItem('layout_init');
+    // AI-Rate-Limit-Keys (Format: ai_limit_YYYY-MM-DD) bereinigen
+    const keysToRemove = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith('ai_limit_')) keysToRemove.push(k);
+    }
+    keysToRemove.forEach(k => localStorage.removeItem(k));
   } catch {}
+  // In-Memory-Cache leeren (verhindert Cross-User-Cache)
+  try { import('@/lib/clientCache').then(m => m.cacheClear()); } catch {}
 }
 
 /** Teilt LanguageContext im selben Tab mit, dass sich die Sprache geändert hat. */

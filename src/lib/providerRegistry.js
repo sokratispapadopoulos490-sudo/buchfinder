@@ -343,7 +343,8 @@ const PROVIDER_DEFS = {
     },
   },
 
-  // ── Audiobook (Architektur-ready, keine echten Deeplinks) ─────────────────
+  // ── Audiobook (Architektur-ready) ─────────────────────────────────────────
+  // Keine ASIN/Spotify-ID – nur sichere Suchseiten-URLs, availability immer 'unknown'
   audible_de: {
     providerId: 'audible_de', providerName: 'Audible',
     type: 'audiobook', region: 'DE', currency: 'EUR', priority: 10,
@@ -352,11 +353,36 @@ const PROVIDER_DEFS = {
       availability: 'unknown',
     }),
   },
+  audible_uk: {
+    providerId: 'audible_uk', providerName: 'Audible UK',
+    type: 'audiobook', region: 'UK', currency: 'GBP', priority: 10,
+    buildLink: (book) => ({
+      url: `https://www.audible.co.uk/search?keywords=${q(book)}`,
+      availability: 'unknown',
+    }),
+  },
+  audible_us: {
+    providerId: 'audible_us', providerName: 'Audible',
+    type: 'audiobook', region: 'US', currency: 'USD', priority: 10,
+    buildLink: (book) => ({
+      url: `https://www.audible.com/search?keywords=${q(book)}`,
+      availability: 'unknown',
+    }),
+  },
+  storytel_de: {
+    providerId: 'storytel_de', providerName: 'Storytel',
+    type: 'audiobook', region: 'DE', currency: 'EUR', priority: 11,
+    buildLink: (book) => ({
+      url: `https://www.storytel.com/de/search#query=${encodeURIComponent(book.title)}`,
+      availability: 'unknown',
+    }),
+  },
   spotify_audiobooks: {
     providerId: 'spotify_audiobooks', providerName: 'Spotify',
-    type: 'audiobook', region: 'global', currency: null, priority: 11,
+    type: 'audiobook', region: 'global', currency: null, priority: 12,
     buildLink: (book) => ({
-      url: `https://open.spotify.com/search/${encodeURIComponent(book.title)}/audiobooks`,
+      // Spotify: Suche auf der Webseite – kein Deeplink ohne Spotify-ID
+      url: `https://open.spotify.com/search/${encodeURIComponent(book.title)}`,
       availability: 'unknown',
     }),
   },
@@ -370,9 +396,9 @@ const PROVIDER_DEFS = {
  * Used-Provider sind bewusst in der Liste – werden bei Bedarf per Typ gefiltert.
  */
 export const REGION_REGISTRY = {
-  global: ['google_books', 'abebooks'],
-  DE:     ['amazon_de', 'thalia', 'hugendubel', 'medimops', 'booklooker', 'zvab'],
-  AT:     ['amazon_de', 'thalia_at', 'medimops'],
+  global: ['google_books', 'abebooks', 'spotify_audiobooks'],
+  DE:     ['amazon_de', 'thalia', 'hugendubel', 'medimops', 'booklooker', 'zvab', 'audible_de', 'storytel_de'],
+  AT:     ['amazon_de', 'thalia_at', 'medimops', 'audible_de'],
   CH:     ['exlibris', 'orellfuessli'],
   // GR: griechische Provider zuerst, Amazon.de ganz hinten
   GR:     ['politeia_gr', 'protoporia_gr', 'ianos_gr', 'evripidis_gr', 'metabook_gr', 'skroutz_gr', 'amazon_de_gr'],
@@ -380,8 +406,8 @@ export const REGION_REGISTRY = {
   FR:     ['amazon_fr', 'fnac_fr'],
   ES:     ['amazon_es', 'casa_del_libro'],
   IT:     ['amazon_it', 'ibs_it'],
-  UK:     ['amazon_uk', 'bookshop_uk', 'world_of_books'],
-  US:     ['amazon_us', 'bookshop_us', 'thriftbooks'],
+  UK:     ['amazon_uk', 'bookshop_uk', 'world_of_books', 'audible_uk'],
+  US:     ['amazon_us', 'bookshop_us', 'thriftbooks', 'audible_us'],
 };
 
 export const SHOPPING_REGIONS = [

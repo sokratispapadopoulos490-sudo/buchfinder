@@ -9,6 +9,7 @@
 
 import { useState, useCallback, useRef } from 'react';
 import { searchGoogleBooks, cacheBookToDB } from '@/lib/bookService';
+import { makeCacheKey, cacheGet, cacheSet } from '@/lib/clientCache';
 
 const DEBOUNCE_MS = 400;
 const PAGE_SIZE = 20;
@@ -49,12 +50,28 @@ export function useGoogleBooks() {
 
     abortRef.current = new AbortController();
 
+    const langRestrict = options.langRestrict || '';
+
     if (!append) {
       seenKeysRef.current = new Set();
       startIndexRef.current = 0;
       queryRef.current = searchQuery;
       optionsRef.current = options;
       setResults([]);
+
+      // Cache-Hit prüfen (nur für erste Seite, nicht für loadMore)
+      const cacheKey = makeCacheKey(searchQuery, langRestrict, 0);
+      const cached = cacheGet(cacheKey);
+      if (cached) {
+        loadingRef.current = false;
+        setLoading(false);
+        setResults(cached.items);
+        setTotalItems(cached.totalItems);
+        startIndexRef.current = cached.nextStartIndex;
+        setHasMore(cached.nextStartIndex < cached.totalItems);
+        cached.items.forEach(b => { seenKeysRef.current.add(b.isbn13 || b.isbn10 || b.title); });
+        return;
+      }
     }
 
     loadingRef.current = true;
@@ -82,6 +99,12 @@ export function useGoogleBooks() {
       setResults(prev => append ? [...prev, ...unique] : unique);
       setTotalItems(total);
       setHasMore(nextStartIndex < total);
+
+      // Ergebnis für erste Seite cachen
+      if (!append) {
+        const cacheKey = makeCacheKey(searchQuery, langRestrict, 0);
+        cacheSet(cacheKey, { items: unique, totalItems: total, nextStartIndex });
+      }
 
       // Silent background caching (fire-and-forget)
       unique.forEach(book => cacheBookToDB(book).catch(() => {}));

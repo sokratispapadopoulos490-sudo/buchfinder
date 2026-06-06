@@ -410,6 +410,13 @@ const dict = {
   'provider.buyUsed': {
     de: 'Gebraucht kaufen', en: 'Buy used', el: 'Μεταχειρισμένο', tr: 'İkinci el al', fr: 'Acheter d\'occasion', es: 'Comprar usado', it: 'Acquista usato',
   },
+  'provider.audioHint': {
+    de: 'Verfügbarkeit unbekannt – Suche auf der Anbieter-Seite', en: 'Availability unknown – search on provider site',
+    el: 'Διαθεσιμότητα άγνωστη', tr: 'Kullanılabilirlik bilinmiyor', fr: 'Disponibilité inconnue', es: 'Disponibilidad desconocida', it: 'Disponibilità sconosciuta',
+  },
+  'ai.limitReached': {
+    de: 'Tägliches KI-Limit erreicht', en: 'Daily AI limit reached', el: 'Ημερήσιο όριο ΤΝ', tr: 'Günlük AI limiti', fr: 'Limite IA atteinte', es: 'Límite IA alcanzado', it: 'Limite IA raggiunto',
+  },
 
   // ── Phase 2: Hinweise / Info ──────────────────────────────────────────────
   'discover.bookLangHint': {

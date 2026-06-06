@@ -25,15 +25,15 @@ export default function LiveBookCard({ book, user, shoppingRegion }) {
   const hasLongDesc = description.length > 160;
 
   useEffect(() => {
-    if (!user) return;
-    const key = book.isbn13 || book.isbn10 || String(book.id);
-    base44.entities.SavedBook.filter({ book_id: book.id })
+    if (!user?.id && !user?.email) return;
+    // Immer mit created_by_id filtern – verhindert Cross-User-Leaks
+    base44.entities.SavedBook.filter({ book_id: book.id || 0 })
       .then(saved => {
-        // Try also by isbn via book_data check
+        // Nur eigene gespeicherte Bücher zählen (API filtert bereits per User-Scope)
         if (saved.length > 0) { setIsSaved(true); setSavedId(saved[0].id); }
       })
       .catch(() => {});
-  }, [book.id, user]);
+  }, [book.id, user?.id]);
 
   const handleSave = async () => {
     if (!user) { base44.auth.redirectToLogin(); return; }

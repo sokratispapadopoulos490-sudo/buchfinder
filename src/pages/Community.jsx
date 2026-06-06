@@ -129,24 +129,57 @@ function CommunityContent() {
   };
 
   const AI_DAILY_LIMIT = 5;
+  const AI_TIMEOUT_MS = 20000;
+
+  /** Rate-Limit-Zähler im localStorage – wird bei Logout/User-Wechsel geleert. */
+  function getAiUsageToday(userId) {
+    const today = new Date().toISOString().split('T')[0];
+    const key = `ai_limit_${today}_${userId || 'anon'}`;
+    const stored = parseInt(localStorage.getItem(key) || '0', 10);
+    return { count: stored, key };
+  }
 
   const handleAskAI = async (post) => {
-    // Rate limiting: check AI usage stored on user object (resets each UTC day)
-    const today = new Date().toISOString().split('T')[0];
-    const aiUsageKey = `ai_usage_${today}`;
-    const currentUsage = user?.[aiUsageKey] || 0;
+    if (!user?.id && !user?.email) return; // kein User – kein AI
+    const userId = user.id || user.email;
+    const { count, key } = getAiUsageToday(userId);
 
-    if (currentUsage >= AI_DAILY_LIMIT) {
-      alert(`Du hast dein tägliches KI-Limit von ${AI_DAILY_LIMIT} Antworten erreicht. Morgen kannst du wieder KI-Antworten anfordern.`);
+    if (count >= AI_DAILY_LIMIT) {
+      alert(`Du hast dein tägliches KI-Limit von ${AI_DAILY_LIMIT} Antworten erreicht. Morgen wieder verfügbar.`);
       return;
     }
 
-    // Increment counter on user before calling LLM (prevents double-spend on error)
-    await base44.auth.updateMe({ [aiUsageKey]: currentUsage + 1 });
-    setUser(prev => ({ ...prev, [aiUsageKey]: currentUsage + 1 }));
+    // Zähler erhöhen BEVOR der API-Call – verhindert Doppel-Spend bei Fehler
+    localStorage.setItem(key, String(count + 1));
 
     const prompt = `Du bist der Book Compass KI-Assistent. Ein Nutzer hat folgenden Post geschrieben:\n\nTitel: ${post.title}\n${post.book_title ? `Buch: ${post.book_title}` : ''}\nInhalt: ${post.content}\n\nGib eine hilfreiche, freundliche Antwort (max. 150 Wörter). Sei persönlich und auf Bücher fokussiert.`;
-    const response = await base44.integrations.Core.InvokeLLM({ prompt });
+
+    // Timeout-Guard: kein Page-Crash bei LLM-Timeout
+    let response;
+    try {
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('AI timeout')), AI_TIMEOUT_MS)
+      );
+      response = await Promise.race([
+        base44.integrations.Core.InvokeLLM({ prompt }),
+        timeoutPromise,
+      ]);
+    } catch (err) {
+      const isTimeout = err?.message === 'AI timeout';
+      const msg = isTimeout
+        ? 'Die KI hat leider nicht rechtzeitig geantwortet. Bitte versuche es später.'
+        : 'Die KI-Antwort ist fehlgeschlagen. Bitte versuche es später.';
+      // Zähler zurücksetzen bei Fehler (kein Verbrauch wenn kein Ergebnis)
+      localStorage.setItem(key, String(count));
+      alert(msg);
+      return;
+    }
+
+    if (!response || typeof response !== 'string') {
+      localStorage.setItem(key, String(count));
+      return;
+    }
+
     await handleAddComment(post.id, response, true);
   };
 

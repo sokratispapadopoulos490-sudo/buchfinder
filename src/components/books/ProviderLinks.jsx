@@ -7,7 +7,7 @@
  */
 
 import React, { useState } from 'react';
-import { ExternalLink, ChevronDown, ChevronUp, Tag } from 'lucide-react';
+import { ExternalLink, ChevronDown, ChevronUp, Tag, Headphones } from 'lucide-react';
 import { getProviderLinksForBook } from '@/lib/providerRegistry';
 import { useLanguage } from '@/components/language/LanguageContext';
 
@@ -52,15 +52,19 @@ function ProviderButton({ link, t }) {
 export default function ProviderLinks({ book, shoppingRegion = 'DE', className = '' }) {
   const { t } = useLanguage();
   const [showUsed, setShowUsed] = useState(false);
+  const [showAudio, setShowAudio] = useState(false);
 
   // Neue Bücher: top 3
   const newLinks = getProviderLinksForBook(book, shoppingRegion, { types: ['new', 'marketplace'], limit: 3 });
   // Gebraucht: top 2
   const usedLinks = getProviderLinksForBook(book, shoppingRegion, { types: ['used'], limit: 2 });
+  // Audiobook: top 2 (Architektur-ready)
+  const audioLinks = getProviderLinksForBook(book, shoppingRegion, { types: ['audiobook'], limit: 2 });
 
   const hasUsed = usedLinks.length > 0;
+  const hasAudio = audioLinks.length > 0;
 
-  if (newLinks.length === 0 && !hasUsed) return null;
+  if (newLinks.length === 0 && !hasUsed && !hasAudio) return null;
 
   return (
     <div className={`space-y-2 ${className}`}>
@@ -83,6 +87,30 @@ export default function ProviderLinks({ book, shoppingRegion = 'DE', className =
           {showUsed && usedLinks.map(link => (
             <ProviderButton key={link.providerId + link.url} link={link} t={t} />
           ))}
+        </>
+      )}
+
+      {/* Audiobook-Toggle (Architektur-ready, kein Preis/Verfügbarkeit) */}
+      {hasAudio && (
+        <>
+          <button
+            onClick={() => setShowAudio(v => !v)}
+            className="w-full flex items-center justify-center gap-1.5 py-1.5 text-xs text-stone-500 dark:text-stone-400 hover:text-pink-600 dark:hover:text-pink-400 transition-colors"
+          >
+            <Headphones className="w-3 h-3" />
+            {t('provider.audiobook', 'Hörbuch')}
+            {showAudio ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+          </button>
+          {showAudio && (
+            <>
+              {audioLinks.map(link => (
+                <ProviderButton key={link.providerId + link.url} link={link} t={t} />
+              ))}
+              <p className="text-[10px] text-stone-400 dark:text-stone-500 text-center px-2">
+                {t('provider.audioHint', 'Verfügbarkeit unbekannt – Suche auf der Anbieter-Seite')}
+              </p>
+            </>
+          )}
         </>
       )}
     </div>
