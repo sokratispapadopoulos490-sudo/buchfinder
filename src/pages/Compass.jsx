@@ -1,13 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-// Module-level cache – überlebt Re-Mounts, nicht aber Page-Reloads
-let _compassCache = null;
-
-const LS_KEY = 'compassSnap_v1';
-function getSnap() { try { return JSON.parse(localStorage.getItem(LS_KEY) || 'null'); } catch { return null; } }
-function setSnap(d) { try { localStorage.setItem(LS_KEY, JSON.stringify(d)); } catch {} }
-function clearSnap() { try { localStorage.removeItem(LS_KEY); } catch {} }
-
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { BookOpen, Sparkles, Target, MessageCircle, Plus, BookMarked, ChevronLeft, ChevronRight, X, ChevronDown, ChevronUp, Camera, Compass as CompassIcon } from 'lucide-react';
@@ -24,6 +16,14 @@ import LibraryView from '@/components/library/LibraryView';
 import QuotesSection from '@/components/compass/QuotesSection';
 import ChallengesSection from '@/components/compass/ChallengesSection';
 import FollowingSection from '@/components/compass/FollowingSection';
+
+// Module-level cache – überlebt Re-Mounts, nicht aber Page-Reloads
+let _compassCache = null;
+
+const LS_KEY = 'compassSnap_v1';
+function getSnap() { try { return JSON.parse(localStorage.getItem(LS_KEY) || 'null'); } catch { return null; } }
+function setSnap(d) { try { localStorage.setItem(LS_KEY, JSON.stringify(d)); } catch {} }
+function clearSnap() { try { localStorage.removeItem(LS_KEY); } catch {} }
 
 
 export default function Compass() {

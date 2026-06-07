@@ -26,10 +26,13 @@ export default function LiveBookCard({ book, user, shoppingRegion }) {
 
   useEffect(() => {
     if (!user?.id && !user?.email) return;
-    // Immer mit created_by_id filtern – verhindert Cross-User-Leaks
-    base44.entities.SavedBook.filter({ book_id: book.id || 0 })
+    // Nur prüfen wenn book.id existiert – sonst kein Filter möglich (vermeidet false positives)
+    if (!book.id && !book.isbn13) return;
+    const filterKey = book.id ? { book_id: book.id } : { book_id: parseInt((book.isbn13 || '0').slice(-8)) || null };
+    if (!filterKey.book_id) return;
+    base44.entities.SavedBook.filter(filterKey)
       .then(saved => {
-        // Nur eigene gespeicherte Bücher zählen (API filtert bereits per User-Scope)
+        // API filtert bereits per User-Scope
         if (saved.length > 0) { setIsSaved(true); setSavedId(saved[0].id); }
       })
       .catch(() => {});

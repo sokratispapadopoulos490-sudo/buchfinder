@@ -31,7 +31,8 @@ export function setBookLanguage(lang) {
   try {
     if (lang) localStorage.setItem(BOOK_LANG_KEY, lang);
     else localStorage.removeItem(BOOK_LANG_KEY);
-    window.dispatchEvent(new StorageEvent('storage', { key: BOOK_LANG_KEY, newValue: lang }));
+    // CustomEvent statt StorageEvent – konsistenter Cross-Browser-Support
+    window.dispatchEvent(new CustomEvent('bc:book_lang', { detail: { key: BOOK_LANG_KEY, newValue: lang } }));
   } catch {}
 }
 
@@ -64,7 +65,8 @@ export function getShoppingRegion() {
 export function setShoppingRegion(region) {
   try {
     localStorage.setItem(SHOP_REGION_KEY, region);
-    window.dispatchEvent(new StorageEvent('storage', { key: SHOP_REGION_KEY, newValue: region }));
+    // CustomEvent statt StorageEvent – konsistenter Cross-Browser-Support
+    window.dispatchEvent(new CustomEvent('bc:shop_region', { detail: { key: SHOP_REGION_KEY, newValue: region } }));
   } catch {}
 }
 

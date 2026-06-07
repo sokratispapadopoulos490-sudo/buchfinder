@@ -70,8 +70,12 @@ function CommunityContent() {
       setPosts(postsData);
       setSavedBooks(booksData);
       setUserLikes(likesData);
-    } catch {
-      base44.auth.redirectToLogin();
+    } catch (err) {
+      // Nur bei echten Auth-Fehlern weiterleiten, nicht bei Netzwerkfehlern
+      const isAuthErr = err?.status === 401 || err?.status === 403 ||
+        String(err?.message).includes('401') || String(err?.message).includes('unauthorized');
+      if (isAuthErr) base44.auth.redirectToLogin();
+      else console.error('Community loadData error:', err);
     } finally {
       setLoading(false);
     }

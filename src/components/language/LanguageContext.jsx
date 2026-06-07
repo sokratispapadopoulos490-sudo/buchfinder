@@ -58,17 +58,11 @@ export const LanguageProvider = ({ children }) => {
     return () => window.removeEventListener('bc:language', onBcLanguage);
   }, [language]);
 
-  // Sync: storage-Event aus anderen Tabs + bookLanguage/shoppingRegion
+  // Sync: storage-Event aus anderen Tabs (echte storage-Events: appLanguage, bc_auth_v2)
   useEffect(() => {
     const onStorage = (e) => {
       if (e.key === 'appLanguage' && e.newValue && e.newValue !== language) {
         setLanguage(e.newValue);
-      }
-      if (e.key === 'bc_book_lang') {
-        setBookLanguageState(e.newValue || '');
-      }
-      if (e.key === 'bc_shop_region' && e.newValue) {
-        setShoppingRegionState(e.newValue);
       }
       // Logout in anderem Tab → zurück zu Deutsch
       if (e.key === 'bc_auth_v2' && e.newValue === null) {
@@ -80,6 +74,18 @@ export const LanguageProvider = ({ children }) => {
     window.addEventListener('storage', onStorage);
     return () => window.removeEventListener('storage', onStorage);
   }, [language]);
+
+  // Sync: CustomEvents aus demselben Tab (shoppingRegion.js dispatcht CustomEvents)
+  useEffect(() => {
+    const onBookLang = (e) => setBookLanguageState(e.detail?.newValue || '');
+    const onShopRegion = (e) => { if (e.detail?.newValue) setShoppingRegionState(e.detail.newValue); };
+    window.addEventListener('bc:book_lang', onBookLang);
+    window.addEventListener('bc:shop_region', onShopRegion);
+    return () => {
+      window.removeEventListener('bc:book_lang', onBookLang);
+      window.removeEventListener('bc:shop_region', onShopRegion);
+    };
+  }, []);
 
   const changeLanguage = useCallback(async (newLanguage) => {
     setLanguage(newLanguage);
