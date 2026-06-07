@@ -24,19 +24,25 @@ export default function LiveBookCard({ book, user, shoppingRegion }) {
   const shortDesc = description.length > 160 ? description.slice(0, 160) + '…' : description;
   const hasLongDesc = description.length > 160;
 
+  // Stabiler Key: bevorzugt source_id (Google volumeId), dann isbn13, dann Entitäts-ID
+  const stableBookId = book.source_id
+    ? `src_${book.source_id}`
+    : book.isbn13
+      ? `isbn_${book.isbn13}`
+      : book.id
+        ? String(book.id)
+        : null;
+
   useEffect(() => {
     if (!user?.id && !user?.email) return;
-    // Nur prüfen wenn book.id existiert – sonst kein Filter möglich (vermeidet false positives)
-    if (!book.id && !book.isbn13) return;
-    const filterKey = book.id ? { book_id: book.id } : { book_id: parseInt((book.isbn13 || '0').slice(-8)) || null };
-    if (!filterKey.book_id) return;
-    base44.entities.SavedBook.filter(filterKey)
+    if (!stableBookId) return;
+    // Suche per source_id im book_data, das beim Speichern mitgespeichert wird
+    base44.entities.SavedBook.filter({ 'book_data.stableId': stableBookId })
       .then(saved => {
-        // API filtert bereits per User-Scope
         if (saved.length > 0) { setIsSaved(true); setSavedId(saved[0].id); }
       })
       .catch(() => {});
-  }, [book.id, user?.id]);
+  }, [stableBookId, user?.id]);
 
   const handleSave = async () => {
     if (!user) { base44.auth.redirectToLogin(); return; }
@@ -47,8 +53,11 @@ export default function LiveBookCard({ book, user, shoppingRegion }) {
         setIsSaved(false); setSavedId(null);
       } else {
         const created = await base44.entities.SavedBook.create({
-          book_id: book.id || parseInt((book.isbn13 || '0').slice(-8)) || Date.now(),
+          // book_id: Entitäts-ID wenn vorhanden, sonst 0 (Pflichtfeld bleibt befüllt)
+          book_id: book.id || 0,
           book_data: {
+            stableId: stableBookId,      // Kollisionsfreier Lookup-Key
+            source_id: book.source_id,   // Google volumeId
             title: book.title,
             author: displayAuthor,
             authors: book.authors,

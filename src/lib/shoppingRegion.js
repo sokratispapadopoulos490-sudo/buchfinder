@@ -96,11 +96,19 @@ export function loadPreferencesFromProfile(user) {
   try {
     if (user.book_language !== undefined && user.book_language !== null) {
       const current = localStorage.getItem(BOOK_LANG_KEY);
-      if (!current) localStorage.setItem(BOOK_LANG_KEY, user.book_language);
+      if (!current) {
+        localStorage.setItem(BOOK_LANG_KEY, user.book_language);
+        // Same-tab sync → LanguageContext
+        window.dispatchEvent(new CustomEvent('bc:book_lang', { detail: { key: BOOK_LANG_KEY, newValue: user.book_language } }));
+      }
     }
     if (user.shopping_region) {
       const current = localStorage.getItem(SHOP_REGION_KEY);
-      if (!current) localStorage.setItem(SHOP_REGION_KEY, user.shopping_region);
+      if (!current) {
+        localStorage.setItem(SHOP_REGION_KEY, user.shopping_region);
+        // Same-tab sync → LanguageContext
+        window.dispatchEvent(new CustomEvent('bc:shop_region', { detail: { key: SHOP_REGION_KEY, newValue: user.shopping_region } }));
+      }
     }
   } catch {}
 }

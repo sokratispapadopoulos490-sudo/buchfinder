@@ -507,6 +507,16 @@ export function getProviderLinksForBook(book, region = 'DE', options = {}) {
   return links;
 }
 
+/**
+ * Gibt die interne Provider-Definition für eine providerId zurück.
+ * Nützlich für Tests, Debugging und externe Nutzung ohne direkten PROVIDER_DEFS-Zugriff.
+ * @param {string} providerId
+ * @returns {object|null}
+ */
+export function getProviderDefinition(providerId) {
+  return PROVIDER_DEFS[providerId] ?? null;
+}
+
 // Legacy-Alias für Rückwärtskompatibilität
 export function getProviderLinks(book, region = 'DE') {
   return getProviderLinksForBook(book, region, { includeUsed: false });

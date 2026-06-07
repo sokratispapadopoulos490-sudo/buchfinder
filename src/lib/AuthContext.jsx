@@ -14,6 +14,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { cacheClear } from '@/lib/clientCache';
+import { loadPreferencesFromProfile } from '@/lib/shoppingRegion';
 
 const AuthContext = createContext();
 
@@ -100,6 +101,9 @@ export const AuthProvider = ({ children }) => {
           localStorage.setItem('appLanguage', currentUser.language);
           dispatchLanguageChange(currentUser.language);
         }
+
+        // bookLanguage + shoppingRegion aus Profil laden (nur wenn localStorage noch leer)
+        loadPreferencesFromProfile(currentUser);
       })
       .catch((err) => {
         const hadCachedAuth = !!readCache()?.isAuthenticated;
