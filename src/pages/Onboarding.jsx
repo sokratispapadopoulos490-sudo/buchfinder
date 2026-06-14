@@ -83,7 +83,7 @@ export default function Onboarding() {
 
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-stone-700 mb-1 block">Benutzername</label>
+                  <label className="text-sm font-medium text-stone-700 mb-1 block">Benutzername <span className="text-stone-400 font-normal">(optional)</span></label>
                   <div className="flex items-center border border-stone-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-amber-500">
                     <span className="pl-4 text-stone-400 text-sm">@</span>
                     <input
@@ -105,6 +105,12 @@ export default function Onboarding() {
                 >
                   Weiter
                 </Button>
+                <button
+                  onClick={() => setStep(1)}
+                  className="w-full text-sm text-stone-400 hover:text-stone-600 transition-colors py-1"
+                >
+                  Überspringen
+                </button>
               </div>
             </motion.div>
           )}
