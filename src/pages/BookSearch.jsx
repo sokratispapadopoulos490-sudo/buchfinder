@@ -9,6 +9,7 @@ import { getMatchingBooks } from '@/components/books/BookDatabaseLogic';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/components/language/LanguageContext';
+import { setBookLanguage } from '@/lib/shoppingRegion';
 
 // Erste Frage für alle - Altersgruppe ermitteln
 const ageQuestion = {
@@ -21,9 +22,26 @@ const ageQuestion = {
   ]
 };
 
+// Buchsprachen-Frage für alle Gruppen (Schritt 2)
+const bookLanguageQuestion = {
+  id: 'book_language',
+  question: "In welcher Sprache soll das Buch sein?",
+  options: [
+    { value: "de", label: "🇩🇪 Deutsch" },
+    { value: "en", label: "🇬🇧 Englisch" },
+    { value: "fr", label: "🇫🇷 Französisch" },
+    { value: "es", label: "🇪🇸 Spanisch" },
+    { value: "it", label: "🇮🇹 Italienisch" },
+    { value: "el", label: "🇬🇷 Griechisch" },
+    { value: "tr", label: "🇹🇷 Türkisch" },
+    { value: "any", label: "🌍 Mehrere / egal" },
+  ]
+};
+
 const questionSets = {
   kinder: [
     ageQuestion,
+    bookLanguageQuestion,
     {
       id: 'topic',
       question: "Was interessiert dich gerade am meisten?",
@@ -73,6 +91,7 @@ const questionSets = {
   ],
   jugendliche: [
     ageQuestion,
+    bookLanguageQuestion,
     {
       id: 'topic',
       question: "Was interessiert dich gerade am meisten?",
@@ -123,6 +142,7 @@ const questionSets = {
   ],
   erwachsene: [
     ageQuestion,
+    bookLanguageQuestion,
     {
       id: 'reading_goal',
       question: "Was ist dein Hauptziel beim Lesen?",
@@ -319,18 +339,12 @@ function BookSearchContent() {
   const [questions, setQuestions] = useState(questionSets.erwachsene);
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [recommendationCount, setRecommendationCount] = useState(0);
-  const [isPremium, setIsPremium] = useState(false);
   const [loading, setLoading] = useState(false);
   const [translatedQuestions, setTranslatedQuestions] = useState(questionSets.erwachsene);
   const { t } = useLanguage();
 
   useEffect(() => {
-    const init = async () => {
-      await checkAuth();
-      await loadRecommendationCount();
-    };
-    init();
+    checkAuth();
   }, []);
 
   useEffect(() => {
@@ -346,24 +360,11 @@ function BookSearchContent() {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
         setIsAuthenticated(true);
-        setIsPremium(currentUser.is_premium || currentUser.role === 'admin');
       } else {
         setIsAuthenticated(false);
       }
     } catch (error) {
       setIsAuthenticated(false);
-    }
-  };
-
-  const loadRecommendationCount = async () => {
-    try {
-      const isAuth = await base44.auth.isAuthenticated();
-      if (isAuth) {
-        const recommendations = await base44.entities.Recommendation.list();
-        setRecommendationCount(recommendations.length);
-      }
-    } catch (error) {
-      console.error('Fehler beim Laden der Empfehlungen:', error);
     }
   };
 
@@ -448,6 +449,12 @@ function BookSearchContent() {
 
     const readBooks = ans.read_books ? ans.read_books.split(',').map(b => b.trim().toLowerCase()) : [];
 
+    // Buchsprache mit shoppingRegion-Logik verbinden
+    const bookLang = ans.book_language || 'de';
+    if (bookLang !== 'any') {
+      setBookLanguage(bookLang);
+    }
+
     return {
       mainTopics,
       secondaryTopics,
@@ -455,6 +462,7 @@ function BookSearchContent() {
       difficulty: ans.level || "einsteiger",
       timeEffort: ans.length,
       ageGroup: ageGroup,
+      bookLanguage: bookLang === 'any' ? null : bookLang,
       readBooks
     };
   };
@@ -468,9 +476,7 @@ function BookSearchContent() {
         await base44.entities.Recommendation.create({
           books: results,
           profile: profile,
-          is_premium: isPremium
         });
-        setRecommendationCount(recommendationCount + 1);
       } catch (error) {
         console.error('Fehler beim Speichern:', error);
       }
@@ -511,10 +517,6 @@ function BookSearchContent() {
   };
 
   const navigate = useNavigate();
-
-  const handleUpgrade = () => {
-    navigate('/Premium');
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50 pb-20">
@@ -674,24 +676,7 @@ function BookSearchContent() {
                   {t('results.subtitle')}
                 </p>
                 
-                {!isPremium && isAuthenticated && (
-                  <div className="mt-6 inline-block">
-                    <div className="bg-amber-50 border border-amber-200 rounded-lg px-6 py-4">
-                      <p className="text-sm text-amber-800 mb-2">
-                        <strong>{t('results.freeVersion')}</strong> {recommendationCount} {t('results.recommendationsUsed')}
-                      </p>
-                      {recommendationCount >= 3 && (
-                        <Button
-                          onClick={handleUpgrade}
-                          size="sm"
-                          className="bg-amber-600 hover:bg-amber-700 text-white"
-                        >
-                          {t('btn.upgradePremium')}
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                )}
+
               </motion.div>
 
               <div className="space-y-8">

@@ -24,8 +24,8 @@ const dict = {
     tr: 'Pusula', fr: 'Boussole', es: 'Brújula', it: 'Bussola',
   },
   'nav.discover': {
-    de: 'Entdecken', en: 'Discover', el: 'Ανακάλυψη',
-    tr: 'Keşfet', fr: 'Découvrir', es: 'Descubrir', it: 'Scopri',
+    de: 'Suchen', en: 'Search', el: 'Αναζήτηση',
+    tr: 'Ara', fr: 'Chercher', es: 'Buscar', it: 'Cerca',
   },
   'nav.account': {
     de: 'Account', en: 'Account', el: 'Λογαριασμός',
@@ -124,26 +124,13 @@ const dict = {
     tr: 'Ücretsiz başla', fr: 'Commencer gratuitement', es: 'Empezar gratis', it: 'Inizia gratis',
   },
   'home.freeDescription': {
-    de: '3 personalisierte Empfehlungen – komplett kostenlos, keine Kreditkarte nötig',
-    en: '3 personalized recommendations – completely free, no credit card needed',
-    el: '3 εξατομικευμένες προτάσεις – εντελώς δωρεάν',
-    tr: '3 kişiselleştirilmiş öneri – tamamen ücretsiz',
-    fr: '3 recommandations personnalisées – totalement gratuites',
-    es: '3 recomendaciones personalizadas – completamente gratis',
-    it: '3 consigli personalizzati – completamente gratis',
-  },
-  'home.premiumTitle': {
-    de: 'Premium für 4,99€/Monat', en: 'Premium for €4.99/month', el: 'Premium για 4,99€/μήνα',
-    tr: 'Aylık 4,99€ Premium', fr: 'Premium à 4,99€/mois', es: 'Premium por 4,99€/mes', it: 'Premium a 4,99€/mese',
-  },
-  'home.premiumDescription': {
-    de: 'Unbegrenzte Empfehlungen, erweiterte Profile und regelmäßig neue Bücher',
-    en: 'Unlimited recommendations, extended profiles and regularly new books',
-    el: 'Απεριόριστες προτάσεις και νέα βιβλία',
-    tr: 'Sınırsız öneriler ve düzenli yeni kitaplar',
-    fr: 'Recommandations illimitées et nouveaux livres réguliers',
-    es: 'Recomendaciones ilimitadas y libros nuevos regularmente',
-    it: 'Consigli illimitati e nuovi libri regolarmente',
+    de: 'Kostenlose Buchempfehlungen – kein Abo, keine Kreditkarte',
+    en: 'Free book recommendations – no subscription, no credit card',
+    el: 'Δωρεάν προτάσεις βιβλίων – χωρίς συνδρομή',
+    tr: 'Ücretsiz kitap önerileri – abonelik yok',
+    fr: 'Recommandations gratuites – sans abonnement',
+    es: 'Recomendaciones gratuitas – sin suscripción',
+    it: 'Consigli gratuiti – senza abbonamento',
   },
 
   // ── Empfehlungen / Results ────────────────────────────────────────────────
