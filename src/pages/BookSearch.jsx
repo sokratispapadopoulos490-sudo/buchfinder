@@ -628,70 +628,111 @@ function BookSearchContent() {
                 animate={{ y: 0, opacity: 1 }}
                 className="text-center mb-12"
               >
-                <h2 className="text-3xl md:text-4xl font-light text-stone-800 mb-3">
+                <h2 className="text-3xl md:text-4xl font-light text-stone-800 dark:text-stone-100 mb-3">
                   {t('results.title')}
                 </h2>
                 <p className="text-stone-500 font-light">
                   {t('results.subtitle')}
                 </p>
-                
-
               </motion.div>
 
-              <div className="space-y-8">
-                {Array.isArray(recommendations) && recommendations.map((book, idx) => {
-                  const isContrast = book.isContrast;
-                  const placement = book.placement || idx + 1;
-                  const badgeColor = idx === 0
-                    ? 'bg-gradient-to-br from-amber-500 to-amber-600'
-                    : idx === 1
-                    ? 'bg-gradient-to-br from-stone-400 to-stone-500'
-                    : isContrast
-                    ? 'bg-gradient-to-br from-purple-400 to-purple-500'
-                    : 'bg-gradient-to-br from-amber-300 to-amber-400';
+              {/* Robuste Trennung: main vs. contrast */}
+              {(() => {
+                const mainBooks = Array.isArray(recommendations) ? recommendations.filter(b => !b.isContrast) : [];
+                const horizonBooks = Array.isArray(recommendations) ? recommendations.filter(b => b.isContrast) : [];
 
-                  let title, subtitle;
-                  if (isContrast) {
-                    title = t('results.somethingDifferent');
-                    subtitle = t('results.expandHorizon');
-                  } else if (idx === 0) {
-                    title = t('results.bestMatch');
-                    subtitle = t('results.perfectChoice');
-                  } else if (idx === 1) {
-                    title = t('results.secondBest');
-                    subtitle = t('results.deepensTheme');
-                  } else {
-                    title = `${t('results.recommendation')} #${placement}`;
-                    subtitle = t('results.fitsInterests');
-                  }
-
+                if (mainBooks.length === 0) {
                   return (
-                    <div key={book.id} className="space-y-3">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold ${badgeColor}`}>
-                          {placement}
-                        </div>
-                        <div>
-                          <h3 className="text-lg font-medium text-stone-800">{title}</h3>
-                          <p className="text-sm text-stone-500">{subtitle}</p>
-                        </div>
-                      </div>
-                      <BookCard
-                        book={book}
-                        reasons={generateReasons(book, profile)}
-                        index={idx}
-                        isContrast={isContrast}
-                      />
+                    <div className="text-center py-16 text-stone-400">
+                      <p className="text-lg mb-2">Keine Bücher gefunden</p>
+                      <p className="text-sm">Versuche eine neue Suche mit anderen Einstellungen.</p>
                     </div>
                   );
-                })}
-              </div>
+                }
+
+                return (
+                  <>
+                    {/* Sektion 1: Hauptempfehlungen */}
+                    <div className="mb-14">
+                      <div className="flex items-center gap-3 mb-6">
+                        <h3 className="text-xl font-medium text-stone-800 dark:text-stone-100">
+                          Deine {mainBooks.length} Empfehlung{mainBooks.length !== 1 ? 'en' : ''}
+                        </h3>
+                        <div className="flex-1 h-px bg-stone-200 dark:bg-stone-700" />
+                      </div>
+                      <div className="space-y-8">
+                        {mainBooks.map((book, idx) => {
+                          const placement = book.placement || idx + 1;
+                          const badgeColor = idx === 0
+                            ? 'bg-gradient-to-br from-amber-500 to-amber-600'
+                            : idx === 1
+                            ? 'bg-gradient-to-br from-stone-400 to-stone-500'
+                            : 'bg-gradient-to-br from-amber-300 to-amber-400';
+                          return (
+                            <div key={book.id || book.isbn13 || idx} className="space-y-3">
+                              <div className="flex items-center gap-3">
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 ${badgeColor}`}>
+                                  {placement}
+                                </div>
+                                <span className="text-sm text-stone-500 dark:text-stone-400">
+                                  {idx === 0 ? 'Bester Treffer' : idx === 1 ? 'Passt sehr gut' : 'Empfohlen für dich'}
+                                </span>
+                              </div>
+                              <BookCard
+                                book={book}
+                                reasons={generateReasons(book, profile)}
+                                index={idx}
+                                isContrast={false}
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Sektion 2: Horizont-Erweiterungen */}
+                    {horizonBooks.length > 0 && (
+                      <div className="mb-14">
+                        <div className="flex items-center gap-3 mb-2">
+                          <h3 className="text-xl font-medium text-stone-800 dark:text-stone-100 whitespace-nowrap">
+                            Etwas Neues wagen
+                          </h3>
+                          <div className="flex-1 h-px bg-stone-200 dark:bg-stone-700" />
+                        </div>
+                        <p className="text-sm text-stone-400 dark:text-stone-500 mb-6">
+                          Bücher, die deinen Horizont bewusst erweitern – abseits deiner üblichen Themen.
+                        </p>
+                        <div className="space-y-8">
+                          {horizonBooks.map((book, idx) => (
+                            <div key={book.id || book.isbn13 || `h-${idx}`} className="space-y-3">
+                              <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 bg-gradient-to-br from-violet-400 to-violet-500">
+                                  ✦
+                                </div>
+                                <span className="text-sm text-violet-600 dark:text-violet-400 font-medium">
+                                  Horizont erweitern
+                                </span>
+                              </div>
+                              <BookCard
+                                book={book}
+                                reasons={generateReasons(book, profile)}
+                                index={10 + idx}
+                                isContrast={true}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
 
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 1 }}
-                className="mt-12 text-center"
+                transition={{ delay: 0.5 }}
+                className="mt-8 text-center"
               >
                 <button
                   onClick={handleRestart}
