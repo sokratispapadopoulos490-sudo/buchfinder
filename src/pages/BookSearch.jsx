@@ -8,7 +8,6 @@ import ProfileCard from '@/components/books/ProfileCard';
 import BookCard from '@/components/books/BookCard';
 import { getMatchingBooks } from '@/components/books/BookDatabaseLogic';
 import { base44 } from '@/api/base44Client';
-import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/components/language/LanguageContext';
 import { setBookLanguage } from '@/lib/shoppingRegion';
 
@@ -432,7 +431,7 @@ function BookSearchContent() {
 
   const handleBackFromProfile = () => {
     setPhase('questions');
-    setCurrentQuestion(questions.length - 1);
+    setCurrentQuestion(translatedQuestions.length - 1);
   };
 
   const handleBackFromResults = () => {
@@ -449,8 +448,6 @@ function BookSearchContent() {
     setAgeGroup('erwachsene');
     setQuestions(questionSets.erwachsene);
   };
-
-  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50 pb-20">
