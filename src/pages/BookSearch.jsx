@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Compass, ArrowRight, ChevronLeft } from 'lucide-react';
 import QuestionCard from '@/components/books/QuestionCard';
+import ReadBooksInput from '@/components/books/ReadBooksInput';
 import ProfileCard from '@/components/books/ProfileCard';
 import BookCard from '@/components/books/BookCard';
 import { getMatchingBooks } from '@/components/books/BookDatabaseLogic';
@@ -38,108 +39,87 @@ const bookLanguageQuestion = {
   ]
 };
 
+// read_books ist kein normaler Frageschritt – wird separat als Chip-Screen behandelt
+// Marker-Objekt, damit der Flow weiß: hier ReadBooksInput rendern
+const readBooksStep = { id: 'read_books', isReadBooksInput: true };
+
 const questionSets = {
+  // ── Kinder (5 Schritte inkl. readBooks) ──────────────────────────────────
   kinder: [
     ageQuestion,
     bookLanguageQuestion,
     {
+      id: 'age_range',
+      question: "Wie alt bist du?",
+      options: [
+        { value: "6-8",  label: "6–8 Jahre 📚" },
+        { value: "9-10", label: "9–10 Jahre 🌟" },
+        { value: "11-12", label: "11–12 Jahre 🚀" },
+      ]
+    },
+    {
       id: 'topic',
-      question: "Was interessiert dich gerade am meisten?",
+      question: "Was magst du am liebsten?",
       options: [
-        { value: "abenteuer", label: "🗺️ Spannende Abenteuer" },
-        { value: "freundschaft", label: "🤝 Freundschaft und Zusammenhalt" },
-        { value: "magie", label: "✨ Magie und Fantasie" },
-        { value: "lustiges", label: "😄 Lustige Geschichten" },
-        { value: "mut", label: "💪 Mutig sein" },
-        { value: "schule", label: "🎒 Schule und Lernen" }
-      ]
-    },
-    {
-      id: 'mood',
-      question: "Wie fühlst du dich gerade?",
-      options: [
-        { value: "neugierig", label: "Ich möchte etwas Neues entdecken" },
-        { value: "aufgeregt", label: "Ich will Action und Spannung" },
-        { value: "ruhig", label: "Ich möchte mich entspannen" },
-        { value: "mutig", label: "Ich suche Inspiration" }
-      ]
-    },
-    {
-      id: 'style',
-      question: "Welche Geschichten magst du am liebsten?",
-      options: [
-        { value: "story", label: "Abenteuergeschichten" },
-        { value: "reflektierend", label: "Geschichten zum Nachdenken" }
+        { value: "abenteuer",   label: "🗺️ Abenteuer & Spannung" },
+        { value: "magie",       label: "✨ Magie & Fantasie" },
+        { value: "freundschaft",label: "🤝 Freundschaft" },
+        { value: "lustiges",    label: "😄 Lustige Bücher" },
+        { value: "tiere",       label: "🐾 Tiere & Natur" },
+        { value: "schule",      label: "🎒 Schule & Rätsel" },
       ]
     },
     {
       id: 'length',
       question: "Wie lange möchtest du lesen?",
       options: [
-        { value: "kurz", label: "Kurze Geschichten (10-20 Min.)" },
-        { value: "mittel", label: "Ein Kapitel am Tag" },
-        { value: "lang", label: "Längere, spannende Bücher" }
+        { value: "kurz",  label: "⏱️ Kurz (10–20 Min.)" },
+        { value: "mittel",label: "📖 Ein Kapitel täglich" },
+        { value: "lang",  label: "📚 Richtig eintauchen" },
       ]
     },
-    {
-      id: 'read_books',
-      question: "Nenne 3 Bücher, die du bereits gelesen und geliebt hast",
-      description: "Damit wir Dopplungen vermeiden und besser verstehen, was dir gefällt",
-      isTextInput: true,
-      placeholder: "z.B. Harry Potter, Das magische Baumhaus, Der kleine Prinz"
-    }
+    readBooksStep,
   ],
+
+  // ── Jugendliche (5 Schritte inkl. readBooks) ─────────────────────────────
   jugendliche: [
     ageQuestion,
     bookLanguageQuestion,
     {
+      id: 'occasion',
+      question: "Wonach suchst du gerade?",
+      options: [
+        { value: "freizeit",   label: "🎧 Einfach Spaß & Ablenkung" },
+        { value: "entdecken",  label: "🌍 Etwas Neues entdecken" },
+        { value: "verstehen",  label: "💭 Mich selbst besser verstehen" },
+        { value: "schule",     label: "📝 Etwas für die Schule" },
+      ]
+    },
+    {
       id: 'topic',
-      question: "Was interessiert dich gerade am meisten?",
+      question: "Was interessiert dich?",
       options: [
-        { value: "selbstfindung", label: "Mich selbst besser verstehen" },
-        { value: "freundschaft", label: "Freundschaft und Beziehungen" },
-        { value: "abenteuer", label: "Abenteuer und Fantasy" },
-        { value: "liebe", label: "Liebe und erste Beziehungen" },
-        { value: "gesellschaft", label: "Die Welt verstehen" },
-        { value: "mut", label: "Mut und innere Stärke" }
-      ]
-    },
-    {
-      id: 'mood',
-      question: "Was beschreibt deine Situation am besten?",
-      options: [
-        { value: "suchend", label: "Ich suche nach Orientierung" },
-        { value: "neugierig", label: "Ich will neue Perspektiven" },
-        { value: "herausfordernd", label: "Ich stehe vor Herausforderungen" },
-        { value: "inspiriert", label: "Ich will inspiriert werden" }
-      ]
-    },
-    {
-      id: 'style',
-      question: "Welche Bücher bevorzugst du?",
-      options: [
-        { value: "story", label: "Spannende Geschichten" },
-        { value: "reflektierend", label: "Zum Nachdenken" },
-        { value: "praktisch", label: "Mit Tipps fürs Leben" }
+        { value: "abenteuer",    label: "⚔️ Abenteuer & Fantasy" },
+        { value: "liebe",        label: "💕 Liebe & Gefühle" },
+        { value: "freundschaft", label: "🤜 Freundschaft & Zusammenhalt" },
+        { value: "selbstfindung",label: "🔍 Wer bin ich?" },
+        { value: "gesellschaft", label: "🌐 Die Welt verstehen" },
+        { value: "thriller_krimi",label: "🕵️ Spannung & Krimi" },
       ]
     },
     {
       id: 'length',
-      question: "Wie viel Zeit hast du zum Lesen?",
+      question: "Wie viel Zeit hast du?",
       options: [
-        { value: "kurz", label: "15-30 Minuten am Tag" },
-        { value: "mittel", label: "Ein paar Kapitel täglich" },
-        { value: "lang", label: "Ich tauche gerne tief ein" }
+        { value: "kurz",  label: "⚡ 15–30 Minuten" },
+        { value: "mittel",label: "📖 Ein paar Kapitel täglich" },
+        { value: "lang",  label: "🏊 Ich tauche gerne tief ein" },
       ]
     },
-    {
-      id: 'read_books',
-      question: "Nenne 3 Bücher, die du bereits gelesen und geliebt hast",
-      description: "Damit wir Dopplungen vermeiden und besser verstehen, was dir gefällt",
-      isTextInput: true,
-      placeholder: "z.B. Die Tribute von Panem, Tschick, Das Schicksal ist ein mieser Verräter"
-    }
+    readBooksStep,
   ],
+
+  // ── Erwachsene (6 Schritte inkl. readBooks) ──────────────────────────────
   erwachsene: [
     ageQuestion,
     bookLanguageQuestion,
@@ -147,91 +127,53 @@ const questionSets = {
       id: 'reading_goal',
       question: "Was ist dein Hauptziel beim Lesen?",
       options: [
-        { value: "wachstum", label: "Persönliches Wachstum & Wissen" },
+        { value: "wachstum",    label: "Persönliches Wachstum & Wissen" },
         { value: "entspannung", label: "Entspannung & Unterhaltung" },
-        { value: "beide", label: "Beides – je nach Stimmung" }
+        { value: "beide",       label: "Beides – je nach Stimmung" },
       ]
     },
     {
       id: 'topic',
       question: "Was interessiert dich am meisten?",
       options: [
-        // Sachbuch-Themen
-        { value: "persoenliche_entwicklung", label: "Persönliche Entwicklung" },
-        { value: "stress_ruhe", label: "Ruhe und Gelassenheit" },
-        { value: "fokus_produktivitaet", label: "Fokus & Produktivität" },
-        { value: "beziehung_kommunikation", label: "Beziehungen & Kommunikation" },
-        { value: "sinn_philosophie", label: "Sinn & Lebensphilosophie" },
-        { value: "glaube_spiritualitaet", label: "Glaube & Spiritualität" },
-        { value: "kreativitaet", label: "Kreativität" },
-        { value: "lernen_wissen", label: "Lernen & Wissenserweiterung" },
-        { value: "koerper_gesundheit", label: "Körper & Gesundheit" },
-        // Belletristik-Genres
-        { value: "fantasy_scifi", label: "Fantasy & Science-Fiction" },
-        { value: "thriller_krimi", label: "Thriller & Krimis" },
-        { value: "romance", label: "Romantik & Liebesromane" },
-        { value: "historisch", label: "Historische Romane" },
-        { value: "literatur", label: "Anspruchsvolle Literatur" },
-        { value: "humor", label: "Humor & Leichte Unterhaltung" }
-      ]
-    },
-    {
-      id: 'mood',
-      question: "Wie würdest du deine Situation beschreiben?",
-      options: [
-        { value: "ueberfordert", label: "Ich suche Orientierung" },
-        { value: "neugierig", label: "Ich will Neues entdecken" },
-        { value: "antriebslos", label: "Ich brauche frische Impulse" },
-        { value: "wachsend", label: "Ich will mich weiterentwickeln" }
+        { value: "persoenliche_entwicklung",  label: "Persönliche Entwicklung" },
+        { value: "stress_ruhe",               label: "Ruhe & Gelassenheit" },
+        { value: "fokus_produktivitaet",      label: "Fokus & Produktivität" },
+        { value: "beziehung_kommunikation",   label: "Beziehungen & Kommunikation" },
+        { value: "sinn_philosophie",          label: "Sinn & Lebensphilosophie" },
+        { value: "glaube_spiritualitaet",     label: "Glaube & Spiritualität" },
+        { value: "kreativitaet",              label: "Kreativität" },
+        { value: "lernen_wissen",             label: "Lernen & Wissen" },
+        { value: "koerper_gesundheit",        label: "Körper & Gesundheit" },
+        { value: "fantasy_scifi",             label: "Fantasy & Science-Fiction" },
+        { value: "thriller_krimi",            label: "Thriller & Krimis" },
+        { value: "romance",                   label: "Romantik & Liebesromane" },
+        { value: "historisch",                label: "Historische Romane" },
+        { value: "literatur",                 label: "Anspruchsvolle Literatur" },
+        { value: "humor",                     label: "Humor & Unterhaltung" },
       ]
     },
     {
       id: 'style',
-      question: "Welcher Lesestil passt zu dir?",
+      question: "Wie liest du am liebsten?",
       options: [
-        { value: "praktisch", label: "Praktisch & umsetzbar" },
-        { value: "wissenschaftlich", label: "Wissenschaftlich fundiert" },
-        { value: "story", label: "Erzählerisch & biografisch" },
-        { value: "reflektierend", label: "Philosophisch & tiefgründig" }
+        { value: "praktisch",       label: "Praktisch & direkt umsetzbar" },
+        { value: "wissenschaftlich",label: "Wissenschaftlich fundiert" },
+        { value: "story",           label: "Erzählerisch & biografisch" },
+        { value: "reflektierend",   label: "Philosophisch & tiefgründig" },
       ]
     },
     {
       id: 'length',
       question: "Wie viel Zeit möchtest du investieren?",
       options: [
-        { value: "kurz", label: "Kurze Sessions (5-15 Min.)" },
-        { value: "mittel", label: "In meinem eigenen Tempo" },
-        { value: "lang", label: "Intensiv & umfassend" }
+        { value: "kurz",  label: "Kurze Sessions (5–15 Min.)" },
+        { value: "mittel",label: "In meinem eigenen Tempo" },
+        { value: "lang",  label: "Intensiv & umfassend" },
       ]
     },
-    {
-      id: 'level',
-      question: "Wie tief möchtest du eintauchen?",
-      options: [
-        { value: "einsteiger", label: "Einsteigerfreundlich" },
-        { value: "fortgeschritten", label: "Mit Tiefgang" },
-        { value: "erfahren", label: "Sehr tiefgehend" }
-      ]
-    },
-    {
-      id: 'setting',
-      question: "Welche Welten ziehen dich an?",
-      options: [
-        { value: "real", label: "Realistische, greifbare Geschichten" },
-        { value: "fantastisch", label: "Fantastische, magische Welten" },
-        { value: "historisch", label: "Vergangene Epochen" },
-        { value: "zukunft", label: "Zukunft & Science-Fiction" },
-        { value: "egal", label: "Hauptsache gute Geschichte" }
-      ]
-    },
-    {
-      id: 'read_books',
-      question: "Nenne 3 Bücher, die du bereits gelesen und geliebt hast",
-      description: "Damit wir Dopplungen vermeiden und besser verstehen, was dir gefällt",
-      isTextInput: true,
-      placeholder: "z.B. Atomic Habits, Der kleine Prinz, Sapiens"
-    }
-  ]
+    readBooksStep,
+  ],
 };
 
 
@@ -333,6 +275,7 @@ function BookSearchContent() {
   const [phase, setPhase] = useState('start');
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState({});
+  const [readBooks, setReadBooks] = useState([]);   // Array von Titeln (Chips)
   const [profile, setProfile] = useState(null);
   const [recommendations, setRecommendations] = useState(null);
   const [ageGroup, setAgeGroup] = useState('erwachsene');
@@ -372,82 +315,69 @@ function BookSearchContent() {
     setPhase('questions');
   };
 
-  const handleAnswer = (value) => {
-    const currentQuestionId = translatedQuestions?.[currentQuestion]?.id;
-    if (!currentQuestionId) return;
+  const advanceOrFinish = (newAnswers) => {
+    if (currentQuestion < translatedQuestions.length - 1) {
+      setCurrentQuestion(currentQuestion + 1);
+    } else {
+      const userProfile = analyzeAnswers(newAnswers);
+      setProfile(userProfile);
+      setPhase('profile');
+    }
+  };
 
-    const newAnswers = { ...answers, [currentQuestionId]: value };
+  const handleAnswer = (value) => {
+    const currentQ = translatedQuestions?.[currentQuestion];
+    if (!currentQ) return;
+
+    const newAnswers = { ...answers, [currentQ.id]: value };
     setAnswers(newAnswers);
 
-    if (currentQuestionId === 'age') {
+    if (currentQ.id === 'age') {
       setAgeGroup(value);
       setQuestions(questionSets[value]);
     }
 
-    if (translatedQuestions[currentQuestion].isTextInput) {
-      return;
-    }
+    // readBooksInput wird über handleReadBooksDone gesteuert, nicht hier
+    if (currentQ.isReadBooksInput) return;
 
-    setTimeout(() => {
-      if (currentQuestion < translatedQuestions.length - 1) {
-        setCurrentQuestion(currentQuestion + 1);
-      } else {
-        const userProfile = analyzeAnswers(newAnswers);
-        setProfile(userProfile);
-        setPhase('profile');
-      }
-    }, 300);
+    setTimeout(() => advanceOrFinish(newAnswers), 300);
   };
 
-  const handleTextSubmit = () => {
-    const newAnswers = { ...answers, [translatedQuestions[currentQuestion].id]: answers[translatedQuestions[currentQuestion].id] || '' };
-    
-    setTimeout(() => {
-      if (currentQuestion < translatedQuestions.length - 1) {
-        setCurrentQuestion(currentQuestion + 1);
-      } else {
-        const userProfile = analyzeAnswers(newAnswers);
-        setProfile(userProfile);
-        setPhase('profile');
-      }
-    }, 300);
+  // Wird aufgerufen wenn Nutzer "Weiter" / "Überspringen" im ReadBooksInput drückt
+  const handleReadBooksDone = () => {
+    setTimeout(() => advanceOrFinish(answers), 300);
   };
 
   const analyzeAnswers = (ans) => {
-    const mainTopics = [ans.topic];
+    const mainTopics = ans.topic ? [ans.topic] : [];
     const secondaryTopics = [];
-    
+
+    // Sekundär-Topics aus Anlass/Ziel ableiten
     if (ageGroup === 'erwachsene') {
-      const moodTopics = {
-        ueberfordert: ["stress_ruhe"],
-        neugierig: ["lernen_wissen"],
-        antriebslos: ["persoenliche_entwicklung"],
-        wachsend: ["sinn_philosophie"]
+      const goalTopics = {
+        wachstum:     ['persoenliche_entwicklung', 'fokus_produktivitaet'],
+        entspannung:  ['humor', 'romance'],
+        beide:        [],
       };
-      secondaryTopics.push(...(moodTopics[ans.mood] || []));
+      secondaryTopics.push(...(goalTopics[ans.reading_goal] || []));
     } else if (ageGroup === 'jugendliche') {
-      const moodTopics = {
-        suchend: ["selbstfindung"],
-        neugierig: ["abenteuer"],
-        herausfordernd: ["mut"],
-        inspiriert: ["leben"]
+      const occasionTopics = {
+        freizeit:    ['abenteuer', 'humor'],
+        entdecken:   ['gesellschaft', 'selbstfindung'],
+        verstehen:   ['selbstfindung'],
+        schule:      ['lernen_wissen'],
       };
-      secondaryTopics.push(...(moodTopics[ans.mood] || []));
+      secondaryTopics.push(...(occasionTopics[ans.occasion] || []));
     } else if (ageGroup === 'kinder') {
-      const moodTopics = {
-        neugierig: ["magie"],
-        aufgeregt: ["abenteuer"],
-        ruhig: ["freundschaft"],
-        mutig: ["mut"]
-      };
-      secondaryTopics.push(...(moodTopics[ans.mood] || []));
+      // topic ist bereits Haupttopic, kein separater mood mehr
     }
 
-    const style = [ans.style];
-    if (ans.length === "kurz") style.push("kurz");
-    if (ans.length === "lang") style.push("anspruchsvoll");
+    const style = ans.style ? [ans.style] : ['story'];
+    if (ans.length === 'kurz') style.push('kurz');
+    if (ans.length === 'lang') style.push('anspruchsvoll');
 
-    const readBooks = ans.read_books ? ans.read_books.split(',').map(b => b.trim().toLowerCase()) : [];
+    // readBooks: Array von Strings (Chip-Eingabe), lowercase für Matching
+    const readBooksNormalized = readBooks.map(b => b.trim().toLowerCase()).filter(Boolean);
 
     // Buchsprache mit shoppingRegion-Logik verbinden
     const bookLang = ans.book_language || 'de';
@@ -459,11 +389,14 @@ function BookSearchContent() {
       mainTopics,
       secondaryTopics,
       style,
-      difficulty: ans.level || "einsteiger",
-      timeEffort: ans.length,
-      ageGroup: ageGroup,
+      difficulty: ans.level || 'einsteiger',
+      timeEffort: ans.length || 'mittel',
+      ageGroup,
+      ageRange: ans.age_range || null,
+      occasion: ans.occasion || null,
+      readingGoal: ans.reading_goal || null,
       bookLanguage: bookLang === 'any' ? null : bookLang,
-      readBooks
+      readBooks: readBooksNormalized,
     };
   };
 
@@ -510,6 +443,7 @@ function BookSearchContent() {
     setPhase('start');
     setCurrentQuestion(0);
     setAnswers({});
+    setReadBooks([]);
     setProfile(null);
     setRecommendations(null);
     setAgeGroup('erwachsene');
@@ -577,19 +511,47 @@ function BookSearchContent() {
             <div className="flex-1 flex items-center justify-center">
               <AnimatePresence mode="wait">
                 {translatedQuestions[currentQuestion] && (
-                  <QuestionCard
-                    key={currentQuestion}
-                    question={translatedQuestions[currentQuestion].question}
-                    options={translatedQuestions[currentQuestion].options}
-                    onSelect={handleAnswer}
-                    selectedValue={answers[translatedQuestions[currentQuestion].id]}
-                    questionNumber={currentQuestion + 1}
-                    totalQuestions={translatedQuestions.length}
-                    isTextInput={translatedQuestions[currentQuestion].isTextInput}
-                    placeholder={translatedQuestions[currentQuestion].placeholder}
-                    description={translatedQuestions[currentQuestion].description}
-                    onTextSubmit={handleTextSubmit}
-                  />
+                  translatedQuestions[currentQuestion].isReadBooksInput ? (
+                    <motion.div key="readbooks" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="w-full max-w-xl mx-auto">
+                      {/* Progress */}
+                      <div className="mb-8">
+                        <div className="flex justify-between text-sm text-stone-400 dark:text-stone-500 mb-2">
+                          <span>Frage {currentQuestion + 1}</span>
+                          <span>{currentQuestion + 1} von {translatedQuestions.length}</span>
+                        </div>
+                        <div className="h-1 bg-stone-100 dark:bg-stone-800 rounded-full overflow-hidden">
+                          <div className="h-full bg-stone-800 dark:bg-amber-500 transition-all" style={{ width: `${((currentQuestion + 1) / translatedQuestions.length) * 100}%` }} />
+                        </div>
+                      </div>
+                      <h2 className="text-2xl md:text-3xl font-light text-stone-800 dark:text-stone-100 mb-2 leading-relaxed">
+                        Welche Bücher hast du zuletzt gelesen?
+                      </h2>
+                      <p className="text-stone-500 dark:text-stone-400 text-sm mb-6">
+                        Optional – hilft uns, Dopplungen zu vermeiden.
+                      </p>
+                      <ReadBooksInput
+                        value={readBooks}
+                        onChange={setReadBooks}
+                        onSkip={handleReadBooksDone}
+                        placeholder={
+                          ageGroup === 'kinder' ? 'z.B. Harry Potter, Gregs Tagebuch ...'
+                          : ageGroup === 'jugendliche' ? 'z.B. Die Tribute von Panem, Tschick ...'
+                          : 'z.B. Atomic Habits, Sapiens, Der kleine Prinz ...'
+                        }
+                      />
+                    </motion.div>
+                  ) : (
+                    <QuestionCard
+                      key={currentQuestion}
+                      question={translatedQuestions[currentQuestion].question}
+                      options={translatedQuestions[currentQuestion].options}
+                      onSelect={handleAnswer}
+                      selectedValue={answers[translatedQuestions[currentQuestion].id]}
+                      questionNumber={currentQuestion + 1}
+                      totalQuestions={translatedQuestions.length}
+                      description={translatedQuestions[currentQuestion].description}
+                    />
+                  )
                 )}
               </AnimatePresence>
             </div>
