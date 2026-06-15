@@ -450,7 +450,7 @@ function BookSearchContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50 pb-20">
+    <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] pb-24">
       <AnimatePresence mode="wait">
         {/* Start Phase */}
         {phase === 'start' && (
@@ -459,32 +459,41 @@ function BookSearchContent() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="min-h-screen flex flex-col items-center justify-center px-6 py-12"
+            className="min-h-screen flex flex-col items-center justify-center px-6 py-16"
           >
             <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
+              initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="text-center mb-12"
+              transition={{ duration: 0.5, ease: "easeOut" }}
+              className="text-center mb-10"
             >
-              <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center shadow-lg">
-                <Compass className="w-10 h-10 text-white" />
+              <div className="w-24 h-24 mx-auto mb-8 rounded-2xl bg-amber-600 flex items-center justify-center shadow-lg">
+                <Compass className="w-12 h-12 text-white" />
               </div>
-              <h1 className="text-4xl md:text-5xl font-light text-stone-800 mb-3">
-                {t('booksearch.title')}
+              <h1 className="text-4xl md:text-5xl font-light text-stone-800 dark:text-stone-100 mb-3 tracking-tight">
+                Buchsuche
               </h1>
-              <p className="text-stone-500 text-lg">
-                {t('booksearch.subtitle')}
+              <p className="text-stone-500 dark:text-stone-400 text-lg font-light max-w-xs mx-auto leading-relaxed">
+                Finde dein perfektes nächstes Buch
               </p>
             </motion.div>
 
-            <Button
-              onClick={handleStart}
-              size="lg"
-              className="bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white px-8 py-6 text-lg rounded-xl gap-2"
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="flex flex-col items-center gap-4"
             >
-              {t('btn.startSearch')}
-              <ArrowRight className="w-5 h-5" />
-            </Button>
+              <Button
+                onClick={handleStart}
+                size="lg"
+                className="bg-amber-600 hover:bg-amber-700 text-white px-10 py-6 text-base rounded-xl gap-2 shadow-sm"
+              >
+                Neue Suche starten
+                <ArrowRight className="w-5 h-5" />
+              </Button>
+              <p className="text-xs text-stone-400 dark:text-stone-500">Kostenlos in der Beta</p>
+            </motion.div>
           </motion.div>
         )}
 
@@ -624,14 +633,14 @@ function BookSearchContent() {
               </div>
 
               <motion.div
-                initial={{ y: -20, opacity: 0 }}
+                initial={{ y: -10, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                className="text-center mb-12"
+                className="mb-10"
               >
-                <h2 className="text-3xl md:text-4xl font-light text-stone-800 dark:text-stone-100 mb-3">
+                <h2 className="text-2xl md:text-3xl font-light text-stone-800 dark:text-stone-100 mb-1">
                   {t('results.title')}
                 </h2>
-                <p className="text-stone-500 font-light">
+                <p className="text-stone-400 dark:text-stone-500 text-sm font-light">
                   {t('results.subtitle')}
                 </p>
               </motion.div>
@@ -653,29 +662,24 @@ function BookSearchContent() {
                 return (
                   <>
                     {/* Sektion 1: Hauptempfehlungen */}
-                    <div className="mb-14">
-                      <div className="flex items-center gap-3 mb-6">
-                        <h3 className="text-xl font-medium text-stone-800 dark:text-stone-100">
-                          Deine {mainBooks.length} Empfehlung{mainBooks.length !== 1 ? 'en' : ''}
-                        </h3>
-                        <div className="flex-1 h-px bg-stone-200 dark:bg-stone-700" />
+                    <div className="mb-16">
+                      <div className="flex items-center gap-3 mb-8">
+                        <div>
+                          <h3 className="text-lg font-semibold text-stone-800 dark:text-stone-100">
+                            Deine {mainBooks.length} Empfehlung{mainBooks.length !== 1 ? 'en'  : ''}
+                          </h3>
+                          <p className="text-xs text-stone-400 dark:text-stone-500 mt-0.5">Passend zu deinem Profil</p>
+                        </div>
+                        <div className="flex-1 h-px bg-stone-200 dark:bg-stone-700 ml-2" />
                       </div>
-                      <div className="space-y-8">
+                      <div className="space-y-6">
                         {mainBooks.map((book, idx) => {
-                          const placement = book.placement || idx + 1;
-                          const badgeColor = idx === 0
-                            ? 'bg-gradient-to-br from-amber-500 to-amber-600'
-                            : idx === 1
-                            ? 'bg-gradient-to-br from-stone-400 to-stone-500'
-                            : 'bg-gradient-to-br from-amber-300 to-amber-400';
+                          const label = idx === 0 ? 'Bester Treffer' : idx === 1 ? 'Passt sehr gut' : 'Empfohlen';
                           return (
-                            <div key={book.id || book.isbn13 || idx} className="space-y-3">
-                              <div className="flex items-center gap-3">
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 ${badgeColor}`}>
-                                  {placement}
-                                </div>
-                                <span className="text-sm text-stone-500 dark:text-stone-400">
-                                  {idx === 0 ? 'Bester Treffer' : idx === 1 ? 'Passt sehr gut' : 'Empfohlen für dich'}
+                            <div key={book.id || book.isbn13 || idx} className="space-y-2">
+                              <div className="flex items-center gap-2 px-1">
+                                <span className={`text-xs font-semibold uppercase tracking-wide ${idx === 0 ? 'text-amber-600' : 'text-stone-400 dark:text-stone-500'}`}>
+                                  {label}
                                 </span>
                               </div>
                               <BookCard
@@ -693,24 +697,25 @@ function BookSearchContent() {
                     {/* Sektion 2: Horizont-Erweiterungen */}
                     {horizonBooks.length > 0 && (
                       <div className="mb-14">
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-xl font-medium text-stone-800 dark:text-stone-100 whitespace-nowrap">
-                            Etwas Neues wagen
-                          </h3>
-                          <div className="flex-1 h-px bg-stone-200 dark:bg-stone-700" />
+                        <div className="border-t-2 border-dashed border-stone-200 dark:border-stone-700 pt-10 mb-8">
+                          <div className="flex items-center gap-3 mb-1">
+                            <div className="w-7 h-7 rounded-full bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center flex-shrink-0">
+                              <span className="text-violet-600 dark:text-violet-400 text-xs">✦</span>
+                            </div>
+                            <h3 className="text-lg font-semibold text-stone-800 dark:text-stone-100">
+                              Etwas Neues wagen
+                            </h3>
+                          </div>
+                          <p className="text-xs text-stone-400 dark:text-stone-500 ml-10">
+                            Bücher, die deinen Horizont bewusst erweitern.
+                          </p>
                         </div>
-                        <p className="text-sm text-stone-400 dark:text-stone-500 mb-6">
-                          Bücher, die deinen Horizont bewusst erweitern – abseits deiner üblichen Themen.
-                        </p>
                         <div className="space-y-8">
                           {horizonBooks.map((book, idx) => (
-                            <div key={book.id || book.isbn13 || `h-${idx}`} className="space-y-3">
-                              <div className="flex items-center gap-2">
-                                <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 bg-gradient-to-br from-violet-400 to-violet-500">
-                                  ✦
-                                </div>
-                                <span className="text-sm text-violet-600 dark:text-violet-400 font-medium">
-                                  Horizont erweitern
+                            <div key={book.id || book.isbn13 || `h-${idx}`} className="space-y-2">
+                              <div className="flex items-center gap-2 px-1">
+                                <span className="text-xs font-medium text-violet-500 dark:text-violet-400 uppercase tracking-wide">
+                                  Horizont-Erweiterung
                                 </span>
                               </div>
                               <BookCard

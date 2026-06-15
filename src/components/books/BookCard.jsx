@@ -194,7 +194,7 @@ export default function BookCard({ book, reasons, index, isContrast }) {
             </div>
 
             {book.description && (
-              <p className="text-stone-600 dark:text-stone-300 text-sm leading-relaxed">
+              <p className="text-stone-500 dark:text-stone-400 text-sm leading-relaxed line-clamp-3">
                 {book.description}
               </p>
             )}
@@ -208,16 +208,16 @@ export default function BookCard({ book, reasons, index, isContrast }) {
             const main = (reasons.mainReason || '').trim().slice(0, 80).toLowerCase();
             const showMainReason = main && main !== desc && !desc.includes(main.slice(0, 40));
             return showMainReason ? (
-              <p className="text-stone-800 dark:text-stone-100 font-medium mb-4">
+              <p className="text-stone-700 dark:text-stone-200 text-sm font-medium mb-3 leading-snug">
                 {reasons.mainReason}
               </p>
             ) : null;
           })()}
-          
-          <ul className="space-y-2 mb-6">
-            {reasons.bullets.map((bullet, i) => (
-              <li key={i} className="flex items-start gap-3 text-sm text-stone-600 dark:text-stone-300">
-                <span className="w-1.5 h-1.5 rounded-full bg-stone-400 mt-2 flex-shrink-0" />
+
+          <ul className="flex flex-wrap gap-2 mb-5">
+            {reasons.bullets.filter(Boolean).slice(0, 2).map((bullet, i) => (
+              <li key={i} className="inline-flex items-center gap-1.5 text-xs text-stone-500 dark:text-stone-400 bg-stone-50 dark:bg-stone-800 px-2.5 py-1.5 rounded-full border border-stone-100 dark:border-stone-700">
+                <span className="w-1 h-1 rounded-full bg-amber-400 flex-shrink-0" />
                 <span>{bullet}</span>
               </li>
             ))}
