@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Sparkles, ShoppingCart, Bookmark, BookmarkCheck, MessageSquare, Users, Info } from 'lucide-react';
+import { ExternalLink, Sparkles, ShoppingCart, Bookmark, BookmarkCheck, MessageSquare, Info } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { base44 } from '@/api/base44Client';
 import StarRating from './StarRating';
@@ -49,23 +49,12 @@ export default function BookCard({ book, reasons, index, isContrast }) {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
   const [editingReview, setEditingReview] = useState(false);
-  const [readCount, setReadCount] = useState(0);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const buyLinks = generateBuyLinks(book);
 
   useEffect(() => {
     checkIfSaved();
-    loadReadCount();
   }, [book.id]);
-
-  const loadReadCount = async () => {
-    try {
-      const allSaved = await base44.entities.SavedBook.filter({ book_id: book.id });
-      setReadCount(allSaved.length);
-    } catch (error) {
-      console.error('Error loading read count:', error);
-    }
-  };
 
   const checkIfSaved = async () => {
     try {
@@ -113,7 +102,6 @@ export default function BookCard({ book, reasons, index, isContrast }) {
         });
         setIsSaved(true);
         setSavedBookId(created.id);
-        await loadReadCount();
       }
     } catch (error) {
       console.error('Error saving book:', error);
@@ -205,24 +193,26 @@ export default function BookCard({ book, reasons, index, isContrast }) {
               {book.language && book.language !== 'de' && <span>• {book.language.toUpperCase()}</span>}
             </div>
 
-            {readCount > 0 && (
-              <div className="flex items-center gap-2 text-xs text-stone-500 mb-2">
-                <Users className="w-3 h-3" />
-                <span>Schon {readCount}× gelesen</span>
-              </div>
+            {book.description && (
+              <p className="text-stone-600 dark:text-stone-300 text-sm leading-relaxed">
+                {book.description}
+              </p>
             )}
-            
-            <p className="text-stone-600 dark:text-stone-300 text-sm leading-relaxed">
-              {book.description}
-            </p>
           </div>
         </div>
 
         {/* Why this book */}
         <div className="mt-6 pt-6 border-t border-stone-100 dark:border-stone-700">
-          <p className="text-stone-800 dark:text-stone-100 font-medium mb-4">
-            {reasons.mainReason}
-          </p>
+          {(() => {
+            const desc = (book.description || '').trim().slice(0, 80).toLowerCase();
+            const main = (reasons.mainReason || '').trim().slice(0, 80).toLowerCase();
+            const showMainReason = main && main !== desc && !desc.includes(main.slice(0, 40));
+            return showMainReason ? (
+              <p className="text-stone-800 dark:text-stone-100 font-medium mb-4">
+                {reasons.mainReason}
+              </p>
+            ) : null;
+          })()}
           
           <ul className="space-y-2 mb-6">
             {reasons.bullets.map((bullet, i) => (
@@ -381,7 +371,7 @@ export default function BookCard({ book, reasons, index, isContrast }) {
       {showDetailModal && (
         <BookDetailModal
           book={book}
-          readCount={readCount}
+
           onClose={() => setShowDetailModal(false)}
         />
       )}
