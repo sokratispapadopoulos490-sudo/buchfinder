@@ -283,7 +283,7 @@ function BookSearchContent() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(false);
   const [translatedQuestions, setTranslatedQuestions] = useState(questionSets.erwachsene);
-  const { t } = useLanguage();
+  const { t, bookLanguage: contextBookLanguage } = useLanguage();
 
   useEffect(() => {
     checkAuth();
@@ -378,10 +378,15 @@ function BookSearchContent() {
     // readBooks: Array von Strings (Chip-Eingabe), lowercase für Matching
     const readBooksNormalized = readBooks.map(b => b.trim().toLowerCase()).filter(Boolean);
 
-    // Buchsprache mit shoppingRegion-Logik verbinden
-    const bookLang = ans.book_language || 'de';
-    if (bookLang !== 'any') {
-      setBookLanguage(bookLang);
+    // Buchsprache: nutze explizite Antwort, sonst Kontext-Präferenz (z.B. 'el' für Griechen)
+    const answeredLang = ans.book_language; // undefined wenn nicht beantwortet
+    const bookLang = answeredLang && answeredLang !== 'any'
+      ? answeredLang
+      : (contextBookLanguage || null);
+
+    // Nur persistieren wenn User explizit eine Sprache gewählt hat
+    if (answeredLang && answeredLang !== 'any') {
+      setBookLanguage(answeredLang);
     }
 
     return {
@@ -394,7 +399,7 @@ function BookSearchContent() {
       ageRange: ans.age_range || null,
       occasion: ans.occasion || null,
       readingGoal: ans.reading_goal || null,
-      bookLanguage: bookLang === 'any' ? null : bookLang,
+      bookLanguage: bookLang,
       readBooks: readBooksNormalized,
     };
   };

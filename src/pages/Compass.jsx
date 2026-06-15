@@ -311,7 +311,7 @@ export default function Compass() {
     <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] px-4 py-8 md:py-12">
       <div className="max-w-2xl mx-auto">
         {/* Header mit Logo */}
-        <div className="mb-8 flex items-center gap-4 sticky top-0 z-10 bg-stone-50 dark:bg-[#0a0a0a] py-4">
+        <div className="mb-8 flex items-center gap-4">
           <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center shadow-md flex-shrink-0">
             <CompassIcon className="w-8 h-8 text-white" />
           </div>
