@@ -496,7 +496,7 @@ function BookSearchContent() {
   };
 
   return (
-    <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] pb-24">
+    <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] pb-24 relative">
       <AnimatePresence mode="wait">
         {/* Start Phase */}
         {phase === 'start' && (
@@ -528,16 +528,17 @@ function BookSearchContent() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="flex flex-col items-center gap-4"
+              className="flex flex-col items-center gap-4 relative z-10"
             >
-              <Button
+              <button
+                type="button"
                 onClick={handleStart}
-                size="lg"
-                className="bg-amber-600 hover:bg-amber-700 text-white px-10 py-6 text-base rounded-xl gap-2 shadow-sm"
+                style={{ backgroundColor: '#d97706', color: '#ffffff' }}
+                className="flex items-center gap-2 px-10 py-4 text-base font-medium rounded-xl shadow-sm hover:opacity-90 active:opacity-80 transition-opacity cursor-pointer"
               >
                 Neue Suche starten
                 <ArrowRight className="w-5 h-5" />
-              </Button>
+              </button>
               <p className="text-xs text-stone-400 dark:text-stone-500">Kostenlos in der Beta</p>
             </motion.div>
           </motion.div>
