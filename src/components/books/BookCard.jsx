@@ -10,12 +10,13 @@ import BookCover, { getCoverUrl } from './BookCover';
 import ProviderLinks from './ProviderLinks';
 import { useLanguage } from '@/components/language/LanguageContext';
 
-export default function BookCard({ book, reasons, index, isContrast }) {
+export default function BookCard({ book, reasons, index, isContrast, isAuthenticated: isAuthProp }) {
   const { shoppingRegion } = useLanguage();
   const [showBuyOptions, setShowBuyOptions] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // Use prop if provided (avoids N concurrent isAuthenticated() calls on results page)
+  const [isAuthenticated, setIsAuthenticated] = useState(isAuthProp ?? false);
   const [editingNotes, setEditingNotes] = useState(false);
   const [notes, setNotes] = useState('');
   const [savedBookId, setSavedBookId] = useState(null);
@@ -26,12 +27,13 @@ export default function BookCard({ book, reasons, index, isContrast }) {
 
   useEffect(() => {
     checkIfSaved();
-  }, [book.id]);
+  }, [book.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const checkIfSaved = async () => {
     try {
-      const isAuth = await base44.auth.isAuthenticated();
-      setIsAuthenticated(isAuth);
+      // Only call isAuthenticated() if prop not provided
+      const isAuth = isAuthProp !== undefined ? isAuthProp : await base44.auth.isAuthenticated();
+      if (isAuthProp === undefined) setIsAuthenticated(isAuth);
       
       if (isAuth) {
         const saved = await base44.entities.SavedBook.filter({ book_id: book.id });
@@ -118,8 +120,8 @@ export default function BookCard({ book, reasons, index, isContrast }) {
       )}
     >
       {isContrast && (
-        <div className="bg-amber-50 px-6 py-3 border-b border-amber-200">
-          <div className="flex items-center gap-2 text-amber-700 text-sm">
+        <div className="bg-amber-50 dark:bg-amber-900/20 px-6 py-3 border-b border-amber-200 dark:border-amber-800">
+          <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400 text-sm">
             <Sparkles className="w-4 h-4" />
             <span>Horizont-Erweiterung</span>
           </div>
@@ -201,9 +203,9 @@ export default function BookCard({ book, reasons, index, isContrast }) {
           <div className="space-y-3">
             {isSaved && (
               <>
-                <div className="bg-stone-50 rounded-lg p-4 space-y-3">
+                <div className="bg-stone-50 dark:bg-stone-800/50 rounded-lg p-4 space-y-3">
                   <div className="flex items-center justify-between">
-                    <label className="text-sm font-medium text-stone-700">Meine Bewertung</label>
+                    <label className="text-sm font-medium text-stone-700 dark:text-stone-300">Meine Bewertung</label>
                     {!editingReview ? (
                       <button
                         onClick={() => setEditingReview(true)}
@@ -246,9 +248,9 @@ export default function BookCard({ book, reasons, index, isContrast }) {
                   ) : null}
                 </div>
 
-                <div className="bg-stone-50 rounded-lg p-4 space-y-2">
+                <div className="bg-stone-50 dark:bg-stone-800/50 rounded-lg p-4 space-y-2">
                   <div className="flex items-center justify-between">
-                    <label className="text-sm font-medium text-stone-700">Meine Notizen</label>
+                    <label className="text-sm font-medium text-stone-700 dark:text-stone-300">Meine Notizen</label>
                     {!editingNotes ? (
                       <button
                         onClick={() => setEditingNotes(true)}

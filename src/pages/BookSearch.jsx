@@ -163,6 +163,25 @@ const questionSets = {
       ]
     },
     {
+      id: 'level',
+      question: "Wie erfahren bist du als Leser?",
+      options: [
+        { value: "einsteiger",     label: "Einsteiger – zugänglich & flüssig" },
+        { value: "fortgeschritten",label: "Fortgeschritten – anspruchsvoller Inhalt" },
+        { value: "erfahren",       label: "Erfahren – komplexe Werke willkommen" },
+      ]
+    },
+    {
+      id: 'format',
+      question: "In welchem Format möchtest du lesen?",
+      options: [
+        { value: "print",     label: "📖 Gedrucktes Buch" },
+        { value: "ebook",     label: "📱 E-Book" },
+        { value: "audiobook", label: "🎧 Hörbuch" },
+        { value: "any",       label: "🔀 Egal / alle Formate" },
+      ]
+    },
+    {
       id: 'length',
       question: "Wie viel Zeit möchtest du investieren?",
       options: [
@@ -394,6 +413,7 @@ function BookSearchContent() {
       secondaryTopics,
       style,
       difficulty: ans.level || 'einsteiger',
+      format: ans.format || 'any',
       timeEffort: ans.length || 'mittel',
       ageGroup,
       ageRange: ans.age_range || null,
@@ -664,71 +684,76 @@ function BookSearchContent() {
                   );
                 }
 
+                const top3 = mainBooks.slice(0, 3);
+                const rest7 = mainBooks.slice(3);
                 return (
                   <>
-                    {/* Sektion 1: Hauptempfehlungen */}
-                    <div className="mb-16">
-                      <div className="flex items-center gap-3 mb-8">
+                    {/* Sektion 1: Top 3 */}
+                    <div className="mb-10">
+                      <div className="flex items-center gap-3 mb-6">
                         <div>
                           <h3 className="text-lg font-semibold text-stone-800 dark:text-stone-100">
-                            Deine {mainBooks.length} Empfehlung{mainBooks.length !== 1 ? 'en'  : ''}
+                            🏆 Deine Top 3 Empfehlungen
                           </h3>
-                          <p className="text-xs text-stone-400 dark:text-stone-500 mt-0.5">Passend zu deinem Profil</p>
+                          <p className="text-xs text-stone-400 dark:text-stone-500 mt-0.5">Die besten Treffer für dein Profil</p>
                         </div>
                         <div className="flex-1 h-px bg-stone-200 dark:bg-stone-700 ml-2" />
                       </div>
                       <div className="space-y-6">
-                        {mainBooks.map((book, idx) => {
-                          const label = idx === 0 ? 'Bester Treffer' : idx === 1 ? 'Passt sehr gut' : 'Empfohlen';
+                        {top3.map((book, idx) => {
+                          const labels = ['#1 Bester Treffer', '#2 Sehr gut', '#3 Empfohlen'];
                           return (
                             <div key={book.id || book.isbn13 || idx} className="space-y-2">
                               <div className="flex items-center gap-2 px-1">
                                 <span className={`text-xs font-semibold uppercase tracking-wide ${idx === 0 ? 'text-amber-600' : 'text-stone-400 dark:text-stone-500'}`}>
-                                  {label}
+                                  {labels[idx]}
                                 </span>
                               </div>
-                              <BookCard
-                                book={book}
-                                reasons={generateReasons(book, profile)}
-                                index={idx}
-                                isContrast={false}
-                              />
+                              <BookCard book={book} reasons={generateReasons(book, profile)} index={idx} isContrast={false} isAuthenticated={isAuthenticated} />
                             </div>
                           );
                         })}
                       </div>
                     </div>
 
-                    {/* Sektion 2: Horizont-Erweiterungen */}
+                    {/* Sektion 2: Weitere 7 */}
+                    {rest7.length > 0 && (
+                      <div className="mb-12">
+                        <div className="flex items-center gap-3 mb-6">
+                          <h3 className="text-sm font-medium text-stone-500 dark:text-stone-400 uppercase tracking-wide">
+                            Weitere Empfehlungen
+                          </h3>
+                          <div className="flex-1 h-px bg-stone-200 dark:bg-stone-700" />
+                        </div>
+                        <div className="space-y-4">
+                          {rest7.map((book, idx) => (
+                            <div key={book.id || book.isbn13 || `r-${idx}`} className="space-y-1">
+                              <BookCard book={book} reasons={generateReasons(book, profile)} index={Math.min(3 + idx, 5)} isContrast={false} isAuthenticated={isAuthenticated} />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Sektion 3: Horizont-Erweiterungen */}
                     {horizonBooks.length > 0 && (
                       <div className="mb-14">
-                        <div className="border-t-2 border-dashed border-stone-200 dark:border-stone-700 pt-10 mb-8">
+                        <div className="border-t-2 border-dashed border-stone-200 dark:border-stone-700 pt-10 mb-6">
                           <div className="flex items-center gap-3 mb-1">
                             <div className="w-7 h-7 rounded-full bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center flex-shrink-0">
                               <span className="text-violet-600 dark:text-violet-400 text-xs">✦</span>
                             </div>
-                            <h3 className="text-lg font-semibold text-stone-800 dark:text-stone-100">
-                              Etwas Neues wagen
-                            </h3>
+                            <h3 className="text-lg font-semibold text-stone-800 dark:text-stone-100">Etwas Neues wagen</h3>
                           </div>
-                          <p className="text-xs text-stone-400 dark:text-stone-500 ml-10">
-                            Bücher, die deinen Horizont bewusst erweitern.
-                          </p>
+                          <p className="text-xs text-stone-400 dark:text-stone-500 ml-10">Bücher, die deinen Horizont bewusst erweitern.</p>
                         </div>
-                        <div className="space-y-8">
+                        <div className="space-y-6">
                           {horizonBooks.map((book, idx) => (
-                            <div key={book.id || book.isbn13 || `h-${idx}`} className="space-y-2">
+                            <div key={book.id || book.isbn13 || `h-${idx}`} className="space-y-1">
                               <div className="flex items-center gap-2 px-1">
-                                <span className="text-xs font-medium text-violet-500 dark:text-violet-400 uppercase tracking-wide">
-                                  Horizont-Erweiterung
-                                </span>
+                                <span className="text-xs font-medium text-violet-500 dark:text-violet-400 uppercase tracking-wide">Horizont-Erweiterung</span>
                               </div>
-                              <BookCard
-                                book={book}
-                                reasons={generateReasons(book, profile)}
-                                index={10 + idx}
-                                isContrast={true}
-                              />
+                              <BookCard book={book} reasons={generateReasons(book, profile)} index={Math.min(5 + idx, 7)} isContrast={true} isAuthenticated={isAuthenticated} />
                             </div>
                           ))}
                         </div>
