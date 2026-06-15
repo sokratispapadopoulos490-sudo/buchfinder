@@ -302,7 +302,18 @@ function BookSearchContent() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(false);
   const [translatedQuestions, setTranslatedQuestions] = useState(questionSets.erwachsene);
-  const { t, bookLanguage: contextBookLanguage } = useLanguage();
+
+  // Safe language hook – LanguageProvider may not be present in direct preview
+  let t = (k) => k;
+  let contextBookLanguage = null;
+  try {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const lang = useLanguage();
+    t = lang.t;
+    contextBookLanguage = lang.bookLanguage;
+  } catch {
+    // No LanguageProvider – use fallback
+  }
 
   useEffect(() => {
     checkAuth();
@@ -821,6 +832,4 @@ function BookSearchContent() {
   );
 }
 
-export default function BookSearch() {
-  return <BookSearchContent />;
-}
+export default BookSearchContent;
