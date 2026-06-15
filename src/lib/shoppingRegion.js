@@ -114,6 +114,38 @@ export function loadPreferencesFromProfile(user) {
 }
 
 /**
+ * Returns true only when the user has EXPLICITLY stored a shopping region.
+ * detectDefaultRegion() is not explicit — it's a browser-locale guess.
+ */
+export function hasExplicitShoppingRegion() {
+  try { return !!localStorage.getItem(SHOP_REGION_KEY); } catch { return false; }
+}
+
+/**
+ * Maps a bookLanguage code to the most appropriate shopping region.
+ * Used as a fallback when no explicit region was chosen.
+ */
+const BOOK_LANG_TO_REGION = {
+  el: 'GR',
+  tr: 'TR',
+  fr: 'FR',
+  es: 'ES',
+  it: 'IT',
+  en: 'UK',
+  de: 'DE',
+};
+
+/**
+ * Resolves the effective shopping region for provider links.
+ * Priority: explicit region > bookLanguage-derived region > DE default.
+ */
+export function resolveEffectiveRegion(shoppingRegion, bookLanguage) {
+  if (hasExplicitShoppingRegion()) return shoppingRegion;
+  if (bookLanguage && BOOK_LANG_TO_REGION[bookLanguage]) return BOOK_LANG_TO_REGION[bookLanguage];
+  return shoppingRegion;
+}
+
+/**
  * Bereinigt alle Präferenzen bei Logout.
  * bookLanguage und shoppingRegion werden gelöscht (nicht uiLanguage).
  */

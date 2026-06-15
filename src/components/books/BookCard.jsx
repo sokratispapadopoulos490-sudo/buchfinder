@@ -9,9 +9,12 @@ import BookDetailModal from './BookDetailModal';
 import BookCover, { getCoverUrl } from './BookCover';
 import ProviderLinks from './ProviderLinks';
 import { useLanguage } from '@/components/language/LanguageContext';
+import { resolveEffectiveRegion } from '@/lib/shoppingRegion';
 
 export default function BookCard({ book, reasons, index, isContrast, isAuthenticated: isAuthProp }) {
-  const { shoppingRegion } = useLanguage();
+  const { shoppingRegion, bookLanguage } = useLanguage();
+  // If no explicit shopping region was set, derive it from the book's language
+  const effectiveRegion = resolveEffectiveRegion(shoppingRegion, bookLanguage || book?.language);
   const [showBuyOptions, setShowBuyOptions] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -317,7 +320,7 @@ export default function BookCard({ book, reasons, index, isContrast, isAuthentic
             </div>
 
             {showBuyOptions && (
-              <ProviderLinks book={book} shoppingRegion={shoppingRegion} className="mt-1" />
+              <ProviderLinks book={book} shoppingRegion={effectiveRegion} className="mt-1" />
             )}
           </div>
         </div>
