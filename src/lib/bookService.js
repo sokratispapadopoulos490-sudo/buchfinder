@@ -78,7 +78,7 @@ export function normalizeGoogleBook(volume) {
     publisher: info.publisher || null,
     published_date: info.publishedDate || null,
     page_count: info.pageCount || null,
-    language: info.language || 'de',
+    language: info.language || '',
     categories: info.categories || [],
     tags: info.categories || [],
     age_group: 'erwachsene',
@@ -112,8 +112,9 @@ export function normalizeGoogleBook(volume) {
     raw: { volumeId: volume.id, accessInfo: volume.accessInfo },
   };
 
-  // Provider-Links vorab generieren (Lazy: nur DE als Default)
-  bookBase.providerLinks = getProviderLinks(bookBase, 'DE');
+  // IMPORTANT: Do NOT pre-bake providerLinks here — the shopping region is not known at normalization
+  // time and baking 'DE' would cause wrong links for Greek/TR/etc users.
+  // ProviderLinks are generated on-demand in ProviderLinks.jsx and LiveBookCard using live shoppingRegion.
 
   return bookBase;
 }
@@ -322,14 +323,30 @@ export function getAffiliateLinks(book, countryCode = 'DE') {
  * Async: DB-first, Fallback auf lokale Bücher.
  */
 export async function getMatchingBooksFromDB(profile) {
-  const { mainTopics, secondaryTopics, style, difficulty, ageGroup, readBooks = [], savedBookIds = [] } = profile;
+  const { mainTopics, secondaryTopics, style, difficulty, ageGroup, bookLanguage, readBooks = [], savedBookIds = [] } = profile;
 
   let pool;
   try {
-    const dbBooks = await base44.entities.Book.filter({ age_group: ageGroup, is_active: true }, '-rating', 200);
-    pool = dbBooks.length > 0 ? dbBooks : localBooks.map(normalizeLocalBook).filter(b => b.age_group === ageGroup);
+    const filter = { age_group: ageGroup, is_active: true };
+    if (bookLanguage) filter.language = bookLanguage;
+    const dbBooks = await base44.entities.Book.filter(filter, '-rating', 200);
+    // Fallback: if language-filtered results are empty, try without language filter (graceful degradation)
+    if (dbBooks.length === 0 && bookLanguage) {
+      const fallbackBooks = await base44.entities.Book.filter({ age_group: ageGroup, is_active: true }, '-rating', 200);
+      pool = fallbackBooks.length > 0 ? fallbackBooks : localBooks.map(normalizeLocalBook).filter(b => b.age_group === ageGroup);
+    } else {
+      pool = dbBooks.length > 0 ? dbBooks : localBooks.map(normalizeLocalBook).filter(b => b.age_group === ageGroup);
+    }
   } catch {
     pool = localBooks.map(normalizeLocalBook).filter(b => b.age_group === ageGroup);
+  }
+
+  // Client-side language filter on local pool (local DB has no language field — all 'de')
+  // Only filter if bookLanguage is set AND the pool has books with non-'de' language (i.e. from DB)
+  if (bookLanguage && pool.some(b => b.language && b.language !== 'de')) {
+    const langFiltered = pool.filter(b => !b.language || b.language === bookLanguage);
+    if (langFiltered.length >= 3) pool = langFiltered;
+    // else: keep full pool as fallback to avoid empty results
   }
 
   pool = pool.filter(b => !savedBookIds.includes(b.id));

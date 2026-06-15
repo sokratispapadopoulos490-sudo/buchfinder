@@ -6,7 +6,7 @@ import QuestionCard from '@/components/books/QuestionCard';
 import ReadBooksInput from '@/components/books/ReadBooksInput';
 import ProfileCard from '@/components/books/ProfileCard';
 import BookCard from '@/components/books/BookCard';
-import { getMatchingBooks } from '@/components/books/BookDatabaseLogic';
+import { getMatchingBooksFromDB } from '@/lib/bookService';
 import { base44 } from '@/api/base44Client';
 import { useLanguage } from '@/components/language/LanguageContext';
 import { setBookLanguage } from '@/lib/shoppingRegion';
@@ -401,7 +401,7 @@ function BookSearchContent() {
 
   const handleShowBooks = async () => {
     setLoading(true);
-    let results = getMatchingBooks(profile);
+    let results = await getMatchingBooksFromDB(profile);
     
     if (isAuthenticated) {
       try {

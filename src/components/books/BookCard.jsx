@@ -1,44 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Sparkles, ShoppingCart, Bookmark, BookmarkCheck, MessageSquare, Info } from 'lucide-react';
+import { Sparkles, ShoppingCart, Bookmark, BookmarkCheck, MessageSquare, Info } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { base44 } from '@/api/base44Client';
 import StarRating from './StarRating';
 import BookDetailModal from './BookDetailModal';
 import BookCover, { getCoverUrl } from './BookCover';
-
-const generateBuyLinks = (book) => {
-  const displayAuthor = book.author || (book.authors || []).join(', ') || '';
-  const isbn = book.isbn13 || book.isbn10 || book.isbn || '';
-  const encodedTitle = encodeURIComponent(`${book.title} ${displayAuthor}`);
-  const encodedISBN = encodeURIComponent(isbn);
-  
-  return [
-    {
-      name: "Idealo",
-      url: `https://www.idealo.de/preisvergleich/ProductCategory/18492.html?q=${encodedTitle}`,
-      description: "Preisvergleich (neu & gebraucht)"
-    },
-    {
-      name: "Amazon",
-      url: isbn ? `https://www.amazon.de/dp/${isbn}` : `https://www.amazon.de/s?k=${encodedTitle}`,
-      description: "Neu & gebraucht"
-    },
-    {
-      name: "Thalia",
-      url: isbn ? `https://www.thalia.de/suche?sq=${isbn}` : `https://www.thalia.de/suche?sq=${encodedTitle}`,
-      description: "Online & in Filialen"
-    },
-    {
-      name: "medimops",
-      url: `https://www.medimops.de/produkte-C0/?fcIsSearch=1&searchparam=${encodedTitle}`,
-      description: "Gebrauchte Bücher"
-    }
-  ];
-};
+import ProviderLinks from './ProviderLinks';
+import { useLanguage } from '@/components/language/LanguageContext';
 
 export default function BookCard({ book, reasons, index, isContrast }) {
+  const { shoppingRegion } = useLanguage();
   const [showBuyOptions, setShowBuyOptions] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -50,7 +23,6 @@ export default function BookCard({ book, reasons, index, isContrast }) {
   const [comment, setComment] = useState('');
   const [editingReview, setEditingReview] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
-  const buyLinks = generateBuyLinks(book);
 
   useEffect(() => {
     checkIfSaved();
@@ -92,9 +64,12 @@ export default function BookCard({ book, reasons, index, isContrast }) {
           setNotes('');
         }
       } else {
+        // Strip providerLinks from book_data — they are region-specific and must be generated fresh
+        // from shoppingRegion at display time. Storing them would permanently bake the wrong region.
+        const { providerLinks: _strip, ...bookDataClean } = book;
         const created = await base44.entities.SavedBook.create({
           book_id: book.id,
-          book_data: book,
+          book_data: bookDataClean,
           recommendation_reason: reasons,
           notes: notes,
           rating: rating,
@@ -340,28 +315,7 @@ export default function BookCard({ book, reasons, index, isContrast }) {
             </div>
 
             {showBuyOptions && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                className="grid grid-cols-1 sm:grid-cols-2 gap-2"
-              >
-                {buyLinks.map((link) => (
-                  <a
-                    key={link.name}
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block p-3 border border-stone-200 dark:border-stone-700 rounded-lg hover:border-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800 transition-all"
-                  >
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="font-medium text-stone-800 dark:text-stone-200 text-sm">{link.name}</span>
-                      <ExternalLink className="w-3 h-3 text-stone-400" />
-                    </div>
-                    <p className="text-xs text-stone-500 dark:text-stone-400">{link.description}</p>
-                  </a>
-                ))}
-              </motion.div>
+              <ProviderLinks book={book} shoppingRegion={shoppingRegion} className="mt-1" />
             )}
           </div>
         </div>
