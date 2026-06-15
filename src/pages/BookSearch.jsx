@@ -197,8 +197,10 @@ const questionSets = {
 
 
 const generateReasons = (book, profile) => {
-  const topicMatch = profile.mainTopics.find(t => book.tags.includes(t));
-  const styleMatch = profile.style.find(s => book.style.includes(s));
+  const bookTags = book.tags || book.categories || [];
+  const bookStyle = book.style || book.reading_style || [];
+  const topicMatch = (profile.mainTopics || []).find(t => bookTags.includes(t));
+  const styleMatch = (profile.style || []).find(s => bookStyle.includes(s));
 
   const topicReasons = {
     persoenliche_entwicklung: "Spricht dein Bedürfnis nach Selbstentwicklung an",
@@ -450,30 +452,27 @@ function BookSearchContent() {
     }
 
     const profileWithSaved = { ...profile, savedBookIds };
-    let results = await getMatchingBooksFromDB(profileWithSaved);
+    let results;
+    try {
+      results = await getMatchingBooksFromDB(profileWithSaved);
+    } catch (err) {
+      console.error('getMatchingBooksFromDB error:', err);
+      results = [];
+    }
 
-    // Show a useful message if no language-matched books found
-    if (!Array.isArray(results) || results.length === 0) {
-      setRecommendations([]);
-      setPhase('results');
-      setLoading(false);
-      return;
-    }
-    
-    if (isAuthenticated) {
-      try {
-        await base44.entities.Recommendation.create({
-          books: results,
-          profile: profileWithSaved,
-        });
-      } catch (error) {
-        console.error('Fehler beim Speichern:', error);
-      }
-    }
-    
+    if (!Array.isArray(results)) results = [];
+
     setRecommendations(results);
     setPhase('results');
     setLoading(false);
+
+    // Fire-and-forget: persist recommendation (non-blocking, never delays/blocks results)
+    if (isAuthenticated && results.length > 0) {
+      base44.entities.Recommendation.create({
+        books: results,
+        profile: profileWithSaved,
+      }).catch(() => {});
+    }
   };
 
   const handleBack = () => {
@@ -671,7 +670,7 @@ function BookSearchContent() {
         )}
 
         {/* Results Phase */}
-        {phase === 'results' && recommendations && (
+        {phase === 'results' && recommendations !== null && (
           <motion.div
             key="results"
             initial={{ opacity: 0 }}
