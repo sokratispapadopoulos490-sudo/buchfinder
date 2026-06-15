@@ -426,13 +426,34 @@ function BookSearchContent() {
 
   const handleShowBooks = async () => {
     setLoading(true);
-    let results = await getMatchingBooksFromDB(profile);
+
+    // Populate savedBookIds so already-saved books are excluded from results
+    let savedBookIds = [];
+    if (isAuthenticated) {
+      try {
+        const saved = await base44.entities.SavedBook.list();
+        savedBookIds = saved.map(s => s.book_id).filter(Boolean);
+      } catch {
+        savedBookIds = [];
+      }
+    }
+
+    const profileWithSaved = { ...profile, savedBookIds };
+    let results = await getMatchingBooksFromDB(profileWithSaved);
+
+    // Show a useful message if no language-matched books found
+    if (!Array.isArray(results) || results.length === 0) {
+      setRecommendations([]);
+      setPhase('results');
+      setLoading(false);
+      return;
+    }
     
     if (isAuthenticated) {
       try {
         await base44.entities.Recommendation.create({
           books: results,
-          profile: profile,
+          profile: profileWithSaved,
         });
       } catch (error) {
         console.error('Fehler beim Speichern:', error);
@@ -676,10 +697,25 @@ function BookSearchContent() {
                 const horizonBooks = Array.isArray(recommendations) ? recommendations.filter(b => b.isContrast) : [];
 
                 if (mainBooks.length === 0) {
+                  const lang = profile?.bookLanguage;
+                  const langNames = { el: 'Griechisch', tr: 'Türkisch', fr: 'Französisch', es: 'Spanisch', it: 'Italienisch', en: 'Englisch' };
+                  const langName = langNames[lang] || lang;
                   return (
                     <div className="text-center py-16 text-stone-400">
-                      <p className="text-lg mb-2">Keine Bücher gefunden</p>
-                      <p className="text-sm">Versuche eine neue Suche mit anderen Einstellungen.</p>
+                      <p className="text-2xl mb-3">📚</p>
+                      <p className="text-lg mb-2 text-stone-600 dark:text-stone-300">
+                        {lang && lang !== 'any' ? `Noch keine lokalen Bücher auf ${langName}` : 'Keine Bücher gefunden'}
+                      </p>
+                      <p className="text-sm mb-4">
+                        {lang && lang !== 'any'
+                          ? `Probiere die Buchsuche über BookDiscover – dort findest du Google Books auf ${langName}.`
+                          : 'Versuche eine neue Suche mit anderen Einstellungen.'}
+                      </p>
+                      {lang && lang !== 'any' && (
+                        <a href="/BookDiscover" className="inline-block text-sm text-amber-600 underline underline-offset-4 hover:text-amber-700">
+                          Zu BookDiscover →
+                        </a>
+                      )}
                     </div>
                   );
                 }

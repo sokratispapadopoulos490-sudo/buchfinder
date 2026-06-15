@@ -24,7 +24,7 @@ export function normalizeLocalBook(localBook) {
     publisher: localBook.publisher || null,
     published_date: localBook.publishYear ? String(localBook.publishYear) : null,
     page_count: localBook.pageCount || null,
-    language: 'de',
+    language: localBook.language || 'de',
     categories: localBook.tags || [],
     tags: localBook.tags || [],
     age_group: localBook.ageGroup || 'erwachsene',
@@ -326,27 +326,62 @@ export async function getMatchingBooksFromDB(profile) {
   const { mainTopics, secondaryTopics, style, difficulty, ageGroup, bookLanguage, readBooks = [], savedBookIds = [] } = profile;
 
   let pool;
+  let languageFallbackUsed = false;
+
   try {
     const filter = { age_group: ageGroup, is_active: true };
     if (bookLanguage) filter.language = bookLanguage;
     const dbBooks = await base44.entities.Book.filter(filter, '-rating', 200);
-    // Fallback: if language-filtered results are empty, try without language filter (graceful degradation)
+
     if (dbBooks.length === 0 && bookLanguage) {
-      const fallbackBooks = await base44.entities.Book.filter({ age_group: ageGroup, is_active: true }, '-rating', 200);
-      pool = fallbackBooks.length > 0 ? fallbackBooks : localBooks.map(normalizeLocalBook).filter(b => b.age_group === ageGroup);
+      // DB has no books for this language — fall through to local
+      pool = null;
     } else {
-      pool = dbBooks.length > 0 ? dbBooks : localBooks.map(normalizeLocalBook).filter(b => b.age_group === ageGroup);
+      pool = dbBooks.length > 0 ? dbBooks : null;
     }
   } catch {
-    pool = localBooks.map(normalizeLocalBook).filter(b => b.age_group === ageGroup);
+    pool = null;
   }
 
-  // Client-side language filter on local pool (local DB has no language field — all 'de')
-  // Only filter if bookLanguage is set AND the pool has books with non-'de' language (i.e. from DB)
-  if (bookLanguage && pool.some(b => b.language && b.language !== 'de')) {
-    const langFiltered = pool.filter(b => !b.language || b.language === bookLanguage);
-    if (langFiltered.length >= 3) pool = langFiltered;
-    // else: keep full pool as fallback to avoid empty results
+  // Always try local books as a language-aware pool
+  const localPool = localBooks
+    .map(normalizeLocalBook)
+    .filter(b => b.age_group === ageGroup);
+
+  if (!pool) {
+    // Language-filter local books
+    if (bookLanguage && bookLanguage !== 'any') {
+      const langLocal = localPool.filter(b => b.language === bookLanguage);
+      if (langLocal.length >= 3) {
+        pool = langLocal;
+      } else {
+        // Not enough local books in requested language
+        languageFallbackUsed = true;
+        pool = langLocal; // Return what we have, even if small — caller shows message
+      }
+    } else {
+      pool = localPool;
+    }
+  } else if (bookLanguage && bookLanguage !== 'any') {
+    // DB pool: apply client-side language filter
+    const langFiltered = pool.filter(b => b.language === bookLanguage);
+    if (langFiltered.length >= 3) {
+      pool = langFiltered;
+    } else {
+      // Supplement with local books of the same language
+      const langLocal = localPool.filter(b => b.language === bookLanguage);
+      const combined = [...pool, ...langLocal.filter(lb => !pool.some(pb => pb.id === lb.id))];
+      pool = combined.length >= 3 ? combined : combined;
+    }
+  }
+
+  if (!pool) pool = [];
+
+  // Early return if no books found for this language
+  if (pool.length === 0) {
+    const empty = [];
+    empty._meta = { languageFallbackUsed, bookLanguage, count: 0 };
+    return empty;
   }
 
   pool = pool.filter(b => !savedBookIds.includes(b.id));
@@ -389,7 +424,9 @@ export async function getMatchingBooksFromDB(profile) {
       .map((b, i) => ({ ...b, placement: 11 + contrastBooks.length + i, isContrast: true }));
     contrastBooks.push(...filler);
   }
-  return [...topBooks, ...contrastBooks];
+  const result = [...topBooks, ...contrastBooks];
+  result._meta = { languageFallbackUsed, bookLanguage, count: result.length };
+  return result;
 }
 
 /** Synchroner Legacy-Fallback */

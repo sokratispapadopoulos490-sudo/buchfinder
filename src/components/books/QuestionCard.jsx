@@ -17,6 +17,12 @@ export default function QuestionCard({
   onTextSubmit
 }) {
   const [textValue, setTextValue] = useState(selectedValue || '');
+
+  // Reset textValue when the question changes (identified by question text)
+  useEffect(() => {
+    setTextValue(selectedValue || '');
+  }, [question]); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
