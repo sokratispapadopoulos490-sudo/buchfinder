@@ -31,6 +31,9 @@ import { LanguageProvider } from '@/components/language/LanguageContext';
 
 const PAGES_WITHOUT_NAV = ['onboarding', 'legal'];
 
+// Routen, die KEIN onboarding_completed benötigen
+const ONBOARDING_FREE_ROUTES = ['onboarding', 'booksearch', 'bookdiscover', 'legal'];
+
 export default function Layout({ children, currentPageName }) {
   const { isAuthenticated, user } = useAuth();
   const [showConsent, setShowConsent] = useState(false);
@@ -59,7 +62,8 @@ export default function Layout({ children, currentPageName }) {
     if (!user) return;
     if (user.onboarding_completed) return;
     const path = locationRef.current.pathname.toLowerCase();
-    if (!path.includes('onboarding')) {
+    const isAllowed = ONBOARDING_FREE_ROUTES.some(r => path.includes(r));
+    if (!isAllowed) {
       navigate('/Onboarding', { replace: true });
     }
   }, [user, navigate]);
