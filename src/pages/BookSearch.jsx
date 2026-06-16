@@ -9,7 +9,7 @@ import BookCard from '@/components/books/BookCard';
 import { getMatchingBooksFromDB } from '@/lib/bookService';
 import { base44 } from '@/api/base44Client';
 import { useLanguage, LanguageProvider } from '@/components/language/LanguageContext';
-import { setBookLanguage } from '@/lib/shoppingRegion';
+import { setBookLanguage, resolveEffectiveRegion } from '@/lib/shoppingRegion';
 
 // Erste Frage für alle - Altersgruppe ermitteln
 const ageQuestion = {
@@ -659,24 +659,29 @@ function BookSearchContent() {
 
               <ProfileCard profile={profile} />
 
-              {/* Book language + shopping region info pill */}
-              {(profile.bookLanguage || langCtx?.shoppingRegion) && (() => {
+              {/* Book language + effective shopping region pills */}
+              {(() => {
                 const langCode = profile.bookLanguage;
-                const regionCode = langCtx?.shoppingRegion;
+                // Use resolveEffectiveRegion so Greek book language → GR, not stored DE
+                const effectiveRegion = resolveEffectiveRegion(langCtx?.shoppingRegion || 'DE', langCode).toLowerCase();
+                if (!langCode && !effectiveRegion) return null;
+
                 const langLabels = { de: 'Deutsch', en: 'Englisch', el: 'Griechisch', tr: 'Türkisch', fr: 'Französisch', es: 'Spanisch', it: 'Italienisch' };
                 const regionLabels = { de: 'Deutschland', at: 'Österreich', ch: 'Schweiz', gr: 'Griechenland', tr: 'Türkei', fr: 'Frankreich', es: 'Spanien', it: 'Italien', uk: 'Großbritannien', us: 'USA' };
-                const langFlags = { de: '🇩🇪', en: '🇬🇧', el: '🇬🇷', tr: '🇹🇷', fr: '🇫🇷', es: '🇪🇸', it: '🇮🇹' };
+                const langFlags   = { de: '🇩🇪', en: '🇬🇧', el: '🇬🇷', tr: '🇹🇷', fr: '🇫🇷', es: '🇪🇸', it: '🇮🇹' };
                 const regionFlags = { de: '🇩🇪', at: '🇦🇹', ch: '🇨🇭', gr: '🇬🇷', tr: '🇹🇷', fr: '🇫🇷', es: '🇪🇸', it: '🇮🇹', uk: '🇬🇧', us: '🇺🇸' };
                 return (
                   <div className="flex flex-wrap gap-2 justify-center mt-4 mb-1">
                     {langCode && langCode !== 'any' && (
                       <span className="inline-flex items-center gap-1.5 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 text-amber-700 dark:text-amber-300 px-3 py-1 rounded-full text-xs font-medium">
-                        {langFlags[langCode] || '📖'} {langLabels[langCode] || langCode} <span className="opacity-60">({langCode})</span>
+                        <span className="opacity-60 text-[10px] mr-0.5">Buchsprache</span>
+                        {langFlags[langCode] || '📖'} {langLabels[langCode] || langCode} <span className="opacity-50">({langCode})</span>
                       </span>
                     )}
-                    {regionCode && (
+                    {effectiveRegion && (
                       <span className="inline-flex items-center gap-1.5 bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 px-3 py-1 rounded-full text-xs font-medium">
-                        {regionFlags[regionCode] || '🛒'} {regionLabels[regionCode] || regionCode.toUpperCase()} <span className="opacity-60">({regionCode.toUpperCase()})</span>
+                        <span className="opacity-60 text-[10px] mr-0.5">Kaufregion</span>
+                        {regionFlags[effectiveRegion] || '🛒'} {regionLabels[effectiveRegion] || effectiveRegion.toUpperCase()} <span className="opacity-50">({effectiveRegion.toUpperCase()})</span>
                       </span>
                     )}
                   </div>
