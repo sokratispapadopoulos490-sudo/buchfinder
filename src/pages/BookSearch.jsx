@@ -744,10 +744,7 @@ function BookSearchContent() {
                         </div>
                         <div className="space-y-6">
                           {horizonBooks.map((book, idx) => (
-                            <div key={book.id || book.isbn13 || `h-${idx}`} className="space-y-1">
-                              <div className="flex items-center gap-2 px-1">
-                                <span className="text-xs font-medium text-violet-500 dark:text-violet-400 uppercase tracking-wide">{t('booksearch.horizonBadge')}</span>
-                              </div>
+                            <div key={book.id || book.isbn13 || `h-${idx}`}>
                               <BookCard book={book} reasons={generateReasons(book, profile, t)} index={Math.min(5 + idx, 7)} isContrast={true} isAuthenticated={isAuthenticated} analysisBookLanguage={profile?.bookLanguage} />
                             </div>
                           ))}
