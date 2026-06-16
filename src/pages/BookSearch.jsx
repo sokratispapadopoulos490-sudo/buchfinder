@@ -8,7 +8,7 @@ import ProfileCard from '@/components/books/ProfileCard';
 import BookCard from '@/components/books/BookCard';
 import { getMatchingBooksFromDB } from '@/lib/bookService';
 import { base44 } from '@/api/base44Client';
-import { useLanguage } from '@/components/language/LanguageContext';
+import { useLanguage, LanguageProvider } from '@/components/language/LanguageContext';
 import { setBookLanguage } from '@/lib/shoppingRegion';
 
 // Erste Frage für alle - Altersgruppe ermitteln
@@ -305,17 +305,10 @@ function BookSearchContent() {
   const [loading, setLoading] = useState(false);
   const [translatedQuestions, setTranslatedQuestions] = useState(questionSets.erwachsene);
 
-  // Safe language hook – LanguageProvider may not be present in direct preview
-  let t = (k) => k;
-  let contextBookLanguage = null;
-  try {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const lang = useLanguage();
-    t = lang.t;
-    contextBookLanguage = lang.bookLanguage;
-  } catch {
-    // No LanguageProvider – use fallback
-  }
+  // Always call hooks at top level – no try/catch around hooks (React rules)
+  const langCtx = useLanguage();
+  const t = langCtx?.t || ((k) => k);
+  const contextBookLanguage = langCtx?.bookLanguage || null;
 
   useEffect(() => {
     checkAuth();
@@ -831,4 +824,11 @@ function BookSearchContent() {
   );
 }
 
-export default BookSearchContent;
+// Wrap in LanguageProvider so direct preview (no Layout) never throws from useLanguage()
+export default function BookSearch() {
+  return (
+    <LanguageProvider>
+      <BookSearchContent />
+    </LanguageProvider>
+  );
+}
