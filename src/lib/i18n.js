@@ -1009,6 +1009,188 @@ const dict = {
     it: 'Cosa capisci meglio ora rispetto a prima di questa sessione di lettura?',
   },
 
+  // ── BookSearch – Step label ───────────────────────────────────────────────
+  'booksearch.step': {
+    de: 'Schritt {n} von {total}', en: 'Step {n} of {total}', el: 'Βήμα {n} από {total}',
+    tr: 'Adım {n} / {total}', fr: 'Étape {n} sur {total}', es: 'Paso {n} de {total}', it: 'Passo {n} di {total}',
+  },
+
+  // ── BookSearch – Question: age ────────────────────────────────────────────
+  'q.age.question': {
+    de: 'Für wen suchst du ein Buch?', en: 'Who are you looking for a book for?',
+    el: 'Για ποιον ψάχνεις βιβλίο;', tr: 'Kime kitap arıyorsunuz?',
+    fr: 'Pour qui cherchez-vous un livre ?', es: '¿Para quién buscas un libro?', it: 'Per chi stai cercando un libro?',
+  },
+  'q.age.kinder': {
+    de: 'Für Kinder (6-12 Jahre)', en: 'For Children (6-12)', el: 'Για Παιδιά (6-12)',
+    tr: 'Çocuklar için (6-12)', fr: 'Pour Enfants (6-12)', es: 'Para Niños (6-12)', it: 'Per Bambini (6-12)',
+  },
+  'q.age.jugendliche': {
+    de: 'Für Jugendliche (13-17 Jahre)', en: 'For Teens (13-17)', el: 'Για Εφήβους (13-17)',
+    tr: 'Gençler için (13-17)', fr: 'Pour Adolescents (13-17)', es: 'Para Jóvenes (13-17)', it: 'Per Ragazzi (13-17)',
+  },
+  'q.age.erwachsene': {
+    de: 'Für Erwachsene (18+ Jahre)', en: 'For Adults (18+)', el: 'Για Ενήλικες (18+)',
+    tr: 'Yetişkinler için (18+)', fr: 'Pour Adultes (18+)', es: 'Para Adultos (18+)', it: 'Per Adulti (18+)',
+  },
+
+  // ── BookSearch – Question: book_language ──────────────────────────────────
+  'q.bookLang.question': {
+    de: 'In welcher Sprache soll das Buch sein?', en: 'In which language should the book be?',
+    el: 'Σε ποια γλώσσα να είναι το βιβλίο;', tr: 'Kitap hangi dilde olmalı?',
+    fr: 'Dans quelle langue doit être le livre ?', es: '¿En qué idioma debe estar el libro?', it: 'In quale lingua deve essere il libro?',
+  },
+  'q.bookLang.any': {
+    de: '🌍 Mehrere / egal', en: '🌍 Multiple / any', el: '🌍 Πολλές / ό,τι',
+    tr: '🌍 Birden fazla / farketmez', fr: '🌍 Plusieurs / peu importe', es: '🌍 Varias / da igual', it: '🌍 Più lingue / qualsiasi',
+  },
+
+  // ── BookSearch – Question: age_range (Kinder) ─────────────────────────────
+  'q.ageRange.question': {
+    de: 'Wie alt bist du?', en: 'How old are you?', el: 'Πόσο χρονών είσαι;',
+    tr: 'Kaç yaşındasın?', fr: 'Quel âge as-tu ?', es: '¿Cuántos años tienes?', it: 'Quanti anni hai?',
+  },
+  'q.ageRange.6-8':  { de: '6–8 Jahre 📚', en: '6–8 years 📚', el: '6–8 χρονών 📚', tr: '6–8 yaş 📚', fr: '6–8 ans 📚', es: '6–8 años 📚', it: '6–8 anni 📚' },
+  'q.ageRange.9-10': { de: '9–10 Jahre 🌟', en: '9–10 years 🌟', el: '9–10 χρονών 🌟', tr: '9–10 yaş 🌟', fr: '9–10 ans 🌟', es: '9–10 años 🌟', it: '9–10 anni 🌟' },
+  'q.ageRange.11-12':{ de: '11–12 Jahre 🚀', en: '11–12 years 🚀', el: '11–12 χρονών 🚀', tr: '11–12 yaş 🚀', fr: '11–12 ans 🚀', es: '11–12 años 🚀', it: '11–12 anni 🚀' },
+
+  // ── BookSearch – Question: topic (Kinder) ─────────────────────────────────
+  'q.topicKids.question': {
+    de: 'Was magst du am liebsten?', en: 'What do you like most?', el: 'Τι σου αρέσει περισσότερο;',
+    tr: 'En çok neyi seviyorsun?', fr: 'Qu\'aimes-tu le plus ?', es: '¿Qué te gusta más?', it: 'Cosa ti piace di più?',
+  },
+  'q.topic.abenteuer.kids':    { de: '🗺️ Abenteuer & Spannung', en: '🗺️ Adventure & Excitement', el: '🗺️ Περιπέτεια & Συναρπαστικό', tr: '🗺️ Macera & Heyecan', fr: '🗺️ Aventure & Suspense', es: '🗺️ Aventura & Emoción', it: '🗺️ Avventura & Brivido' },
+  'q.topic.magie':             { de: '✨ Magie & Fantasie', en: '✨ Magic & Fantasy', el: '✨ Μαγεία & Φαντασία', tr: '✨ Sihir & Fantezi', fr: '✨ Magie & Fantaisie', es: '✨ Magia & Fantasía', it: '✨ Magia & Fantasia' },
+  'q.topic.freundschaft.kids': { de: '🤝 Freundschaft', en: '🤝 Friendship', el: '🤝 Φιλία', tr: '🤝 Arkadaşlık', fr: '🤝 Amitié', es: '🤝 Amistad', it: '🤝 Amicizia' },
+  'q.topic.lustiges':          { de: '😄 Lustige Bücher', en: '😄 Funny Books', el: '😄 Αστεία βιβλία', tr: '😄 Komik kitaplar', fr: '😄 Livres drôles', es: '😄 Libros divertidos', it: '😄 Libri divertenti' },
+  'q.topic.tiere':             { de: '🐾 Tiere & Natur', en: '🐾 Animals & Nature', el: '🐾 Ζώα & Φύση', tr: '🐾 Hayvanlar & Doğa', fr: '🐾 Animaux & Nature', es: '🐾 Animales & Naturaleza', it: '🐾 Animali & Natura' },
+  'q.topic.schule.kids':       { de: '🎒 Schule & Rätsel', en: '🎒 School & Puzzles', el: '🎒 Σχολείο & Γρίφοι', tr: '🎒 Okul & Bulmacalar', fr: '🎒 École & Énigmes', es: '🎒 Escuela & Acertijos', it: '🎒 Scuola & Indovinelli' },
+
+  // ── BookSearch – Question: length (Kinder) ───────────────────────────────
+  'q.lengthKids.question': {
+    de: 'Wie lange möchtest du lesen?', en: 'How long do you want to read?', el: 'Πόσο θέλεις να διαβάσεις;',
+    tr: 'Ne kadar okumak istiyorsun?', fr: 'Combien de temps veux-tu lire ?', es: '¿Cuánto tiempo quieres leer?', it: 'Quanto tempo vuoi leggere?',
+  },
+  'q.length.kurz.kids':  { de: '⏱️ Kurz (10–20 Min.)', en: '⏱️ Short (10–20 min)', el: '⏱️ Σύντομο (10–20 λεπτά)', tr: '⏱️ Kısa (10–20 dk)', fr: '⏱️ Court (10–20 min)', es: '⏱️ Corto (10–20 min)', it: '⏱️ Breve (10–20 min)' },
+  'q.length.mittel.kids':{ de: '📖 Ein Kapitel täglich', en: '📖 A chapter a day', el: '📖 Ένα κεφάλαιο καθημερινά', tr: '📖 Günde bir bölüm', fr: '📖 Un chapitre par jour', es: '📖 Un capítulo diario', it: '📖 Un capitolo al giorno' },
+  'q.length.lang.kids':  { de: '📚 Richtig eintauchen', en: '📚 Really dive in', el: '📚 Να βυθιστείς', tr: '📚 Gerçekten dalmak', fr: '📚 Vraiment plonger', es: '📚 Sumergirse de verdad', it: '📚 Immergersi davvero' },
+
+  // ── BookSearch – Question: occasion (Jugendliche) ────────────────────────
+  'q.occasion.question': {
+    de: 'Wonach suchst du gerade?', en: 'What are you looking for right now?', el: 'Τι ψάχνεις αυτή τη στιγμή;',
+    tr: 'Şu an ne arıyorsunuz?', fr: 'Que cherchez-vous en ce moment ?', es: '¿Qué buscas ahora mismo?', it: 'Cosa stai cercando in questo momento?',
+  },
+  'q.occasion.freizeit':  { de: '🎧 Einfach Spaß & Ablenkung', en: '🎧 Just fun & distraction', el: '🎧 Απλή διασκέδαση', tr: '🎧 Sadece eğlence', fr: '🎧 Juste du fun', es: '🎧 Solo diversión', it: '🎧 Solo divertimento' },
+  'q.occasion.entdecken': { de: '🌍 Etwas Neues entdecken', en: '🌍 Discover something new', el: '🌍 Ανακαλύψτε κάτι νέο', tr: '🌍 Yeni şeyler keşfet', fr: '🌍 Découvrir quelque chose', es: '🌍 Descubrir algo nuevo', it: '🌍 Scoprire qualcosa' },
+  'q.occasion.verstehen': { de: '💭 Mich selbst besser verstehen', en: '💭 Understand myself better', el: '💭 Να καταλάβω τον εαυτό μου', tr: '💭 Kendimi daha iyi anlamak', fr: '💭 Mieux me comprendre', es: '💭 Entenderme mejor', it: '💭 Capire meglio me stesso' },
+  'q.occasion.schule':    { de: '📝 Etwas für die Schule', en: '📝 Something for school', el: '📝 Κάτι για το σχολείο', tr: '📝 Okul için bir şeyler', fr: '📝 Quelque chose pour l\'école', es: '📝 Algo para el colegio', it: '📝 Qualcosa per la scuola' },
+
+  // ── BookSearch – Question: topic (Jugendliche) ───────────────────────────
+  'q.topicTeens.question': {
+    de: 'Was interessiert dich?', en: 'What interests you?', el: 'Τι σε ενδιαφέρει;',
+    tr: 'Seni ne ilgilendiriyor?', fr: 'Qu\'est-ce qui vous intéresse ?', es: '¿Qué te interesa?', it: 'Cosa ti interessa?',
+  },
+  'q.topic.abenteuer.teens':    { de: '⚔️ Abenteuer & Fantasy', en: '⚔️ Adventure & Fantasy', el: '⚔️ Περιπέτεια & Φαντασία', tr: '⚔️ Macera & Fantezi', fr: '⚔️ Aventure & Fantasy', es: '⚔️ Aventura & Fantasía', it: '⚔️ Avventura & Fantasy' },
+  'q.topic.liebe':              { de: '💕 Liebe & Gefühle', en: '💕 Love & Feelings', el: '💕 Αγάπη & Συναισθήματα', tr: '💕 Aşk & Duygular', fr: '💕 Amour & Émotions', es: '💕 Amor & Sentimientos', it: '💕 Amore & Sentimenti' },
+  'q.topic.freundschaft.teens': { de: '🤜 Freundschaft & Zusammenhalt', en: '🤜 Friendship & Solidarity', el: '🤜 Φιλία & Αλληλεγγύη', tr: '🤜 Arkadaşlık & Dayanışma', fr: '🤜 Amitié & Solidarité', es: '🤜 Amistad & Unión', it: '🤜 Amicizia & Solidarietà' },
+  'q.topic.selbstfindung':      { de: '🔍 Wer bin ich?', en: '🔍 Who am I?', el: '🔍 Ποιος είμαι;', tr: '🔍 Ben kimim?', fr: '🔍 Qui suis-je ?', es: '🔍 ¿Quién soy yo?', it: '🔍 Chi sono?' },
+  'q.topic.gesellschaft':       { de: '🌐 Die Welt verstehen', en: '🌐 Understand the world', el: '🌐 Να καταλάβω τον κόσμο', tr: '🌐 Dünyayı anlamak', fr: '🌐 Comprendre le monde', es: '🌐 Entender el mundo', it: '🌐 Capire il mondo' },
+  'q.topic.thriller_krimi.teens':{ de: '🕵️ Spannung & Krimi', en: '🕵️ Thriller & Crime', el: '🕵️ Θρίλερ & Αστυνομικά', tr: '🕵️ Gerilim & Suç', fr: '🕵️ Suspense & Policier', es: '🕵️ Suspense & Crimen', it: '🕵️ Suspense & Giallo' },
+
+  // ── BookSearch – Question: length (Jugendliche) ──────────────────────────
+  'q.lengthTeens.question': {
+    de: 'Wie viel Zeit hast du?', en: 'How much time do you have?', el: 'Πόσο χρόνο έχεις;',
+    tr: 'Ne kadar vaktin var?', fr: 'Combien de temps as-tu ?', es: '¿Cuánto tiempo tienes?', it: 'Quanto tempo hai?',
+  },
+  'q.length.kurz.teens':  { de: '⚡ 15–30 Minuten', en: '⚡ 15–30 minutes', el: '⚡ 15–30 λεπτά', tr: '⚡ 15–30 dakika', fr: '⚡ 15–30 minutes', es: '⚡ 15–30 minutos', it: '⚡ 15–30 minuti' },
+  'q.length.mittel.teens':{ de: '📖 Ein paar Kapitel täglich', en: '📖 A few chapters daily', el: '📖 Μερικά κεφάλαια καθημερινά', tr: '📖 Günde birkaç bölüm', fr: '📖 Quelques chapitres par jour', es: '📖 Algunos capítulos diarios', it: '📖 Qualche capitolo al giorno' },
+  'q.length.lang.teens':  { de: '🏊 Ich tauche gerne tief ein', en: '🏊 I like to dive deep', el: '🏊 Μου αρέσει να βυθίζομαι βαθιά', tr: '🏊 Derin dalmayı seviyorum', fr: '🏊 J\'aime plonger profondément', es: '🏊 Me gusta sumergirme', it: '🏊 Mi piace immergermi a fondo' },
+
+  // ── BookSearch – Question: reading_goal (Erwachsene) ─────────────────────
+  'q.readingGoal.question': {
+    de: 'Was ist dein Hauptziel beim Lesen?', en: 'What is your main reading goal?', el: 'Ποιος είναι ο κύριος στόχος σου στην ανάγνωση;',
+    tr: 'Okuma amacın nedir?', fr: 'Quel est votre objectif principal de lecture ?', es: '¿Cuál es tu objetivo principal al leer?', it: 'Qual è il tuo obiettivo principale di lettura?',
+  },
+  'q.readingGoal.wachstum':    { de: 'Persönliches Wachstum & Wissen', en: 'Personal Growth & Knowledge', el: 'Προσωπική ανάπτυξη & Γνώση', tr: 'Kişisel gelişim & Bilgi', fr: 'Croissance personnelle & Savoir', es: 'Crecimiento personal & Conocimiento', it: 'Crescita personale & Conoscenza' },
+  'q.readingGoal.entspannung': { de: 'Entspannung & Unterhaltung', en: 'Relaxation & Entertainment', el: 'Χαλάρωση & Ψυχαγωγία', tr: 'Rahatlama & Eğlence', fr: 'Détente & Divertissement', es: 'Relajación & Entretenimiento', it: 'Relax & Intrattenimento' },
+  'q.readingGoal.beide':       { de: 'Beides – je nach Stimmung', en: 'Both – depending on mood', el: 'Και τα δύο – ανάλογα με τη διάθεση', tr: 'İkisi de – ruh haline göre', fr: 'Les deux – selon l\'humeur', es: 'Ambos – según el estado de ánimo', it: 'Entrambi – a seconda dell\'umore' },
+
+  // ── BookSearch – Question: topic (Erwachsene) ────────────────────────────
+  'q.topicAdults.question': {
+    de: 'Was interessiert dich am meisten?', en: 'What interests you most?', el: 'Τι σε ενδιαφέρει περισσότερο;',
+    tr: 'Sizi en çok ne ilgilendiriyor?', fr: 'Qu\'est-ce qui vous intéresse le plus ?', es: '¿Qué te interesa más?', it: 'Cosa ti interessa di più?',
+  },
+  'q.topic.persoenliche_entwicklung': { de: 'Persönliche Entwicklung', en: 'Personal Development', el: 'Προσωπική ανάπτυξη', tr: 'Kişisel gelişim', fr: 'Développement personnel', es: 'Desarrollo personal', it: 'Sviluppo personale' },
+  'q.topic.stress_ruhe':               { de: 'Ruhe & Gelassenheit', en: 'Calm & Serenity', el: 'Ηρεμία & Γαλήνη', tr: 'Sakinlik & Huzur', fr: 'Calme & Sérénité', es: 'Calma & Serenidad', it: 'Calma & Serenità' },
+  'q.topic.fokus_produktivitaet':      { de: 'Fokus & Produktivität', en: 'Focus & Productivity', el: 'Εστίαση & Παραγωγικότητα', tr: 'Odak & Verimlilik', fr: 'Focus & Productivité', es: 'Foco & Productividad', it: 'Focus & Produttività' },
+  'q.topic.beziehung_kommunikation':   { de: 'Beziehungen & Kommunikation', en: 'Relationships & Communication', el: 'Σχέσεις & Επικοινωνία', tr: 'İlişkiler & İletişim', fr: 'Relations & Communication', es: 'Relaciones & Comunicación', it: 'Relazioni & Comunicazione' },
+  'q.topic.sinn_philosophie':          { de: 'Sinn & Lebensphilosophie', en: 'Meaning & Life Philosophy', el: 'Νόημα & Φιλοσοφία ζωής', tr: 'Anlam & Yaşam felsefesi', fr: 'Sens & Philosophie de vie', es: 'Sentido & Filosofía de vida', it: 'Senso & Filosofia di vita' },
+  'q.topic.glaube_spiritualitaet':     { de: 'Glaube & Spiritualität', en: 'Faith & Spirituality', el: 'Πίστη & Πνευματικότητα', tr: 'İnanç & Maneviyat', fr: 'Foi & Spiritualité', es: 'Fe & Espiritualidad', it: 'Fede & Spiritualità' },
+  'q.topic.kreativitaet':              { de: 'Kreativität', en: 'Creativity', el: 'Δημιουργικότητα', tr: 'Yaratıcılık', fr: 'Créativité', es: 'Creatividad', it: 'Creatività' },
+  'q.topic.lernen_wissen':             { de: 'Lernen & Wissen', en: 'Learning & Knowledge', el: 'Μάθηση & Γνώση', tr: 'Öğrenme & Bilgi', fr: 'Apprentissage & Savoir', es: 'Aprendizaje & Conocimiento', it: 'Apprendimento & Conoscenza' },
+  'q.topic.koerper_gesundheit':        { de: 'Körper & Gesundheit', en: 'Body & Health', el: 'Σώμα & Υγεία', tr: 'Beden & Sağlık', fr: 'Corps & Santé', es: 'Cuerpo & Salud', it: 'Corpo & Salute' },
+  'q.topic.fantasy_scifi':             { de: 'Fantasy & Science-Fiction', en: 'Fantasy & Science-Fiction', el: 'Φαντασία & Επιστημονική φαντασία', tr: 'Fantezi & Bilim kurgu', fr: 'Fantasy & Science-Fiction', es: 'Fantasía & Ciencia ficción', it: 'Fantasy & Fantascienza' },
+  'q.topic.thriller_krimi':            { de: 'Thriller & Krimis', en: 'Thriller & Crime', el: 'Θρίλερ & Αστυνομικά', tr: 'Gerilim & Polisiye', fr: 'Thriller & Policier', es: 'Thriller & Crimen', it: 'Thriller & Giallo' },
+  'q.topic.romance':                   { de: 'Romantik & Liebesromane', en: 'Romance & Love Stories', el: 'Ρομάντζο & Ιστορίες αγάπης', tr: 'Romantizm & Aşk romanları', fr: 'Romance & Histoires d\'amour', es: 'Romance & Novelas de amor', it: 'Romantico & Storie d\'amore' },
+  'q.topic.historisch':                { de: 'Historische Romane', en: 'Historical Novels', el: 'Ιστορικά μυθιστορήματα', tr: 'Tarihi romanlar', fr: 'Romans historiques', es: 'Novelas históricas', it: 'Romanzi storici' },
+  'q.topic.literatur':                 { de: 'Anspruchsvolle Literatur', en: 'Serious Literature', el: 'Απαιτητική λογοτεχνία', tr: 'Edebiyat', fr: 'Littérature exigeante', es: 'Literatura exigente', it: 'Letteratura impegnativa' },
+  'q.topic.humor':                     { de: 'Humor & Unterhaltung', en: 'Humor & Entertainment', el: 'Χιούμορ & Ψυχαγωγία', tr: 'Mizah & Eğlence', fr: 'Humour & Divertissement', es: 'Humor & Entretenimiento', it: 'Umorismo & Intrattenimento' },
+
+  // ── BookSearch – Question: style (Erwachsene) ────────────────────────────
+  'q.style.question': {
+    de: 'Wie liest du am liebsten?', en: 'How do you prefer to read?', el: 'Πώς προτιμάς να διαβάζεις;',
+    tr: 'Nasıl okumayı tercih edersin?', fr: 'Comment préférez-vous lire ?', es: '¿Cómo prefieres leer?', it: 'Come preferisci leggere?',
+  },
+  'q.style.praktisch':       { de: 'Praktisch & direkt umsetzbar', en: 'Practical & directly applicable', el: 'Πρακτικό & άμεσα εφαρμόσιμο', tr: 'Pratik & doğrudan uygulanabilir', fr: 'Pratique & directement applicable', es: 'Práctico & directamente aplicable', it: 'Pratico & direttamente applicabile' },
+  'q.style.wissenschaftlich':{ de: 'Wissenschaftlich fundiert', en: 'Scientifically grounded', el: 'Επιστημονικά τεκμηριωμένο', tr: 'Bilimsel temelli', fr: 'Fondé scientifiquement', es: 'Científicamente fundamentado', it: 'Scientificamente fondato' },
+  'q.style.story':           { de: 'Erzählerisch & biografisch', en: 'Narrative & biographical', el: 'Αφηγηματικό & βιογραφικό', tr: 'Anlatı & biyografik', fr: 'Narratif & biographique', es: 'Narrativo & biográfico', it: 'Narrativo & biografico' },
+  'q.style.reflektierend':   { de: 'Philosophisch & tiefgründig', en: 'Philosophical & deep', el: 'Φιλοσοφικό & βαθύ', tr: 'Felsefi & derin', fr: 'Philosophique & profond', es: 'Filosófico & profundo', it: 'Filosofico & profondo' },
+
+  // ── BookSearch – Question: level (Erwachsene) ────────────────────────────
+  'q.level.question': {
+    de: 'Wie erfahren bist du als Leser?', en: 'How experienced are you as a reader?', el: 'Πόσο έμπειρος αναγνώστης είσαι;',
+    tr: 'Okuyucu olarak ne kadar deneyimlisin?', fr: 'Quelle est votre expérience de lecture ?', es: '¿Cuánta experiencia tienes como lector?', it: 'Quanto sei esperto come lettore?',
+  },
+  'q.level.einsteiger':     { de: 'Einsteiger – zugänglich & flüssig', en: 'Beginner – accessible & fluent', el: 'Αρχάριος – προσιτό & ευανάγνωστο', tr: 'Başlangıç – erişilebilir & akıcı', fr: 'Débutant – accessible & fluide', es: 'Principiante – accesible & fluido', it: 'Principiante – accessibile & scorrevole' },
+  'q.level.fortgeschritten':{ de: 'Fortgeschritten – anspruchsvoller Inhalt', en: 'Advanced – more demanding content', el: 'Προχωρημένος – πιο απαιτητικό', tr: 'İleri – daha zorlu içerik', fr: 'Avancé – contenu plus exigeant', es: 'Avanzado – contenido más exigente', it: 'Avanzato – contenuto più impegnativo' },
+  'q.level.erfahren':       { de: 'Erfahren – komplexe Werke willkommen', en: 'Experienced – complex works welcome', el: 'Έμπειρος – σύνθετα έργα ευπρόσδεκτα', tr: 'Deneyimli – karmaşık eserler memnuniyetle', fr: 'Expérimenté – œuvres complexes bienvenues', es: 'Experimentado – obras complejas bienvenidas', it: 'Esperto – opere complesse benvenute' },
+
+  // ── BookSearch – Question: format (Erwachsene) ───────────────────────────
+  'q.format.question': {
+    de: 'In welchem Format möchtest du lesen?', en: 'In which format would you like to read?', el: 'Σε ποια μορφή θέλεις να διαβάσεις;',
+    tr: 'Hangi formatta okumak istersin?', fr: 'Dans quel format souhaitez-vous lire ?', es: '¿En qué formato quieres leer?', it: 'In quale formato vuoi leggere?',
+  },
+  'q.format.print':    { de: '📖 Gedrucktes Buch', en: '📖 Printed Book', el: '📖 Έντυπο βιβλίο', tr: '📖 Basılı kitap', fr: '📖 Livre imprimé', es: '📖 Libro impreso', it: '📖 Libro stampato' },
+  'q.format.ebook':    { de: '📱 E-Book', en: '📱 E-Book', el: '📱 E-Book', tr: '📱 E-Kitap', fr: '📱 E-Book', es: '📱 E-Book', it: '📱 E-Book' },
+  'q.format.audiobook':{ de: '🎧 Hörbuch', en: '🎧 Audiobook', el: '🎧 Ακουστικό βιβλίο', tr: '🎧 Sesli kitap', fr: '🎧 Livre audio', es: '🎧 Audiolibro', it: '🎧 Audiolibro' },
+  'q.format.any':      { de: '🔀 Egal / alle Formate', en: '🔀 Any / all formats', el: '🔀 Ό,τι / όλες οι μορφές', tr: '🔀 Farketmez / her format', fr: '🔀 Peu importe / tous formats', es: '🔀 Da igual / todos los formatos', it: '🔀 Qualsiasi formato' },
+
+  // ── BookSearch – Question: length (Erwachsene) ───────────────────────────
+  'q.lengthAdults.question': {
+    de: 'Wie viel Zeit möchtest du investieren?', en: 'How much time do you want to invest?', el: 'Πόσο χρόνο θέλεις να αφιερώσεις;',
+    tr: 'Ne kadar zaman harcamak istiyorsun?', fr: 'Combien de temps souhaitez-vous investir ?', es: '¿Cuánto tiempo quieres invertir?', it: 'Quanto tempo vuoi investire?',
+  },
+  'q.length.kurz.adults':  { de: 'Kurze Sessions (5–15 Min.)', en: 'Short sessions (5–15 min)', el: 'Σύντομες συνεδρίες (5–15 λεπτά)', tr: 'Kısa seanslar (5–15 dk)', fr: 'Courtes sessions (5–15 min)', es: 'Sesiones cortas (5–15 min)', it: 'Sessioni brevi (5–15 min)' },
+  'q.length.mittel.adults':{ de: 'In meinem eigenen Tempo', en: 'At my own pace', el: 'Στο δικό μου ρυθμό', tr: 'Kendi hızımda', fr: 'À mon propre rythme', es: 'A mi propio ritmo', it: 'Al mio ritmo' },
+  'q.length.lang.adults':  { de: 'Intensiv & umfassend', en: 'Intensive & comprehensive', el: 'Εντατικό & ολοκληρωμένο', tr: 'Yoğun & kapsamlı', fr: 'Intensif & complet', es: 'Intensivo & exhaustivo', it: 'Intensivo & completo' },
+
+  // ── BookSearch – ReadBooks placeholder texts ──────────────────────────────
+  'q.readBooks.placeholder.kinder': {
+    de: 'z.B. Harry Potter, Gregs Tagebuch ...', en: 'e.g. Harry Potter, Diary of a Wimpy Kid ...',
+    el: 'π.χ. Harry Potter, Ημερολόγιο ενός ...', tr: 'örn. Harry Potter, Çaylak Günlüğü ...',
+    fr: 'ex. Harry Potter, Journal d\'un dégonflé ...', es: 'ej. Harry Potter, Diario de Greg ...', it: 'es. Harry Potter, Diario di una schiappa ...',
+  },
+  'q.readBooks.placeholder.jugendliche': {
+    de: 'z.B. Die Tribute von Panem, Tschick ...', en: 'e.g. The Hunger Games, The Perks of Being ...',
+    el: 'π.χ. Hunger Games, Divergent ...', tr: 'örn. Açlık Oyunları, Tschick ...',
+    fr: 'ex. Hunger Games, Le Prince de la nuit ...', es: 'ej. Los Juegos del Hambre, Tschick ...', it: 'es. Hunger Games, La fattoria degli animali ...',
+  },
+  'q.readBooks.placeholder.erwachsene': {
+    de: 'z.B. Atomic Habits, Sapiens, Der kleine Prinz ...', en: 'e.g. Atomic Habits, Sapiens, The Little Prince ...',
+    el: 'π.χ. Atomic Habits, Sapiens, Ο Μικρός Πρίγκιπας ...', tr: 'örn. Atomic Habits, Sapiens ...',
+    fr: 'ex. Atomic Habits, Sapiens, Le Petit Prince ...', es: 'ej. Atomic Habits, Sapiens, El Principito ...', it: 'es. Atomic Habits, Sapiens, Il Piccolo Principe ...',
+  },
+
   'discover.bookLangHint': {
     de: 'Hinweis: Für Griechisch und Türkisch sind weniger Bücher indexiert.',
     en: 'Note: Fewer books are indexed for Greek and Turkish.',

@@ -11,188 +11,185 @@ import { base44 } from '@/api/base44Client';
 import { useLanguage, LanguageProvider } from '@/components/language/LanguageContext';
 import { setBookLanguage } from '@/lib/shoppingRegion';
 
-// Erste Frage für alle - Altersgruppe ermitteln
-const ageQuestion = {
-  id: 'age',
-  question: "Für wen suchst du ein Buch?",
-  options: [
-    { value: "kinder", label: "Für Kinder (6-12 Jahre)" },
-    { value: "jugendliche", label: "Für Jugendliche (13-17 Jahre)" },
-    { value: "erwachsene", label: "Für Erwachsene (18+ Jahre)" }
-  ]
-};
-
-// Buchsprachen-Frage für alle Gruppen (Schritt 2)
-const bookLanguageQuestion = {
-  id: 'book_language',
-  question: "In welcher Sprache soll das Buch sein?",
-  options: [
-    { value: "de", label: "🇩🇪 Deutsch" },
-    { value: "en", label: "🇬🇧 Englisch" },
-    { value: "fr", label: "🇫🇷 Französisch" },
-    { value: "es", label: "🇪🇸 Spanisch" },
-    { value: "it", label: "🇮🇹 Italienisch" },
-    { value: "el", label: "🇬🇷 Griechisch" },
-    { value: "tr", label: "🇹🇷 Türkisch" },
-    { value: "any", label: "🌍 Mehrere / egal" },
-  ]
-};
-
 // read_books ist kein normaler Frageschritt – wird separat als Chip-Screen behandelt
-// Marker-Objekt, damit der Flow weiß: hier ReadBooksInput rendern
 const readBooksStep = { id: 'read_books', isReadBooksInput: true };
 
-const questionSets = {
-  // ── Kinder (5 Schritte inkl. readBooks) ──────────────────────────────────
-  kinder: [
-    ageQuestion,
-    bookLanguageQuestion,
-    {
-      id: 'age_range',
-      question: "Wie alt bist du?",
-      options: [
-        { value: "6-8",  label: "6–8 Jahre 📚" },
-        { value: "9-10", label: "9–10 Jahre 🌟" },
-        { value: "11-12", label: "11–12 Jahre 🚀" },
-      ]
-    },
-    {
-      id: 'topic',
-      question: "Was magst du am liebsten?",
-      options: [
-        { value: "abenteuer",   label: "🗺️ Abenteuer & Spannung" },
-        { value: "magie",       label: "✨ Magie & Fantasie" },
-        { value: "freundschaft",label: "🤝 Freundschaft" },
-        { value: "lustiges",    label: "😄 Lustige Bücher" },
-        { value: "tiere",       label: "🐾 Tiere & Natur" },
-        { value: "schule",      label: "🎒 Schule & Rätsel" },
-      ]
-    },
-    {
-      id: 'length',
-      question: "Wie lange möchtest du lesen?",
-      options: [
-        { value: "kurz",  label: "⏱️ Kurz (10–20 Min.)" },
-        { value: "mittel",label: "📖 Ein Kapitel täglich" },
-        { value: "lang",  label: "📚 Richtig eintauchen" },
-      ]
-    },
-    readBooksStep,
-  ],
+// Build localized question sets. Called inside component so t() uses current language.
+function buildQuestionSets(t) {
+  const ageQuestion = {
+    id: 'age',
+    question: t('q.age.question'),
+    options: [
+      { value: "kinder",      label: t('q.age.kinder') },
+      { value: "jugendliche", label: t('q.age.jugendliche') },
+      { value: "erwachsene",  label: t('q.age.erwachsene') },
+    ]
+  };
 
-  // ── Jugendliche (5 Schritte inkl. readBooks) ─────────────────────────────
-  jugendliche: [
-    ageQuestion,
-    bookLanguageQuestion,
-    {
-      id: 'occasion',
-      question: "Wonach suchst du gerade?",
-      options: [
-        { value: "freizeit",   label: "🎧 Einfach Spaß & Ablenkung" },
-        { value: "entdecken",  label: "🌍 Etwas Neues entdecken" },
-        { value: "verstehen",  label: "💭 Mich selbst besser verstehen" },
-        { value: "schule",     label: "📝 Etwas für die Schule" },
-      ]
-    },
-    {
-      id: 'topic',
-      question: "Was interessiert dich?",
-      options: [
-        { value: "abenteuer",    label: "⚔️ Abenteuer & Fantasy" },
-        { value: "liebe",        label: "💕 Liebe & Gefühle" },
-        { value: "freundschaft", label: "🤜 Freundschaft & Zusammenhalt" },
-        { value: "selbstfindung",label: "🔍 Wer bin ich?" },
-        { value: "gesellschaft", label: "🌐 Die Welt verstehen" },
-        { value: "thriller_krimi",label: "🕵️ Spannung & Krimi" },
-      ]
-    },
-    {
-      id: 'length',
-      question: "Wie viel Zeit hast du?",
-      options: [
-        { value: "kurz",  label: "⚡ 15–30 Minuten" },
-        { value: "mittel",label: "📖 Ein paar Kapitel täglich" },
-        { value: "lang",  label: "🏊 Ich tauche gerne tief ein" },
-      ]
-    },
-    readBooksStep,
-  ],
+  const bookLanguageQuestion = {
+    id: 'book_language',
+    question: t('q.bookLang.question'),
+    options: [
+      { value: "de",  label: `🇩🇪 ${t('bookLang.de')}` },
+      { value: "en",  label: `🇬🇧 ${t('bookLang.en')}` },
+      { value: "fr",  label: `🇫🇷 ${t('bookLang.fr')}` },
+      { value: "es",  label: `🇪🇸 ${t('bookLang.es')}` },
+      { value: "it",  label: `🇮🇹 ${t('bookLang.it')}` },
+      { value: "el",  label: `🇬🇷 ${t('bookLang.el')}` },
+      { value: "tr",  label: `🇹🇷 ${t('bookLang.tr')}` },
+      { value: "any", label: t('q.bookLang.any') },
+    ]
+  };
 
-  // ── Erwachsene (6 Schritte inkl. readBooks) ──────────────────────────────
-  erwachsene: [
-    ageQuestion,
-    bookLanguageQuestion,
-    {
-      id: 'reading_goal',
-      question: "Was ist dein Hauptziel beim Lesen?",
-      options: [
-        { value: "wachstum",    label: "Persönliches Wachstum & Wissen" },
-        { value: "entspannung", label: "Entspannung & Unterhaltung" },
-        { value: "beide",       label: "Beides – je nach Stimmung" },
-      ]
-    },
-    {
-      id: 'topic',
-      question: "Was interessiert dich am meisten?",
-      options: [
-        { value: "persoenliche_entwicklung",  label: "Persönliche Entwicklung" },
-        { value: "stress_ruhe",               label: "Ruhe & Gelassenheit" },
-        { value: "fokus_produktivitaet",      label: "Fokus & Produktivität" },
-        { value: "beziehung_kommunikation",   label: "Beziehungen & Kommunikation" },
-        { value: "sinn_philosophie",          label: "Sinn & Lebensphilosophie" },
-        { value: "glaube_spiritualitaet",     label: "Glaube & Spiritualität" },
-        { value: "kreativitaet",              label: "Kreativität" },
-        { value: "lernen_wissen",             label: "Lernen & Wissen" },
-        { value: "koerper_gesundheit",        label: "Körper & Gesundheit" },
-        { value: "fantasy_scifi",             label: "Fantasy & Science-Fiction" },
-        { value: "thriller_krimi",            label: "Thriller & Krimis" },
-        { value: "romance",                   label: "Romantik & Liebesromane" },
-        { value: "historisch",                label: "Historische Romane" },
-        { value: "literatur",                 label: "Anspruchsvolle Literatur" },
-        { value: "humor",                     label: "Humor & Unterhaltung" },
-      ]
-    },
-    {
-      id: 'style',
-      question: "Wie liest du am liebsten?",
-      options: [
-        { value: "praktisch",       label: "Praktisch & direkt umsetzbar" },
-        { value: "wissenschaftlich",label: "Wissenschaftlich fundiert" },
-        { value: "story",           label: "Erzählerisch & biografisch" },
-        { value: "reflektierend",   label: "Philosophisch & tiefgründig" },
-      ]
-    },
-    {
-      id: 'level',
-      question: "Wie erfahren bist du als Leser?",
-      options: [
-        { value: "einsteiger",     label: "Einsteiger – zugänglich & flüssig" },
-        { value: "fortgeschritten",label: "Fortgeschritten – anspruchsvoller Inhalt" },
-        { value: "erfahren",       label: "Erfahren – komplexe Werke willkommen" },
-      ]
-    },
-    {
-      id: 'format',
-      question: "In welchem Format möchtest du lesen?",
-      options: [
-        { value: "print",     label: "📖 Gedrucktes Buch" },
-        { value: "ebook",     label: "📱 E-Book" },
-        { value: "audiobook", label: "🎧 Hörbuch" },
-        { value: "any",       label: "🔀 Egal / alle Formate" },
-      ]
-    },
-    {
-      id: 'length',
-      question: "Wie viel Zeit möchtest du investieren?",
-      options: [
-        { value: "kurz",  label: "Kurze Sessions (5–15 Min.)" },
-        { value: "mittel",label: "In meinem eigenen Tempo" },
-        { value: "lang",  label: "Intensiv & umfassend" },
-      ]
-    },
-    readBooksStep,
-  ],
-};
+  return {
+    kinder: [
+      ageQuestion,
+      bookLanguageQuestion,
+      {
+        id: 'age_range',
+        question: t('q.ageRange.question'),
+        options: [
+          { value: "6-8",   label: t('q.ageRange.6-8') },
+          { value: "9-10",  label: t('q.ageRange.9-10') },
+          { value: "11-12", label: t('q.ageRange.11-12') },
+        ]
+      },
+      {
+        id: 'topic',
+        question: t('q.topicKids.question'),
+        options: [
+          { value: "abenteuer",    label: t('q.topic.abenteuer.kids') },
+          { value: "magie",        label: t('q.topic.magie') },
+          { value: "freundschaft", label: t('q.topic.freundschaft.kids') },
+          { value: "lustiges",     label: t('q.topic.lustiges') },
+          { value: "tiere",        label: t('q.topic.tiere') },
+          { value: "schule",       label: t('q.topic.schule.kids') },
+        ]
+      },
+      {
+        id: 'length',
+        question: t('q.lengthKids.question'),
+        options: [
+          { value: "kurz",   label: t('q.length.kurz.kids') },
+          { value: "mittel", label: t('q.length.mittel.kids') },
+          { value: "lang",   label: t('q.length.lang.kids') },
+        ]
+      },
+      readBooksStep,
+    ],
+
+    jugendliche: [
+      ageQuestion,
+      bookLanguageQuestion,
+      {
+        id: 'occasion',
+        question: t('q.occasion.question'),
+        options: [
+          { value: "freizeit",   label: t('q.occasion.freizeit') },
+          { value: "entdecken",  label: t('q.occasion.entdecken') },
+          { value: "verstehen",  label: t('q.occasion.verstehen') },
+          { value: "schule",     label: t('q.occasion.schule') },
+        ]
+      },
+      {
+        id: 'topic',
+        question: t('q.topicTeens.question'),
+        options: [
+          { value: "abenteuer",     label: t('q.topic.abenteuer.teens') },
+          { value: "liebe",         label: t('q.topic.liebe') },
+          { value: "freundschaft",  label: t('q.topic.freundschaft.teens') },
+          { value: "selbstfindung", label: t('q.topic.selbstfindung') },
+          { value: "gesellschaft",  label: t('q.topic.gesellschaft') },
+          { value: "thriller_krimi",label: t('q.topic.thriller_krimi.teens') },
+        ]
+      },
+      {
+        id: 'length',
+        question: t('q.lengthTeens.question'),
+        options: [
+          { value: "kurz",   label: t('q.length.kurz.teens') },
+          { value: "mittel", label: t('q.length.mittel.teens') },
+          { value: "lang",   label: t('q.length.lang.teens') },
+        ]
+      },
+      readBooksStep,
+    ],
+
+    erwachsene: [
+      ageQuestion,
+      bookLanguageQuestion,
+      {
+        id: 'reading_goal',
+        question: t('q.readingGoal.question'),
+        options: [
+          { value: "wachstum",    label: t('q.readingGoal.wachstum') },
+          { value: "entspannung", label: t('q.readingGoal.entspannung') },
+          { value: "beide",       label: t('q.readingGoal.beide') },
+        ]
+      },
+      {
+        id: 'topic',
+        question: t('q.topicAdults.question'),
+        options: [
+          { value: "persoenliche_entwicklung",  label: t('q.topic.persoenliche_entwicklung') },
+          { value: "stress_ruhe",               label: t('q.topic.stress_ruhe') },
+          { value: "fokus_produktivitaet",      label: t('q.topic.fokus_produktivitaet') },
+          { value: "beziehung_kommunikation",   label: t('q.topic.beziehung_kommunikation') },
+          { value: "sinn_philosophie",          label: t('q.topic.sinn_philosophie') },
+          { value: "glaube_spiritualitaet",     label: t('q.topic.glaube_spiritualitaet') },
+          { value: "kreativitaet",              label: t('q.topic.kreativitaet') },
+          { value: "lernen_wissen",             label: t('q.topic.lernen_wissen') },
+          { value: "koerper_gesundheit",        label: t('q.topic.koerper_gesundheit') },
+          { value: "fantasy_scifi",             label: t('q.topic.fantasy_scifi') },
+          { value: "thriller_krimi",            label: t('q.topic.thriller_krimi') },
+          { value: "romance",                   label: t('q.topic.romance') },
+          { value: "historisch",                label: t('q.topic.historisch') },
+          { value: "literatur",                 label: t('q.topic.literatur') },
+          { value: "humor",                     label: t('q.topic.humor') },
+        ]
+      },
+      {
+        id: 'style',
+        question: t('q.style.question'),
+        options: [
+          { value: "praktisch",        label: t('q.style.praktisch') },
+          { value: "wissenschaftlich", label: t('q.style.wissenschaftlich') },
+          { value: "story",            label: t('q.style.story') },
+          { value: "reflektierend",    label: t('q.style.reflektierend') },
+        ]
+      },
+      {
+        id: 'level',
+        question: t('q.level.question'),
+        options: [
+          { value: "einsteiger",      label: t('q.level.einsteiger') },
+          { value: "fortgeschritten", label: t('q.level.fortgeschritten') },
+          { value: "erfahren",        label: t('q.level.erfahren') },
+        ]
+      },
+      {
+        id: 'format',
+        question: t('q.format.question'),
+        options: [
+          { value: "print",     label: t('q.format.print') },
+          { value: "ebook",     label: t('q.format.ebook') },
+          { value: "audiobook", label: t('q.format.audiobook') },
+          { value: "any",       label: t('q.format.any') },
+        ]
+      },
+      {
+        id: 'length',
+        question: t('q.lengthAdults.question'),
+        options: [
+          { value: "kurz",   label: t('q.length.kurz.adults') },
+          { value: "mittel", label: t('q.length.mittel.adults') },
+          { value: "lang",   label: t('q.length.lang.adults') },
+        ]
+      },
+      readBooksStep,
+    ],
+  };
+}
 
 
 
@@ -299,25 +296,24 @@ function BookSearchContent() {
   const [profile, setProfile] = useState(null);
   const [recommendations, setRecommendations] = useState(null);
   const [ageGroup, setAgeGroup] = useState('erwachsene');
-  const [questions, setQuestions] = useState(questionSets.erwachsene);
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [translatedQuestions, setTranslatedQuestions] = useState(questionSets.erwachsene);
 
   // Always call hooks at top level – no try/catch around hooks (React rules)
   const langCtx = useLanguage();
   const t = langCtx?.t || ((k) => k);
   const contextBookLanguage = langCtx?.bookLanguage || null;
 
+  // Rebuild question sets whenever language changes
+  const questionSets = buildQuestionSets(t);
+
   // Robust start path: read ?startQuestions=1 on mount and set phase.
-  // This fires even if React synthetic click is flaky in sandboxed iframe preview.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('startQuestions') === '1') {
       setPhase('questions');
       setCurrentQuestion(0);
-      // Remove the param so back-navigation doesn't re-trigger
       params.delete('startQuestions');
       const newSearch = params.toString();
       history.replaceState(null, '', window.location.pathname + (newSearch ? '?' + newSearch : ''));
@@ -328,11 +324,8 @@ function BookSearchContent() {
     checkAuth();
   }, []);
 
-  useEffect(() => {
-    if (questionSets[ageGroup]) {
-      setTranslatedQuestions(questionSets[ageGroup]);
-    }
-  }, [ageGroup]);
+  // Always use the freshly-built set (language + age group reactive, no stale state)
+  const translatedQuestions = questionSets[ageGroup] || questionSets.erwachsene;
 
   const checkAuth = async () => {
     try {
@@ -381,7 +374,6 @@ function BookSearchContent() {
 
     if (currentQ.id === 'age') {
       setAgeGroup(value);
-      setQuestions(questionSets[value]);
     }
 
     // readBooksInput wird über handleReadBooksDone gesteuert, nicht hier
@@ -518,7 +510,6 @@ function BookSearchContent() {
     setProfile(null);
     setRecommendations(null);
     setAgeGroup('erwachsene');
-    setQuestions(questionSets.erwachsene);
   };
 
   return (
@@ -606,11 +597,7 @@ function BookSearchContent() {
                         value={readBooks}
                         onChange={setReadBooks}
                         onSkip={handleReadBooksDone}
-                        placeholder={
-                          ageGroup === 'kinder' ? 'z.B. Harry Potter, Gregs Tagebuch ...'
-                          : ageGroup === 'jugendliche' ? 'z.B. Die Tribute von Panem, Tschick ...'
-                          : 'z.B. Atomic Habits, Sapiens, Der kleine Prinz ...'
-                        }
+                        placeholder={t(`q.readBooks.placeholder.${ageGroup}`)}
                       />
                     </motion.div>
                   ) : (
@@ -623,6 +610,9 @@ function BookSearchContent() {
                       questionNumber={currentQuestion + 1}
                       totalQuestions={translatedQuestions.length}
                       description={translatedQuestions[currentQuestion].description}
+                      stepLabel={t('booksearch.step')
+                        .replace('{n}', currentQuestion + 1)
+                        .replace('{total}', translatedQuestions.length)}
                     />
                   )
                 )}
@@ -666,8 +656,8 @@ function BookSearchContent() {
                 const regionCode = (langCtx?.shoppingRegion || 'DE').toUpperCase();
                 if (!langCode && !regionCode) return null;
 
-                const langLabels   = { de: 'Deutsch', en: 'Englisch', el: 'Griechisch', tr: 'Türkisch', fr: 'Französisch', es: 'Spanisch', it: 'Italienisch' };
-                const regionLabels = { DE: 'Deutschland', AT: 'Österreich', CH: 'Schweiz', GR: 'Griechenland', TR: 'Türkei', FR: 'Frankreich', ES: 'Spanien', IT: 'Italien', UK: 'Großbritannien', US: 'USA' };
+                const langLabels   = { de: t('bookLang.de'), en: t('bookLang.en'), el: t('bookLang.el'), tr: t('bookLang.tr'), fr: t('bookLang.fr'), es: t('bookLang.es'), it: t('bookLang.it') };
+                const regionLabels = { DE: t('region.de'), AT: t('region.at'), CH: t('region.ch'), GR: t('region.gr'), TR: t('region.tr'), FR: t('region.fr'), ES: t('region.es'), IT: t('region.it'), UK: t('region.uk'), US: t('region.us') };
                 const langFlags    = { de: '🇩🇪', en: '🇬🇧', el: '🇬🇷', tr: '🇹🇷', fr: '🇫🇷', es: '🇪🇸', it: '🇮🇹' };
                 const regionFlags  = { DE: '🇩🇪', AT: '🇦🇹', CH: '🇨🇭', GR: '🇬🇷', TR: '🇹🇷', FR: '🇫🇷', ES: '🇪🇸', IT: '🇮🇹', UK: '🇬🇧', US: '🇺🇸' };
                 return (
@@ -748,8 +738,7 @@ function BookSearchContent() {
 
                 if (mainBooks.length === 0) {
                   const lang = profile?.bookLanguage;
-                  const langNames = { el: 'Griechisch', tr: 'Türkisch', fr: 'Französisch', es: 'Spanisch', it: 'Italienisch', en: 'Englisch' };
-                  const langName = langNames[lang] || lang;
+                  const langName = lang ? t(`bookLang.${lang}`) || lang : lang;
                   return (
                     <div className="text-center py-16 text-stone-400">
                       <p className="text-2xl mb-3">📚</p>

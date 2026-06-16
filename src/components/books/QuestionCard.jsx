@@ -14,7 +14,8 @@ export default function QuestionCard({
   isTextInput,
   placeholder,
   description,
-  onTextSubmit
+  onTextSubmit,
+  stepLabel,
 }) {
   const [textValue, setTextValue] = useState(selectedValue || '');
 
@@ -35,7 +36,7 @@ export default function QuestionCard({
       <div className="mb-8">
         <div className="flex justify-between items-center mb-3">
           <span className="text-xs font-medium text-stone-400 dark:text-stone-500 uppercase tracking-wide">
-            Schritt {questionNumber} von {totalQuestions}
+            {stepLabel || `Schritt ${questionNumber} von ${totalQuestions}`}
           </span>
           <span className="text-xs text-stone-300 dark:text-stone-600">
             {Math.round((questionNumber / totalQuestions) * 100)}%
