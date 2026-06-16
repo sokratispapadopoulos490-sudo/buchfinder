@@ -1,9 +1,14 @@
 /**
  * ProviderLinks – Zeigt Kauf-/Gebraucht-Links für ein Buch an.
  *
- * Nutzt providerRegistry.getProviderLinksForBook() mit der shoppingRegion.
- * Zeigt max. 3 neue Anbieter + optional 1-2 Gebraucht-Anbieter.
- * Used-Links sind klar als "Gebraucht" gekennzeichnet.
+ * Strategie:
+ *   - Wenn bookLanguage und shoppingRegion auf DIESELBE Region zeigen → einfache Liste (bisheriges Verhalten)
+ *   - Wenn sie UNTERSCHIEDLICH sind → 3 Gruppen:
+ *       1. "Passend zur Buchsprache"  – Provider der Buchsprach-Region (z.B. GR für 'el')
+ *       2. "In deiner Kaufregion"     – Provider der Shopping-Region (z.B. DE)
+ *       3. "Gebraucht & Marktplatz"  – Used-Provider aus beiden Regionen, dedupliziert
+ *
+ * bookLanguage und shoppingRegion bleiben vollständig getrennt – keine implizite Ableitung.
  */
 
 import React, { useState } from 'react';
@@ -11,14 +16,19 @@ import { ExternalLink, ChevronDown, ChevronUp, Tag, Headphones } from 'lucide-re
 import { getProviderLinksForBook } from '@/lib/providerRegistry';
 import { useLanguage } from '@/components/language/LanguageContext';
 
-// Typ-Badges: Farbe + i18n-Key
+// ISO 639-1 bookLanguage → REGION_REGISTRY key
+const LANG_TO_REGION = {
+  el: 'GR', tr: 'TR', fr: 'FR', es: 'ES', it: 'IT', en: 'UK', de: 'DE',
+};
+
+// Typ-Badges
 const TYPE_STYLE = {
-  new:        { bg: 'bg-emerald-100 dark:bg-emerald-900/30', text: 'text-emerald-700 dark:text-emerald-400', key: 'provider.new' },
-  used:       { bg: 'bg-amber-100 dark:bg-amber-900/30',     text: 'text-amber-700 dark:text-amber-400',     key: 'provider.used' },
-  marketplace:{ bg: 'bg-blue-100 dark:bg-blue-900/30',       text: 'text-blue-700 dark:text-blue-400',       key: 'provider.marketplace' },
-  ebook:      { bg: 'bg-purple-100 dark:bg-purple-900/30',   text: 'text-purple-700 dark:text-purple-400',   key: 'provider.ebook' },
-  audiobook:  { bg: 'bg-pink-100 dark:bg-pink-900/30',       text: 'text-pink-700 dark:text-pink-400',       key: 'provider.audiobook' },
-  discovery:  { bg: 'bg-stone-100 dark:bg-stone-800',        text: 'text-stone-500 dark:text-stone-400',     key: 'provider.discovery' },
+  new:         { bg: 'bg-emerald-100 dark:bg-emerald-900/30', text: 'text-emerald-700 dark:text-emerald-400', key: 'provider.new' },
+  used:        { bg: 'bg-amber-100 dark:bg-amber-900/30',     text: 'text-amber-700 dark:text-amber-400',     key: 'provider.used' },
+  marketplace: { bg: 'bg-blue-100 dark:bg-blue-900/30',       text: 'text-blue-700 dark:text-blue-400',       key: 'provider.marketplace' },
+  ebook:       { bg: 'bg-purple-100 dark:bg-purple-900/30',   text: 'text-purple-700 dark:text-purple-400',   key: 'provider.ebook' },
+  audiobook:   { bg: 'bg-pink-100 dark:bg-pink-900/30',       text: 'text-pink-700 dark:text-pink-400',       key: 'provider.audiobook' },
+  discovery:   { bg: 'bg-stone-100 dark:bg-stone-800',        text: 'text-stone-500 dark:text-stone-400',     key: 'provider.discovery' },
 };
 
 function TypeBadge({ type, t }) {
@@ -49,32 +59,138 @@ function ProviderButton({ link, t }) {
   );
 }
 
-export default function ProviderLinks({ book, shoppingRegion = 'DE', className = '' }) {
+function SectionLabel({ children }) {
+  return (
+    <p className="text-[10px] uppercase tracking-wider font-semibold text-stone-400 dark:text-stone-500 mt-3 mb-1 first:mt-0">
+      {children}
+    </p>
+  );
+}
+
+/** Deduplicate by providerId, keeping first occurrence */
+function dedup(links) {
+  const seen = new Set();
+  return links.filter(l => {
+    if (seen.has(l.providerId)) return false;
+    seen.add(l.providerId);
+    return true;
+  });
+}
+
+export default function ProviderLinks({ book, shoppingRegion = 'DE', bookLanguage = '', className = '' }) {
   const { t } = useLanguage();
   const [showUsed, setShowUsed] = useState(false);
   const [showAudio, setShowAudio] = useState(false);
 
-  // Neue Bücher: top 3
-  const newLinks = getProviderLinksForBook(book, shoppingRegion, { types: ['new', 'marketplace'], limit: 3 });
-  // Gebraucht: top 2
-  const usedLinks = getProviderLinksForBook(book, shoppingRegion, { types: ['used'], limit: 2 });
-  // Audiobook: top 2 (Architektur-ready)
-  const audioLinks = getProviderLinksForBook(book, shoppingRegion, { types: ['audiobook'], limit: 2 });
+  // Derive region from bookLanguage (if set)
+  const langRegion = bookLanguage ? (LANG_TO_REGION[bookLanguage] || null) : null;
 
-  const hasUsed = usedLinks.length > 0;
+  // Are the two regions actually different?
+  const hasDualRegion = langRegion && langRegion !== shoppingRegion;
+
+  // ── Audiobook links (always from shoppingRegion, no grouping needed)
+  const audioLinks = getProviderLinksForBook(book, shoppingRegion, { types: ['audiobook'], limit: 2 });
   const hasAudio = audioLinks.length > 0;
 
-  if (newLinks.length === 0 && !hasUsed && !hasAudio) return null;
+  if (hasDualRegion) {
+    // ── GROUP MODE ─────────────────────────────────────────────────────────────
+    // Group 1: Buchsprach-Region (new + marketplace, top 3)
+    const langLinks = getProviderLinksForBook(book, langRegion, { types: ['new', 'marketplace'], limit: 3 });
+    // Group 2: Kaufregion (new + marketplace, top 3, exclude any already shown)
+    const shoppingLinksRaw = getProviderLinksForBook(book, shoppingRegion, { types: ['new', 'marketplace'], limit: 4 });
+    const shownIds = new Set(langLinks.map(l => l.providerId));
+    const shopLinks = shoppingLinksRaw.filter(l => !shownIds.has(l.providerId)).slice(0, 3);
+    // Group 3: Used from both regions, deduplicated
+    const usedLang = getProviderLinksForBook(book, langRegion, { types: ['used'], limit: 3 });
+    const usedShop = getProviderLinksForBook(book, shoppingRegion, { types: ['used'], limit: 3 });
+    const usedLinks = dedup([...usedLang, ...usedShop]);
+
+    const FLAG_MAP = { GR: '🇬🇷', DE: '🇩🇪', AT: '🇦🇹', CH: '🇨🇭', TR: '🇹🇷', FR: '🇫🇷', ES: '🇪🇸', IT: '🇮🇹', UK: '🇬🇧', US: '🇺🇸' };
+    const LANG_LABEL = { el: 'Griechisch', tr: 'Türkisch', fr: 'Französisch', es: 'Spanisch', it: 'Italienisch', en: 'Englisch', de: 'Deutsch' };
+
+    const hasAnyContent = langLinks.length > 0 || shopLinks.length > 0 || usedLinks.length > 0 || hasAudio;
+    if (!hasAnyContent) return null;
+
+    return (
+      <div className={`space-y-0.5 ${className}`}>
+        {/* Group 1: Buchsprach-Region */}
+        {langLinks.length > 0 && (
+          <>
+            <SectionLabel>
+              {FLAG_MAP[langRegion] || ''} Passend zur Buchsprache ({LANG_LABEL[bookLanguage] || bookLanguage})
+            </SectionLabel>
+            <div className="space-y-2 mb-2">
+              {langLinks.map(link => <ProviderButton key={link.providerId + link.url} link={link} t={t} />)}
+            </div>
+          </>
+        )}
+
+        {/* Group 2: Kaufregion */}
+        {shopLinks.length > 0 && (
+          <>
+            <SectionLabel>
+              {FLAG_MAP[shoppingRegion] || ''} In deiner Kaufregion ({shoppingRegion})
+            </SectionLabel>
+            <div className="space-y-2 mb-2">
+              {shopLinks.map(link => <ProviderButton key={link.providerId + link.url} link={link} t={t} />)}
+            </div>
+          </>
+        )}
+
+        {/* Group 3: Used toggle */}
+        {usedLinks.length > 0 && (
+          <>
+            <button
+              onClick={() => setShowUsed(v => !v)}
+              className="w-full flex items-center justify-center gap-1.5 py-1.5 text-xs text-stone-500 dark:text-stone-400 hover:text-amber-600 dark:hover:text-amber-500 transition-colors"
+            >
+              <Tag className="w-3 h-3" />
+              Gebraucht &amp; Marktplatz
+              {showUsed ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+            </button>
+            {showUsed && (
+              <div className="space-y-2">
+                {usedLinks.map(link => <ProviderButton key={link.providerId + link.url} link={link} t={t} />)}
+              </div>
+            )}
+          </>
+        )}
+
+        {/* Audiobook */}
+        {hasAudio && (
+          <>
+            <button
+              onClick={() => setShowAudio(v => !v)}
+              className="w-full flex items-center justify-center gap-1.5 py-1.5 text-xs text-stone-500 dark:text-stone-400 hover:text-pink-600 dark:hover:text-pink-400 transition-colors"
+            >
+              <Headphones className="w-3 h-3" />
+              {t('provider.audiobook', 'Hörbuch')}
+              {showAudio ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+            </button>
+            {showAudio && audioLinks.map(link => (
+              <ProviderButton key={link.providerId + link.url} link={link} t={t} />
+            ))}
+          </>
+        )}
+      </div>
+    );
+  }
+
+  // ── SIMPLE MODE (same region or no bookLanguage) ────────────────────────────
+  const effectiveRegion = langRegion || shoppingRegion;
+  const newLinks  = getProviderLinksForBook(book, effectiveRegion, { types: ['new', 'marketplace'], limit: 3 });
+  const usedLinks = getProviderLinksForBook(book, effectiveRegion, { types: ['used'], limit: 2 });
+  const hasUsedSimple = usedLinks.length > 0;
+
+  if (newLinks.length === 0 && !hasUsedSimple && !hasAudio) return null;
 
   return (
     <div className={`space-y-2 ${className}`}>
-      {/* Neue Anbieter */}
       {newLinks.map(link => (
         <ProviderButton key={link.providerId + link.url} link={link} t={t} />
       ))}
 
-      {/* Used-Toggle */}
-      {hasUsed && (
+      {hasUsedSimple && (
         <>
           <button
             onClick={() => setShowUsed(v => !v)}
@@ -90,7 +206,6 @@ export default function ProviderLinks({ book, shoppingRegion = 'DE', className =
         </>
       )}
 
-      {/* Audiobook-Toggle (Architektur-ready, kein Preis/Verfügbarkeit) */}
       {hasAudio && (
         <>
           <button

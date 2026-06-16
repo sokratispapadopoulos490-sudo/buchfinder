@@ -326,7 +326,12 @@ export default function BookCard({ book, reasons, index, isContrast, isAuthentic
             </div>
 
             {showBuyOptions && (
-              <ProviderLinks book={book} shoppingRegion={effectiveRegion} className="mt-1" />
+              <ProviderLinks
+                book={book}
+                shoppingRegion={shoppingRegion}
+                bookLanguage={effectiveLang}
+                className="mt-1"
+              />
             )}
           </div>
         </div>
