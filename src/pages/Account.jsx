@@ -144,15 +144,9 @@ function AccountContent() {
                     )}
                   </div>
                 )}
-                {isPremium ? (
-                  <span className="inline-flex items-center gap-1 bg-amber-600 text-white px-2.5 py-0.5 rounded-full text-xs font-medium mt-2">
-                    <Crown className="w-3 h-3" /> {t('account.premiumBadge', 'Premium')}
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1 bg-stone-100 dark:bg-stone-800 text-stone-500 dark:text-stone-400 px-2.5 py-0.5 rounded-full text-xs font-medium mt-2">
-                    {t('account.betaBadge', 'Kostenlos Beta')}
-                  </span>
-                )}
+                <span className="inline-flex items-center gap-1 bg-stone-100 dark:bg-stone-800 text-stone-500 dark:text-stone-400 px-2.5 py-0.5 rounded-full text-xs font-medium mt-2">
+                  {t('account.betaBadge')}
+                </span>
               </div>
             </div>
 

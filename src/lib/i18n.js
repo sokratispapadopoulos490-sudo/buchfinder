@@ -306,6 +306,12 @@ const dict = {
   'account.premiumBadge': {
     de: 'Premium', en: 'Premium', el: 'Premium', tr: 'Premium', fr: 'Premium', es: 'Premium', it: 'Premium',
   },
+  'account.darkMode': {
+    de: 'Dark Mode', en: 'Dark Mode', el: 'Σκοτεινή λειτουργία', tr: 'Karanlık mod', fr: 'Mode sombre', es: 'Modo oscuro', it: 'Modalità scura',
+  },
+  'account.darkModeSub': {
+    de: 'Dunkles Design aktivieren', en: 'Enable dark design', el: 'Ενεργοποίηση σκοτεινού σχεδίου', tr: 'Koyu tasarımı etkinleştir', fr: 'Activer le design sombre', es: 'Activar diseño oscuro', it: 'Attiva design scuro',
+  },
   'account.history': {
     de: 'Empfehlungsverlauf', en: 'Recommendation History', el: 'Ιστορικό προτάσεων', tr: 'Öneri geçmişi', fr: 'Historique des recommandations', es: 'Historial de recomendaciones', it: 'Cronologia consigli',
   },

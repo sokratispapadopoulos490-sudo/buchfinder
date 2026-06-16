@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Moon, Sun } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { useLanguage } from '@/components/language/LanguageContext';
 
 export default function DarkModeToggle() {
+  const { t } = useLanguage();
   const [isDark, setIsDark] = useState(() => {
     return document.documentElement.classList.contains('dark');
   });
@@ -59,8 +61,8 @@ export default function DarkModeToggle() {
         <div className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-transform ${isDark ? 'translate-x-6' : 'translate-x-1'}`} />
       </div>
       <div className="flex-1 text-left">
-        <div className="font-medium text-stone-800 dark:text-stone-200">Dark Mode</div>
-        <div className="text-sm text-stone-500 dark:text-stone-400">Dunkles Design aktivieren</div>
+        <div className="font-medium text-stone-800 dark:text-stone-200">{t('account.darkMode')}</div>
+        <div className="text-sm text-stone-500 dark:text-stone-400">{t('account.darkModeSub')}</div>
       </div>
       {isDark ? <Moon className="w-5 h-5 text-stone-600 dark:text-stone-400" /> : <Sun className="w-5 h-5 text-stone-600 dark:text-stone-400" />}
     </button>
