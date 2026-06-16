@@ -756,7 +756,7 @@ function BookSearchContent() {
                                   {labels[idx]}
                                 </span>
                               </div>
-                              <BookCard book={book} reasons={generateReasons(book, profile)} index={idx} isContrast={false} isAuthenticated={isAuthenticated} />
+                              <BookCard book={book} reasons={generateReasons(book, profile)} index={idx} isContrast={false} isAuthenticated={isAuthenticated} analysisBookLanguage={profile?.bookLanguage} />
                             </div>
                           );
                         })}
@@ -775,7 +775,7 @@ function BookSearchContent() {
                         <div className="space-y-4">
                           {rest7.map((book, idx) => (
                             <div key={book.id || book.isbn13 || `r-${idx}`} className="space-y-1">
-                              <BookCard book={book} reasons={generateReasons(book, profile)} index={Math.min(3 + idx, 5)} isContrast={false} isAuthenticated={isAuthenticated} />
+                              <BookCard book={book} reasons={generateReasons(book, profile)} index={Math.min(3 + idx, 5)} isContrast={false} isAuthenticated={isAuthenticated} analysisBookLanguage={profile?.bookLanguage} />
                             </div>
                           ))}
                         </div>
@@ -800,7 +800,7 @@ function BookSearchContent() {
                               <div className="flex items-center gap-2 px-1">
                                 <span className="text-xs font-medium text-violet-500 dark:text-violet-400 uppercase tracking-wide">Horizont-Erweiterung</span>
                               </div>
-                              <BookCard book={book} reasons={generateReasons(book, profile)} index={Math.min(5 + idx, 7)} isContrast={true} isAuthenticated={isAuthenticated} />
+                              <BookCard book={book} reasons={generateReasons(book, profile)} index={Math.min(5 + idx, 7)} isContrast={true} isAuthenticated={isAuthenticated} analysisBookLanguage={profile?.bookLanguage} />
                             </div>
                           ))}
                         </div>
