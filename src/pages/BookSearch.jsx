@@ -275,13 +275,6 @@ function BookSearchContent() {
     setCurrentQuestion(0);
   };
 
-  // Build fallback URL: keep existing query params, add startQuestions=1
-  const startFallbackHref = (() => {
-    const params = new URLSearchParams(window.location.search);
-    params.set('startQuestions', '1');
-    return window.location.pathname + '?' + params.toString();
-  })();
-
   const advanceOrFinish = (newAnswers) => {
     if (currentQuestion < translatedQuestions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
@@ -469,14 +462,14 @@ function BookSearchContent() {
             </motion.div>
 
             <div className="flex flex-col items-center gap-4 relative z-10">
-              <a
-                href={startFallbackHref}
-                onClick={(e) => { e.preventDefault(); handleStart(); }}
-                style={{ backgroundColor: '#d97706', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '8px', padding: '16px 40px', fontSize: '1rem', fontWeight: 500, borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.12)', textDecoration: 'none', cursor: 'pointer' }}
+              <button
+                type="button"
+                onClick={handleStart}
+                style={{ backgroundColor: '#d97706', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '8px', padding: '16px 40px', fontSize: '1rem', fontWeight: 500, borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.12)', cursor: 'pointer', border: 'none' }}
               >
                 {t('btn.startSearch')}
                 <ArrowRight className="w-5 h-5" />
-              </a>
+              </button>
               <p className="text-xs text-stone-400 dark:text-stone-500">{t('booksearch.betaLabel')}</p>
             </div>
           </motion.div>
