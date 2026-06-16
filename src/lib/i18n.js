@@ -501,6 +501,234 @@ const dict = {
     de: 'Tägliches KI-Limit erreicht', en: 'Daily AI limit reached', el: 'Ημερήσιο όριο ΤΝ', tr: 'Günlük AI limiti', fr: 'Limite IA atteinte', es: 'Límite IA alcanzado', it: 'Limite IA raggiunto',
   },
 
+  // ── Compass ───────────────────────────────────────────────────────────────
+  'compass.title': {
+    de: 'Dein Lese-Compass', en: 'Your Reading Compass', el: 'Η Πυξίδα Ανάγνωσής σου',
+    tr: 'Okuma Pusulam', fr: 'Votre boussole lecture', es: 'Tu brújula de lectura', it: 'La tua bussola lettura',
+  },
+  'compass.newRecommendations': {
+    de: 'Neue Empfehlungen holen', en: 'Get New Recommendations', el: 'Νέες προτάσεις',
+    tr: 'Yeni öneriler al', fr: 'Nouvelles recommandations', es: 'Nuevas recomendaciones', it: 'Nuovi consigli',
+  },
+  'compass.todayFocus': {
+    de: 'Heute im Fokus', en: 'Today\'s Focus', el: 'Εστίαση σήμερα',
+    tr: 'Bugünün odağı', fr: 'Focus du jour', es: 'Foco de hoy', it: 'Focus di oggi',
+  },
+  'compass.todayFocusSub': {
+    de: 'Lies weiter und halte fest, was dich bewegt', en: 'Keep reading and capture what moves you',
+    el: 'Συνέχισε να διαβάζεις και κράτα σημειώσεις', tr: 'Okumaya devam et ve seni etkileyen şeyleri not et',
+    fr: 'Continuez à lire et notez ce qui vous touche', es: 'Sigue leyendo y anota lo que te mueve', it: 'Continua a leggere e annota ciò che ti tocca',
+  },
+  'compass.reflectionLabel': {
+    de: 'Reflexion für später', en: 'Reflection for later', el: 'Αναστοχασμός για αργότερα',
+    tr: 'Sonrası için düşünce', fr: 'Réflexion pour plus tard', es: 'Reflexión para después', it: 'Riflessione per dopo',
+  },
+  'compass.reflectionPlaceholder': {
+    de: 'Deine Gedanken...', en: 'Your thoughts...', el: 'Οι σκέψεις σου...',
+    tr: 'Düşünceleriniz...', fr: 'Vos pensées...', es: 'Tus pensamientos...', it: 'I tuoi pensieri...',
+  },
+  'compass.saveReflection': {
+    de: 'Speichern', en: 'Save', el: 'Αποθήκευση',
+    tr: 'Kaydet', fr: 'Enregistrer', es: 'Guardar', it: 'Salva',
+  },
+  'compass.logProgress': {
+    de: 'Fortschritt eintragen', en: 'Log Progress', el: 'Καταχώρηση προόδου',
+    tr: 'İlerleme kaydet', fr: 'Enregistrer le progrès', es: 'Registrar progreso', it: 'Registra progresso',
+  },
+  'compass.weeklyProgress': {
+    de: 'Wochenfortschritt', en: 'Weekly Progress', el: 'Εβδομαδιαία πρόοδος',
+    tr: 'Haftalık ilerleme', fr: 'Progrès hebdomadaire', es: 'Progreso semanal', it: 'Progresso settimanale',
+  },
+  'compass.library': {
+    de: 'Bibliothek', en: 'Library', el: 'Βιβλιοθήκη',
+    tr: 'Kütüphane', fr: 'Bibliothèque', es: 'Biblioteca', it: 'Libreria',
+  },
+  'compass.yourLibrary': {
+    de: 'Deine Bibliothek', en: 'Your Library', el: 'Η βιβλιοθήκη σου',
+    tr: 'Kütüphanem', fr: 'Votre bibliothèque', es: 'Tu biblioteca', it: 'La tua libreria',
+  },
+  'compass.libraryEmpty': {
+    de: 'Noch keine Bücher in deiner Bibliothek', en: 'No books in your library yet',
+    el: 'Δεν υπάρχουν βιβλία στη βιβλιοθήκη σου', tr: 'Kütüphanende henüz kitap yok',
+    fr: 'Pas encore de livres dans votre bibliothèque', es: 'Aún no hay libros en tu biblioteca', it: 'Ancora nessun libro nella tua libreria',
+  },
+  'compass.lastRecommendations': {
+    de: 'Letzte Empfehlungen', en: 'Last Recommendations', el: 'Τελευταίες προτάσεις',
+    tr: 'Son öneriler', fr: 'Dernières recommandations', es: 'Últimas recomendaciones', it: 'Ultimi consigli',
+  },
+  'compass.newAnalysis': {
+    de: 'Neue Analyse', en: 'New Analysis', el: 'Νέα ανάλυση',
+    tr: 'Yeni analiz', fr: 'Nouvelle analyse', es: 'Nuevo análisis', it: 'Nuova analisi',
+  },
+  'compass.readReady': {
+    de: 'Bereit für dein nächstes Buch?', en: 'Ready for your next book?', el: 'Έτοιμος για το επόμενο βιβλίο σου;',
+    tr: 'Bir sonraki kitabın için hazır mısın?', fr: 'Prêt pour votre prochain livre ?', es: '¿Listo para tu próximo libro?', it: 'Pronto per il tuo prossimo libro?',
+  },
+  'compass.readReadySub': {
+    de: 'Lass uns gemeinsam das richtige Buch für dich finden.', en: 'Let\'s find the right book for you together.',
+    el: 'Ας βρούμε μαζί το κατάλληλο βιβλίο για σένα.', tr: 'Birlikte sana uygun kitabı bulalım.',
+    fr: 'Trouvons ensemble le bon livre pour vous.', es: 'Encontremos juntos el libro adecuado para ti.', it: 'Troviamo insieme il libro giusto per te.',
+  },
+  'compass.startRecommendation': {
+    de: 'Buchempfehlung starten', en: 'Start Book Recommendation', el: 'Έναρξη πρότασης βιβλίου',
+    tr: 'Kitap önerisi başlat', fr: 'Démarrer la recommandation', es: 'Iniciar recomendación', it: 'Avvia consiglio libro',
+  },
+  'compass.scanBook': {
+    de: 'Buch scannen', en: 'Scan Book', el: 'Σάρωση βιβλίου',
+    tr: 'Kitap tara', fr: 'Scanner le livre', es: 'Escanear libro', it: 'Scansiona libro',
+  },
+  'compass.recommendations': {
+    de: 'Empfehlungen', en: 'Recommendations', el: 'Προτάσεις',
+    tr: 'Öneriler', fr: 'Recommandations', es: 'Recomendaciones', it: 'Consigli',
+  },
+  'compass.analyzeStart': {
+    de: 'Analyse starten', en: 'Start Analysis', el: 'Έναρξη ανάλυσης',
+    tr: 'Analizi başlat', fr: 'Démarrer l\'analyse', es: 'Iniciar análisis', it: 'Avvia analisi',
+  },
+  'compass.scan': {
+    de: 'Scannen', en: 'Scan', el: 'Σάρωση',
+    tr: 'Tara', fr: 'Scanner', es: 'Escanear', it: 'Scansiona',
+  },
+  'compass.addBook': {
+    de: 'Buch hinzufügen', en: 'Add Book', el: 'Προσθήκη βιβλίου',
+    tr: 'Kitap ekle', fr: 'Ajouter un livre', es: 'Añadir libro', it: 'Aggiungi libro',
+  },
+  'compass.allBooks': {
+    de: 'Alle Bücher', en: 'All Books', el: 'Όλα τα βιβλία',
+    tr: 'Tüm kitaplar', fr: 'Tous les livres', es: 'Todos los libros', it: 'Tutti i libri',
+  },
+  'compass.read': {
+    de: 'gelesen', en: 'read', el: 'διαβάστηκε',
+    tr: 'okundu', fr: 'lu', es: 'leído', it: 'letto',
+  },
+  'compass.dayStreak': {
+    de: 'Tag Streak', en: 'day streak', el: 'μέρα σερί',
+    tr: 'gün seri', fr: 'jour de suite', es: 'día seguido', it: 'giorno consecutivo',
+  },
+  'compass.daysStreak': {
+    de: 'Tage Streak', en: 'days streak', el: 'μέρες σερί',
+    tr: 'gün seri', fr: 'jours de suite', es: 'días seguidos', it: 'giorni consecutivi',
+  },
+  'compass.ofBooks': {
+    de: 'von', en: 'of', el: 'από',
+    tr: '/', fr: 'sur', es: 'de', it: 'di',
+  },
+  'compass.booksLabel': {
+    de: 'Büchern', en: 'books', el: 'βιβλία',
+    tr: 'kitap', fr: 'livres', es: 'libros', it: 'libri',
+  },
+  'compass.yourThought': {
+    de: 'Dein Gedanke vom', en: 'Your thought from', el: 'Η σκέψη σου από',
+    tr: 'Düşüncen', fr: 'Votre pensée du', es: 'Tu pensamiento del', it: 'Il tuo pensiero del',
+  },
+  'compass.deleteBookConfirm': {
+    de: 'Möchtest du dieses Buch wirklich aus deiner Bibliothek entfernen?',
+    en: 'Really remove this book from your library?',
+    el: 'Να αφαιρεθεί αυτό το βιβλίο από τη βιβλιοθήκη;',
+    tr: 'Bu kitabı kütüphanenden çıkarmak istiyor musun?',
+    fr: 'Supprimer ce livre de votre bibliothèque ?',
+    es: '¿Eliminar este libro de tu biblioteca?',
+    it: 'Rimuovere questo libro dalla libreria?',
+  },
+  'compass.loading': {
+    de: 'Lädt...', en: 'Loading...', el: 'Φόρτωση...',
+    tr: 'Yükleniyor...', fr: 'Chargement...', es: 'Cargando...', it: 'Caricamento...',
+  },
+
+  // ── BookSearch – Questions & Options ─────────────────────────────────────
+  'booksearch.betaLabel': {
+    de: 'Kostenlos in der Beta', en: 'Free in Beta', el: 'Δωρεάν στη Beta',
+    tr: 'Beta\'da ücretsiz', fr: 'Gratuit en Beta', es: 'Gratis en Beta', it: 'Gratuito in Beta',
+  },
+  'booksearch.readBooksTitle': {
+    de: 'Welche Bücher hast du zuletzt gelesen?', en: 'Which books have you read recently?',
+    el: 'Ποια βιβλία διάβασες πρόσφατα;', tr: 'Son zamanlarda hangi kitapları okudun?',
+    fr: 'Quels livres avez-vous lus récemment ?', es: '¿Qué libros has leído recientemente?', it: 'Quali libri hai letto di recente?',
+  },
+  'booksearch.readBooksOptional': {
+    de: 'Optional – hilft uns, Dopplungen zu vermeiden.', en: 'Optional – helps us avoid duplicates.',
+    el: 'Προαιρετικό – μας βοηθά να αποφύγουμε επαναλήψεις.', tr: 'İsteğe bağlı – tekrarları önlememize yardımcı olur.',
+    fr: 'Facultatif – nous aide à éviter les doublons.', es: 'Opcional – nos ayuda a evitar duplicados.', it: 'Opzionale – ci aiuta a evitare duplicati.',
+  },
+  'booksearch.questionOf': {
+    de: 'Frage', en: 'Question', el: 'Ερώτηση',
+    tr: 'Soru', fr: 'Question', es: 'Pregunta', it: 'Domanda',
+  },
+  'booksearch.of': {
+    de: 'von', en: 'of', el: 'από',
+    tr: '/', fr: 'sur', es: 'de', it: 'di',
+  },
+  'booksearch.top3Title': {
+    de: '🏆 Deine Top 3 Empfehlungen', en: '🏆 Your Top 3 Recommendations', el: '🏆 Οι κορυφαίες 3 προτάσεις σου',
+    tr: '🏆 İlk 3 Önerin', fr: '🏆 Vos 3 meilleures recommandations', es: '🏆 Tus 3 mejores recomendaciones', it: '🏆 I tuoi 3 migliori consigli',
+  },
+  'booksearch.top3Sub': {
+    de: 'Die besten Treffer für dein Profil', en: 'The best matches for your profile',
+    el: 'Οι καλύτερες αντιστοιχίες για το προφίλ σου', tr: 'Profiliniz için en iyi eşleşmeler',
+    fr: 'Les meilleures correspondances pour votre profil', es: 'Los mejores resultados para tu perfil', it: 'Le migliori corrispondenze per il tuo profilo',
+  },
+  'booksearch.moreRecs': {
+    de: 'Weitere Empfehlungen', en: 'More Recommendations', el: 'Περισσότερες προτάσεις',
+    tr: 'Daha fazla öneri', fr: 'Plus de recommandations', es: 'Más recomendaciones', it: 'Altri consigli',
+  },
+  'booksearch.horizonTitle': {
+    de: 'Etwas Neues wagen', en: 'Try Something New', el: 'Δοκίμασε κάτι νέο',
+    tr: 'Yeni bir şey dene', fr: 'Oser quelque chose de nouveau', es: 'Atrévete con algo nuevo', it: 'Prova qualcosa di nuovo',
+  },
+  'booksearch.horizonSub': {
+    de: 'Bücher, die deinen Horizont bewusst erweitern.', en: 'Books that deliberately expand your horizon.',
+    el: 'Βιβλία που διευρύνουν σκόπιμα τον ορίζοντά σου.', tr: 'Ufkunu bilinçli olarak genişleten kitaplar.',
+    fr: 'Des livres qui élargissent délibérément votre horizon.', es: 'Libros que amplían deliberadamente tu horizonte.', it: 'Libri che ampliano deliberatamente il tuo orizzonte.',
+  },
+  'booksearch.horizonBadge': {
+    de: 'Horizont-Erweiterung', en: 'Horizon Expansion', el: 'Διεύρυνση οριζόντων',
+    tr: 'Ufuk genişletme', fr: 'Élargissement d\'horizon', es: 'Expansión de horizonte', it: 'Espansione dell\'orizzonte',
+  },
+  'booksearch.rank1': {
+    de: '#1 Bester Treffer', en: '#1 Best Match', el: '#1 Καλύτερη αντιστοιχία',
+    tr: '#1 En İyi Eşleşme', fr: '#1 Meilleure correspondance', es: '#1 Mejor coincidencia', it: '#1 Miglior corrispondenza',
+  },
+  'booksearch.rank2': {
+    de: '#2 Sehr gut', en: '#2 Very Good', el: '#2 Πολύ καλό',
+    tr: '#2 Çok İyi', fr: '#2 Très bon', es: '#2 Muy bueno', it: '#2 Molto buono',
+  },
+  'booksearch.rank3': {
+    de: '#3 Empfohlen', en: '#3 Recommended', el: '#3 Προτεινόμενο',
+    tr: '#3 Önerilen', fr: '#3 Recommandé', es: '#3 Recomendado', it: '#3 Consigliato',
+  },
+  'booksearch.noBooksLang': {
+    de: 'Noch keine lokalen Bücher auf', en: 'No local books yet in',
+    el: 'Δεν υπάρχουν ακόμα τοπικά βιβλία σε', tr: 'Henüz yerel kitap yok:',
+    fr: 'Pas encore de livres locaux en', es: 'Aún no hay libros locales en', it: 'Ancora nessun libro locale in',
+  },
+  'booksearch.noBooksGeneral': {
+    de: 'Keine Bücher gefunden', en: 'No books found', el: 'Δεν βρέθηκαν βιβλία',
+    tr: 'Kitap bulunamadı', fr: 'Aucun livre trouvé', es: 'No se encontraron libros', it: 'Nessun libro trovato',
+  },
+  'booksearch.noBooksSuggestDiscover': {
+    de: 'Probiere die Buchsuche über BookDiscover – dort findest du Google Books auf', 
+    en: 'Try book search via BookDiscover – find Google Books in',
+    el: 'Δοκίμασε το BookDiscover – βρες Google Books σε', tr: 'BookDiscover\'ı dene – Google Books\'ta bul:',
+    fr: 'Essayez BookDiscover – trouvez Google Books en', es: 'Prueba BookDiscover – encuentra Google Books en', it: 'Prova BookDiscover – trova Google Books in',
+  },
+  'booksearch.noBooksTryNew': {
+    de: 'Versuche eine neue Suche mit anderen Einstellungen.', en: 'Try a new search with different settings.',
+    el: 'Δοκίμασε νέα αναζήτηση με διαφορετικές ρυθμίσεις.', tr: 'Farklı ayarlarla yeni bir arama deneyin.',
+    fr: 'Essayez une nouvelle recherche avec d\'autres paramètres.', es: 'Intenta una nueva búsqueda con otras configuraciones.', it: 'Prova una nuova ricerca con impostazioni diverse.',
+  },
+  'booksearch.toBookDiscover': {
+    de: 'Zu BookDiscover →', en: 'Go to BookDiscover →', el: 'Στο BookDiscover →',
+    tr: 'BookDiscover\'a git →', fr: 'Aller à BookDiscover →', es: 'Ir a BookDiscover →', it: 'Vai a BookDiscover →',
+  },
+  'booksearch.buchsprachePill': {
+    de: 'Buchsprache', en: 'Book language', el: 'Γλώσσα βιβλίου',
+    tr: 'Kitap dili', fr: 'Langue du livre', es: 'Idioma del libro', it: 'Lingua del libro',
+  },
+  'booksearch.kaufregionPill': {
+    de: 'Kaufregion', en: 'Shopping region', el: 'Περιοχή αγορών',
+    tr: 'Alışveriş bölgesi', fr: 'Région d\'achat', es: 'Región de compra', it: 'Regione di acquisto',
+  },
+
   // ── Phase 2: Hinweise / Info ──────────────────────────────────────────────
   'discover.bookLangHint': {
     de: 'Hinweis: Für Griechisch und Türkisch sind weniger Bücher indexiert.',

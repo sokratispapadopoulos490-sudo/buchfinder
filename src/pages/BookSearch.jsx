@@ -543,10 +543,10 @@ function BookSearchContent() {
                 <Compass className="w-12 h-12 text-white" />
               </div>
               <h1 className="text-4xl md:text-5xl font-light text-stone-800 dark:text-stone-100 mb-3 tracking-tight">
-                Buchsuche
+                {t('booksearch.title')}
               </h1>
               <p className="text-stone-500 dark:text-stone-400 text-lg font-light max-w-xs mx-auto leading-relaxed">
-                Finde dein perfektes nächstes Buch
+                {t('booksearch.subtitle')}
               </p>
             </motion.div>
 
@@ -556,10 +556,10 @@ function BookSearchContent() {
                 onClick={(e) => { e.preventDefault(); handleStart(); }}
                 style={{ backgroundColor: '#d97706', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '8px', padding: '16px 40px', fontSize: '1rem', fontWeight: 500, borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.12)', textDecoration: 'none', cursor: 'pointer' }}
               >
-                Neue Suche starten
+                {t('btn.startSearch')}
                 <ArrowRight className="w-5 h-5" />
               </a>
-              <p className="text-xs text-stone-400 dark:text-stone-500">Kostenlos in der Beta</p>
+              <p className="text-xs text-stone-400 dark:text-stone-500">{t('booksearch.betaLabel')}</p>
             </div>
           </motion.div>
         )}
@@ -589,18 +589,18 @@ function BookSearchContent() {
                       {/* Progress */}
                       <div className="mb-8">
                         <div className="flex justify-between text-sm text-stone-400 dark:text-stone-500 mb-2">
-                          <span>Frage {currentQuestion + 1}</span>
-                          <span>{currentQuestion + 1} von {translatedQuestions.length}</span>
+                          <span>{t('booksearch.questionOf')} {currentQuestion + 1}</span>
+                          <span>{currentQuestion + 1} {t('booksearch.of')} {translatedQuestions.length}</span>
                         </div>
                         <div className="h-1 bg-stone-100 dark:bg-stone-800 rounded-full overflow-hidden">
                           <div className="h-full bg-stone-800 dark:bg-amber-500 transition-all" style={{ width: `${((currentQuestion + 1) / translatedQuestions.length) * 100}%` }} />
                         </div>
                       </div>
                       <h2 className="text-2xl md:text-3xl font-light text-stone-800 dark:text-stone-100 mb-2 leading-relaxed">
-                        Welche Bücher hast du zuletzt gelesen?
+                        {t('booksearch.readBooksTitle')}
                       </h2>
                       <p className="text-stone-500 dark:text-stone-400 text-sm mb-6">
-                        Optional – hilft uns, Dopplungen zu vermeiden.
+                        {t('booksearch.readBooksOptional')}
                       </p>
                       <ReadBooksInput
                         value={readBooks}
@@ -674,13 +674,13 @@ function BookSearchContent() {
                   <div className="flex flex-wrap gap-2 justify-center mt-4 mb-1">
                     {langCode && langCode !== 'any' && (
                       <span className="inline-flex items-center gap-1.5 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 text-amber-700 dark:text-amber-300 px-3 py-1 rounded-full text-xs font-medium">
-                        <span className="opacity-60 text-[10px] mr-0.5">Buchsprache</span>
+                        <span className="opacity-60 text-[10px] mr-0.5">{t('booksearch.buchsprachePill')}</span>
                         {langFlags[langCode] || '📖'} {langLabels[langCode] || langCode} <span className="opacity-50">({langCode})</span>
                       </span>
                     )}
                     {regionCode && (
                       <span className="inline-flex items-center gap-1.5 bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 px-3 py-1 rounded-full text-xs font-medium">
-                        <span className="opacity-60 text-[10px] mr-0.5">Kaufregion</span>
+                        <span className="opacity-60 text-[10px] mr-0.5">{t('booksearch.kaufregionPill')}</span>
                         {regionFlags[regionCode] || '🛒'} {regionLabels[regionCode] || regionCode} <span className="opacity-50">({regionCode})</span>
                       </span>
                     )}
@@ -754,16 +754,16 @@ function BookSearchContent() {
                     <div className="text-center py-16 text-stone-400">
                       <p className="text-2xl mb-3">📚</p>
                       <p className="text-lg mb-2 text-stone-600 dark:text-stone-300">
-                        {lang && lang !== 'any' ? `Noch keine lokalen Bücher auf ${langName}` : 'Keine Bücher gefunden'}
+                        {lang && lang !== 'any' ? `${t('booksearch.noBooksLang')} ${langName}` : t('booksearch.noBooksGeneral')}
                       </p>
                       <p className="text-sm mb-4">
                         {lang && lang !== 'any'
-                          ? `Probiere die Buchsuche über BookDiscover – dort findest du Google Books auf ${langName}.`
-                          : 'Versuche eine neue Suche mit anderen Einstellungen.'}
+                          ? `${t('booksearch.noBooksSuggestDiscover')} ${langName}.`
+                          : t('booksearch.noBooksTryNew')}
                       </p>
                       {lang && lang !== 'any' && (
                         <a href="/BookDiscover" className="inline-block text-sm text-amber-600 underline underline-offset-4 hover:text-amber-700">
-                          Zu BookDiscover →
+                          {t('booksearch.toBookDiscover')}
                         </a>
                       )}
                     </div>
@@ -779,15 +779,15 @@ function BookSearchContent() {
                       <div className="flex items-center gap-3 mb-6">
                         <div>
                           <h3 className="text-lg font-semibold text-stone-800 dark:text-stone-100">
-                            🏆 Deine Top 3 Empfehlungen
-                          </h3>
-                          <p className="text-xs text-stone-400 dark:text-stone-500 mt-0.5">Die besten Treffer für dein Profil</p>
+                              {t('booksearch.top3Title')}
+                            </h3>
+                            <p className="text-xs text-stone-400 dark:text-stone-500 mt-0.5">{t('booksearch.top3Sub')}</p>
                         </div>
                         <div className="flex-1 h-px bg-stone-200 dark:bg-stone-700 ml-2" />
                       </div>
                       <div className="space-y-6">
                         {top3.map((book, idx) => {
-                          const labels = ['#1 Bester Treffer', '#2 Sehr gut', '#3 Empfohlen'];
+                          const labels = [t('booksearch.rank1'), t('booksearch.rank2'), t('booksearch.rank3')];
                           return (
                             <div key={book.id || book.isbn13 || idx} className="space-y-2">
                               <div className="flex items-center gap-2 px-1">
@@ -807,7 +807,7 @@ function BookSearchContent() {
                       <div className="mb-12">
                         <div className="flex items-center gap-3 mb-6">
                           <h3 className="text-sm font-medium text-stone-500 dark:text-stone-400 uppercase tracking-wide">
-                            Weitere Empfehlungen
+                            {t('booksearch.moreRecs')}
                           </h3>
                           <div className="flex-1 h-px bg-stone-200 dark:bg-stone-700" />
                         </div>
@@ -829,15 +829,15 @@ function BookSearchContent() {
                             <div className="w-7 h-7 rounded-full bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center flex-shrink-0">
                               <span className="text-violet-600 dark:text-violet-400 text-xs">✦</span>
                             </div>
-                            <h3 className="text-lg font-semibold text-stone-800 dark:text-stone-100">Etwas Neues wagen</h3>
-                          </div>
-                          <p className="text-xs text-stone-400 dark:text-stone-500 ml-10">Bücher, die deinen Horizont bewusst erweitern.</p>
+                            <h3 className="text-lg font-semibold text-stone-800 dark:text-stone-100">{t('booksearch.horizonTitle')}</h3>
+                            </div>
+                            <p className="text-xs text-stone-400 dark:text-stone-500 ml-10">{t('booksearch.horizonSub')}</p>
                         </div>
                         <div className="space-y-6">
                           {horizonBooks.map((book, idx) => (
                             <div key={book.id || book.isbn13 || `h-${idx}`} className="space-y-1">
                               <div className="flex items-center gap-2 px-1">
-                                <span className="text-xs font-medium text-violet-500 dark:text-violet-400 uppercase tracking-wide">Horizont-Erweiterung</span>
+                                <span className="text-xs font-medium text-violet-500 dark:text-violet-400 uppercase tracking-wide">{t('booksearch.horizonBadge')}</span>
                               </div>
                               <BookCard book={book} reasons={generateReasons(book, profile)} index={Math.min(5 + idx, 7)} isContrast={true} isAuthenticated={isAuthenticated} analysisBookLanguage={profile?.bookLanguage} />
                             </div>

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { BookOpen, Sparkles, Target, MessageCircle, Plus, BookMarked, ChevronLeft, ChevronRight, X, ChevronDown, ChevronUp, Camera, Compass as CompassIcon } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '@/components/language/LanguageContext';
 import { formatDistanceToNow } from 'date-fns';
 import { de } from 'date-fns/locale';
 import BookScannerModal from '@/components/books/BookScannerModal';
@@ -27,6 +28,7 @@ function clearSnap() { try { localStorage.removeItem(LS_KEY); } catch {} }
 
 
 export default function Compass() {
+  const { t } = useLanguage();
   const [user, setUser] = useState(null);
 
   // Sofort aus Cache (Modul oder localStorage) initialisieren – kein Flackern
@@ -224,7 +226,7 @@ export default function Compass() {
   };
 
   const handleDeleteSavedBook = async (savedBookId) => {
-    if (confirm('Möchtest du dieses Buch wirklich aus deiner Bibliothek entfernen?')) {
+    if (confirm(t('compass.deleteBookConfirm'))) {
       await base44.entities.SavedBook.delete(savedBookId);
       _compassCache = null; clearSnap();
       await loadCompassData();
@@ -234,7 +236,7 @@ export default function Compass() {
   if (loading) {
     return (
       <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] flex items-center justify-center">
-        <div className="text-stone-500 dark:text-stone-400">Lädt...</div>
+        <div className="text-stone-500 dark:text-stone-400">{t('compass.loading')}</div>
       </div>
     );
   }
@@ -244,7 +246,7 @@ export default function Compass() {
       <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] px-4 py-12 pb-32">
         <div className="max-w-xl mx-auto">
           <div className="mb-8">
-            <h1 className="text-2xl font-light text-stone-800 dark:text-stone-200">Dein Lesekompass</h1>
+            <h1 className="text-2xl font-light text-stone-800 dark:text-stone-200">{t('compass.title')}</h1>
           </div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -253,10 +255,10 @@ export default function Compass() {
           >
             <BookOpen className="w-16 h-16 text-amber-600 dark:text-amber-500 mx-auto mb-6" />
             <h1 className="text-2xl font-light text-stone-800 dark:text-stone-200 mb-4">
-              Bereit für dein nächstes Buch?
+              {t('compass.readReady')}
             </h1>
             <p className="text-stone-600 dark:text-stone-400 mb-8">
-              Lass uns gemeinsam das richtige Buch für dich finden.
+              {t('compass.readReadySub')}
             </p>
             <div className="flex flex-col gap-3">
               <Button
@@ -264,7 +266,7 @@ export default function Compass() {
                 className="bg-amber-600 hover:bg-amber-700 text-white gap-2"
               >
                 <Sparkles className="w-4 h-4" />
-                Buchempfehlung starten
+                 {t('compass.startRecommendation')}
               </Button>
               <Button
                 onClick={() => setShowScanner(true)}
@@ -272,7 +274,7 @@ export default function Compass() {
                 className="gap-2 border-amber-300 text-amber-800"
               >
                 <Camera className="w-4 h-4" />
-                Buch scannen
+                 {t('compass.scanBook')}
               </Button>
             </div>
           </motion.div>
@@ -281,12 +283,12 @@ export default function Compass() {
           {lastRecommendations.length > 0 && (
             <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-5 shadow-sm">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-medium text-stone-700 dark:text-stone-300">Letzte Empfehlungen</h3>
+                <h3 className="text-sm font-medium text-stone-700 dark:text-stone-300">{t('compass.lastRecommendations')}</h3>
                 <button
                   onClick={() => navigate('/BookSearch')}
                   className="text-xs text-amber-600 dark:text-amber-500 hover:underline"
                 >
-                  Neue Analyse
+                  {t('compass.newAnalysis')}
                 </button>
               </div>
               <div className="space-y-3">
@@ -315,7 +317,7 @@ export default function Compass() {
           <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center shadow-md flex-shrink-0">
             <CompassIcon className="w-8 h-8 text-white" />
           </div>
-          <span className="text-2xl font-semibold text-stone-900 dark:text-white">Dein Lese-Compass</span>
+          <span className="text-2xl font-semibold text-stone-900 dark:text-white">{t('compass.title')}</span>
         </div>
 
         {/* CTA: Neue Buchempfehlung */}
@@ -326,7 +328,7 @@ export default function Compass() {
           >
             <div className="flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-500" />
-              <span className="text-sm font-medium text-amber-900 dark:text-amber-400">Neue Empfehlungen holen</span>
+              <span className="text-sm font-medium text-amber-900 dark:text-amber-400">{t('compass.newRecommendations')}</span>
             </div>
             <span className="text-xs text-amber-600 dark:text-amber-500">→</span>
           </button>
@@ -349,8 +351,8 @@ export default function Compass() {
                 <ChevronLeft className="w-4 h-4 text-stone-600 dark:text-stone-400" />
               </button>
               <span className="text-xs text-stone-400 dark:text-stone-500">
-                {currentBookIndex + 1} von {allBooks.length} Büchern
-              </span>
+                 {currentBookIndex + 1} {t('compass.ofBooks')} {allBooks.length} {t('compass.booksLabel')}
+               </span>
               <button
                 onClick={() => switchBook(Math.min(allBooks.length - 1, currentBookIndex + 1))}
                 disabled={currentBookIndex === allBooks.length - 1}
@@ -371,14 +373,14 @@ export default function Compass() {
               <p className="text-stone-600 dark:text-stone-400 mb-3">{currentBook.book_data.author}</p>
               <div className="flex items-center gap-4 text-sm text-stone-500 dark:text-stone-400">
                 <span className="flex items-center gap-1">
-                  <BookOpen className="w-4 h-4" />
-                  {progress}% gelesen
-                </span>
-                {streak > 0 && (
-                  <span className="flex items-center gap-1">
-                    🔥 {streak} {streak === 1 ? 'Tag' : 'Tage'} Streak
-                  </span>
-                )}
+                   <BookOpen className="w-4 h-4" />
+                   {progress}% {t('compass.read')}
+                 </span>
+                 {streak > 0 && (
+                   <span className="flex items-center gap-1">
+                     🔥 {streak} {streak === 1 ? t('compass.dayStreak') : t('compass.daysStreak')}
+                   </span>
+                 )}
               </div>
             </div>
           </div>
@@ -402,7 +404,7 @@ export default function Compass() {
               >
                 <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-500 flex-shrink-0" />
                 <span className="text-xs font-medium text-amber-900 dark:text-amber-400 flex-1">
-                  Dein Gedanke vom {new Date(currentReflection.date).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                  {t('compass.yourThought')} {new Date(currentReflection.date).toLocaleDateString(undefined, { day: '2-digit', month: '2-digit', year: 'numeric' })}
                 </span>
                 <button
                   onClick={(e) => { e.stopPropagation(); deleteReflection(); }}
@@ -430,10 +432,10 @@ export default function Compass() {
             <div className="flex items-start gap-2">
               <Target className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
               <div>
-                <div className="text-xs font-medium text-blue-900 dark:text-blue-400 mb-1">Heute im Fokus</div>
-                <p className="text-sm text-blue-800 dark:text-blue-300">
-                  Lies weiter und halte fest, was dich bewegt
-                </p>
+                <div className="text-xs font-medium text-blue-900 dark:text-blue-400 mb-1">{t('compass.todayFocus')}</div>
+                 <p className="text-sm text-blue-800 dark:text-blue-300">
+                   {t('compass.todayFocusSub')}
+                 </p>
               </div>
             </div>
           </div>
@@ -443,14 +445,14 @@ export default function Compass() {
             <div className="flex items-start gap-2">
               <MessageCircle className="w-4 h-4 text-stone-600 dark:text-stone-400 mt-0.5 flex-shrink-0" />
               <div className="flex-1">
-                <div className="text-xs font-medium text-stone-700 dark:text-stone-300 mb-2">Reflexion für später</div>
+                <div className="text-xs font-medium text-stone-700 dark:text-stone-300 mb-2">{t('compass.reflectionLabel')}</div>
                 <p className="text-sm text-stone-600 dark:text-stone-400 mb-3 leading-relaxed">
                   {reflectionQuestion}
                 </p>
                 <textarea
                   value={todayReflection}
                   onChange={(e) => setTodayReflection(e.target.value)}
-                  placeholder="Deine Gedanken..."
+                  placeholder={t('compass.reflectionPlaceholder')}
                   className="w-full px-3 py-2 text-sm border border-stone-200 dark:border-stone-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none bg-white dark:bg-[#1a1a1a] text-stone-800 dark:text-stone-200"
                   rows={3}
                 />
@@ -458,8 +460,8 @@ export default function Compass() {
                   <button
                     onClick={saveReflection}
                     className="mt-2 text-xs text-amber-600 hover:text-amber-700 font-medium"
-                  >
-                    Speichern
+                    >
+                    {t('compass.saveReflection')}
                   </button>
                 )}
               </div>
@@ -472,7 +474,7 @@ export default function Compass() {
             className="w-full bg-amber-600 hover:bg-amber-700 text-white gap-2"
           >
             <Plus className="w-4 h-4" />
-            Fortschritt eintragen
+            {t('compass.logProgress')}
           </Button>
         </motion.div>
 
@@ -511,24 +513,24 @@ export default function Compass() {
             className="p-4 bg-white dark:bg-[#1a1a1a] border border-stone-200 dark:border-stone-700 rounded-xl hover:border-amber-300 dark:hover:border-amber-700 transition-colors text-left"
           >
             <Sparkles className="w-5 h-5 text-amber-600 dark:text-amber-500 mb-2" />
-            <div className="text-sm font-medium text-stone-800 dark:text-stone-200 mb-1">Empfehlungen</div>
-            <div className="text-xs text-stone-500 dark:text-stone-400">Analyse starten</div>
+            <div className="text-sm font-medium text-stone-800 dark:text-stone-200 mb-1">{t('compass.recommendations')}</div>
+            <div className="text-xs text-stone-500 dark:text-stone-400">{t('compass.analyzeStart')}</div>
           </button>
           <button
             onClick={() => setShowScanner(true)}
             className="p-4 bg-white dark:bg-[#1a1a1a] border border-stone-200 dark:border-stone-700 rounded-xl hover:border-amber-300 dark:hover:border-amber-700 transition-colors text-left"
           >
             <Camera className="w-5 h-5 text-amber-600 dark:text-amber-500 mb-2" />
-            <div className="text-sm font-medium text-stone-800 dark:text-stone-200 mb-1">Scannen</div>
-            <div className="text-xs text-stone-500 dark:text-stone-400">Buch hinzufügen</div>
+            <div className="text-sm font-medium text-stone-800 dark:text-stone-200 mb-1">{t('compass.scan')}</div>
+            <div className="text-xs text-stone-500 dark:text-stone-400">{t('compass.addBook')}</div>
           </button>
           <button
             onClick={() => setShowLibrary(v => !v)}
             className="p-4 bg-white dark:bg-[#1a1a1a] border border-stone-200 dark:border-stone-700 rounded-xl hover:border-amber-300 dark:hover:border-amber-700 transition-colors text-left"
           >
             <BookMarked className="w-5 h-5 text-amber-600 dark:text-amber-500 mb-2" />
-            <div className="text-sm font-medium text-stone-800 dark:text-stone-200 mb-1">Bibliothek</div>
-            <div className="text-xs text-stone-500 dark:text-stone-400">Alle Bücher</div>
+            <div className="text-sm font-medium text-stone-800 dark:text-stone-200 mb-1">{t('compass.library')}</div>
+            <div className="text-xs text-stone-500 dark:text-stone-400">{t('compass.allBooks')}</div>
           </button>
         </div>
 
@@ -536,12 +538,12 @@ export default function Compass() {
         {showLibrary && (
           <div className="mb-6">
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-xl font-light text-stone-800 dark:text-stone-200">Deine Bibliothek</h2>
+              <h2 className="text-xl font-light text-stone-800 dark:text-stone-200">{t('compass.yourLibrary')}</h2>
             </div>
             {allBooks.length === 0 ? (
               <div className="text-center py-12 bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700">
                 <BookMarked className="w-12 h-12 text-stone-300 mx-auto mb-4" />
-                <p className="text-stone-500">Noch keine Bücher in deiner Bibliothek</p>
+                <p className="text-stone-500">{t('compass.libraryEmpty')}</p>
               </div>
             ) : (
               <LibraryView
@@ -559,12 +561,12 @@ export default function Compass() {
         {lastRecommendations.length > 0 && (
           <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-5 shadow-sm">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-medium text-stone-700 dark:text-stone-300">Letzte Empfehlungen</h3>
+              <h3 className="text-sm font-medium text-stone-700 dark:text-stone-300">{t('compass.lastRecommendations')}</h3>
               <button
                 onClick={() => navigate('/BookSearch')}
                 className="text-xs text-amber-600 dark:text-amber-500 hover:underline"
               >
-                Neue Analyse
+                {t('compass.newAnalysis')}
               </button>
             </div>
             <div className="space-y-3">
