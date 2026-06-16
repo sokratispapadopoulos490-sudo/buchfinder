@@ -310,20 +310,18 @@ function BookSearchContent() {
   const t = langCtx?.t || ((k) => k);
   const contextBookLanguage = langCtx?.bookLanguage || null;
 
-  // Robust start path: watch URL hash so even if React synthetic click is flaky
-  // (e.g. sandboxed iframe preview), navigating to #start still triggers phase change.
+  // Robust start path: read ?startQuestions=1 on mount and set phase.
+  // This fires even if React synthetic click is flaky in sandboxed iframe preview.
   useEffect(() => {
-    const applyHash = () => {
-      if (window.location.hash === '#start') {
-        setPhase('questions');
-        setCurrentQuestion(0);
-        // clean up hash without triggering another hashchange
-        history.replaceState(null, '', window.location.pathname + window.location.search);
-      }
-    };
-    applyHash(); // handle if already set on mount
-    window.addEventListener('hashchange', applyHash);
-    return () => window.removeEventListener('hashchange', applyHash);
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('startQuestions') === '1') {
+      setPhase('questions');
+      setCurrentQuestion(0);
+      // Remove the param so back-navigation doesn't re-trigger
+      params.delete('startQuestions');
+      const newSearch = params.toString();
+      history.replaceState(null, '', window.location.pathname + (newSearch ? '?' + newSearch : ''));
+    }
   }, []);
 
   useEffect(() => {
@@ -355,9 +353,14 @@ function BookSearchContent() {
     // Primary: direct React state update
     setPhase('questions');
     setCurrentQuestion(0);
-    // Secondary: hash-based fallback for sandboxed iframe / flaky click events
-    window.location.hash = '#start';
   };
+
+  // Build fallback URL: keep existing query params, add startQuestions=1
+  const startFallbackHref = (() => {
+    const params = new URLSearchParams(window.location.search);
+    params.set('startQuestions', '1');
+    return window.location.pathname + '?' + params.toString();
+  })();
 
   const advanceOrFinish = (newAnswers) => {
     if (currentQuestion < translatedQuestions.length - 1) {
@@ -549,7 +552,7 @@ function BookSearchContent() {
 
             <div className="flex flex-col items-center gap-4 relative z-10">
               <a
-                href="#start"
+                href={startFallbackHref}
                 onClick={(e) => { e.preventDefault(); handleStart(); }}
                 style={{ backgroundColor: '#d97706', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '8px', padding: '16px 40px', fontSize: '1rem', fontWeight: 500, borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.12)', textDecoration: 'none', cursor: 'pointer' }}
               >
