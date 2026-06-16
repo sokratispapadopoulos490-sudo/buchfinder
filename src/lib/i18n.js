@@ -306,6 +306,12 @@ const dict = {
   'account.premiumBadge': {
     de: 'Premium', en: 'Premium', el: 'Premium', tr: 'Premium', fr: 'Premium', es: 'Premium', it: 'Premium',
   },
+  'account.shoppingRegion': {
+    de: 'Kaufregion', en: 'Shopping Region', el: 'Περιοχή αγορών', tr: 'Alışveriş bölgesi', fr: 'Région d\'achat', es: 'Región de compra', it: 'Regione di acquisto',
+  },
+  'account.shoppingRegionSub': {
+    de: 'Bestimmt Buchläden & lokale Marktplätze', en: 'Determines bookstores & local marketplaces', el: 'Καθορίζει βιβλιοπωλεία & αγορές', tr: 'Kitabevleri ve pazar yerlerini belirler', fr: 'Détermine librairies & marchés locaux', es: 'Determina librerías y mercados locales', it: 'Determina librerie e mercati locali',
+  },
   'account.darkMode': {
     de: 'Dark Mode', en: 'Dark Mode', el: 'Σκοτεινή λειτουργία', tr: 'Karanlık mod', fr: 'Mode sombre', es: 'Modo oscuro', it: 'Modalità scura',
   },

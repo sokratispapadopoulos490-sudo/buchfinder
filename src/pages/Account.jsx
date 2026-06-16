@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { useLanguage, LanguageProvider } from '@/components/language/LanguageContext';
+import { SHOPPING_REGIONS } from '@/lib/providerRegistry';
 import ProfileEditModal from '@/components/profile/ProfileEditModal';
 import NotificationBell from '@/components/notifications/NotificationBell';
 import GlobalSearch from '@/components/search/GlobalSearch';
@@ -26,7 +27,7 @@ function AccountContent() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const navigate = useNavigate();
-  const { language, changeLanguage, t } = useLanguage();
+  const { language, changeLanguage, shoppingRegion, changeShoppingRegion, t } = useLanguage();
 
   // Only languages that have full i18n translations
   const UI_LANGUAGES = [
@@ -268,6 +269,26 @@ function AccountContent() {
                 >
                   {UI_LANGUAGES.map((lang) => (
                     <option key={lang.code} value={lang.code}>{lang.flag} {lang.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Kaufregion */}
+              <div className="flex items-center justify-between p-3 border border-stone-200 dark:border-stone-700 rounded-xl">
+                <div className="flex items-center gap-3">
+                  <Globe className="w-4 h-4 text-stone-500" />
+                  <div>
+                    <div className="text-sm font-medium text-stone-800 dark:text-stone-200">{t('account.shoppingRegion')}</div>
+                    <div className="text-xs text-stone-500">{t('account.shoppingRegionSub')}</div>
+                  </div>
+                </div>
+                <select
+                  value={shoppingRegion}
+                  onChange={(e) => changeShoppingRegion(e.target.value)}
+                  className="appearance-none bg-stone-50 dark:bg-[#262626] border border-stone-300 dark:border-stone-600 rounded-lg px-3 py-2 text-sm text-stone-700 dark:text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
+                >
+                  {SHOPPING_REGIONS.map((r) => (
+                    <option key={r.code} value={r.code}>{r.flag} {t(r.labelKey)}</option>
                   ))}
                 </select>
               </div>
