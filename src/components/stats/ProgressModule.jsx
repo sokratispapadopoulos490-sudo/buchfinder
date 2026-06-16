@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TrendingUp, BookOpen, Flame, ChevronRight, X, ChevronLeft, Sparkles, BookMarked } from 'lucide-react';
+import { useLanguage } from '@/components/language/LanguageContext';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -131,7 +132,7 @@ function MiniBar({ label, pages, max, color = 'bg-amber-500', sublabel }) {
 
 // ── Level views ──────────────────────────────────────────────────────────────
 
-function WeekView({ readingLogs, onDrillDown }) {
+function WeekView({ readingLogs, onDrillDown, t }) {
   const days = useMemo(() => getWeekDays(readingLogs), [readingLogs]);
   const dayNames = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
   const maxPages = Math.max(...days.map(d => d.pages), 1);
@@ -141,9 +142,9 @@ function WeekView({ readingLogs, onDrillDown }) {
   return (
     <div>
       <div className="flex items-end justify-between mb-1">
-        <span className="text-sm text-stone-500 dark:text-stone-400">Gesamt: <span className="font-semibold text-stone-800 dark:text-stone-200">{total} Seiten</span></span>
+        <span className="text-sm text-stone-500 dark:text-stone-400">{t('progress.total')} <span className="font-semibold text-stone-800 dark:text-stone-200">{total} {t('progress.pages')}</span></span>
         <button onClick={onDrillDown} className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-0.5 hover:underline">
-          Monatsansicht <ChevronRight className="w-3 h-3" />
+          {t('progress.monthView')} <ChevronRight className="w-3 h-3" />
         </button>
       </div>
       <div className="flex gap-1 mt-4 items-end">
@@ -165,18 +166,18 @@ function WeekView({ readingLogs, onDrillDown }) {
   );
 }
 
-function MonthView({ readingLogs, onDrillDown, onBack }) {
+function MonthView({ readingLogs, onDrillDown, onBack, t }) {
   const weeks = useMemo(() => getMonthWeeks(readingLogs), [readingLogs]);
   const maxPages = Math.max(...weeks.map(w => w.pages), 1);
   const total = weeks.reduce((s, w) => s + w.pages, 0);
-  const monthName = new Date().toLocaleString('de-DE', { month: 'long' });
+  const monthName = new Date().toLocaleString(undefined, { month: 'long' });
 
   return (
     <div>
       <div className="flex items-end justify-between mb-1">
-        <span className="text-sm text-stone-500 dark:text-stone-400">{monthName}: <span className="font-semibold text-stone-800 dark:text-stone-200">{total} Seiten</span></span>
+        <span className="text-sm text-stone-500 dark:text-stone-400">{monthName}: <span className="font-semibold text-stone-800 dark:text-stone-200">{total} {t('progress.pages')}</span></span>
         <button onClick={onDrillDown} className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-0.5 hover:underline">
-          Jahresansicht <ChevronRight className="w-3 h-3" />
+          {t('progress.yearView')} <ChevronRight className="w-3 h-3" />
         </button>
       </div>
       <div className="flex gap-2 mt-4 items-end">
@@ -195,7 +196,7 @@ function MonthView({ readingLogs, onDrillDown, onBack }) {
   );
 }
 
-function YearView({ readingLogs, onBack }) {
+function YearView({ readingLogs, onBack, t }) {
   const months = useMemo(() => getYearMonths(readingLogs), [readingLogs]);
   const maxPages = Math.max(...months.map(m => m.pages), 1);
   const total = months.reduce((s, m) => s + m.pages, 0);
@@ -204,7 +205,7 @@ function YearView({ readingLogs, onBack }) {
   return (
     <div>
       <div className="flex items-end justify-between mb-1">
-        <span className="text-sm text-stone-500 dark:text-stone-400">{new Date().getFullYear()}: <span className="font-semibold text-stone-800 dark:text-stone-200">{total} Seiten</span></span>
+        <span className="text-sm text-stone-500 dark:text-stone-400">{new Date().getFullYear()}: <span className="font-semibold text-stone-800 dark:text-stone-200">{total} {t('progress.pages')}</span></span>
       </div>
       <div className="flex gap-1 mt-4 items-end">
         {months.map((m, i) => (
@@ -225,9 +226,10 @@ function YearView({ readingLogs, onBack }) {
 // ── Main Component ────────────────────────────────────────────────────────────
 
 const LEVELS = ['week', 'month', 'year'];
-const LEVEL_LABELS = { week: 'Wochenfortschritt', month: 'Monatsfortschritt', year: 'Jahresfortschritt' };
 
 export default function ProgressModule({ readingLogs, completedBooksCount, savedBooksCount = 0, generatedBooksCount = 0 }) {
+  const { t } = useLanguage();
+  const LEVEL_LABELS = { week: t('progress.weeklyProgress'), month: t('progress.monthlyProgress'), year: t('progress.yearlyProgress') };
   const [showDetail, setShowDetail] = useState(false);
   const [level, setLevel] = useState('week'); // 'week' | 'month' | 'year'
 
@@ -261,7 +263,7 @@ export default function ProgressModule({ readingLogs, completedBooksCount, saved
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <TrendingUp className="w-4 h-4 text-amber-600 dark:text-amber-500" />
-            <span className="text-xs font-medium text-stone-600 dark:text-stone-400 uppercase tracking-wider">Wochenfortschritt</span>
+            <span className="text-xs font-medium text-stone-600 dark:text-stone-400 uppercase tracking-wider">{t('progress.weeklyProgress')}</span>
           </div>
           <ChevronRight className="w-4 h-4 text-stone-400 group-hover:text-amber-500 transition-colors" />
         </div>
@@ -270,7 +272,7 @@ export default function ProgressModule({ readingLogs, completedBooksCount, saved
           <div className="flex items-end gap-4">
             <div>
               <div className="text-3xl font-light text-stone-800 dark:text-stone-200">{weekPages}</div>
-              <div className="text-xs text-stone-500 dark:text-stone-400">Seiten diese Woche</div>
+              <div className="text-xs text-stone-500 dark:text-stone-400">{t('progress.pagesThisWeek')}</div>
             </div>
             {streak > 0 && (
               <div className="flex items-center gap-1 pb-0.5">
@@ -284,8 +286,8 @@ export default function ProgressModule({ readingLogs, completedBooksCount, saved
                 {weekDiff >= 0
                   ? `+${weekDiff}% 🎉`
                   : weekPages === 0
-                    ? '📚 Los geht\'s!'
-                    : '💪 Weiter so!'}
+                    ? t('progress.letsGo')
+                    : t('progress.keepGoing')}
               </div>
             )}
           </div>
@@ -295,17 +297,17 @@ export default function ProgressModule({ readingLogs, completedBooksCount, saved
             <div className="flex flex-col items-center gap-0.5">
               <Sparkles className="w-4 h-4 text-amber-500" />
               <span className="text-sm font-semibold text-stone-700 dark:text-stone-200">{generatedBooksCount}</span>
-              <span className="text-[10px] text-stone-400 dark:text-stone-500">Entdeckt</span>
+              <span className="text-[10px] text-stone-400 dark:text-stone-500">{t('progress.discovered')}</span>
             </div>
             <div className="flex flex-col items-center gap-0.5">
               <BookMarked className="w-4 h-4 text-blue-500" />
               <span className="text-sm font-semibold text-stone-700 dark:text-stone-200">{savedBooksCount}</span>
-              <span className="text-[10px] text-stone-400 dark:text-stone-500">Gespeichert</span>
+              <span className="text-[10px] text-stone-400 dark:text-stone-500">{t('progress.saved')}</span>
             </div>
             <div className="flex flex-col items-center gap-0.5">
               <BookOpen className="w-4 h-4 text-green-500" />
               <span className="text-sm font-semibold text-stone-700 dark:text-stone-200">{weekPages}</span>
-              <span className="text-[10px] text-stone-400 dark:text-stone-500">Seiten</span>
+              <span className="text-[10px] text-stone-400 dark:text-stone-500">{t('progress.pages')}</span>
             </div>
           </div>
         </div>
@@ -362,7 +364,7 @@ export default function ProgressModule({ readingLogs, completedBooksCount, saved
                         : 'text-stone-500 dark:text-stone-400 hover:text-stone-700 dark:hover:text-stone-300'
                     }`}
                   >
-                    {l === 'week' ? 'Woche' : l === 'month' ? 'Monat' : 'Jahr'}
+                    {l === 'week' ? t('progress.week') : l === 'month' ? t('progress.month') : t('progress.year')}
                   </button>
                 ))}
               </div>
@@ -377,13 +379,13 @@ export default function ProgressModule({ readingLogs, completedBooksCount, saved
                   transition={{ duration: 0.18 }}
                 >
                   {level === 'week' && (
-                    <WeekView readingLogs={readingLogs} onDrillDown={drillDown} />
+                    <WeekView readingLogs={readingLogs} onDrillDown={drillDown} t={t} />
                   )}
                   {level === 'month' && (
-                    <MonthView readingLogs={readingLogs} onDrillDown={drillDown} onBack={drillUp} />
+                    <MonthView readingLogs={readingLogs} onDrillDown={drillDown} onBack={drillUp} t={t} />
                   )}
                   {level === 'year' && (
-                    <YearView readingLogs={readingLogs} onBack={drillUp} />
+                    <YearView readingLogs={readingLogs} onBack={drillUp} t={t} />
                   )}
                 </motion.div>
               </AnimatePresence>
@@ -399,14 +401,14 @@ export default function ProgressModule({ readingLogs, completedBooksCount, saved
                   </div>
                 </div>
                 <div>
-                  <div className="text-xs text-stone-500 dark:text-stone-400 mb-0.5">Bücher</div>
+                  <div className="text-xs text-stone-500 dark:text-stone-400 mb-0.5">{t('progress.books')}</div>
                   <div className="flex items-center justify-center gap-1">
                     <BookOpen className="w-3.5 h-3.5 text-stone-400" />
                     <span className="text-sm font-semibold text-stone-800 dark:text-stone-200">{completedBooksCount}</span>
                   </div>
                 </div>
                 <div>
-                  <div className="text-xs text-stone-500 dark:text-stone-400 mb-0.5">vs. Vorwoche</div>
+                  <div className="text-xs text-stone-500 dark:text-stone-400 mb-0.5">{t('progress.vsPrevWeek')}</div>
                   <div className={`text-sm font-semibold ${weekDiff === null ? 'text-stone-400' : weekDiff >= 0 ? 'text-green-600' : 'text-amber-500'}`}>
                     {weekDiff === null ? '–' : weekDiff >= 0 ? `+${weekDiff}%` : `${weekDiff}%`}
                   </div>

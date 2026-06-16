@@ -163,14 +163,8 @@ export default function Compass() {
   };
 
   const generateReflectionQuestion = () => {
-    const questions = [
-      'Was hat dich heute beim Lesen überrascht oder irritiert?',
-      'Welcher Gedanke aus dem Buch beschäftigt dich gerade am meisten?',
-      'Was würdest du anders machen als die Person im Buch?',
-      'Woran erinnert dich das Gelesene aus deinem eigenen Leben?',
-      'Was verstehst du jetzt besser als vor dieser Lesesession?'
-    ];
-    setReflectionQuestion(questions[Math.floor(Math.random() * questions.length)]);
+    const keys = ['compass.rq1', 'compass.rq2', 'compass.rq3', 'compass.rq4', 'compass.rq5'];
+    setReflectionQuestion(keys[Math.floor(Math.random() * keys.length)]);
   };
 
   const switchBook = async (newIndex) => {
@@ -447,7 +441,7 @@ export default function Compass() {
               <div className="flex-1">
                 <div className="text-xs font-medium text-stone-700 dark:text-stone-300 mb-2">{t('compass.reflectionLabel')}</div>
                 <p className="text-sm text-stone-600 dark:text-stone-400 mb-3 leading-relaxed">
-                  {reflectionQuestion}
+                  {t(reflectionQuestion)}
                 </p>
                 <textarea
                   value={todayReflection}

@@ -730,6 +730,285 @@ const dict = {
   },
 
   // ── Phase 2: Hinweise / Info ──────────────────────────────────────────────
+  // ── ProgressModule ────────────────────────────────────────────────────────
+  'progress.weeklyProgress': {
+    de: 'Wochenfortschritt', en: 'Weekly Progress', el: 'Εβδομαδιαία πρόοδος',
+    tr: 'Haftalık ilerleme', fr: 'Progrès hebdomadaire', es: 'Progreso semanal', it: 'Progresso settimanale',
+  },
+  'progress.monthlyProgress': {
+    de: 'Monatsfortschritt', en: 'Monthly Progress', el: 'Μηνιαία πρόοδος',
+    tr: 'Aylık ilerleme', fr: 'Progrès mensuel', es: 'Progreso mensual', it: 'Progresso mensile',
+  },
+  'progress.yearlyProgress': {
+    de: 'Jahresfortschritt', en: 'Yearly Progress', el: 'Ετήσια πρόοδος',
+    tr: 'Yıllık ilerleme', fr: 'Progrès annuel', es: 'Progreso anual', it: 'Progresso annuale',
+  },
+  'progress.pagesThisWeek': {
+    de: 'Seiten diese Woche', en: 'Pages this week', el: 'Σελίδες αυτή την εβδομάδα',
+    tr: 'Bu haftaki sayfalar', fr: 'Pages cette semaine', es: 'Páginas esta semana', it: 'Pagine questa settimana',
+  },
+  'progress.pages': {
+    de: 'Seiten', en: 'Pages', el: 'Σελίδες',
+    tr: 'Sayfalar', fr: 'Pages', es: 'Páginas', it: 'Pagine',
+  },
+  'progress.discovered': {
+    de: 'Entdeckt', en: 'Discovered', el: 'Ανακαλύφθηκαν',
+    tr: 'Keşfedildi', fr: 'Découverts', es: 'Descubiertos', it: 'Scoperti',
+  },
+  'progress.saved': {
+    de: 'Gespeichert', en: 'Saved', el: 'Αποθηκεύτηκαν',
+    tr: 'Kaydedildi', fr: 'Sauvegardés', es: 'Guardados', it: 'Salvati',
+  },
+  'progress.monthView': {
+    de: 'Monatsansicht', en: 'Month view', el: 'Μηνιαία προβολή',
+    tr: 'Aylık görünüm', fr: 'Vue mensuelle', es: 'Vista mensual', it: 'Vista mensile',
+  },
+  'progress.yearView': {
+    de: 'Jahresansicht', en: 'Year view', el: 'Ετήσια προβολή',
+    tr: 'Yıllık görünüm', fr: 'Vue annuelle', es: 'Vista anual', it: 'Vista annuale',
+  },
+  'progress.total': {
+    de: 'Gesamt:', en: 'Total:', el: 'Σύνολο:',
+    tr: 'Toplam:', fr: 'Total :', es: 'Total:', it: 'Totale:',
+  },
+  'progress.week': {
+    de: 'Woche', en: 'Week', el: 'Εβδομάδα',
+    tr: 'Hafta', fr: 'Semaine', es: 'Semana', it: 'Settimana',
+  },
+  'progress.month': {
+    de: 'Monat', en: 'Month', el: 'Μήνας',
+    tr: 'Ay', fr: 'Mois', es: 'Mes', it: 'Mese',
+  },
+  'progress.year': {
+    de: 'Jahr', en: 'Year', el: 'Έτος',
+    tr: 'Yıl', fr: 'Année', es: 'Año', it: 'Anno',
+  },
+  'progress.books': {
+    de: 'Bücher', en: 'Books', el: 'Βιβλία',
+    tr: 'Kitaplar', fr: 'Livres', es: 'Libros', it: 'Libri',
+  },
+  'progress.vsPrevWeek': {
+    de: 'vs. Vorwoche', en: 'vs. last week', el: 'σε σχέση με την προηγούμενη εβδομάδα',
+    tr: 'geçen haftaya göre', fr: 'vs sem. préc.', es: 'vs semana ant.', it: 'vs sett. prec.',
+  },
+  'progress.letsGo': {
+    de: '📚 Los geht\'s!', en: '📚 Let\'s go!', el: '📚 Πάμε!',
+    tr: '📚 Hadi gidelim!', fr: '📚 C\'est parti !', es: '📚 ¡Vamos!', it: '📚 Andiamo!',
+  },
+  'progress.keepGoing': {
+    de: '💪 Weiter so!', en: '💪 Keep it up!', el: '💪 Συνέχισε!',
+    tr: '💪 Devam et!', fr: '💪 Continue !', es: '💪 ¡Sigue así!', it: '💪 Continua così!',
+  },
+
+  // ── EventsList ────────────────────────────────────────────────────────────
+  'events.title': {
+    de: 'Lese-Termine', en: 'Reading Events', el: 'Εκδηλώσεις ανάγνωσης',
+    tr: 'Okuma etkinlikleri', fr: 'Événements lecture', es: 'Eventos de lectura', it: 'Eventi di lettura',
+  },
+  'events.new': {
+    de: 'Neu', en: 'New', el: 'Νέο',
+    tr: 'Yeni', fr: 'Nouveau', es: 'Nuevo', it: 'Nuovo',
+  },
+  'events.loading': {
+    de: 'Lädt...', en: 'Loading...', el: 'Φόρτωση...',
+    tr: 'Yükleniyor...', fr: 'Chargement...', es: 'Cargando...', it: 'Caricamento...',
+  },
+  'events.empty': {
+    de: 'Noch keine Termine – jetzt erstellen', en: 'No events yet – create one now',
+    el: 'Δεν υπάρχουν εκδηλώσεις – δημιουργήστε τώρα', tr: 'Henüz etkinlik yok – şimdi oluşturun',
+    fr: 'Pas encore d\'événements – créez-en un', es: 'Aún no hay eventos – crea uno ahora', it: 'Nessun evento ancora – creane uno ora',
+  },
+  'events.today': {
+    de: 'Heute', en: 'Today', el: 'Σήμερα',
+    tr: 'Bugün', fr: 'Aujourd\'hui', es: 'Hoy', it: 'Oggi',
+  },
+
+  // ── QuotesSection ─────────────────────────────────────────────────────────
+  'quotes.title': {
+    de: 'Meine Zitate', en: 'My Quotes', el: 'Τα αποσπάσματά μου',
+    tr: 'Alıntılarım', fr: 'Mes citations', es: 'Mis citas', it: 'Le mie citazioni',
+  },
+  'quotes.new': {
+    de: 'Neu', en: 'New', el: 'Νέο',
+    tr: 'Yeni', fr: 'Nouveau', es: 'Nuevo', it: 'Nuovo',
+  },
+  'quotes.empty': {
+    de: 'Noch keine Zitate hinzugefügt', en: 'No quotes added yet',
+    el: 'Δεν έχουν προστεθεί αποσπάσματα', tr: 'Henüz alıntı eklenmedi',
+    fr: 'Aucune citation ajoutée', es: 'Aún no hay citas', it: 'Nessuna citazione ancora',
+  },
+  'quotes.camera': {
+    de: 'Kamera', en: 'Camera', el: 'Κάμερα',
+    tr: 'Kamera', fr: 'Caméra', es: 'Cámara', it: 'Fotocamera',
+  },
+  'quotes.manual': {
+    de: 'Manuell', en: 'Manual', el: 'Χειροκίνητα',
+    tr: 'Manuel', fr: 'Manuel', es: 'Manual', it: 'Manuale',
+  },
+  'quotes.placeholder': {
+    de: 'Zitat eingeben...', en: 'Enter quote...', el: 'Εισάγετε απόσπασμα...',
+    tr: 'Alıntı girin...', fr: 'Saisir une citation...', es: 'Ingresar cita...', it: 'Inserisci citazione...',
+  },
+  'quotes.pageNumber': {
+    de: 'Seitenzahl (optional)', en: 'Page number (optional)', el: 'Αριθμός σελίδας (προαιρετικό)',
+    tr: 'Sayfa numarası (isteğe bağlı)', fr: 'Numéro de page (optionnel)', es: 'Número de página (opcional)', it: 'Numero pagina (opzionale)',
+  },
+  'quotes.saving': {
+    de: 'Wird bearbeitet...', en: 'Saving...', el: 'Αποθήκευση...',
+    tr: 'Kaydediliyor...', fr: 'Enregistrement...', es: 'Guardando...', it: 'Salvataggio...',
+  },
+  'quotes.save': {
+    de: 'Speichern', en: 'Save', el: 'Αποθήκευση',
+    tr: 'Kaydet', fr: 'Enregistrer', es: 'Guardar', it: 'Salva',
+  },
+  'quotes.cancel': {
+    de: 'Abbrechen', en: 'Cancel', el: 'Άκυρο',
+    tr: 'İptal', fr: 'Annuler', es: 'Cancelar', it: 'Annulla',
+  },
+  'quotes.cameraHint': {
+    de: 'Fotografiere den Zitat-Text oder lade ein Bild hoch', en: 'Photograph the quote text or upload an image',
+    el: 'Φωτογράφισε το κείμενο ή ανέβασε εικόνα', tr: 'Alıntı metnini fotoğrafla veya resim yükle',
+    fr: 'Photographiez le texte ou téléchargez une image', es: 'Fotografía el texto o sube una imagen', it: 'Fotografa il testo o carica un\'immagine',
+  },
+  'quotes.pageAbbrev': {
+    de: 'S.', en: 'p.', el: 'σ.',
+    tr: 's.', fr: 'p.', es: 'p.', it: 'p.',
+  },
+
+  // ── ChallengesSection ─────────────────────────────────────────────────────
+  'challenges.title': {
+    de: 'Reading Challenges', en: 'Reading Challenges', el: 'Προκλήσεις ανάγνωσης',
+    tr: 'Okuma meydan okumaları', fr: 'Défis lecture', es: 'Retos de lectura', it: 'Sfide lettura',
+  },
+  'challenges.active': {
+    de: 'Deine aktiven Challenges:', en: 'Your active challenges:', el: 'Οι ενεργές προκλήσεις σου:',
+    tr: 'Aktif meydan okumalarım:', fr: 'Vos défis actifs :', es: 'Tus retos activos:', it: 'Le tue sfide attive:',
+  },
+  'challenges.more': {
+    de: 'Weitere Challenges', en: 'More Challenges', el: 'Περισσότερες προκλήσεις',
+    tr: 'Daha fazla meydan okuma', fr: 'Plus de défis', es: 'Más retos', it: 'Altre sfide',
+  },
+  'challenges.none': {
+    de: 'Keine Challenges verfügbar', en: 'No challenges available', el: 'Δεν υπάρχουν διαθέσιμες προκλήσεις',
+    tr: 'Mevcut meydan okuma yok', fr: 'Aucun défi disponible', es: 'No hay retos disponibles', it: 'Nessuna sfida disponibile',
+  },
+  'challenges.allJoined': {
+    de: 'Du hast an allen Challenges teilgenommen 🎉', en: 'You\'ve joined all challenges 🎉',
+    el: 'Συμμετέχεις σε όλες τις προκλήσεις 🎉', tr: 'Tüm meydan okumalara katıldın 🎉',
+    fr: 'Vous avez rejoint tous les défis 🎉', es: '¡Participas en todos los retos! 🎉', it: 'Hai partecipato a tutte le sfide 🎉',
+  },
+  'challenges.join': {
+    de: 'Beitreten', en: 'Join', el: 'Συμμετοχή',
+    tr: 'Katıl', fr: 'Rejoindre', es: 'Unirse', it: 'Partecipa',
+  },
+  'challenges.joining': {
+    de: 'Wird beigetreten...', en: 'Joining...', el: 'Γίνεται συμμετοχή...',
+    tr: 'Katılınıyor...', fr: 'Adhésion...', es: 'Uniéndose...', it: 'Partecipazione...',
+  },
+  'challenges.leave': {
+    de: 'Verlassen', en: 'Leave', el: 'Αποχώρηση',
+    tr: 'Ayrıl', fr: 'Quitter', es: 'Abandonar', it: 'Lascia',
+  },
+  'challenges.easy': {
+    de: 'Einfach', en: 'Easy', el: 'Εύκολο',
+    tr: 'Kolay', fr: 'Facile', es: 'Fácil', it: 'Facile',
+  },
+  'challenges.medium': {
+    de: 'Mittel', en: 'Medium', el: 'Μεσαίο',
+    tr: 'Orta', fr: 'Moyen', es: 'Medio', it: 'Medio',
+  },
+  'challenges.hard': {
+    de: 'Schwer', en: 'Hard', el: 'Δύσκολο',
+    tr: 'Zor', fr: 'Difficile', es: 'Difícil', it: 'Difficile',
+  },
+  'challenges.booksUnit': {
+    de: 'Bücher', en: 'books', el: 'βιβλία',
+    tr: 'kitap', fr: 'livres', es: 'libros', it: 'libri',
+  },
+  'challenges.pagesUnit': {
+    de: 'Seiten', en: 'pages', el: 'σελίδες',
+    tr: 'sayfa', fr: 'pages', es: 'páginas', it: 'pagine',
+  },
+  'challenges.participants': {
+    de: 'Teilnehmer', en: 'participants', el: 'συμμετέχοντες',
+    tr: 'katılımcı', fr: 'participants', es: 'participantes', it: 'partecipanti',
+  },
+
+  // ── FollowingSection ──────────────────────────────────────────────────────
+  'network.title': {
+    de: 'Mein Netzwerk', en: 'My Network', el: 'Το δίκτυό μου',
+    tr: 'Ağım', fr: 'Mon réseau', es: 'Mi red', it: 'La mia rete',
+  },
+  'network.iFollow': {
+    de: 'Ich folge', en: 'I follow', el: 'Ακολουθώ',
+    tr: 'Takip ettiklerim', fr: 'Je suis', es: 'Sigo', it: 'Seguo',
+  },
+  'network.followMe': {
+    de: 'Folgen mir', en: 'Follow me', el: 'Με ακολουθούν',
+    tr: 'Beni takip edenler', fr: 'Me suivent', es: 'Me siguen', it: 'Mi seguono',
+  },
+  'network.noFollowing': {
+    de: 'Du folgst noch niemandem.', en: 'You\'re not following anyone yet.',
+    el: 'Δεν ακολουθείς κανέναν ακόμα.', tr: 'Henüz kimseyi takip etmiyorsun.',
+    fr: 'Vous ne suivez personne pour l\'instant.', es: 'Aún no sigues a nadie.', it: 'Non stai ancora seguendo nessuno.',
+  },
+  'network.noFollowers': {
+    de: 'Noch keine Follower.', en: 'No followers yet.',
+    el: 'Δεν υπάρχουν ακόλουθοι ακόμα.', tr: 'Henüz takipçi yok.',
+    fr: 'Pas encore de followers.', es: 'Aún no hay seguidores.', it: 'Ancora nessun follower.',
+  },
+  'network.showAll': {
+    de: 'Alle', en: 'Show all', el: 'Όλοι',
+    tr: 'Tümünü göster', fr: 'Voir tous', es: 'Ver todos', it: 'Vedi tutti',
+  },
+
+  // ── Compass reflection questions ──────────────────────────────────────────
+  'compass.rq1': {
+    de: 'Was hat dich heute beim Lesen überrascht oder irritiert?',
+    en: 'What surprised or puzzled you while reading today?',
+    el: 'Τι σε εξέπληξε ή σε μπέρδεψε κατά την ανάγνωση σήμερα;',
+    tr: 'Bugün okurken seni şaşırtan ya da rahatsız eden ne oldu?',
+    fr: 'Qu\'est-ce qui vous a surpris ou dérangé lors de votre lecture aujourd\'hui ?',
+    es: '¿Qué te sorprendió o desconcertó mientras leías hoy?',
+    it: 'Cosa ti ha sorpreso o turbato mentre leggevi oggi?',
+  },
+  'compass.rq2': {
+    de: 'Welcher Gedanke aus dem Buch beschäftigt dich gerade am meisten?',
+    en: 'Which thought from the book is occupying you most right now?',
+    el: 'Ποια σκέψη από το βιβλίο σε απασχολεί περισσότερο τώρα;',
+    tr: 'Kitaptan hangi düşünce şu anda seni en çok meşgul ediyor?',
+    fr: 'Quelle pensée du livre vous occupe le plus en ce moment ?',
+    es: '¿Qué pensamiento del libro te ocupa más ahora mismo?',
+    it: 'Quale pensiero del libro ti occupa di più in questo momento?',
+  },
+  'compass.rq3': {
+    de: 'Was würdest du anders machen als die Person im Buch?',
+    en: 'What would you do differently from the person in the book?',
+    el: 'Τι θα έκανες διαφορετικά από τον χαρακτήρα στο βιβλίο;',
+    tr: 'Kitaptaki kişiden farklı ne yapardın?',
+    fr: 'Que feriez-vous différemment de la personne dans le livre ?',
+    es: '¿Qué harías diferente a la persona del libro?',
+    it: 'Cosa faresti diversamente dalla persona nel libro?',
+  },
+  'compass.rq4': {
+    de: 'Woran erinnert dich das Gelesene aus deinem eigenen Leben?',
+    en: 'What from your own life does the reading remind you of?',
+    el: 'Σε τι από τη ζωή σου σε θυμίζει αυτό που διάβασες;',
+    tr: 'Okuduklarınız kendi hayatınızdan neyi hatırlatıyor?',
+    fr: 'À quoi de votre vie personnelle cette lecture vous fait-elle penser ?',
+    es: '¿De qué de tu propia vida te recuerda lo leído?',
+    it: 'A cosa della tua vita ti ricorda ciò che hai letto?',
+  },
+  'compass.rq5': {
+    de: 'Was verstehst du jetzt besser als vor dieser Lesesession?',
+    en: 'What do you understand better now than before this reading session?',
+    el: 'Τι καταλαβαίνεις τώρα καλύτερα από ό,τι πριν;',
+    tr: 'Bu okuma oturumundan önceye göre şimdi neyi daha iyi anlıyorsun?',
+    fr: 'Qu\'est-ce que vous comprenez mieux maintenant qu\'avant cette session de lecture ?',
+    es: '¿Qué entiendes mejor ahora que antes de esta sesión de lectura?',
+    it: 'Cosa capisci meglio ora rispetto a prima di questa sessione di lettura?',
+  },
+
   'discover.bookLangHint': {
     de: 'Hinweis: Für Griechisch und Türkisch sind weniger Bücher indexiert.',
     en: 'Note: Fewer books are indexed for Greek and Turkish.',

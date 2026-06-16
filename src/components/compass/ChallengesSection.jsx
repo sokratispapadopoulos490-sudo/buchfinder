@@ -3,8 +3,10 @@ import { base44 } from '@/api/base44Client';
 import { Zap, ChevronDown } from 'lucide-react';
 import { toast } from 'sonner';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { useLanguage } from '@/components/language/LanguageContext';
 
 export default function ChallengesSection() {
+  const { t } = useLanguage();
   const [challenges, setChallenges] = useState([]);
   const [userChallenges, setUserChallenges] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -70,9 +72,9 @@ export default function ChallengesSection() {
   };
 
   const getDifficultyLabel = (goalValue) => {
-    if (goalValue <= 5) return 'Einfach';
-    if (goalValue <= 12) return 'Mittel';
-    return 'Schwer';
+    if (goalValue <= 5) return t('challenges.easy');
+    if (goalValue <= 12) return t('challenges.medium');
+    return t('challenges.hard');
   };
 
   const sortedChallenges = [...challenges].sort((a, b) => a.goal_value - b.goal_value);
@@ -85,14 +87,14 @@ export default function ChallengesSection() {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Zap className="w-5 h-5 text-amber-600 dark:text-amber-500" />
-          <h3 className="text-sm font-medium text-stone-700 dark:text-stone-300">Reading Challenges</h3>
+          <h3 className="text-sm font-medium text-stone-700 dark:text-stone-300">{t('challenges.title')}</h3>
         </div>
       </div>
 
       <div className="space-y-3">
         {joinedChallenges.length > 0 && (
           <>
-            <p className="text-xs font-medium text-amber-600 dark:text-amber-500 mb-2">Deine aktiven Challenges:</p>
+            <p className="text-xs font-medium text-amber-600 dark:text-amber-500 mb-2">{t('challenges.active')}</p>
             {joinedChallenges.map((challenge) => {
               const userProgress = userChallenges.find((uc) => uc.challenge_id === challenge.id);
               return (
@@ -126,7 +128,7 @@ export default function ChallengesSection() {
                     disabled={isLoading}
                     className="w-full px-3 py-2 text-xs rounded font-medium transition-colors bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50"
                   >
-                    Verlassen
+                    {t('challenges.leave')}
                   </button>
                 </div>
               );
@@ -135,16 +137,16 @@ export default function ChallengesSection() {
         )}
 
         {challenges.length === 0 ? (
-          <p className="text-xs text-stone-500 dark:text-stone-400 text-center py-4">Keine Challenges verfügbar</p>
+          <p className="text-xs text-stone-500 dark:text-stone-400 text-center py-4">{t('challenges.none')}</p>
         ) : (
           displayedChallenges.length === 0 && availableChallenges.length > 0 ? null : displayedChallenges.length === 0 ? (
-            <p className="text-xs text-stone-500 dark:text-stone-400 text-center py-4">Du hast an allen Challenges teilgenommen 🎉</p>
+            <p className="text-xs text-stone-500 dark:text-stone-400 text-center py-4">{t('challenges.allJoined')}</p>
           ) : (
             <>
               {availableChallenges.length > 0 && (
                 <Collapsible open={showAllChallenges} onOpenChange={setShowAllChallenges} className="mt-4">
                   <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-2 text-xs font-medium text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-lg transition-colors">
-                    <span>Weitere Challenges ({availableChallenges.length})</span>
+                    <span>{t('challenges.more')} ({availableChallenges.length})</span>
                     <ChevronDown className={`w-4 h-4 transition-transform ${showAllChallenges ? 'rotate-180' : ''}`} />
                   </CollapsibleTrigger>
                   <CollapsibleContent className="space-y-3 mt-3">
@@ -166,10 +168,10 @@ export default function ChallengesSection() {
 
                           <div className="flex items-center justify-between text-xs text-stone-500 dark:text-stone-400 mb-3">
                             <div>
-                              📚 {challenge.goal_value} {challenge.goal_type === 'books' ? 'Bücher' : 'Seiten'}
+                              📚 {challenge.goal_value} {challenge.goal_type === 'books' ? t('challenges.booksUnit') : t('challenges.pagesUnit')}
                             </div>
                             {challenge.participant_count > 0 && (
-                              <div>👥 {challenge.participant_count} Teilnehmer</div>
+                              <div>👥 {challenge.participant_count} {t('challenges.participants')}</div>
                             )}
                           </div>
 
@@ -196,7 +198,7 @@ export default function ChallengesSection() {
                                 : 'bg-amber-600 hover:bg-amber-700 text-white cursor-pointer'
                             }`}
                           >
-                            {isLoading ? 'Wird beigetreten...' : 'Beitreten'}
+                            {isLoading ? t('challenges.joining') : t('challenges.join')}
                           </button>
                         </div>
                       );

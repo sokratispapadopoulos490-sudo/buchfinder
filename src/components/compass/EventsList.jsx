@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Plus, Check, Trash2, Calendar, Clock } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import CreateEventModal from './CreateEventModal';
+import { useLanguage } from '@/components/language/LanguageContext';
 
 const CATEGORY_LABELS = {
   lesen: '📖 Buch lesen',
@@ -23,6 +24,7 @@ const CATEGORY_COLORS = {
 };
 
 export default function EventsList() {
+  const { t } = useLanguage();
   const [events, setEvents] = useState([]);
   const [showCreate, setShowCreate] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -56,33 +58,33 @@ export default function EventsList() {
   };
 
   const formatDate = (dateStr) => {
-    if (isToday(dateStr)) return 'Heute';
+    if (isToday(dateStr)) return t('events.today');
     const d = new Date(dateStr + 'T00:00:00');
-    return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' });
+    return d.toLocaleDateString(undefined, { day: '2-digit', month: '2-digit', year: '2-digit' });
   };
 
   return (
     <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-5 shadow-sm">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-medium text-stone-700 dark:text-stone-300">Lese-Termine</h3>
+        <h3 className="text-sm font-medium text-stone-700 dark:text-stone-300">{t('events.title')}</h3>
         <button
           onClick={() => setShowCreate(true)}
           className="flex items-center gap-1 text-xs text-amber-600 dark:text-amber-500 hover:underline font-medium"
         >
           <Plus className="w-3 h-3" />
-          Neu
+          {t('events.new')}
         </button>
       </div>
 
       {loading ? (
-        <div className="text-xs text-stone-400 dark:text-stone-500 py-2">Lädt...</div>
+        <div className="text-xs text-stone-400 dark:text-stone-500 py-2">{t('events.loading')}</div>
       ) : events.length === 0 ? (
         <button
           onClick={() => setShowCreate(true)}
           className="w-full py-6 text-center text-sm text-stone-400 dark:text-stone-500 border-2 border-dashed border-stone-200 dark:border-stone-700 rounded-xl hover:border-amber-300 dark:hover:border-amber-700 transition-colors"
         >
           <Calendar className="w-6 h-6 mx-auto mb-2 opacity-50" />
-          Noch keine Termine – jetzt erstellen
+          {t('events.empty')}
         </button>
       ) : (
         <div className="space-y-2">

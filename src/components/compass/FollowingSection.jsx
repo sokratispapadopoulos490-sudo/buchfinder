@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { Users, UserCheck } from 'lucide-react';
+import { useLanguage } from '@/components/language/LanguageContext';
 
 export default function FollowingSection() {
+  const { t } = useLanguage();
   const [following, setFollowing] = useState([]);
   const [followers, setFollowers] = useState([]);
   const [myEmail, setMyEmail] = useState('');
@@ -43,7 +45,7 @@ export default function FollowingSection() {
     <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-5 shadow-sm mb-6">
       <div className="flex items-center gap-2 mb-4">
         <Users className="w-4 h-4 text-amber-600" />
-        <span className="font-medium text-stone-800 dark:text-stone-200">Mein Netzwerk</span>
+        <span className="font-medium text-stone-800 dark:text-stone-200">{t('network.title')}</span>
       </div>
 
       {/* Tabs */}
@@ -56,7 +58,7 @@ export default function FollowingSection() {
               : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400'
           }`}
         >
-          Ich folge <span className="ml-1 opacity-70">({following.length})</span>
+          {t('network.iFollow')} <span className="ml-1 opacity-70">({following.length})</span>
         </button>
         <button
           onClick={() => setTab('followers')}
@@ -66,13 +68,13 @@ export default function FollowingSection() {
               : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400'
           }`}
         >
-          Folgen mir <span className="ml-1 opacity-70">({followers.length})</span>
+          {t('network.followMe')} <span className="ml-1 opacity-70">({followers.length})</span>
         </button>
       </div>
 
       {list.length === 0 ? (
         <div className="text-center py-4 text-stone-400 text-sm">
-          {tab === 'following' ? 'Du folgst noch niemandem.' : 'Noch keine Follower.'}
+          {tab === 'following' ? t('network.noFollowing') : t('network.noFollowers')}
         </div>
       ) : (
         <div className="space-y-2">
@@ -101,7 +103,7 @@ export default function FollowingSection() {
               onClick={() => navigate('/Community?tab=following')}
               className="w-full text-xs text-amber-600 text-center py-1 hover:underline"
             >
-              Alle {list.length} anzeigen
+              {t('network.showAll')} {list.length}
             </button>
           )}
         </div>
