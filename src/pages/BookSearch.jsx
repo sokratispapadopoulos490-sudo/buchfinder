@@ -310,6 +310,22 @@ function BookSearchContent() {
   const t = langCtx?.t || ((k) => k);
   const contextBookLanguage = langCtx?.bookLanguage || null;
 
+  // Robust start path: watch URL hash so even if React synthetic click is flaky
+  // (e.g. sandboxed iframe preview), navigating to #start still triggers phase change.
+  useEffect(() => {
+    const applyHash = () => {
+      if (window.location.hash === '#start') {
+        setPhase('questions');
+        setCurrentQuestion(0);
+        // clean up hash without triggering another hashchange
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+      }
+    };
+    applyHash(); // handle if already set on mount
+    window.addEventListener('hashchange', applyHash);
+    return () => window.removeEventListener('hashchange', applyHash);
+  }, []);
+
   useEffect(() => {
     checkAuth();
   }, []);
@@ -336,7 +352,11 @@ function BookSearchContent() {
   };
 
   const handleStart = () => {
+    // Primary: direct React state update
     setPhase('questions');
+    setCurrentQuestion(0);
+    // Secondary: hash-based fallback for sandboxed iframe / flaky click events
+    window.location.hash = '#start';
   };
 
   const advanceOrFinish = (newAnswers) => {
@@ -527,23 +547,17 @@ function BookSearchContent() {
               </p>
             </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="flex flex-col items-center gap-4 relative z-10"
-            >
-              <button
-                type="button"
-                onClick={handleStart}
-                style={{ backgroundColor: '#d97706', color: '#ffffff' }}
-                className="flex items-center gap-2 px-10 py-4 text-base font-medium rounded-xl shadow-sm hover:opacity-90 active:opacity-80 transition-opacity cursor-pointer"
+            <div className="flex flex-col items-center gap-4 relative z-10">
+              <a
+                href="#start"
+                onClick={(e) => { e.preventDefault(); handleStart(); }}
+                style={{ backgroundColor: '#d97706', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '8px', padding: '16px 40px', fontSize: '1rem', fontWeight: 500, borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.12)', textDecoration: 'none', cursor: 'pointer' }}
               >
                 Neue Suche starten
                 <ArrowRight className="w-5 h-5" />
-              </button>
+              </a>
               <p className="text-xs text-stone-400 dark:text-stone-500">Kostenlos in der Beta</p>
-            </motion.div>
+            </div>
           </motion.div>
         )}
 
