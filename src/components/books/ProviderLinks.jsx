@@ -59,11 +59,14 @@ function ProviderButton({ link, t }) {
   );
 }
 
-function SectionLabel({ children }) {
+function SectionHeader({ title, subtitle, isFirst = false }) {
   return (
-    <p className="text-[10px] uppercase tracking-wider font-semibold text-stone-400 dark:text-stone-500 mt-3 mb-1 first:mt-0">
-      {children}
-    </p>
+    <div className={`${isFirst ? '' : 'mt-4'} mb-2`}>
+      <p className="text-xs font-semibold text-stone-700 dark:text-stone-200 leading-tight">{title}</p>
+      {subtitle && (
+        <p className="text-[11px] text-stone-400 dark:text-stone-500 mt-0.5 leading-tight">{subtitle}</p>
+      )}
+    </div>
   );
 }
 
@@ -116,10 +119,12 @@ export default function ProviderLinks({ book, shoppingRegion = 'DE', bookLanguag
         {/* Group 1: Buchsprach-Region */}
         {langLinks.length > 0 && (
           <>
-            <SectionLabel>
-              {FLAG_MAP[langRegion] || ''} Passend zur Buchsprache ({LANG_LABEL[bookLanguage] || bookLanguage})
-            </SectionLabel>
-            <div className="space-y-2 mb-2">
+            <SectionHeader
+              isFirst
+              title={`${FLAG_MAP[langRegion] || ''} Passend zur Buchsprache`}
+              subtitle={`${LANG_LABEL[bookLanguage] || bookLanguage}sprachige Anbieter`}
+            />
+            <div className="space-y-2">
               {langLinks.map(link => <ProviderButton key={link.providerId + link.url} link={link} t={t} />)}
             </div>
           </>
@@ -128,10 +133,11 @@ export default function ProviderLinks({ book, shoppingRegion = 'DE', bookLanguag
         {/* Group 2: Kaufregion */}
         {shopLinks.length > 0 && (
           <>
-            <SectionLabel>
-              {FLAG_MAP[shoppingRegion] || ''} In deiner Kaufregion ({shoppingRegion})
-            </SectionLabel>
-            <div className="space-y-2 mb-2">
+            <SectionHeader
+              title={`${FLAG_MAP[shoppingRegion] || ''} In deiner Kaufregion`}
+              subtitle={`Suche in ${shoppingRegion}`}
+            />
+            <div className="space-y-2">
               {shopLinks.map(link => <ProviderButton key={link.providerId + link.url} link={link} t={t} />)}
             </div>
           </>
@@ -142,11 +148,13 @@ export default function ProviderLinks({ book, shoppingRegion = 'DE', bookLanguag
           <>
             <button
               onClick={() => setShowUsed(v => !v)}
-              className="w-full flex items-center justify-center gap-1.5 py-1.5 text-xs text-stone-500 dark:text-stone-400 hover:text-amber-600 dark:hover:text-amber-500 transition-colors"
+              className="w-full flex items-center justify-between gap-2 px-1 py-2 mt-2 text-xs font-semibold text-stone-600 dark:text-stone-300 hover:text-amber-600 dark:hover:text-amber-500 transition-colors border-t border-stone-100 dark:border-stone-800"
             >
-              <Tag className="w-3 h-3" />
-              Gebraucht &amp; Marktplatz
-              {showUsed ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+              <span className="flex items-center gap-1.5">
+                <Tag className="w-3.5 h-3.5" />
+                Gebraucht &amp; Marktplatz
+              </span>
+              {showUsed ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
             </button>
             {showUsed && (
               <div className="space-y-2">
