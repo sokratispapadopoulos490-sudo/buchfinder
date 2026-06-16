@@ -288,6 +288,90 @@ const dict = {
     de: 'Mein Account', en: 'My Account', el: 'Ο λογαριασμός μου',
     tr: 'Hesabım', fr: 'Mon compte', es: 'Mi cuenta', it: 'Il mio account',
   },
+  'account.loading': {
+    de: 'Lädt...', en: 'Loading...', el: 'Φόρτωση...', tr: 'Yükleniyor...', fr: 'Chargement...', es: 'Cargando...', it: 'Caricamento...',
+  },
+  'account.editProfile': {
+    de: 'Profil bearbeiten', en: 'Edit Profile', el: 'Επεξεργασία προφίλ', tr: 'Profili düzenle', fr: 'Modifier le profil', es: 'Editar perfil', it: 'Modifica profilo',
+  },
+  'account.editProfileSub': {
+    de: 'Name, Bio, Genres anpassen', en: 'Adjust name, bio, genres', el: 'Όνομα, βιογραφικό, είδη', tr: 'İsim, bio, türler', fr: 'Nom, bio, genres', es: 'Nombre, bio, géneros', it: 'Nome, bio, generi',
+  },
+  'account.upgradePremium': {
+    de: 'Auf Premium upgraden', en: 'Upgrade to Premium', el: 'Αναβάθμιση σε Premium', tr: 'Premium\'a geç', fr: 'Passer à Premium', es: 'Mejorar a Premium', it: 'Passa a Premium',
+  },
+  'account.betaBadge': {
+    de: 'Kostenlos Beta', en: 'Free Beta', el: 'Δωρεάν Beta', tr: 'Ücretsiz Beta', fr: 'Beta gratuit', es: 'Beta gratuita', it: 'Beta gratuito',
+  },
+  'account.premiumBadge': {
+    de: 'Premium', en: 'Premium', el: 'Premium', tr: 'Premium', fr: 'Premium', es: 'Premium', it: 'Premium',
+  },
+  'account.history': {
+    de: 'Empfehlungsverlauf', en: 'Recommendation History', el: 'Ιστορικό προτάσεων', tr: 'Öneri geçmişi', fr: 'Historique des recommandations', es: 'Historial de recomendaciones', it: 'Cronologia consigli',
+  },
+  'account.noRecommendations': {
+    de: 'Noch keine Empfehlungen erhalten', en: 'No recommendations yet', el: 'Δεν υπάρχουν ακόμα προτάσεις', tr: 'Henüz öneri yok', fr: 'Aucune recommandation encore', es: 'Aún no hay recomendaciones', it: 'Ancora nessun consiglio',
+  },
+  'account.firstRecommendation': {
+    de: 'Erste Empfehlung erhalten', en: 'Get first recommendation', el: 'Πάρε την πρώτη σου πρόταση', tr: 'İlk öneriyi al', fr: 'Obtenir la première recommandation', es: 'Obtener primera recomendación', it: 'Ottieni il primo consiglio',
+  },
+  'account.moreAvailable': {
+    de: 'weitere verfügbar', en: 'more available', el: 'περισσότερα διαθέσιμα', tr: 'daha fazlası mevcut', fr: 'de plus disponibles', es: 'más disponibles', it: 'altri disponibili',
+  },
+  'account.showWithPremium': {
+    de: 'Mit Premium anzeigen', en: 'Show with Premium', el: 'Εμφάνιση με Premium', tr: 'Premium ile göster', fr: 'Afficher avec Premium', es: 'Mostrar con Premium', it: 'Mostra con Premium',
+  },
+  'account.moreResults': {
+    de: 'weitere', en: 'more', el: 'περισσότερα', tr: 'daha fazla', fr: 'de plus', es: 'más', it: 'altri',
+  },
+  'account.deleteConfirm': {
+    de: 'Möchtest du diese Empfehlung wirklich löschen?', en: 'Really delete this recommendation?', el: 'Να διαγραφεί αυτή η πρόταση;', tr: 'Bu öneriyi silmek istiyor musun?', fr: 'Supprimer cette recommandation ?', es: '¿Eliminar esta recomendación?', it: 'Eliminare questo consiglio?',
+  },
+  'account.settings': {
+    de: 'Einstellungen', en: 'Settings', el: 'Ρυθμίσεις', tr: 'Ayarlar', fr: 'Paramètres', es: 'Configuración', it: 'Impostazioni',
+  },
+  'account.appLanguage': {
+    de: 'App-Sprache', en: 'App Language', el: 'Γλώσσα εφαρμογής', tr: 'Uygulama dili', fr: 'Langue de l\'app', es: 'Idioma de la app', it: 'Lingua app',
+  },
+  'account.appLanguageSub': {
+    de: 'Oberfläche – nicht die Buchsprache', en: 'Interface – not the book language', el: 'Διεπαφή – όχι γλώσσα βιβλίου', tr: 'Arayüz – kitap dili değil', fr: 'Interface – pas la langue du livre', es: 'Interfaz – no el idioma del libro', it: 'Interfaccia – non la lingua del libro',
+  },
+  'account.publicProfile': {
+    de: 'Profil öffentlich', en: 'Public Profile', el: 'Δημόσιο προφίλ', tr: 'Herkese açık profil', fr: 'Profil public', es: 'Perfil público', it: 'Profilo pubblico',
+  },
+  'account.publicProfileSub': {
+    de: 'Andere Nutzer können dein Profil sehen', en: 'Other users can see your profile', el: 'Άλλοι χρήστες μπορούν να δουν το προφίλ σου', tr: 'Diğer kullanıcılar profilini görebilir', fr: 'Les autres utilisateurs peuvent voir votre profil', es: 'Otros usuarios pueden ver tu perfil', it: 'Gli altri utenti possono vedere il tuo profilo',
+  },
+  'account.notifications': {
+    de: 'Benachrichtigungen', en: 'Notifications', el: 'Ειδοποιήσεις', tr: 'Bildirimler', fr: 'Notifications', es: 'Notificaciones', it: 'Notifiche',
+  },
+  'account.notif.comments': {
+    de: 'Kommentare', en: 'Comments', el: 'Σχόλια', tr: 'Yorumlar', fr: 'Commentaires', es: 'Comentarios', it: 'Commenti',
+  },
+  'account.notif.likes': {
+    de: 'Likes', en: 'Likes', el: 'Likes', tr: 'Beğeniler', fr: 'J\'aime', es: 'Me gusta', it: 'Mi piace',
+  },
+  'account.notif.messages': {
+    de: 'Nachrichten', en: 'Messages', el: 'Μηνύματα', tr: 'Mesajlar', fr: 'Messages', es: 'Mensajes', it: 'Messaggi',
+  },
+  'account.exportData': {
+    de: 'Daten exportieren', en: 'Export Data', el: 'Εξαγωγή δεδομένων', tr: 'Veriyi dışa aktar', fr: 'Exporter les données', es: 'Exportar datos', it: 'Esporta dati',
+  },
+  'account.exportDataSub': {
+    de: 'Alle deine Daten herunterladen', en: 'Download all your data', el: 'Κατέβασε όλα τα δεδομένα σου', tr: 'Tüm verilerini indir', fr: 'Télécharger toutes vos données', es: 'Descargar todos tus datos', it: 'Scarica tutti i tuoi dati',
+  },
+  'account.exportConfirm': {
+    de: 'Möchtest du alle deine Daten exportieren?', en: 'Export all your data?', el: 'Εξαγωγή όλων των δεδομένων;', tr: 'Tüm verilerini dışa aktarmak istiyor musun?', fr: 'Exporter toutes vos données ?', es: '¿Exportar todos tus datos?', it: 'Esportare tutti i tuoi dati?',
+  },
+  'account.logout': {
+    de: 'Abmelden', en: 'Logout', el: 'Αποσύνδεση', tr: 'Çıkış yap', fr: 'Déconnexion', es: 'Cerrar sesión', it: 'Esci',
+  },
+  'account.goHome': {
+    de: 'Zur Startseite', en: 'Go to Home', el: 'Αρχική σελίδα', tr: 'Ana sayfaya git', fr: 'Aller à l\'accueil', es: 'Ir a inicio', it: 'Vai alla home',
+  },
+  'account.legal': {
+    de: 'Rechtliche Hinweise', en: 'Legal Notice', el: 'Νομικές πληροφορίες', tr: 'Yasal bildirim', fr: 'Mentions légales', es: 'Aviso legal', it: 'Note legali',
+  },
 
   // ── Phase 2: Buchsprache (bookLanguage) ───────────────────────────────────
   'bookLang.label': {

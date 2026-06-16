@@ -26,7 +26,7 @@ function AccountContent() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const navigate = useNavigate();
-  const { language, changeLanguage } = useLanguage();
+  const { language, changeLanguage, t } = useLanguage();
 
   // Only languages that have full i18n translations
   const UI_LANGUAGES = [
@@ -71,7 +71,7 @@ function AccountContent() {
   };
 
   const handleDeleteRecommendation = async (recId) => {
-    if (confirm('Möchtest du diese Empfehlung wirklich löschen?')) {
+    if (confirm(t('account.deleteConfirm'))) {
       await base44.entities.Recommendation.delete(recId);
       setRecommendations(recommendations.filter(r => r.id !== recId));
     }
@@ -80,7 +80,7 @@ function AccountContent() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-stone-50 dark:bg-[#0a0a0a]">
-        <div className="text-stone-500">Lädt...</div>
+        <div className="text-stone-500">{t('account.loading', 'Lädt...')}</div>
       </div>
     );
   }
@@ -144,9 +144,13 @@ function AccountContent() {
                     )}
                   </div>
                 )}
-                {isPremium && (
+                {isPremium ? (
                   <span className="inline-flex items-center gap-1 bg-amber-600 text-white px-2.5 py-0.5 rounded-full text-xs font-medium mt-2">
-                    <Crown className="w-3 h-3" /> Premium
+                    <Crown className="w-3 h-3" /> {t('account.premiumBadge', 'Premium')}
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 bg-stone-100 dark:bg-stone-800 text-stone-500 dark:text-stone-400 px-2.5 py-0.5 rounded-full text-xs font-medium mt-2">
+                    {t('account.betaBadge', 'Kostenlos Beta')}
                   </span>
                 )}
               </div>
@@ -160,8 +164,8 @@ function AccountContent() {
               <div className="flex items-center gap-3">
                 <Edit className="w-4 h-4 text-amber-600" />
                 <div className="text-left">
-                  <div className="text-sm font-medium text-stone-800 dark:text-stone-200">Profil bearbeiten</div>
-                  <div className="text-xs text-stone-500">Name, Bio, Genres anpassen</div>
+                  <div className="text-sm font-medium text-stone-800 dark:text-stone-200">{t('account.editProfile')}</div>
+                  <div className="text-xs text-stone-500">{t('account.editProfileSub')}</div>
                 </div>
               </div>
               <ChevronRight className="w-4 h-4 text-stone-400" />
@@ -172,7 +176,7 @@ function AccountContent() {
                 onClick={() => navigate('/Premium')}
                 className="w-full mt-3 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white gap-2"
               >
-                <Crown className="w-4 h-4" /> Auf Premium upgraden
+                <Crown className="w-4 h-4" /> {t('account.upgradePremium')}
               </Button>
             )}
           </div>
@@ -190,7 +194,7 @@ function AccountContent() {
           <CollapsibleTrigger className="w-full flex items-center justify-between p-4 bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 hover:border-amber-300 transition-colors shadow-sm">
             <div className="flex items-center gap-3">
               <Clock className="w-5 h-5 text-amber-600" />
-              <span className="font-medium text-stone-800 dark:text-stone-200">Empfehlungsverlauf</span>
+              <span className="font-medium text-stone-800 dark:text-stone-200">{t('account.history')}</span>
               <span className="text-xs text-stone-400 bg-stone-100 dark:bg-stone-800 px-2 py-0.5 rounded-full">{recommendations.length}</span>
             </div>
             <ChevronDown className={`w-4 h-4 text-stone-400 transition-transform ${historyOpen ? 'rotate-180' : ''}`} />
@@ -200,9 +204,9 @@ function AccountContent() {
               {recommendations.length === 0 ? (
                 <div className="text-center py-6">
                   <Compass className="w-10 h-10 text-stone-300 mx-auto mb-3" />
-                  <p className="text-stone-500 text-sm">Noch keine Empfehlungen erhalten</p>
+                  <p className="text-stone-500 text-sm">{t('account.noRecommendations')}</p>
                   <Button onClick={() => navigate('/Compass')} size="sm" className="mt-3 bg-stone-800 hover:bg-stone-700 text-white">
-                    Erste Empfehlung erhalten
+                    {t('account.firstRecommendation')}
                   </Button>
                 </div>
               ) : (
@@ -223,16 +227,16 @@ function AccountContent() {
                           <span key={i} className="bg-stone-50 dark:bg-stone-800 px-3 py-1 rounded-full text-xs text-stone-700 dark:text-stone-300">{book.title}</span>
                         ))}
                         {rec.books?.length > 3 && (
-                          <span className="bg-stone-100 dark:bg-stone-700 px-3 py-1 rounded-full text-xs text-stone-500">+{rec.books.length - 3} weitere</span>
+                          <span className="bg-stone-100 dark:bg-stone-700 px-3 py-1 rounded-full text-xs text-stone-500">+{rec.books.length - 3} {t('account.moreResults')}</span>
                         )}
                       </div>
                     </div>
                   ))}
                   {!isPremium && recommendations.length > freeLimit && (
                     <div className="border-2 border-dashed border-stone-200 dark:border-stone-700 rounded-xl p-4 text-center">
-                      <p className="text-stone-500 text-sm mb-2">{recommendations.length - freeLimit} weitere verfügbar</p>
+                      <p className="text-stone-500 text-sm mb-2">{recommendations.length - freeLimit} {t('account.moreAvailable')}</p>
                       <Button onClick={() => navigate('/Premium')} size="sm" variant="outline" className="gap-1">
-                        <Crown className="w-3 h-3" /> Mit Premium anzeigen
+                        <Crown className="w-3 h-3" /> {t('account.showWithPremium')}
                       </Button>
                     </div>
                   )}
@@ -247,7 +251,7 @@ function AccountContent() {
           <CollapsibleTrigger className="w-full flex items-center justify-between p-4 bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 hover:border-amber-300 transition-colors shadow-sm">
             <div className="flex items-center gap-3">
               <Globe className="w-5 h-5 text-amber-600" />
-              <span className="font-medium text-stone-800 dark:text-stone-200">Einstellungen</span>
+              <span className="font-medium text-stone-800 dark:text-stone-200">{t('account.settings')}</span>
             </div>
             <ChevronDown className={`w-4 h-4 text-stone-400 transition-transform ${settingsOpen ? 'rotate-180' : ''}`} />
           </CollapsibleTrigger>
@@ -259,8 +263,8 @@ function AccountContent() {
                 <div className="flex items-center gap-3">
                   <Globe className="w-4 h-4 text-stone-500" />
                   <div>
-                    <div className="text-sm font-medium text-stone-800 dark:text-stone-200">App-Sprache</div>
-                    <div className="text-xs text-stone-500">Oberfläche – nicht die Buchsprache</div>
+                    <div className="text-sm font-medium text-stone-800 dark:text-stone-200">{t('account.appLanguage')}</div>
+                    <div className="text-xs text-stone-500">{t('account.appLanguageSub')}</div>
                   </div>
                 </div>
                 <select
@@ -282,8 +286,8 @@ function AccountContent() {
                 <div className="flex items-center gap-3">
                   <Lock className="w-4 h-4 text-stone-500" />
                   <div>
-                    <div className="text-sm font-medium text-stone-800 dark:text-stone-200">Profil öffentlich</div>
-                    <div className="text-xs text-stone-500">Andere Nutzer können dein Profil sehen</div>
+                    <div className="text-sm font-medium text-stone-800 dark:text-stone-200">{t('account.publicProfile')}</div>
+                    <div className="text-xs text-stone-500">{t('account.publicProfileSub')}</div>
                   </div>
                 </div>
                 <button
@@ -302,15 +306,15 @@ function AccountContent() {
               <div className="p-3 border border-stone-200 dark:border-stone-700 rounded-xl space-y-3">
                 <div className="flex items-center gap-2 mb-1">
                   <Bell className="w-4 h-4 text-stone-500" />
-                  <span className="text-sm font-medium text-stone-800 dark:text-stone-200">Benachrichtigungen</span>
+                  <span className="text-sm font-medium text-stone-800 dark:text-stone-200">{t('account.notifications')}</span>
                 </div>
                 {[
-                  { key: 'notification_comments', label: 'Kommentare' },
-                  { key: 'notification_likes', label: 'Likes' },
-                  { key: 'notification_messages', label: 'Nachrichten' },
-                ].map(({ key, label }) => (
+                  { key: 'notification_comments', labelKey: 'account.notif.comments' },
+                  { key: 'notification_likes',    labelKey: 'account.notif.likes' },
+                  { key: 'notification_messages', labelKey: 'account.notif.messages' },
+                ].map(({ key, labelKey }) => (
                   <div key={key} className="flex items-center justify-between">
-                    <span className="text-sm text-stone-600 dark:text-stone-400">{label}</span>
+                    <span className="text-sm text-stone-600 dark:text-stone-400">{t(labelKey)}</span>
                     <button
                       onClick={async () => {
                         const newVal = !(user[key] !== false);
@@ -328,7 +332,7 @@ function AccountContent() {
               {/* Daten exportieren */}
               <button
                 onClick={async () => {
-                  if (confirm('Möchtest du alle deine Daten exportieren?')) {
+                  if (confirm(t('account.exportConfirm'))) {
                     const data = { user, savedBooks, readingLogs, recommendations };
                     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
                     const url = window.URL.createObjectURL(blob);
@@ -342,8 +346,8 @@ function AccountContent() {
               >
                 <Download className="w-4 h-4 text-stone-500" />
                 <div>
-                  <div className="text-sm font-medium text-stone-800 dark:text-stone-200">Daten exportieren</div>
-                  <div className="text-xs text-stone-500">Alle deine Daten herunterladen</div>
+                  <div className="text-sm font-medium text-stone-800 dark:text-stone-200">{t('account.exportData')}</div>
+                  <div className="text-xs text-stone-500">{t('account.exportDataSub')}</div>
                 </div>
               </button>
 
@@ -353,7 +357,7 @@ function AccountContent() {
                 className="w-full flex items-center gap-3 p-3 border border-red-200 dark:border-red-900 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-left"
               >
                 <LogOut className="w-4 h-4 text-red-500" />
-                <div className="text-sm font-medium text-red-500">Abmelden</div>
+                <div className="text-sm font-medium text-red-500">{t('account.logout')}</div>
               </button>
             </div>
           </CollapsibleContent>
@@ -362,11 +366,11 @@ function AccountContent() {
         {/* Bottom actions */}
         <div className="space-y-3">
           <Button onClick={() => navigate('/Home')} className="w-full bg-amber-600 hover:bg-amber-700 text-white gap-2">
-            <Compass className="w-4 h-4" /> Zur Startseite
+            <Compass className="w-4 h-4" /> {t('account.goHome')}
           </Button>
           <div className="text-center">
             <button onClick={() => navigate('/Legal')} className="text-sm text-stone-500 hover:text-stone-700 transition-colors">
-              Rechtliche Hinweise
+              {t('account.legal')}
             </button>
           </div>
         </div>
