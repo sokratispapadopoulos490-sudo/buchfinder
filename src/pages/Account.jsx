@@ -26,7 +26,18 @@ function AccountContent() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const navigate = useNavigate();
-  const { language, changeLanguage, supportedLanguages } = useLanguage();
+  const { language, changeLanguage } = useLanguage();
+
+  // Only languages that have full i18n translations
+  const UI_LANGUAGES = [
+    { code: 'de', name: 'Deutsch',    flag: '🇩🇪' },
+    { code: 'en', name: 'English',    flag: '🇬🇧' },
+    { code: 'el', name: 'Ελληνικά',  flag: '🇬🇷' },
+    { code: 'tr', name: 'Türkçe',    flag: '🇹🇷' },
+    { code: 'fr', name: 'Français',  flag: '🇫🇷' },
+    { code: 'es', name: 'Español',   flag: '🇪🇸' },
+    { code: 'it', name: 'Italiano',  flag: '🇮🇹' },
+  ];
 
   useEffect(() => { loadAccountData(); }, []);
 
@@ -243,13 +254,13 @@ function AccountContent() {
           <CollapsibleContent>
             <div className="bg-white dark:bg-[#1a1a1a] border border-t-0 border-stone-200 dark:border-stone-700 rounded-b-2xl p-4 space-y-3">
 
-              {/* Sprache */}
+              {/* App-UI Sprache (ändert NICHT die Buchsprache) */}
               <div className="flex items-center justify-between p-3 border border-stone-200 dark:border-stone-700 rounded-xl">
                 <div className="flex items-center gap-3">
                   <Globe className="w-4 h-4 text-stone-500" />
                   <div>
-                    <div className="text-sm font-medium text-stone-800 dark:text-stone-200">Sprache</div>
-                    <div className="text-xs text-stone-500">App-Sprache ändern</div>
+                    <div className="text-sm font-medium text-stone-800 dark:text-stone-200">App-Sprache</div>
+                    <div className="text-xs text-stone-500">Oberfläche – nicht die Buchsprache</div>
                   </div>
                 </div>
                 <select
@@ -257,7 +268,7 @@ function AccountContent() {
                   onChange={(e) => changeLanguage(e.target.value)}
                   className="appearance-none bg-stone-50 dark:bg-[#262626] border border-stone-300 dark:border-stone-600 rounded-lg px-3 py-2 text-sm text-stone-700 dark:text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
                 >
-                  {supportedLanguages.map((lang) => (
+                  {UI_LANGUAGES.map((lang) => (
                     <option key={lang.code} value={lang.code}>{lang.flag} {lang.name}</option>
                   ))}
                 </select>
