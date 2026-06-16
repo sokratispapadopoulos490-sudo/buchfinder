@@ -193,97 +193,24 @@ function buildQuestionSets(t) {
 
 
 
-const generateReasons = (book, profile) => {
+const generateReasons = (book, profile, t) => {
   const bookTags = book.tags || book.categories || [];
   const bookStyle = book.style || book.reading_style || [];
-  const topicMatch = (profile.mainTopics || []).find(t => bookTags.includes(t));
+  const topicMatch = (profile.mainTopics || []).find(topic => bookTags.includes(topic));
   const styleMatch = (profile.style || []).find(s => bookStyle.includes(s));
 
-  const topicReasons = {
-    persoenliche_entwicklung: "Spricht dein Bedürfnis nach Selbstentwicklung an",
-    stress_ruhe: "Hilft dir, mehr Ruhe zu finden",
-    fokus_produktivitaet: "Unterstützt dich bei Fokus und Produktivität",
-    beziehung_kommunikation: "Stärkt deine Beziehungskompetenz",
-    sinn_philosophie: "Berührt die großen Lebensfragen",
-    kreativitaet: "Fördert deine kreative Seite",
-    lernen_wissen: "Erweitert dein Wissen",
-    koerper_gesundheit: "Unterstützt deine Gesundheit",
-    fantasy_scifi: "Entführt dich in faszinierende Fantasiewelten",
-    thriller_krimi: "Fesselt dich mit Spannung bis zur letzten Seite",
-    romance: "Berührt dein Herz mit emotionalen Geschichten",
-    historisch: "Lässt vergangene Epochen lebendig werden",
-    literatur: "Bietet tiefgründige, kunstvolle Erzählkunst",
-    humor: "Bringt dich zum Lachen und Schmunzeln",
-    abenteuer: "Nimmt dich mit auf spannende Reisen",
-    freundschaft: "Zeigt die Kraft von Freundschaft",
-    magie: "Entführt dich in magische Welten",
-    lustiges: "Bringt dich zum Lachen",
-    mut: "Inspiriert zu mutigen Schritten",
-    schule: "Begleitet durch den Schulalltag",
-    selbstfindung: "Hilft dir, dich selbst zu verstehen",
-    liebe: "Berührt das Herz"
-  };
-
-  const styleReasons = {
-    praktisch: "Der praktische Stil passt zu deiner Vorliebe für Umsetzbarkeit",
-    wissenschaftlich: "Wissenschaftlich fundiert – genau wie du es magst",
-    story: "Erzählerisch geschrieben – für deinen bevorzugten Lesestil",
-    reflektierend: "Lädt zum Nachdenken ein – passend zu deinem Stil",
-    kurz: "Kompakt und prägnant – ideal für deine Lesezeit",
-    anspruchsvoll: "Mit Tiefgang – genau richtig für dich"
-  };
-
-  const bookSpecificReasons = {
-    "Atomic Habits": "Dieses Buch zeigt dir, wie kleinste Veränderungen große Wirkung haben – perfekt für nachhaltigen Wandel.",
-    "Die Kunst des klaren Denkens": "52 kompakte Denkfehler-Analysen – jede für sich ein Aha-Moment.",
-    "Der Weg des Künstlers": "Ein bewährtes 12-Wochen-Programm, das schon Tausende kreativer gemacht hat.",
-    "Stille": "Kagges Polarerfahrungen machen Stille greifbar – ein Gegenpol zur lauten Welt.",
-    "Deep Work": "Newport zeigt wissenschaftlich, wie du in einer Ablenkungswelt fokussiert bleibst.",
-    "Gewaltfreie Kommunikation": "Rosenbergs Methode hat Beziehungen weltweit verändert – auch deine?",
-    "Der Mönch, der seinen Ferrari verkaufte": "Eine inspirierende Parabel über das Wesentliche im Leben.",
-    "Thinking, Fast and Slow": "Kahnemans Forschung erklärt, warum wir denken, wie wir denken.",
-    "Ikigai": "Das japanische Konzept des Lebenszwecks – kurz und einprägsam erklärt.",
-    "Essentialism": "McKeown zeigt, wie 'weniger aber besser' dein Leben vereinfacht.",
-    "Der kleine Prinz": "Die zeitlose Geschichte über Freundschaft, die Generationen berührt.",
-    "Das magische Baumhaus": "Zeitreisen machen Geschichte lebendig und spannend.",
-    "Greg's Tagebuch": "Comics und Text perfekt kombiniert – Lesespaß garantiert.",
-    "Die Schule der magischen Tiere": "Jeder bekommt sein perfektes Tier – welches wäre deins?",
-    "Harry Potter und der Stein der Weisen": "Der Beginn einer Saga, die Millionen verzaubert hat.",
-    "Matilda": "Dahls Geschichte über ein kluges Mädchen, das sich behauptet.",
-    "Die Tribute von Panem": "Katniss' Mut inspiriert – eine Geschichte über Widerstand.",
-    "Das Schicksal ist ein mieser Verräter": "John Green berührt mit seiner ehrlichen Erzählweise.",
-    "Tschick": "Ein deutscher Klassiker über Freundschaft und Freiheit."
-  };
-
-  const bookSpecificReason = bookSpecificReasons[book.title] || book.description;
-
-  const practicalGains = {
-    persoenliche_entwicklung: "Konkrete Werkzeuge für persönliches Wachstum",
-    stress_ruhe: "Praktische Methoden für mehr Gelassenheit im Alltag",
-    fokus_produktivitaet: "Umsetzbare Strategien für mehr Klarheit",
-    beziehung_kommunikation: "Direkt anwendbare Kommunikationstechniken",
-    sinn_philosophie: "Neue Perspektiven für eigene Reflexion",
-    glaube_spiritualitaet: "Spirituelle Einsichten und innere Orientierung",
-    kreativitaet: "Impulse, die du sofort ausprobieren kannst",
-    lernen_wissen: "Wissen, das dich weiterbringt",
-    fantasy_scifi: "Vollkommenes Eintauchen in andere Welten",
-    thriller_krimi: "Nervenaufreibende Spannung und clevere Rätsel",
-    romance: "Emotionale Tiefe und hoffnungsvolle Geschichten",
-    historisch: "Faszinierende Einblicke in vergangene Zeiten",
-    literatur: "Sprachliche Schönheit und gedankliche Tiefe",
-    humor: "Leichtigkeit und Unterhaltung pur",
-    abenteuer: "Spannung, die dich fesselt",
-    freundschaft: "Geschichten, die ans Herz gehen"
-  };
+  const bookSpecificReason = book.description;
 
   return {
-    mainReason: book.isContrast 
-      ? `"${book.title}" erweitert deinen Horizont mit einem anderen Blickwinkel – ${book.author} bietet eine frische Perspektive.`
+    mainReason: book.isContrast
+      ? t('reason.contrast')
+          .replace('{title}', book.title)
+          .replace('{author}', book.author || (book.authors || [])[0] || '')
       : bookSpecificReason,
     bullets: [
-      topicReasons[topicMatch] || "Passt thematisch zu deinen Interessen",
-      styleReasons[styleMatch] || "Angenehm zu lesen",
-      practicalGains[topicMatch] || "Bietet wertvolle Erkenntnisse für den Alltag"
+      topicMatch ? t(`reason.topic.${topicMatch}`) || t('reason.fallback.topic') : t('reason.fallback.topic'),
+      styleMatch ? t(`reason.style.${styleMatch}`) || t('reason.fallback.style') : t('reason.fallback.style'),
+      topicMatch ? t(`reason.topic.${topicMatch}`) || t('reason.fallback.gain') : t('reason.fallback.gain'),
     ]
   };
 };
@@ -784,7 +711,7 @@ function BookSearchContent() {
                                   {labels[idx]}
                                 </span>
                               </div>
-                              <BookCard book={book} reasons={generateReasons(book, profile)} index={idx} isContrast={false} isAuthenticated={isAuthenticated} analysisBookLanguage={profile?.bookLanguage} />
+                              <BookCard book={book} reasons={generateReasons(book, profile, t)} index={idx} isContrast={false} isAuthenticated={isAuthenticated} analysisBookLanguage={profile?.bookLanguage} />
                             </div>
                           );
                         })}
@@ -803,7 +730,7 @@ function BookSearchContent() {
                         <div className="space-y-4">
                           {rest7.map((book, idx) => (
                             <div key={book.id || book.isbn13 || `r-${idx}`} className="space-y-1">
-                              <BookCard book={book} reasons={generateReasons(book, profile)} index={Math.min(3 + idx, 5)} isContrast={false} isAuthenticated={isAuthenticated} analysisBookLanguage={profile?.bookLanguage} />
+                              <BookCard book={book} reasons={generateReasons(book, profile, t)} index={Math.min(3 + idx, 5)} isContrast={false} isAuthenticated={isAuthenticated} analysisBookLanguage={profile?.bookLanguage} />
                             </div>
                           ))}
                         </div>
@@ -828,7 +755,7 @@ function BookSearchContent() {
                               <div className="flex items-center gap-2 px-1">
                                 <span className="text-xs font-medium text-violet-500 dark:text-violet-400 uppercase tracking-wide">{t('booksearch.horizonBadge')}</span>
                               </div>
-                              <BookCard book={book} reasons={generateReasons(book, profile)} index={Math.min(5 + idx, 7)} isContrast={true} isAuthenticated={isAuthenticated} analysisBookLanguage={profile?.bookLanguage} />
+                              <BookCard book={book} reasons={generateReasons(book, profile, t)} index={Math.min(5 + idx, 7)} isContrast={true} isAuthenticated={isAuthenticated} analysisBookLanguage={profile?.bookLanguage} />
                             </div>
                           ))}
                         </div>

@@ -9,10 +9,11 @@ import BookDetailModal from './BookDetailModal';
 import BookCover, { getCoverUrl } from './BookCover';
 import ProviderLinks from './ProviderLinks';
 import { useLanguage } from '@/components/language/LanguageContext';
+
 import { resolveEffectiveRegion } from '@/lib/shoppingRegion';
 
 export default function BookCard({ book, reasons, index, isContrast, isAuthenticated: isAuthProp, analysisBookLanguage }) {
-  const { shoppingRegion, bookLanguage } = useLanguage();
+  const { shoppingRegion, bookLanguage, t } = useLanguage();
   // analysisBookLanguage (from the current wizard session) always wins over localStorage.
   // If a language was chosen in the wizard (e.g. 'el'), derive region from it directly,
   // bypassing hasExplicitShoppingRegion() which would otherwise lock to 'DE'.
@@ -129,12 +130,12 @@ export default function BookCard({ book, reasons, index, isContrast, isAuthentic
       )}
     >
       {isContrast && (
-        <div className="bg-amber-50 dark:bg-amber-900/20 px-6 py-3 border-b border-amber-200 dark:border-amber-800">
-          <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400 text-sm">
-            <Sparkles className="w-4 h-4" />
-            <span>Horizont-Erweiterung</span>
-          </div>
-        </div>
+      <div className="bg-amber-50 dark:bg-amber-900/20 px-6 py-3 border-b border-amber-200 dark:border-amber-800">
+      <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400 text-sm">
+        <Sparkles className="w-4 h-4" />
+        <span>{t('booksearch.horizonBadge')}</span>
+      </div>
+      </div>
       )}
       
       <div className="p-6 md:p-8">
@@ -168,13 +169,13 @@ export default function BookCard({ book, reasons, index, isContrast, isAuthentic
               </h3>
             </button>
             <p className="text-stone-600 dark:text-stone-300 text-sm mb-2">
-              {book.author || (book.authors || []).join(', ') || 'Unbekannter Autor'}
+              {book.author || (book.authors || []).join(', ') || t('book.unknownAuthor')}
             </p>
             
             {/* Buchdetails */}
             <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-stone-500 dark:text-stone-400 mb-3">
               {(book.publishYear || book.published_date) && <span>{book.publishYear || String(book.published_date).slice(0, 4)}</span>}
-              {(book.pageCount || book.page_count) && <span>• {book.pageCount || book.page_count} Seiten</span>}
+              {(book.pageCount || book.page_count) && <span>• {book.pageCount || book.page_count} {t('book.pages')}</span>}
               {book.publisher && <span>• {book.publisher}</span>}
               {book.language && book.language !== 'de' && <span>• {book.language.toUpperCase()}</span>}
             </div>
@@ -214,20 +215,20 @@ export default function BookCard({ book, reasons, index, isContrast, isAuthentic
               <>
                 <div className="bg-stone-50 dark:bg-stone-800/50 rounded-lg p-4 space-y-3">
                   <div className="flex items-center justify-between">
-                    <label className="text-sm font-medium text-stone-700 dark:text-stone-300">Meine Bewertung</label>
+                    <label className="text-sm font-medium text-stone-700 dark:text-stone-300">{t('book.myRating')}</label>
                     {!editingReview ? (
                       <button
                         onClick={() => setEditingReview(true)}
                         className="text-xs text-amber-600 hover:text-amber-700"
                       >
-                        Bearbeiten
+                        {t('book.edit')}
                       </button>
                     ) : (
                       <button
                         onClick={handleSaveReview}
                         className="text-xs text-green-600 hover:text-green-700 font-medium"
                       >
-                        Speichern
+                        {t('book.saveAction')}
                       </button>
                     )}
                   </div>
@@ -245,7 +246,7 @@ export default function BookCard({ book, reasons, index, isContrast, isAuthentic
                     <textarea
                       value={comment}
                       onChange={(e) => setComment(e.target.value)}
-                      placeholder="Was hat dir gefallen oder nicht gefallen?"
+                      placeholder={t('book.reviewPlaceholder')}
                       className="w-full px-3 py-2 border border-stone-200 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-amber-500"
                       rows={3}
                     />
@@ -259,20 +260,20 @@ export default function BookCard({ book, reasons, index, isContrast, isAuthentic
 
                 <div className="bg-stone-50 dark:bg-stone-800/50 rounded-lg p-4 space-y-2">
                   <div className="flex items-center justify-between">
-                    <label className="text-sm font-medium text-stone-700 dark:text-stone-300">Meine Notizen</label>
+                    <label className="text-sm font-medium text-stone-700 dark:text-stone-300">{t('book.myNotes')}</label>
                     {!editingNotes ? (
                       <button
                         onClick={() => setEditingNotes(true)}
                         className="text-xs text-amber-600 hover:text-amber-700"
                       >
-                        Bearbeiten
+                        {t('book.edit')}
                       </button>
                     ) : (
                       <button
                         onClick={handleSaveNotes}
                         className="text-xs text-green-600 hover:text-green-700 font-medium"
                       >
-                        Speichern
+                        {t('book.saveAction')}
                       </button>
                     )}
                   </div>
@@ -280,13 +281,13 @@ export default function BookCard({ book, reasons, index, isContrast, isAuthentic
                     <textarea
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
-                      placeholder="Z.B. Seite 42 ist interessant..."
+                      placeholder={t('book.notesPlaceholder')}
                       className="w-full px-3 py-2 border border-stone-200 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-amber-500"
                       rows={3}
                     />
                   ) : (
                     <p className="text-sm text-stone-600">
-                      {notes || 'Noch keine Notizen hinzugefügt'}
+                      {notes || t('book.noNotes')}
                     </p>
                   )}
                 </div>
@@ -306,12 +307,12 @@ export default function BookCard({ book, reasons, index, isContrast, isAuthentic
                 {isSaved ? (
                   <>
                     <BookmarkCheck className="w-4 h-4" />
-                    Gespeichert
+                    {t('btn.saved')}
                   </>
                 ) : (
                   <>
                     <Bookmark className="w-4 h-4" />
-                    Speichern
+                    {t('btn.save')}
                   </>
                 )}
               </Button>
@@ -321,7 +322,7 @@ export default function BookCard({ book, reasons, index, isContrast, isAuthentic
                 className="flex-1 gap-2 bg-stone-800 hover:bg-stone-700 dark:bg-amber-600 dark:hover:bg-amber-700 dark:text-white"
               >
                 <ShoppingCart className="w-4 h-4" />
-                Kaufen
+                {t('book.buy')}
               </Button>
             </div>
 

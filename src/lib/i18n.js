@@ -1191,6 +1191,312 @@ const dict = {
     fr: 'ex. Atomic Habits, Sapiens, Le Petit Prince ...', es: 'ej. Atomic Habits, Sapiens, El Principito ...', it: 'es. Atomic Habits, Sapiens, Il Piccolo Principe ...',
   },
 
+  // ── ProfileCard ───────────────────────────────────────────────────────────
+  'profile.title': {
+    de: 'Dein Leseprofil', en: 'Your Reading Profile', el: 'Το προφίλ ανάγνωσής σου',
+    tr: 'Okuma profilim', fr: 'Votre profil de lecture', es: 'Tu perfil de lectura', it: 'Il tuo profilo di lettura',
+  },
+  'profile.mainTopics': {
+    de: 'Deine Hauptthemen', en: 'Your Main Topics', el: 'Τα κύρια θέματά σου',
+    tr: 'Ana konularım', fr: 'Vos thèmes principaux', es: 'Tus temas principales', it: 'I tuoi temi principali',
+  },
+  'profile.preferredStyle': {
+    de: 'Bevorzugter Stil', en: 'Preferred Style', el: 'Προτιμώμενο στυλ',
+    tr: 'Tercih edilen stil', fr: 'Style préféré', es: 'Estilo preferido', it: 'Stile preferito',
+  },
+  'profile.depth': {
+    de: 'Empfohlene Tiefe', en: 'Recommended Depth', el: 'Προτεινόμενο βάθος',
+    tr: 'Önerilen derinlik', fr: 'Profondeur recommandée', es: 'Profundidad recomendada', it: 'Profondità consigliata',
+  },
+  'profile.style.praktisch': {
+    de: 'Praktisch umsetzbar', en: 'Practically applicable', el: 'Πρακτικά εφαρμόσιμο',
+    tr: 'Pratik uygulanabilir', fr: 'Pratique et applicable', es: 'Práctico y aplicable', it: 'Praticamente applicabile',
+  },
+  'profile.style.wissenschaftlich': {
+    de: 'Wissenschaftlich fundiert', en: 'Scientifically grounded', el: 'Επιστημονικά τεκμηριωμένο',
+    tr: 'Bilimsel temelli', fr: 'Fondé scientifiquement', es: 'Científicamente fundamentado', it: 'Scientificamente fondato',
+  },
+  'profile.style.story': {
+    de: 'Erzählerisch', en: 'Narrative', el: 'Αφηγηματικό',
+    tr: 'Anlatı', fr: 'Narratif', es: 'Narrativo', it: 'Narrativo',
+  },
+  'profile.style.reflektierend': {
+    de: 'Zum Nachdenken', en: 'Thought-provoking', el: 'Στοχαστικό',
+    tr: 'Düşündürücü', fr: 'Qui donne à réfléchir', es: 'Para reflexionar', it: 'Riflessivo',
+  },
+  'profile.style.kurz': {
+    de: 'Kompakt', en: 'Compact', el: 'Συμπαγές',
+    tr: 'Kompakt', fr: 'Compact', es: 'Compacto', it: 'Compatto',
+  },
+  'profile.style.anspruchsvoll': {
+    de: 'Tiefgehend', en: 'In-depth', el: 'Σε βάθος',
+    tr: 'Derinlemesine', fr: 'Approfondi', es: 'En profundidad', it: 'Approfondito',
+  },
+  'profile.diff.einsteiger': {
+    de: 'Einsteiger', en: 'Beginner', el: 'Αρχάριος',
+    tr: 'Başlangıç', fr: 'Débutant', es: 'Principiante', it: 'Principiante',
+  },
+  'profile.diff.fortgeschritten': {
+    de: 'Fortgeschritten', en: 'Advanced', el: 'Προχωρημένος',
+    tr: 'İleri', fr: 'Avancé', es: 'Avanzado', it: 'Avanzato',
+  },
+  'profile.diff.erfahren': {
+    de: 'Sehr erfahren', en: 'Experienced', el: 'Έμπειρος',
+    tr: 'Deneyimli', fr: 'Expérimenté', es: 'Experimentado', it: 'Esperto',
+  },
+
+  // ── BookCard ──────────────────────────────────────────────────────────────
+  'book.pages': {
+    de: 'Seiten', en: 'pages', el: 'σελίδες',
+    tr: 'sayfa', fr: 'pages', es: 'páginas', it: 'pagine',
+  },
+  'book.myRating': {
+    de: 'Meine Bewertung', en: 'My Rating', el: 'Η αξιολόγησή μου',
+    tr: 'Değerlendirmem', fr: 'Mon évaluation', es: 'Mi valoración', it: 'La mia valutazione',
+  },
+  'book.myNotes': {
+    de: 'Meine Notizen', en: 'My Notes', el: 'Οι σημειώσεις μου',
+    tr: 'Notlarım', fr: 'Mes notes', es: 'Mis notas', it: 'Le mie note',
+  },
+  'book.edit': {
+    de: 'Bearbeiten', en: 'Edit', el: 'Επεξεργασία',
+    tr: 'Düzenle', fr: 'Modifier', es: 'Editar', it: 'Modifica',
+  },
+  'book.saveAction': {
+    de: 'Speichern', en: 'Save', el: 'Αποθήκευση',
+    tr: 'Kaydet', fr: 'Enregistrer', es: 'Guardar', it: 'Salva',
+  },
+  'book.reviewPlaceholder': {
+    de: 'Was hat dir gefallen oder nicht gefallen?', en: 'What did you like or dislike?',
+    el: 'Τι σου άρεσε ή δεν σου άρεσε;', tr: 'Ne hoşuna gitti veya gitmedi?',
+    fr: 'Qu\'avez-vous aimé ou pas ?', es: '¿Qué te gustó o no?', it: 'Cosa ti è piaciuto o no?',
+  },
+  'book.notesPlaceholder': {
+    de: 'Z.B. Seite 42 ist interessant...', en: 'E.g. page 42 is interesting...',
+    el: 'π.χ. η σελίδα 42 είναι ενδιαφέρουσα...', tr: 'Örn. 42. sayfa ilginç...',
+    fr: 'Ex. la page 42 est intéressante...', es: 'Ej. la página 42 es interesante...', it: 'Es. pagina 42 interessante...',
+  },
+  'book.noNotes': {
+    de: 'Noch keine Notizen hinzugefügt', en: 'No notes added yet',
+    el: 'Δεν έχουν προστεθεί σημειώσεις', tr: 'Henüz not eklenmedi',
+    fr: 'Aucune note ajoutée', es: 'Aún no hay notas', it: 'Nessuna nota aggiunta',
+  },
+  'book.buy': {
+    de: 'Kaufen', en: 'Buy', el: 'Αγορά',
+    tr: 'Satın Al', fr: 'Acheter', es: 'Comprar', it: 'Acquista',
+  },
+  'book.unknownAuthorFallback': {
+    de: 'Unbekannter Autor', en: 'Unknown Author', el: 'Άγνωστος συγγραφέας',
+    tr: 'Bilinmeyen yazar', fr: 'Auteur inconnu', es: 'Autor desconocido', it: 'Autore sconosciuto',
+  },
+
+  // ── ReadBooksInput ────────────────────────────────────────────────────────
+  'readBooks.continue': {
+    de: 'Weiter', en: 'Continue', el: 'Συνέχεια',
+    tr: 'Devam', fr: 'Continuer', es: 'Continuar', it: 'Continua',
+  },
+  'readBooks.skip': {
+    de: 'Überspringen', en: 'Skip', el: 'Παράλειψη',
+    tr: 'Geç', fr: 'Ignorer', es: 'Omitir', it: 'Salta',
+  },
+
+  // ── generateReasons (BookSearch) ─────────────────────────────────────────
+  'reason.topic.persoenliche_entwicklung': {
+    de: 'Spricht dein Bedürfnis nach Selbstentwicklung an',
+    en: 'Addresses your need for self-development',
+    el: 'Απευθύνεται στην ανάγκη σου για αυτοανάπτυξη',
+    tr: 'Kişisel gelişim ihtiyacına hitap eder',
+    fr: 'Répond à votre besoin de développement personnel',
+    es: 'Responde a tu necesidad de desarrollo personal',
+    it: 'Risponde al tuo bisogno di sviluppo personale',
+  },
+  'reason.topic.stress_ruhe': {
+    de: 'Hilft dir, mehr Ruhe zu finden', en: 'Helps you find more calm',
+    el: 'Σε βοηθά να βρεις περισσότερη ηρεμία', tr: 'Daha fazla huzur bulmanı sağlar',
+    fr: 'Vous aide à trouver plus de calme', es: 'Te ayuda a encontrar más calma', it: 'Ti aiuta a trovare più calma',
+  },
+  'reason.topic.fokus_produktivitaet': {
+    de: 'Unterstützt dich bei Fokus und Produktivität', en: 'Supports your focus and productivity',
+    el: 'Υποστηρίζει την εστίαση και παραγωγικότητά σου', tr: 'Odak ve verimliliğini destekler',
+    fr: 'Soutient votre concentration et productivité', es: 'Apoya tu enfoque y productividad', it: 'Supporta il tuo focus e produttività',
+  },
+  'reason.topic.beziehung_kommunikation': {
+    de: 'Stärkt deine Beziehungskompetenz', en: 'Strengthens your relationship skills',
+    el: 'Ενισχύει τις δεξιότητες σχέσεών σου', tr: 'İlişki becerilerini güçlendirir',
+    fr: 'Renforce vos compétences relationnelles', es: 'Fortalece tus habilidades relacionales', it: 'Rafforza le tue competenze relazionali',
+  },
+  'reason.topic.sinn_philosophie': {
+    de: 'Berührt die großen Lebensfragen', en: 'Touches on life\'s big questions',
+    el: 'Αγγίζει τα μεγάλα ερωτήματα ζωής', tr: 'Hayatın büyük sorularına değinir',
+    fr: 'Aborde les grandes questions de la vie', es: 'Toca las grandes preguntas de la vida', it: 'Tocca le grandi domande della vita',
+  },
+  'reason.topic.kreativitaet': {
+    de: 'Fördert deine kreative Seite', en: 'Nurtures your creative side',
+    el: 'Καλλιεργεί την δημιουργική σου πλευρά', tr: 'Yaratıcı yanını besler',
+    fr: 'Nourrit votre côté créatif', es: 'Nutre tu lado creativo', it: 'Nutre il tuo lato creativo',
+  },
+  'reason.topic.lernen_wissen': {
+    de: 'Erweitert dein Wissen', en: 'Expands your knowledge',
+    el: 'Διευρύνει τις γνώσεις σου', tr: 'Bilgini genişletir',
+    fr: 'Élargit vos connaissances', es: 'Amplía tus conocimientos', it: 'Amplia le tue conoscenze',
+  },
+  'reason.topic.koerper_gesundheit': {
+    de: 'Unterstützt deine Gesundheit', en: 'Supports your health',
+    el: 'Υποστηρίζει την υγεία σου', tr: 'Sağlığını destekler',
+    fr: 'Soutient votre santé', es: 'Apoya tu salud', it: 'Supporta la tua salute',
+  },
+  'reason.topic.fantasy_scifi': {
+    de: 'Entführt dich in faszinierende Fantasiewelten', en: 'Takes you to fascinating fantasy worlds',
+    el: 'Σε μεταφέρει σε συναρπαστικούς κόσμους φαντασίας', tr: 'Seni büyüleyici fantezi dünyalarına götürür',
+    fr: 'Vous emmène dans des mondes de fantaisie fascinants', es: 'Te lleva a mundos de fantasía fascinantes', it: 'Ti porta in affascinanti mondi fantasy',
+  },
+  'reason.topic.thriller_krimi': {
+    de: 'Fesselt dich mit Spannung bis zur letzten Seite', en: 'Grips you with suspense to the last page',
+    el: 'Σε κρατά αγωνία ως την τελευταία σελίδα', tr: 'Son sayfaya kadar gerilimle bağlar',
+    fr: 'Vous captive jusqu\'à la dernière page', es: 'Te atrapa con suspenso hasta la última página', it: 'Ti cattura con suspense fino all\'ultima pagina',
+  },
+  'reason.topic.romance': {
+    de: 'Berührt dein Herz mit emotionalen Geschichten', en: 'Touches your heart with emotional stories',
+    el: 'Αγγίζει την καρδιά σου με συναισθηματικές ιστορίες', tr: 'Duygusal hikayelerle kalbine dokunur',
+    fr: 'Touche votre cœur avec des histoires émouvantes', es: 'Toca tu corazón con historias emotivas', it: 'Tocca il tuo cuore con storie emozionanti',
+  },
+  'reason.topic.historisch': {
+    de: 'Lässt vergangene Epochen lebendig werden', en: 'Brings past eras to life',
+    el: 'Ζωντανεύει περασμένες εποχές', tr: 'Geçmiş çağları canlandırır',
+    fr: 'Donne vie aux époques passées', es: 'Da vida a épocas pasadas', it: 'Dà vita alle epoche passate',
+  },
+  'reason.topic.literatur': {
+    de: 'Bietet tiefgründige, kunstvolle Erzählkunst', en: 'Offers profound, artful storytelling',
+    el: 'Προσφέρει βαθιά, καλλιτεχνική αφήγηση', tr: 'Derin, sanatsal anlatıcılık sunar',
+    fr: 'Offre une narration profonde et artistique', es: 'Ofrece una narrativa profunda y artística', it: 'Offre una narrativa profonda e artistica',
+  },
+  'reason.topic.humor': {
+    de: 'Bringt dich zum Lachen und Schmunzeln', en: 'Makes you laugh and smile',
+    el: 'Σε κάνει να γελάς και να χαμογελάς', tr: 'Güldürür ve gülümsetir',
+    fr: 'Vous fait rire et sourire', es: 'Te hace reír y sonreír', it: 'Ti fa ridere e sorridere',
+  },
+  'reason.topic.abenteuer': {
+    de: 'Nimmt dich mit auf spannende Reisen', en: 'Takes you on exciting journeys',
+    el: 'Σε παίρνει σε συναρπαστικά ταξίδια', tr: 'Seni heyecanlı yolculuklara çıkarır',
+    fr: 'Vous emmène dans des voyages palpitants', es: 'Te lleva a emocionantes aventuras', it: 'Ti porta in emozionanti avventure',
+  },
+  'reason.topic.freundschaft': {
+    de: 'Zeigt die Kraft von Freundschaft', en: 'Shows the power of friendship',
+    el: 'Δείχνει τη δύναμη της φιλίας', tr: 'Dostluğun gücünü gösterir',
+    fr: 'Montre la force de l\'amitié', es: 'Muestra el poder de la amistad', it: 'Mostra il potere dell\'amicizia',
+  },
+  'reason.topic.magie': {
+    de: 'Entführt dich in magische Welten', en: 'Takes you to magical worlds',
+    el: 'Σε μεταφέρει σε μαγικούς κόσμους', tr: 'Seni büyülü dünyalara götürür',
+    fr: 'Vous emmène dans des mondes magiques', es: 'Te lleva a mundos mágicos', it: 'Ti porta in mondi magici',
+  },
+  'reason.topic.selbstfindung': {
+    de: 'Hilft dir, dich selbst zu verstehen', en: 'Helps you understand yourself',
+    el: 'Σε βοηθά να κατανοήσεις τον εαυτό σου', tr: 'Kendini anlamana yardımcı olur',
+    fr: 'Vous aide à vous comprendre', es: 'Te ayuda a entenderte', it: 'Ti aiuta a capire te stesso',
+  },
+  'reason.topic.liebe': {
+    de: 'Berührt das Herz', en: 'Touches the heart',
+    el: 'Αγγίζει την καρδιά', tr: 'Kalbe dokunur',
+    fr: 'Touche le cœur', es: 'Toca el corazón', it: 'Tocca il cuore',
+  },
+  'reason.style.praktisch': {
+    de: 'Der praktische Stil passt zu deiner Vorliebe für Umsetzbarkeit',
+    en: 'The practical style suits your preference for applicability',
+    el: 'Το πρακτικό στυλ ταιριάζει στην προτίμησή σου για εφαρμοσιμότητα',
+    tr: 'Pratik stil, uygulanabilirlik tercihinize uygundur',
+    fr: 'Le style pratique correspond à votre goût pour l\'applicabilité',
+    es: 'El estilo práctico se adapta a tu preferencia por la aplicabilidad',
+    it: 'Lo stile pratico si adatta alla tua preferenza per l\'applicabilità',
+  },
+  'reason.style.wissenschaftlich': {
+    de: 'Wissenschaftlich fundiert – genau wie du es magst',
+    en: 'Scientifically grounded – just the way you like it',
+    el: 'Επιστημονικά τεκμηριωμένο – ακριβώς όπως το προτιμάς',
+    tr: 'Bilimsel temelli – tam istediğin gibi',
+    fr: 'Fondé scientifiquement – exactement comme vous l\'aimez',
+    es: 'Científicamente fundamentado – justo como te gusta',
+    it: 'Scientificamente fondato – esattamente come piace a te',
+  },
+  'reason.style.story': {
+    de: 'Erzählerisch geschrieben – für deinen bevorzugten Lesestil',
+    en: 'Narratively written – for your preferred reading style',
+    el: 'Γραμμένο αφηγηματικά – για το αγαπημένο σου στυλ ανάγνωσης',
+    tr: 'Anlatı tarzında yazılmış – tercih ettiğin okuma stili için',
+    fr: 'Écrit de façon narrative – pour votre style de lecture préféré',
+    es: 'Escrito de forma narrativa – para tu estilo de lectura preferido',
+    it: 'Scritto in modo narrativo – per il tuo stile di lettura preferito',
+  },
+  'reason.style.reflektierend': {
+    de: 'Lädt zum Nachdenken ein – passend zu deinem Stil',
+    en: 'Invites reflection – matching your style',
+    el: 'Προσκαλεί σε στοχασμό – ταιριάζει στο στυλ σου',
+    tr: 'Düşünmeye davet eder – stilinize uygun',
+    fr: 'Invite à la réflexion – en accord avec votre style',
+    es: 'Invita a la reflexión – acorde a tu estilo',
+    it: 'Invita alla riflessione – in linea con il tuo stile',
+  },
+  'reason.style.kurz': {
+    de: 'Kompakt und prägnant – ideal für deine Lesezeit',
+    en: 'Compact and concise – ideal for your reading time',
+    el: 'Συμπαγές και περιεκτικό – ιδανικό για τον χρόνο ανάγνωσής σου',
+    tr: 'Kompakt ve öz – okuma süreniz için ideal',
+    fr: 'Compact et concis – idéal pour votre temps de lecture',
+    es: 'Compacto y conciso – ideal para tu tiempo de lectura',
+    it: 'Compatto e conciso – ideale per il tuo tempo di lettura',
+  },
+  'reason.style.anspruchsvoll': {
+    de: 'Mit Tiefgang – genau richtig für dich', en: 'In-depth – just right for you',
+    el: 'Σε βάθος – ακριβώς κατάλληλο για σένα', tr: 'Derinlemesine – tam senin için',
+    fr: 'En profondeur – parfaitement adapté pour vous', es: 'En profundidad – justo para ti', it: 'Approfondito – perfetto per te',
+  },
+  'reason.fallback.topic': {
+    de: 'Passt thematisch zu deinen Interessen', en: 'Fits your interests thematically',
+    el: 'Ταιριάζει θεματικά στα ενδιαφέροντά σου', tr: 'Tematik olarak ilgi alanlarına uygun',
+    fr: 'Correspond thématiquement à vos intérêts', es: 'Encaja temáticamente con tus intereses', it: 'Si adatta tematicamente ai tuoi interessi',
+  },
+  'reason.fallback.style': {
+    de: 'Angenehm zu lesen', en: 'Enjoyable to read',
+    el: 'Ευχάριστο στην ανάγνωση', tr: 'Okuması keyifli',
+    fr: 'Agréable à lire', es: 'Agradable de leer', it: 'Piacevole da leggere',
+  },
+  'reason.fallback.gain': {
+    de: 'Bietet wertvolle Erkenntnisse für den Alltag', en: 'Offers valuable insights for everyday life',
+    el: 'Προσφέρει πολύτιμες γνώσεις για την καθημερινότητα', tr: 'Günlük hayat için değerli içgörüler sunar',
+    fr: 'Offre des insights précieux pour le quotidien', es: 'Ofrece valiosas perspectivas para el día a día', it: 'Offre preziosi spunti per la vita quotidiana',
+  },
+  'reason.contrast': {
+    de: '"{title}" erweitert deinen Horizont mit einem anderen Blickwinkel – {author} bietet eine frische Perspektive.',
+    en: '"{title}" expands your horizon with a different angle – {author} offers a fresh perspective.',
+    el: '"{title}" διευρύνει τον ορίζοντά σου με διαφορετική οπτική – {author} προσφέρει μια νέα προοπτική.',
+    tr: '"{title}" farklı bir açıyla ufkunu genişletiyor – {author} taze bir bakış açısı sunuyor.',
+    fr: '"{title}" élargit votre horizon avec un angle différent – {author} offre une perspective nouvelle.',
+    es: '"{title}" amplía tu horizonte con un ángulo diferente – {author} ofrece una perspectiva fresca.',
+    it: '"{title}" amplia il tuo orizzonte con un angolo diverso – {author} offre una prospettiva fresca.',
+  },
+
+  // ── ProviderLinks dual-region headers ────────────────────────────────────
+  'provider.langRegionTitle': {
+    de: 'Passend zur Buchsprache', en: 'Matching book language', el: 'Ταιριάζει στη γλώσσα βιβλίου',
+    tr: 'Kitap diline uygun', fr: 'En accord avec la langue du livre', es: 'Acorde al idioma del libro', it: 'Adatto alla lingua del libro',
+  },
+  'provider.langRegionSub': {
+    de: '{lang}sprachige Anbieter', en: '{lang} providers', el: 'Πάροχοι {lang}',
+    tr: '{lang} sağlayıcıları', fr: 'Fournisseurs {lang}', es: 'Proveedores {lang}', it: 'Fornitori {lang}',
+  },
+  'provider.shopRegionTitle': {
+    de: 'In deiner Kaufregion', en: 'In your shopping region', el: 'Στην περιοχή αγορών σου',
+    tr: 'Alışveriş bölgendeki', fr: 'Dans votre région d\'achat', es: 'En tu región de compra', it: 'Nella tua regione di acquisto',
+  },
+  'provider.shopRegionSub': {
+    de: 'Suche in {region}', en: 'Search in {region}', el: 'Αναζήτηση σε {region}',
+    tr: '{region} içinde ara', fr: 'Rechercher en {region}', es: 'Buscar en {region}', it: 'Cerca in {region}',
+  },
+  'provider.usedMarketplace': {
+    de: 'Gebraucht & Marktplatz', en: 'Used & Marketplace', el: 'Μεταχειρισμένα & Αγορά',
+    tr: 'İkinci el & Pazar yeri', fr: 'Occasion & Marketplace', es: 'Usado & Mercado', it: 'Usato & Marketplace',
+  },
+
   'discover.bookLangHint': {
     de: 'Hinweis: Für Griechisch und Türkisch sind weniger Bücher indexiert.',
     en: 'Note: Fewer books are indexed for Greek and Turkish.',

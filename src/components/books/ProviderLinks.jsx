@@ -109,7 +109,7 @@ export default function ProviderLinks({ book, shoppingRegion = 'DE', bookLanguag
     const usedLinks = dedup([...usedLang, ...usedShop]);
 
     const FLAG_MAP = { GR: '🇬🇷', DE: '🇩🇪', AT: '🇦🇹', CH: '🇨🇭', TR: '🇹🇷', FR: '🇫🇷', ES: '🇪🇸', IT: '🇮🇹', UK: '🇬🇧', US: '🇺🇸' };
-    const LANG_LABEL = { el: 'Griechisch', tr: 'Türkisch', fr: 'Französisch', es: 'Spanisch', it: 'Italienisch', en: 'Englisch', de: 'Deutsch' };
+    const LANG_LABEL = { el: t('bookLang.el'), tr: t('bookLang.tr'), fr: t('bookLang.fr'), es: t('bookLang.es'), it: t('bookLang.it'), en: t('bookLang.en'), de: t('bookLang.de') };
 
     const hasAnyContent = langLinks.length > 0 || shopLinks.length > 0 || usedLinks.length > 0 || hasAudio;
     if (!hasAnyContent) return null;
@@ -121,8 +121,8 @@ export default function ProviderLinks({ book, shoppingRegion = 'DE', bookLanguag
           <>
             <SectionHeader
               isFirst
-              title={`${FLAG_MAP[langRegion] || ''} Passend zur Buchsprache`}
-              subtitle={`${LANG_LABEL[bookLanguage] || bookLanguage}sprachige Anbieter`}
+              title={`${FLAG_MAP[langRegion] || ''} ${t('provider.langRegionTitle')}`}
+              subtitle={t('provider.langRegionSub').replace('{lang}', LANG_LABEL[bookLanguage] || bookLanguage)}
             />
             <div className="space-y-2">
               {langLinks.map(link => <ProviderButton key={link.providerId + link.url} link={link} t={t} />)}
@@ -134,8 +134,8 @@ export default function ProviderLinks({ book, shoppingRegion = 'DE', bookLanguag
         {shopLinks.length > 0 && (
           <>
             <SectionHeader
-              title={`${FLAG_MAP[shoppingRegion] || ''} In deiner Kaufregion`}
-              subtitle={`Suche in ${shoppingRegion}`}
+              title={`${FLAG_MAP[shoppingRegion] || ''} ${t('provider.shopRegionTitle')}`}
+              subtitle={t('provider.shopRegionSub').replace('{region}', shoppingRegion)}
             />
             <div className="space-y-2">
               {shopLinks.map(link => <ProviderButton key={link.providerId + link.url} link={link} t={t} />)}
@@ -152,7 +152,7 @@ export default function ProviderLinks({ book, shoppingRegion = 'DE', bookLanguag
             >
               <span className="flex items-center gap-1.5">
                 <Tag className="w-3.5 h-3.5" />
-                Gebraucht &amp; Marktplatz
+                {t('provider.usedMarketplace')}
               </span>
               {showUsed ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
             </button>

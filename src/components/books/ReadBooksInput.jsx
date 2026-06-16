@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Plus } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
+import { useLanguage } from '@/components/language/LanguageContext';
 
 /**
  * ReadBooksInput – Chip-Eingabe für bereits gelesene Bücher.
@@ -15,6 +16,7 @@ import { Button } from "@/components/ui/button";
  */
 export default function ReadBooksInput({ value = [], onChange, onSkip, placeholder, maxItems = 8 }) {
   const [input, setInput] = useState('');
+  const { t } = useLanguage();
 
   const addBook = () => {
     const trimmed = input.trim();
@@ -97,14 +99,14 @@ export default function ReadBooksInput({ value = [], onChange, onSkip, placehold
           onClick={onSkip}
           className="w-full bg-stone-800 hover:bg-stone-700 dark:bg-amber-600 dark:hover:bg-amber-700 text-white"
         >
-          {value.length > 0 ? 'Weiter' : 'Überspringen'}
+          {value.length > 0 ? t('readBooks.continue') : t('readBooks.skip')}
         </Button>
         {value.length > 0 && (
           <button
             onClick={onSkip}
             className="text-xs text-stone-400 hover:text-stone-600 dark:hover:text-stone-300 transition-colors text-center"
           >
-            Überspringen
+            {t('readBooks.skip')}
           </button>
         )}
       </div>
