@@ -16,6 +16,7 @@ export default function QuestionCard({
   description,
   onTextSubmit,
   stepLabel,
+  continueLabel,
 }) {
   const [textValue, setTextValue] = useState(selectedValue || '');
 
@@ -78,7 +79,7 @@ export default function QuestionCard({
             disabled={!textValue.trim()}
             className="w-full bg-stone-800 hover:bg-stone-700 dark:bg-amber-600 dark:hover:bg-amber-700"
           >
-            Weiter
+            {continueLabel || 'Continue'}
           </Button>
         </div>
       ) : (
@@ -91,18 +92,18 @@ export default function QuestionCard({
               transition={{ delay: index * 0.06 }}
               onClick={() => onSelect(option.value)}
               className={cn(
-                "w-full text-left px-5 py-4 rounded-xl border-2 transition-all duration-200",
-                "active:scale-[0.99]",
+                "w-full text-left px-5 py-4 min-h-[56px] rounded-xl border-2 transition-all duration-200",
+                "active:scale-[0.98] touch-manipulation",
                 selectedValue === option.value
                   ? "border-amber-500 bg-amber-50 dark:border-amber-500 dark:bg-amber-900/20 shadow-sm"
                   : "border-stone-200 bg-white dark:border-stone-700 dark:bg-stone-900 hover:border-stone-300 hover:bg-stone-50 dark:hover:border-stone-600 dark:hover:bg-stone-800"
               )}
             >
               <span className={cn(
-                "text-[15px] leading-snug",
+                "text-[15px] leading-snug block",
                 selectedValue === option.value
                   ? "text-amber-800 dark:text-amber-300 font-medium"
-                  : "text-stone-700 dark:text-stone-200 font-light"
+                  : "text-stone-700 dark:text-stone-200 font-normal"
               )}>
                 {option.label}
               </span>

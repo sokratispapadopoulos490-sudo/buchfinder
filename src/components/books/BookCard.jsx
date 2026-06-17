@@ -125,15 +125,15 @@ export default function BookCard({ book, reasons, index, isContrast, isAuthentic
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.15, duration: 0.5 }}
       className={cn(
-        "bg-white dark:bg-[#1a1a1a] rounded-2xl border overflow-hidden",
-        isContrast ? "border-amber-200 dark:border-amber-800" : "border-stone-200 dark:border-stone-700"
+        "bg-white dark:bg-[#1a1a1a] rounded-2xl border overflow-hidden shadow-sm",
+        isContrast ? "border-violet-100 dark:border-violet-900/20" : "border-stone-100 dark:border-stone-700"
       )}
     >
       {isContrast && (
-      <div className="bg-amber-50 dark:bg-amber-900/20 px-6 py-3 border-b border-amber-200 dark:border-amber-800">
-      <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400 text-sm">
-        <Sparkles className="w-4 h-4" />
-        <span>{t('booksearch.horizonBadge')}</span>
+      <div className="bg-violet-50/50 dark:bg-violet-900/10 px-5 py-2 border-b border-violet-100 dark:border-violet-900/20">
+      <div className="flex items-center gap-1.5 text-violet-600 dark:text-violet-400 text-xs">
+        <Sparkles className="w-3 h-3" />
+        <span className="font-medium">{t('booksearch.horizonBadge')}</span>
       </div>
       </div>
       )}

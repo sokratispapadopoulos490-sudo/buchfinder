@@ -640,6 +640,22 @@ const dict = {
     de: 'Kostenlos in der Beta', en: 'Free in Beta', el: 'Δωρεάν στη Beta',
     tr: 'Beta\'da ücretsiz', fr: 'Gratuit en Beta', es: 'Gratis en Beta', it: 'Gratuito in Beta',
   },
+  'booksearch.benefitPersonal': {
+    de: 'Persönliche Buchempfehlung', en: 'Personal book recommendation', el: 'Προσωπική πρόταση βιβλίου',
+    tr: 'Kişisel kitap önerisi', fr: 'Recommandation personnelle', es: 'Recomendación personal', it: 'Consiglio personale',
+  },
+  'booksearch.benefitFree': {
+    de: 'Komplett kostenlos', en: 'Completely free', el: 'Εντελώς δωρεάν',
+    tr: 'Tamamen ücretsiz', fr: 'Entièrement gratuit', es: 'Completamente gratis', it: 'Completamente gratuito',
+  },
+  'booksearch.benefitLanguages': {
+    de: 'Mehrere Buchsprachen', en: 'Multiple book languages', el: 'Πολλές γλώσσες βιβλίων',
+    tr: 'Birden fazla kitap dili', fr: 'Plusieurs langues', es: 'Varios idiomas', it: 'Più lingue',
+  },
+  'q.continueBtn': {
+    de: 'Weiter', en: 'Continue', el: 'Συνέχεια',
+    tr: 'Devam', fr: 'Continuer', es: 'Continuar', it: 'Continua',
+  },
   'booksearch.readBooksTitle': {
     de: 'Welche Bücher hast du zuletzt gelesen?', en: 'Which books have you read recently?',
     el: 'Ποια βιβλία διάβασες πρόσφατα;', tr: 'Son zamanlarda hangi kitapları okudun?',
