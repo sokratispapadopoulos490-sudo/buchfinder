@@ -3,8 +3,9 @@ import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Heart, Sparkles, User, Crown } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-import { de } from 'date-fns/locale';
+import { de, el as elLocale, tr as trLocale, fr, es, it } from 'date-fns/locale';
 import { cn } from "@/lib/utils";
+import { useLanguage } from '@/components/language/LanguageContext';
 
 export default function CommentSection({ 
   comments, 
@@ -17,6 +18,10 @@ export default function CommentSection({
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
+  const { t, language } = useLanguage();
+
+  const dateLocaleMap = { de, el: elLocale, tr: trLocale, fr, es, it };
+  const dateLocale = dateLocaleMap[language] || de;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,7 +50,7 @@ export default function CommentSection({
           className="w-full gap-2 border-amber-300 hover:bg-amber-50"
         >
           <Sparkles className="w-4 h-4 text-amber-600" />
-          {aiLoading ? 'Book Compass denkt nach...' : 'Book Compass fragen'}
+          {aiLoading ? t('comment.askAILoading') : t('comment.askAI')}
         </Button>
       )}
 
@@ -55,7 +60,7 @@ export default function CommentSection({
           type="text"
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
-          placeholder="Schreibe einen Kommentar..."
+          placeholder={t('comment.placeholder')}
           className="flex-1 px-3 py-2 border border-stone-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
         />
         <Button
@@ -64,7 +69,7 @@ export default function CommentSection({
           size="sm"
           className="bg-amber-600 hover:bg-amber-700"
         >
-          Senden
+          {t('comment.send')}
         </Button>
       </form>
 
@@ -106,12 +111,12 @@ export default function CommentSection({
                       {comment.is_ai_response 
                         ? 'Book Compass' 
                         : isAuthor 
-                        ? 'Du' 
-                        : comment.created_by?.split('@')[0] || 'Anonym'}
+                        ? t('post.you')
+                        : comment.created_by?.split('@')[0] || t('post.anon')}
                     </span>
                     {comment.is_ai_response && (
                       <span className="px-2 py-0.5 bg-amber-200 text-amber-800 rounded-full text-xs font-medium">
-                        KI
+                        {t('comment.aiLabel')}
                       </span>
                     )}
                     {!comment.is_ai_response && isUserPremium && (
@@ -120,7 +125,7 @@ export default function CommentSection({
                     <span className="text-xs text-stone-500">
                       {formatDistanceToNow(new Date(comment.created_date), { 
                         addSuffix: true, 
-                        locale: de 
+                        locale: dateLocale 
                       })}
                     </span>
                   </div>
@@ -143,7 +148,7 @@ export default function CommentSection({
 
       {comments.length === 0 && (
         <p className="text-center text-stone-500 text-sm py-4">
-          Noch keine Kommentare. Sei der Erste!
+          {t('comment.empty')}
         </p>
       )}
     </div>

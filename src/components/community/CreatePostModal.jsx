@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { X, Sparkles } from 'lucide-react';
+import { useLanguage } from '@/components/language/LanguageContext';
 
 export default function CreatePostModal({ onClose, onCreate, savedBooks }) {
   const [title, setTitle] = useState('');
@@ -9,6 +10,7 @@ export default function CreatePostModal({ onClose, onCreate, savedBooks }) {
   const [category, setCategory] = useState('allgemein');
   const [selectedBookId, setSelectedBookId] = useState('');
   const [loading, setLoading] = useState(false);
+  const { t } = useLanguage();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,7 +40,7 @@ export default function CreatePostModal({ onClose, onCreate, savedBooks }) {
           className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
         >
           <div className="sticky top-0 bg-white border-b border-stone-200 p-6 flex items-center justify-between">
-            <h2 className="text-xl font-medium text-stone-800">Neuer Post</h2>
+            <h2 className="text-xl font-medium text-stone-800">{t('createPost.title')}</h2>
             <button onClick={onClose} className="text-stone-500 hover:text-stone-700">
               <X className="w-6 h-6" />
             </button>

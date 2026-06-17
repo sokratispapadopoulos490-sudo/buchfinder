@@ -11,7 +11,7 @@ import ReportModal from '@/components/community/ReportModal';
 import ConversationList from '@/components/messages/ConversationList';
 import ChatWindow from '@/components/messages/ChatWindow';
 import NewMessageModal from '@/components/messages/NewMessageModal';
-import { LanguageProvider } from '@/components/language/LanguageContext';
+import { LanguageProvider, useLanguage } from '@/components/language/LanguageContext';
 
 /** Rate-Limit-Zähler im localStorage – Modul-Level damit kein Re-Create bei Render */
 function getAiUsageToday(userId) {
@@ -45,6 +45,7 @@ function CommunityContent() {
   const [followingLoaded, setFollowingLoaded] = useState(false);
 
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   useEffect(() => { loadData(); }, []);
 
@@ -188,7 +189,7 @@ function CommunityContent() {
   };
 
   const handleDeletePost = async (postId) => {
-    if (!confirm('Post wirklich löschen?')) return;
+    if (!confirm(t('community.deleteConfirm'))) return;
     await base44.entities.CommunityPost.delete(postId);
     await loadData();
   };
@@ -208,15 +209,15 @@ function CommunityContent() {
   if (loading) {
     return (
       <div className="min-h-screen bg-stone-50 flex items-center justify-center">
-        <div className="text-stone-500">Lädt...</div>
+        <div className="text-stone-500">{t('community.loading')}</div>
       </div>
     );
   }
 
   const tabs = [
-    { id: 'posts', label: 'Beiträge', icon: Users },
-    { id: 'messages', label: 'Nachrichten', icon: MessageSquare },
-    { id: 'following', label: 'Following', icon: UserCheck },
+    { id: 'posts', label: t('community.tab.posts'), icon: Users },
+    { id: 'messages', label: t('community.tab.messages'), icon: MessageSquare },
+    { id: 'following', label: t('community.tab.following'), icon: UserCheck },
   ];
 
   return (
@@ -229,18 +230,18 @@ function CommunityContent() {
             <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center text-white shadow-lg">
               <Users className="w-5 h-5" />
             </div>
-            <h1 className="text-2xl font-light text-stone-800 dark:text-stone-100">Community</h1>
+            <h1 className="text-2xl font-light text-stone-800 dark:text-stone-100">{t('community.title')}</h1>
           </div>
           <div className="flex gap-2">
             {isAdmin && (
               <Button onClick={() => navigate('/Moderation')} variant="outline" size="sm" className="gap-2">
                 <Shield className="w-4 h-4" />
-                Moderation
+                {t('community.moderation')}
               </Button>
             )}
             <Button onClick={() => navigate('/Clubs')} variant="outline" size="sm" className="gap-2">
               <BookOpen className="w-4 h-4" />
-              Clubs
+              {t('community.clubs')}
             </Button>
 
           </div>
@@ -273,10 +274,10 @@ function CommunityContent() {
                 <div className="flex items-start gap-3">
                   <Crown className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sm text-amber-800 font-medium mb-1">Premium-Vorteil</p>
-                    <p className="text-xs text-amber-700">Als Premium-Mitglied kannst du die Book Compass KI in Diskussionen einbinden.</p>
+                    <p className="text-sm text-amber-800 font-medium mb-1">{t('community.premium.title')}</p>
+                    <p className="text-xs text-amber-700">{t('community.premium.desc')}</p>
                     <Button onClick={() => navigate('/Premium')} size="sm" className="mt-3 bg-amber-600 hover:bg-amber-700 text-white">
-                      Jetzt upgraden
+                      {t('community.premium.upgrade')}
                     </Button>
                   </div>
                 </div>
@@ -285,7 +286,7 @@ function CommunityContent() {
 
             <div className="flex justify-end mb-4">
               <Button onClick={() => setShowCreateModal(true)} className="bg-amber-600 hover:bg-amber-700 text-white gap-2">
-                <Plus className="w-4 h-4" /> Neuer Post
+                <Plus className="w-4 h-4" /> {t('community.newPost')}
               </Button>
             </div>
 
@@ -295,7 +296,7 @@ function CommunityContent() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
                 <input
                   type="text"
-                  placeholder="Posts durchsuchen..."
+                  placeholder={t('community.searchPlaceholder')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 border border-stone-200 dark:border-stone-600 bg-white dark:bg-[#1a1a1a] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
@@ -305,17 +306,23 @@ function CommunityContent() {
 
             {/* Filter */}
             <div className="flex gap-2 overflow-x-auto pb-2 mb-5">
-              {['alle', 'allgemein', 'buchempfehlung', 'diskussion', 'frage'].map((cat) => (
+              {[
+                { key: 'alle', label: t('community.filter.all') },
+                { key: 'allgemein', label: t('community.filter.allgemein') },
+                { key: 'buchempfehlung', label: t('community.filter.buchempfehlung') },
+                { key: 'diskussion', label: t('community.filter.diskussion') },
+                { key: 'frage', label: t('community.filter.frage') },
+              ].map(({ key, label }) => (
                 <button
-                  key={cat}
-                  onClick={() => setCategoryFilter(cat)}
+                  key={key}
+                  onClick={() => setCategoryFilter(key)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
-                    categoryFilter === cat
+                    categoryFilter === key
                       ? 'bg-stone-800 dark:bg-amber-600 text-white'
                       : 'bg-white dark:bg-[#1a1a1a] border border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 hover:bg-stone-50'
                   }`}
                 >
-                  {cat === 'alle' ? 'Alle' : cat.charAt(0).toUpperCase() + cat.slice(1)}
+                  {label}
                 </button>
               ))}
             </div>
@@ -325,7 +332,7 @@ function CommunityContent() {
               {filteredPosts.length === 0 ? (
                 <div className="text-center py-12 bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700">
                   <Users className="w-12 h-12 text-stone-300 mx-auto mb-4" />
-                  <p className="text-stone-500">{categoryFilter === 'alle' ? 'Noch keine Beiträge. Sei der Erste!' : 'Keine Beiträge in dieser Kategorie'}</p>
+                  <p className="text-stone-500">{categoryFilter === 'alle' ? t('community.empty.all') : t('community.empty.category')}</p>
                 </div>
               ) : (
                 filteredPosts.map((post) => (
@@ -366,9 +373,9 @@ function CommunityContent() {
         {activeTab === 'messages' && (
           <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 overflow-hidden">
             <div className="p-4 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between">
-              <h2 className="text-lg font-medium text-stone-800 dark:text-stone-200">Nachrichten</h2>
+              <h2 className="text-lg font-medium text-stone-800 dark:text-stone-200">{t('community.messages.title')}</h2>
               <Button onClick={() => setShowNewMessage(true)} className="bg-amber-600 hover:bg-amber-700 text-white gap-2" size="sm">
-                <Mail className="w-4 h-4" /> Neue Nachricht
+                <Mail className="w-4 h-4" /> {t('community.messages.new')}
               </Button>
             </div>
             <div className="grid lg:grid-cols-[300px,1fr] h-[550px]">
@@ -387,7 +394,7 @@ function CommunityContent() {
                 <div className="hidden lg:flex items-center justify-center bg-stone-50 dark:bg-[#0a0a0a] text-stone-500">
                   <div className="text-center">
                     <MessageSquare className="w-14 h-14 text-stone-300 mx-auto mb-3" />
-                    <p className="text-sm">Wähle eine Konversation aus</p>
+                    <p className="text-sm">{t('community.messages.selectConversation')}</p>
                   </div>
                 </div>
               )}
@@ -399,9 +406,9 @@ function CommunityContent() {
         {activeTab === 'following' && (
           <div className="space-y-5">
             <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-5">
-              <h2 className="text-base font-semibold text-stone-800 dark:text-stone-200 mb-4">Ich folge ({following.length})</h2>
+              <h2 className="text-base font-semibold text-stone-800 dark:text-stone-200 mb-4">{t('community.following.iFollow')} ({following.length})</h2>
               {following.length === 0 ? (
-                <p className="text-stone-500 text-sm text-center py-6">Du folgst noch niemandem</p>
+                <p className="text-stone-500 text-sm text-center py-6">{t('community.following.noFollowing')}</p>
               ) : (
                 <div className="space-y-2">
                   {following.map((f) => f.user && (
@@ -422,7 +429,7 @@ function CommunityContent() {
                         await base44.entities.UserFollow.delete(f.id);
                         await loadFollowing();
                       }}>
-                        Entfolgen
+                        {t('community.following.unfollow')}
                       </Button>
                     </div>
                   ))}
@@ -431,9 +438,9 @@ function CommunityContent() {
             </div>
 
             <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-5">
-              <h2 className="text-base font-semibold text-stone-800 dark:text-stone-200 mb-4">Meine Follower ({followers.length})</h2>
+              <h2 className="text-base font-semibold text-stone-800 dark:text-stone-200 mb-4">{t('community.following.myFollowers')} ({followers.length})</h2>
               {followers.length === 0 ? (
-                <p className="text-stone-500 text-sm text-center py-6">Noch keine Follower</p>
+                <p className="text-stone-500 text-sm text-center py-6">{t('community.following.noFollowers')}</p>
               ) : (
                 <div className="space-y-2">
                   {followers.map((f) => f.user && (

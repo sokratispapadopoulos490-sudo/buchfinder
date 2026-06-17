@@ -3,14 +3,19 @@ import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Heart, MessageSquare, BookOpen, User, Crown, Mail, AlertTriangle, Trash2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-import { de } from 'date-fns/locale';
+import { de, el as elLocale, tr as trLocale, fr, es, it } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
 import { cn } from "@/lib/utils";
+import { useLanguage } from '@/components/language/LanguageContext';
 
 export default function PostCard({ post, onLike, onComment, isLiked, currentUser, onReport, onDelete }) {
   const [showComments, setShowComments] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const navigate = useNavigate();
+  const { t, language } = useLanguage();
+
+  const dateLocaleMap = { de, el: elLocale, tr: trLocale, fr, es, it };
+  const dateLocale = dateLocaleMap[language] || de;
 
   const isAuthor = currentUser?.email === post.created_by;
   const isPremium = currentUser?.is_premium || currentUser?.role === 'admin';
@@ -28,10 +33,10 @@ export default function PostCard({ post, onLike, onComment, isLiked, currentUser
   };
 
   const categoryLabels = {
-    allgemein: "Allgemein",
-    buchempfehlung: "Buchempfehlung",
-    diskussion: "Diskussion",
-    frage: "Frage"
+    allgemein: t('post.cat.allgemein'),
+    buchempfehlung: t('post.cat.buchempfehlung'),
+    diskussion: t('post.cat.diskussion'),
+    frage: t('post.cat.frage'),
   };
 
   return (
@@ -55,12 +60,12 @@ export default function PostCard({ post, onLike, onComment, isLiked, currentUser
                 onClick={() => !isAuthor && navigate(`/PublicProfile?user=${post.created_by}`)}
                 className="font-medium text-stone-800 hover:text-amber-600 transition-colors"
               >
-                {isAuthor ? 'Du' : post.created_by?.split('@')[0] || 'Anonym'}
+                {isAuthor ? t('post.you') : post.created_by?.split('@')[0] || t('post.anon')}
               </button>
               {isPremium && <Crown className="w-3 h-3 text-amber-600" />}
             </div>
             <span className="text-xs text-stone-500">
-              {formatDistanceToNow(new Date(post.created_date), { addSuffix: true, locale: de })}
+              {formatDistanceToNow(new Date(post.created_date), { addSuffix: true, locale: dateLocale })}
             </span>
           </div>
         </div>
@@ -87,7 +92,7 @@ export default function PostCard({ post, onLike, onComment, isLiked, currentUser
                       className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
                     >
                       <AlertTriangle className="w-4 h-4" />
-                      Melden
+                      {t('post.report')}
                     </button>
                   )}
                   {isAdmin && (
@@ -99,7 +104,7 @@ export default function PostCard({ post, onLike, onComment, isLiked, currentUser
                       className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
                     >
                       <Trash2 className="w-4 h-4" />
-                      Löschen
+                      {t('post.delete')}
                     </button>
                   )}
                 </div>
@@ -149,7 +154,7 @@ export default function PostCard({ post, onLike, onComment, isLiked, currentUser
             className="flex items-center gap-1 text-sm text-amber-600 hover:text-amber-700 transition-colors"
           >
             <Mail className="w-4 h-4" />
-            <span className="hidden sm:inline">Nachricht</span>
+            <span className="hidden sm:inline">{t('post.message')}</span>
           </button>
         )}
       </div>
@@ -163,7 +168,7 @@ export default function PostCard({ post, onLike, onComment, isLiked, currentUser
             variant="outline"
             className="w-full"
           >
-            Kommentar hinzufügen
+            {t('post.addComment')}
           </Button>
         </div>
       )}

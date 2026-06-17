@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { X, AlertTriangle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { useLanguage } from '@/components/language/LanguageContext';
 
 export default function ReportModal({ post, onClose, onReported }) {
   const [reason, setReason] = useState('spam');

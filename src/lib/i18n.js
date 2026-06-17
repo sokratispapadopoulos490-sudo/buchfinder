@@ -1526,6 +1526,285 @@ const dict = {
     es: 'Nota: Hay menos libros indexados para griego y turco.',
     it: 'Nota: Meno libri sono indicizzati per greco e turco.',
   },
+
+  // ── Community ─────────────────────────────────────────────────────────────
+  'community.title': {
+    de: 'Community', en: 'Community', el: 'Κοινότητα',
+    tr: 'Topluluk', fr: 'Communauté', es: 'Comunidad', it: 'Comunità',
+  },
+  'community.moderation': {
+    de: 'Moderation', en: 'Moderation', el: 'Συντονισμός',
+    tr: 'Moderasyon', fr: 'Modération', es: 'Moderación', it: 'Moderazione',
+  },
+  'community.clubs': {
+    de: 'Clubs', en: 'Clubs', el: 'Λέσχες',
+    tr: 'Kulüpler', fr: 'Clubs', es: 'Clubes', it: 'Club',
+  },
+  'community.tab.posts': {
+    de: 'Beiträge', en: 'Posts', el: 'Αναρτήσεις',
+    tr: 'Gönderiler', fr: 'Publications', es: 'Publicaciones', it: 'Post',
+  },
+  'community.tab.messages': {
+    de: 'Nachrichten', en: 'Messages', el: 'Μηνύματα',
+    tr: 'Mesajlar', fr: 'Messages', es: 'Mensajes', it: 'Messaggi',
+  },
+  'community.tab.following': {
+    de: 'Following', en: 'Following', el: 'Ακολουθώ',
+    tr: 'Takip', fr: 'Abonnements', es: 'Siguiendo', it: 'Seguiti',
+  },
+  'community.newPost': {
+    de: 'Neuer Post', en: 'New Post', el: 'Νέα ανάρτηση',
+    tr: 'Yeni gönderi', fr: 'Nouveau post', es: 'Nueva publicación', it: 'Nuovo post',
+  },
+  'community.searchPlaceholder': {
+    de: 'Posts durchsuchen...', en: 'Search posts...', el: 'Αναζήτηση αναρτήσεων...',
+    tr: 'Gönderi ara...', fr: 'Rechercher des posts...', es: 'Buscar publicaciones...', it: 'Cerca post...',
+  },
+  'community.filter.all': {
+    de: 'Alle', en: 'All', el: 'Όλα',
+    tr: 'Tümü', fr: 'Tous', es: 'Todos', it: 'Tutti',
+  },
+  'community.filter.allgemein': {
+    de: 'Allgemein', en: 'General', el: 'Γενικά',
+    tr: 'Genel', fr: 'Général', es: 'General', it: 'Generale',
+  },
+  'community.filter.buchempfehlung': {
+    de: 'Buchempfehlung', en: 'Book Rec.', el: 'Πρόταση βιβλίου',
+    tr: 'Kitap önerisi', fr: 'Recommandation', es: 'Recomendación', it: 'Consiglio libro',
+  },
+  'community.filter.diskussion': {
+    de: 'Diskussion', en: 'Discussion', el: 'Συζήτηση',
+    tr: 'Tartışma', fr: 'Discussion', es: 'Discusión', it: 'Discussione',
+  },
+  'community.filter.frage': {
+    de: 'Frage', en: 'Question', el: 'Ερώτηση',
+    tr: 'Soru', fr: 'Question', es: 'Pregunta', it: 'Domanda',
+  },
+  'community.empty.all': {
+    de: 'Noch keine Beiträge. Sei der Erste!', en: 'No posts yet. Be the first!', el: 'Δεν υπάρχουν αναρτήσεις. Γίνε ο πρώτος!',
+    tr: 'Henüz gönderi yok. İlk sen ol!', fr: 'Aucune publication. Soyez le premier !', es: '¡Sin publicaciones aún. ¡Sé el primero!', it: 'Nessun post ancora. Sii il primo!',
+  },
+  'community.empty.category': {
+    de: 'Keine Beiträge in dieser Kategorie', en: 'No posts in this category', el: 'Δεν υπάρχουν αναρτήσεις σε αυτή την κατηγορία',
+    tr: 'Bu kategoride gönderi yok', fr: 'Aucune publication dans cette catégorie', es: 'Sin publicaciones en esta categoría', it: 'Nessun post in questa categoria',
+  },
+  'community.loading': {
+    de: 'Lädt...', en: 'Loading...', el: 'Φόρτωση...',
+    tr: 'Yükleniyor...', fr: 'Chargement...', es: 'Cargando...', it: 'Caricamento...',
+  },
+  'community.premium.title': {
+    de: 'Premium-Vorteil', en: 'Premium Benefit', el: 'Πλεονέκτημα Premium',
+    tr: 'Premium avantajı', fr: 'Avantage Premium', es: 'Ventaja Premium', it: 'Vantaggio Premium',
+  },
+  'community.premium.desc': {
+    de: 'Als Premium-Mitglied kannst du die Book Compass KI in Diskussionen einbinden.',
+    en: 'As a Premium member you can include the Book Compass AI in discussions.',
+    el: 'Ως Premium μέλος μπορείς να χρησιμοποιείς την ΤΝ του Book Compass στις συζητήσεις.',
+    tr: 'Premium üye olarak Book Compass AI\'ı tartışmalara dahil edebilirsin.',
+    fr: 'En tant que membre Premium, vous pouvez intégrer l\'IA Book Compass dans les discussions.',
+    es: 'Como miembro Premium puedes incluir la IA de Book Compass en las discusiones.',
+    it: 'Come membro Premium puoi includere l\'IA Book Compass nelle discussioni.',
+  },
+  'community.premium.upgrade': {
+    de: 'Jetzt upgraden', en: 'Upgrade now', el: 'Αναβάθμιση τώρα',
+    tr: 'Şimdi yükselt', fr: 'Passer Premium', es: 'Mejorar ahora', it: 'Aggiorna ora',
+  },
+  'community.messages.title': {
+    de: 'Nachrichten', en: 'Messages', el: 'Μηνύματα',
+    tr: 'Mesajlar', fr: 'Messages', es: 'Mensajes', it: 'Messaggi',
+  },
+  'community.messages.new': {
+    de: 'Neue Nachricht', en: 'New Message', el: 'Νέο μήνυμα',
+    tr: 'Yeni mesaj', fr: 'Nouveau message', es: 'Nuevo mensaje', it: 'Nuovo messaggio',
+  },
+  'community.messages.selectConversation': {
+    de: 'Wähle eine Konversation aus', en: 'Select a conversation', el: 'Επίλεξε μια συνομιλία',
+    tr: 'Bir konuşma seç', fr: 'Choisissez une conversation', es: 'Selecciona una conversación', it: 'Seleziona una conversazione',
+  },
+  'community.following.iFollow': {
+    de: 'Ich folge', en: 'I follow', el: 'Ακολουθώ',
+    tr: 'Takip ettiklerim', fr: 'Je suis', es: 'Sigo', it: 'Seguo',
+  },
+  'community.following.myFollowers': {
+    de: 'Meine Follower', en: 'My Followers', el: 'Οι ακόλουθοί μου',
+    tr: 'Takipçilerim', fr: 'Mes abonnés', es: 'Mis seguidores', it: 'I miei follower',
+  },
+  'community.following.noFollowing': {
+    de: 'Du folgst noch niemandem', en: 'You\'re not following anyone', el: 'Δεν ακολουθείς κανέναν',
+    tr: 'Henüz kimseyi takip etmiyorsun', fr: 'Vous ne suivez personne', es: 'No sigues a nadie', it: 'Non segui nessuno',
+  },
+  'community.following.noFollowers': {
+    de: 'Noch keine Follower', en: 'No followers yet', el: 'Δεν υπάρχουν ακόλουθοι',
+    tr: 'Henüz takipçi yok', fr: 'Pas encore de followers', es: 'Sin seguidores aún', it: 'Ancora nessun follower',
+  },
+  'community.following.unfollow': {
+    de: 'Entfolgen', en: 'Unfollow', el: 'Διακοπή παρακολούθησης',
+    tr: 'Takibi bırak', fr: 'Ne plus suivre', es: 'Dejar de seguir', it: 'Smetti di seguire',
+  },
+  'community.deleteConfirm': {
+    de: 'Post wirklich löschen?', en: 'Really delete this post?', el: 'Να διαγραφεί αυτή η ανάρτηση;',
+    tr: 'Bu gönderiyi silmek istiyor musun?', fr: 'Supprimer ce post ?', es: '¿Eliminar esta publicación?', it: 'Eliminare questo post?',
+  },
+  // ── PostCard ──────────────────────────────────────────────────────────────
+  'post.you': {
+    de: 'Du', en: 'You', el: 'Εσύ',
+    tr: 'Sen', fr: 'Vous', es: 'Tú', it: 'Tu',
+  },
+  'post.anon': {
+    de: 'Anonym', en: 'Anonymous', el: 'Ανώνυμος',
+    tr: 'Anonim', fr: 'Anonyme', es: 'Anónimo', it: 'Anonimo',
+  },
+  'post.report': {
+    de: 'Melden', en: 'Report', el: 'Αναφορά',
+    tr: 'Şikayet et', fr: 'Signaler', es: 'Reportar', it: 'Segnala',
+  },
+  'post.delete': {
+    de: 'Löschen', en: 'Delete', el: 'Διαγραφή',
+    tr: 'Sil', fr: 'Supprimer', es: 'Eliminar', it: 'Elimina',
+  },
+  'post.message': {
+    de: 'Nachricht', en: 'Message', el: 'Μήνυμα',
+    tr: 'Mesaj', fr: 'Message', es: 'Mensaje', it: 'Messaggio',
+  },
+  'post.addComment': {
+    de: 'Kommentar hinzufügen', en: 'Add comment', el: 'Προσθήκη σχολίου',
+    tr: 'Yorum ekle', fr: 'Ajouter un commentaire', es: 'Añadir comentario', it: 'Aggiungi commento',
+  },
+  'post.cat.allgemein': {
+    de: 'Allgemein', en: 'General', el: 'Γενικά',
+    tr: 'Genel', fr: 'Général', es: 'General', it: 'Generale',
+  },
+  'post.cat.buchempfehlung': {
+    de: 'Buchempfehlung', en: 'Book Rec.', el: 'Πρόταση βιβλίου',
+    tr: 'Kitap önerisi', fr: 'Recommandation', es: 'Recomendación', it: 'Consiglio libro',
+  },
+  'post.cat.diskussion': {
+    de: 'Diskussion', en: 'Discussion', el: 'Συζήτηση',
+    tr: 'Tartışma', fr: 'Discussion', es: 'Discusión', it: 'Discussione',
+  },
+  'post.cat.frage': {
+    de: 'Frage', en: 'Question', el: 'Ερώτηση',
+    tr: 'Soru', fr: 'Question', es: 'Pregunta', it: 'Domanda',
+  },
+  // ── CommentSection ────────────────────────────────────────────────────────
+  'comment.placeholder': {
+    de: 'Schreibe einen Kommentar...', en: 'Write a comment...', el: 'Γράψε ένα σχόλιο...',
+    tr: 'Yorum yaz...', fr: 'Écrire un commentaire...', es: 'Escribe un comentario...', it: 'Scrivi un commento...',
+  },
+  'comment.send': {
+    de: 'Senden', en: 'Send', el: 'Αποστολή',
+    tr: 'Gönder', fr: 'Envoyer', es: 'Enviar', it: 'Invia',
+  },
+  'comment.askAI': {
+    de: 'Book Compass fragen', en: 'Ask Book Compass', el: 'Ρώτα το Book Compass',
+    tr: 'Book Compass\'a sor', fr: 'Demander à Book Compass', es: 'Preguntar a Book Compass', it: 'Chiedi a Book Compass',
+  },
+  'comment.askAILoading': {
+    de: 'Book Compass denkt nach...', en: 'Book Compass is thinking...', el: 'Το Book Compass σκέφτεται...',
+    tr: 'Book Compass düşünüyor...', fr: 'Book Compass réfléchit...', es: 'Book Compass está pensando...', it: 'Book Compass sta pensando...',
+  },
+  'comment.empty': {
+    de: 'Noch keine Kommentare. Sei der Erste!', en: 'No comments yet. Be the first!', el: 'Δεν υπάρχουν σχόλια. Γίνε ο πρώτος!',
+    tr: 'Henüz yorum yok. İlk sen ol!', fr: 'Aucun commentaire. Soyez le premier !', es: 'Sin comentarios aún. ¡Sé el primero!', it: 'Nessun commento ancora. Sii il primo!',
+  },
+  'comment.aiLabel': {
+    de: 'KI', en: 'AI', el: 'ΤΝ',
+    tr: 'YZ', fr: 'IA', es: 'IA', it: 'IA',
+  },
+  // ── CreatePostModal ───────────────────────────────────────────────────────
+  'createPost.title': {
+    de: 'Neuer Post', en: 'New Post', el: 'Νέα ανάρτηση',
+    tr: 'Yeni gönderi', fr: 'Nouveau post', es: 'Nueva publicación', it: 'Nuovo post',
+  },
+  'createPost.category': {
+    de: 'Kategorie', en: 'Category', el: 'Κατηγορία',
+    tr: 'Kategori', fr: 'Catégorie', es: 'Categoría', it: 'Categoria',
+  },
+  'createPost.titleLabel': {
+    de: 'Titel', en: 'Title', el: 'Τίτλος',
+    tr: 'Başlık', fr: 'Titre', es: 'Título', it: 'Titolo',
+  },
+  'createPost.titlePlaceholder': {
+    de: 'Worum geht es?', en: 'What is it about?', el: 'Περί τίνος πρόκειται;',
+    tr: 'Ne hakkında?', fr: 'De quoi s\'agit-il ?', es: '¿De qué trata?', it: 'Di cosa si tratta?',
+  },
+  'createPost.contentLabel': {
+    de: 'Inhalt', en: 'Content', el: 'Περιεχόμενο',
+    tr: 'İçerik', fr: 'Contenu', es: 'Contenido', it: 'Contenuto',
+  },
+  'createPost.contentPlaceholder': {
+    de: 'Teile deine Gedanken...', en: 'Share your thoughts...', el: 'Μοιράσου τις σκέψεις σου...',
+    tr: 'Düşüncelerini paylaş...', fr: 'Partagez vos pensées...', es: 'Comparte tus pensamientos...', it: 'Condividi i tuoi pensieri...',
+  },
+  'createPost.linkBook': {
+    de: 'Buch verknüpfen (optional)', en: 'Link a book (optional)', el: 'Σύνδεση βιβλίου (προαιρετικό)',
+    tr: 'Kitap bağla (isteğe bağlı)', fr: 'Lier un livre (optionnel)', es: 'Vincular un libro (opcional)', it: 'Collega un libro (opzionale)',
+  },
+  'createPost.noBook': {
+    de: 'Kein Buch', en: 'No book', el: 'Χωρίς βιβλίο',
+    tr: 'Kitap yok', fr: 'Aucun livre', es: 'Sin libro', it: 'Nessun libro',
+  },
+  'createPost.cancel': {
+    de: 'Abbrechen', en: 'Cancel', el: 'Άκυρο',
+    tr: 'İptal', fr: 'Annuler', es: 'Cancelar', it: 'Annulla',
+  },
+  'createPost.publish': {
+    de: 'Veröffentlichen', en: 'Publish', el: 'Δημοσίευση',
+    tr: 'Yayımla', fr: 'Publier', es: 'Publicar', it: 'Pubblica',
+  },
+  'createPost.publishing': {
+    de: 'Wird veröffentlicht...', en: 'Publishing...', el: 'Δημοσίευση...',
+    tr: 'Yayımlanıyor...', fr: 'Publication...', es: 'Publicando...', it: 'Pubblicazione...',
+  },
+  // ── ReportModal ───────────────────────────────────────────────────────────
+  'report.title': {
+    de: 'Post melden', en: 'Report Post', el: 'Αναφορά ανάρτησης',
+    tr: 'Gönderiyi şikayet et', fr: 'Signaler le post', es: 'Reportar publicación', it: 'Segnala post',
+  },
+  'report.reasonLabel': {
+    de: 'Grund', en: 'Reason', el: 'Λόγος',
+    tr: 'Sebep', fr: 'Motif', es: 'Motivo', it: 'Motivo',
+  },
+  'report.descLabel': {
+    de: 'Beschreibung (optional)', en: 'Description (optional)', el: 'Περιγραφή (προαιρετικό)',
+    tr: 'Açıklama (isteğe bağlı)', fr: 'Description (optionnel)', es: 'Descripción (opcional)', it: 'Descrizione (opzionale)',
+  },
+  'report.descPlaceholder': {
+    de: 'Weitere Details...', en: 'More details...', el: 'Περισσότερες λεπτομέρειες...',
+    tr: 'Daha fazla detay...', fr: 'Plus de détails...', es: 'Más detalles...', it: 'Più dettagli...',
+  },
+  'report.cancel': {
+    de: 'Abbrechen', en: 'Cancel', el: 'Άκυρο',
+    tr: 'İptal', fr: 'Annuler', es: 'Cancelar', it: 'Annulla',
+  },
+  'report.submit': {
+    de: 'Melden', en: 'Report', el: 'Αναφορά',
+    tr: 'Şikayet et', fr: 'Signaler', es: 'Reportar', it: 'Segnala',
+  },
+  'report.submitting': {
+    de: 'Wird gemeldet...', en: 'Reporting...', el: 'Υποβολή αναφοράς...',
+    tr: 'Şikayet ediliyor...', fr: 'Signalement...', es: 'Reportando...', it: 'Segnalazione...',
+  },
+  'report.reason.spam': {
+    de: 'Spam oder Werbung', en: 'Spam or Advertising', el: 'Spam ή Διαφήμιση',
+    tr: 'Spam veya Reklam', fr: 'Spam ou publicité', es: 'Spam o publicidad', it: 'Spam o pubblicità',
+  },
+  'report.reason.inappropriate': {
+    de: 'Unangemessener Inhalt', en: 'Inappropriate Content', el: 'Ακατάλληλο περιεχόμενο',
+    tr: 'Uygunsuz içerik', fr: 'Contenu inapproprié', es: 'Contenido inapropiado', it: 'Contenuto inappropriato',
+  },
+  'report.reason.harassment': {
+    de: 'Belästigung oder Mobbing', en: 'Harassment or Bullying', el: 'Παρενόχληση ή Εκφοβισμός',
+    tr: 'Taciz veya zorbalık', fr: 'Harcèlement ou intimidation', es: 'Acoso o intimidación', it: 'Molestie o bullismo',
+  },
+  'report.reason.misinformation': {
+    de: 'Falschinformationen', en: 'Misinformation', el: 'Παραπληροφόρηση',
+    tr: 'Yanlış bilgi', fr: 'Désinformation', es: 'Desinformación', it: 'Disinformazione',
+  },
+  'report.reason.other': {
+    de: 'Anderer Grund', en: 'Other Reason', el: 'Άλλος λόγος',
+    tr: 'Başka sebep', fr: 'Autre raison', es: 'Otro motivo', it: 'Altro motivo',
+  },
 };
 
 /**
