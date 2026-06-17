@@ -5,7 +5,6 @@ import { Compass, Crown, Clock, Search, Trash2, Globe, Edit, Download, ChevronDo
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
-import { de } from 'date-fns/locale';
 import { useLanguage, LanguageProvider } from '@/components/language/LanguageContext';
 import { SHOPPING_REGIONS } from '@/lib/providerRegistry';
 import ProfileEditModal from '@/components/profile/ProfileEditModal';
@@ -211,7 +210,7 @@ function AccountContent() {
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-xs text-stone-400 flex items-center gap-1">
                           <Clock className="w-3 h-3" />
-                          {formatDistanceToNow(new Date(rec.created_date), { addSuffix: true, locale: de })}
+                          {formatDistanceToNow(new Date(rec.created_date), { addSuffix: true })}
                         </span>
                         <button onClick={() => handleDeleteRecommendation(rec.id)} className="text-red-400 hover:text-red-500">
                           <Trash2 className="w-4 h-4" />

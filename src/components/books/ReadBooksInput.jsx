@@ -62,7 +62,7 @@ export default function ReadBooksInput({ value = [], onChange, onSkip, placehold
                 <button
                   onClick={() => removeBook(idx)}
                   className="hover:text-red-600 dark:hover:text-red-400 transition-colors"
-                  aria-label={`${title} entfernen`}
+                  aria-label={t('readBooks.remove').replace('{title}', title)}
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>

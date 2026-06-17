@@ -1299,6 +1299,10 @@ const dict = {
     de: 'Überspringen', en: 'Skip', el: 'Παράλειψη',
     tr: 'Geç', fr: 'Ignorer', es: 'Omitir', it: 'Salta',
   },
+  'readBooks.remove': {
+    de: '{title} entfernen', en: 'Remove {title}', el: 'Αφαίρεση {title}',
+    tr: '{title} kaldır', fr: 'Retirer {title}', es: 'Quitar {title}', it: 'Rimuovi {title}',
+  },
 
   // ── generateReasons (BookSearch) ─────────────────────────────────────────
   'reason.topic.persoenliche_entwicklung': {
