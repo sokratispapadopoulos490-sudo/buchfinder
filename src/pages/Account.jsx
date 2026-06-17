@@ -5,7 +5,7 @@ import { Compass, Crown, Clock, Search, Trash2, Globe, Edit, Download, ChevronDo
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
-import { useLanguage, LanguageProvider } from '@/components/language/LanguageContext';
+import { useLanguage } from '@/components/language/LanguageContext';
 import { SHOPPING_REGIONS } from '@/lib/providerRegistry';
 import ProfileEditModal from '@/components/profile/ProfileEditModal';
 import NotificationBell from '@/components/notifications/NotificationBell';
@@ -253,43 +253,57 @@ function AccountContent() {
             <div className="bg-white dark:bg-[#1a1a1a] border border-t-0 border-stone-200 dark:border-stone-700 rounded-b-2xl p-4 space-y-3">
 
               {/* App-UI Sprache (ändert NICHT die Buchsprache) */}
-              <div className="flex items-center justify-between p-3 border border-stone-200 dark:border-stone-700 rounded-xl">
-                <div className="flex items-center gap-3">
+              <div className="p-3 border border-stone-200 dark:border-stone-700 rounded-xl">
+                <div className="flex items-center gap-3 mb-3">
                   <Globe className="w-4 h-4 text-stone-500" />
                   <div>
                     <div className="text-sm font-medium text-stone-800 dark:text-stone-200">{t('account.appLanguage')}</div>
                     <div className="text-xs text-stone-500">{t('account.appLanguageSub')}</div>
                   </div>
                 </div>
-                <select
-                  value={language}
-                  onChange={(e) => changeLanguage(e.target.value)}
-                  className="appearance-none bg-stone-50 dark:bg-[#262626] border border-stone-300 dark:border-stone-600 rounded-lg px-3 py-2 text-sm text-stone-700 dark:text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
-                >
+                <div className="grid grid-cols-2 gap-2">
                   {UI_LANGUAGES.map((lang) => (
-                    <option key={lang.code} value={lang.code}>{lang.flag} {lang.name}</option>
+                    <button
+                      key={lang.code}
+                      onClick={() => changeLanguage(lang.code)}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium border-2 transition-all text-left ${
+                        language === lang.code
+                          ? 'border-amber-500 bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300'
+                          : 'border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-stone-300 dark:hover:border-stone-600'
+                      }`}
+                    >
+                      <span>{lang.flag}</span>
+                      <span>{lang.name}</span>
+                    </button>
                   ))}
-                </select>
+                </div>
               </div>
 
               {/* Kaufregion */}
-              <div className="flex items-center justify-between p-3 border border-stone-200 dark:border-stone-700 rounded-xl">
-                <div className="flex items-center gap-3">
+              <div className="p-3 border border-stone-200 dark:border-stone-700 rounded-xl">
+                <div className="flex items-center gap-3 mb-3">
                   <Globe className="w-4 h-4 text-stone-500" />
                   <div>
                     <div className="text-sm font-medium text-stone-800 dark:text-stone-200">{t('account.shoppingRegion')}</div>
                     <div className="text-xs text-stone-500">{t('account.shoppingRegionSub')}</div>
                   </div>
                 </div>
-                <select
-                  value={shoppingRegion}
-                  onChange={(e) => changeShoppingRegion(e.target.value)}
-                  className="appearance-none bg-stone-50 dark:bg-[#262626] border border-stone-300 dark:border-stone-600 rounded-lg px-3 py-2 text-sm text-stone-700 dark:text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer"
-                >
+                <div className="grid grid-cols-2 gap-2">
                   {SHOPPING_REGIONS.map((r) => (
-                    <option key={r.code} value={r.code}>{r.flag} {t(r.labelKey)}</option>
+                    <button
+                      key={r.code}
+                      onClick={() => changeShoppingRegion(r.code)}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium border-2 transition-all text-left ${
+                        shoppingRegion === r.code
+                          ? 'border-amber-500 bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300'
+                          : 'border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-stone-300 dark:hover:border-stone-600'
+                      }`}
+                    >
+                      <span>{r.flag}</span>
+                      <span>{t(r.labelKey)}</span>
+                    </button>
                   ))}
-                </select>
+                </div>
               </div>
 
               {/* Dark Mode */}
@@ -402,9 +416,5 @@ function AccountContent() {
 }
 
 export default function Account() {
-  return (
-    <LanguageProvider>
-      <AccountContent />
-    </LanguageProvider>
-  );
+  return <AccountContent />;
 }
