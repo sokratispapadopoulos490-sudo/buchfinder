@@ -839,6 +839,57 @@ const dict = {
     tr: '💪 Devam et!', fr: '💪 Continue !', es: '💪 ¡Sigue así!', it: '💪 Continua così!',
   },
 
+  // ── CreateEventModal ──────────────────────────────────────────────────────
+  'createEvent.title': {
+    de: 'Neuer Lese-Termin', en: 'New Reading Event', el: 'Νέα εκδήλωση ανάγνωσης',
+    tr: 'Yeni okuma etkinliği', fr: 'Nouvel événement lecture', es: 'Nuevo evento de lectura', it: 'Nuovo evento di lettura',
+  },
+  'createEvent.titleLabel': {
+    de: 'Titel', en: 'Title', el: 'Τίτλος',
+    tr: 'Başlık', fr: 'Titre', es: 'Título', it: 'Titolo',
+  },
+  'createEvent.titlePlaceholder': {
+    de: 'z.B. Club-Treffen, Buch kaufen…', en: 'E.g. Club meeting, buy book…',
+    el: 'π.χ. Συνάντηση λέσχης, αγορά βιβλίου…', tr: 'Örn. Kulüp toplantısı, kitap al…',
+    fr: 'Ex. réunion club, acheter livre…', es: 'Ej. Reunión del club, comprar libro…', it: 'Es. Riunione club, acquistare libro…',
+  },
+  'createEvent.categoryLabel': {
+    de: 'Kategorie', en: 'Category', el: 'Κατηγορία',
+    tr: 'Kategori', fr: 'Catégorie', es: 'Categoría', it: 'Categoria',
+  },
+  'createEvent.dateLabel': {
+    de: 'Datum', en: 'Date', el: 'Ημερομηνία',
+    tr: 'Tarih', fr: 'Date', es: 'Fecha', it: 'Data',
+  },
+  'createEvent.timeLabel': {
+    de: 'Uhrzeit', en: 'Time', el: 'Ώρα',
+    tr: 'Saat', fr: 'Heure', es: 'Hora', it: 'Ora',
+  },
+  'createEvent.linkBook': {
+    de: 'Buch verknüpfen (optional)', en: 'Link a book (optional)', el: 'Σύνδεση βιβλίου (προαιρετικό)',
+    tr: 'Kitap bağla (isteğe bağlı)', fr: 'Lier un livre (optionnel)', es: 'Vincular un libro (opcional)', it: 'Collega un libro (opzionale)',
+  },
+  'createEvent.notesLabel': {
+    de: 'Notizen (optional)', en: 'Notes (optional)', el: 'Σημειώσεις (προαιρετικό)',
+    tr: 'Notlar (isteğe bağlı)', fr: 'Notes (optionnel)', es: 'Notas (opcional)', it: 'Note (opzionale)',
+  },
+  'createEvent.notesPlaceholder': {
+    de: 'Details, Links, Erinnerungen…', en: 'Details, links, reminders…', el: 'Λεπτομέρειες, σύνδεσμοι, υπενθυμίσεις…',
+    tr: 'Detaylar, bağlantılar, hatırlatmalar…', fr: 'Détails, liens, rappels…', es: 'Detalles, enlaces, recordatorios…', it: 'Dettagli, link, promemoria…',
+  },
+  'createEvent.cancel': {
+    de: 'Abbrechen', en: 'Cancel', el: 'Άκυρο',
+    tr: 'İptal', fr: 'Annuler', es: 'Cancelar', it: 'Annulla',
+  },
+  'createEvent.save': {
+    de: 'Termin erstellen', en: 'Create Event', el: 'Δημιουργία εκδήλωσης',
+    tr: 'Etkinlik oluştur', fr: 'Créer l\'événement', es: 'Crear evento', it: 'Crea evento',
+  },
+  'createEvent.saving': {
+    de: 'Speichern…', en: 'Saving…', el: 'Αποθήκευση…',
+    tr: 'Kaydediliyor…', fr: 'Enregistrement…', es: 'Guardando…', it: 'Salvataggio…',
+  },
+
   // ── EventsList ────────────────────────────────────────────────────────────
   'events.title': {
     de: 'Lese-Termine', en: 'Reading Events', el: 'Εκδηλώσεις ανάγνωσης',
