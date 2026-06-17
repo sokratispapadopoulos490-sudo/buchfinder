@@ -9,13 +9,14 @@ export default function ReportModal({ post, onClose, onReported }) {
   const [reason, setReason] = useState('spam');
   const [description, setDescription] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const { t } = useLanguage();
 
   const reasons = [
-    { value: 'spam', label: 'Spam oder Werbung' },
-    { value: 'inappropriate', label: 'Unangemessener Inhalt' },
-    { value: 'harassment', label: 'Belästigung oder Mobbing' },
-    { value: 'misinformation', label: 'Falschinformationen' },
-    { value: 'other', label: 'Anderer Grund' }
+    { value: 'spam', label: t('report.reason.spam') },
+    { value: 'inappropriate', label: t('report.reason.inappropriate') },
+    { value: 'harassment', label: t('report.reason.harassment') },
+    { value: 'misinformation', label: t('report.reason.misinformation') },
+    { value: 'other', label: t('report.reason.other') },
   ];
 
   const handleSubmit = async () => {
@@ -45,7 +46,7 @@ export default function ReportModal({ post, onClose, onReported }) {
         <div className="p-6 border-b border-stone-200 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <AlertTriangle className="w-5 h-5 text-red-600" />
-            <h2 className="text-xl font-light text-stone-800">Post melden</h2>
+            <h2 className="text-xl font-light text-stone-800">{t('report.title')}</h2>
           </div>
           <button
             onClick={onClose}
@@ -58,7 +59,7 @@ export default function ReportModal({ post, onClose, onReported }) {
         <div className="p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-stone-700 mb-2">
-              Grund
+              {t('report.reasonLabel')}
             </label>
             <select
               value={reason}
@@ -73,12 +74,12 @@ export default function ReportModal({ post, onClose, onReported }) {
 
           <div>
             <label className="block text-sm font-medium text-stone-700 mb-2">
-              Beschreibung (optional)
+              {t('report.descLabel')}
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Weitere Details..."
+              placeholder={t('report.descPlaceholder')}
               className="w-full px-4 py-3 border border-stone-200 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-red-500"
               rows={4}
             />
@@ -91,14 +92,14 @@ export default function ReportModal({ post, onClose, onReported }) {
             variant="outline"
             className="flex-1"
           >
-            Abbrechen
+            {t('report.cancel')}
           </Button>
           <Button
             onClick={handleSubmit}
             disabled={submitting}
             className="flex-1 bg-red-600 hover:bg-red-700 text-white"
           >
-            {submitting ? 'Wird gemeldet...' : 'Melden'}
+            {submitting ? t('report.submitting') : t('report.submit')}
           </Button>
         </div>
       </motion.div>

@@ -49,29 +49,29 @@ export default function CreatePostModal({ onClose, onCreate, savedBooks }) {
           <form onSubmit={handleSubmit} className="p-6 space-y-4">
             <div>
               <label className="block text-sm font-medium text-stone-700 mb-2">
-                Kategorie
+                {t('createPost.category')}
               </label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 className="w-full px-3 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
               >
-                <option value="allgemein">Allgemein</option>
-                <option value="buchempfehlung">Buchempfehlung</option>
-                <option value="diskussion">Diskussion</option>
-                <option value="frage">Frage</option>
+                <option value="allgemein">{t('community.filter.allgemein')}</option>
+                <option value="buchempfehlung">{t('community.filter.buchempfehlung')}</option>
+                <option value="diskussion">{t('community.filter.diskussion')}</option>
+                <option value="frage">{t('community.filter.frage')}</option>
               </select>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-stone-700 mb-2">
-                Titel
+                {t('createPost.titleLabel')}
               </label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="Worum geht es?"
+                placeholder={t('createPost.titlePlaceholder')}
                 className="w-full px-3 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
                 required
               />
@@ -79,12 +79,12 @@ export default function CreatePostModal({ onClose, onCreate, savedBooks }) {
 
             <div>
               <label className="block text-sm font-medium text-stone-700 mb-2">
-                Inhalt
+                {t('createPost.contentLabel')}
               </label>
               <textarea
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                placeholder="Teile deine Gedanken..."
+                placeholder={t('createPost.contentPlaceholder')}
                 rows={6}
                 className="w-full px-3 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none"
                 required
@@ -94,14 +94,14 @@ export default function CreatePostModal({ onClose, onCreate, savedBooks }) {
             {savedBooks?.length > 0 && (
               <div>
                 <label className="block text-sm font-medium text-stone-700 mb-2">
-                  Buch verknüpfen (optional)
+                  {t('createPost.linkBook')}
                 </label>
                 <select
                   value={selectedBookId}
                   onChange={(e) => setSelectedBookId(e.target.value)}
                   className="w-full px-3 py-2 border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
                 >
-                  <option value="">Kein Buch</option>
+                  <option value="">{t('createPost.noBook')}</option>
                   {savedBooks.map((book) => (
                     <option key={book.book_id} value={book.book_id}>
                       {book.book_data.title} - {book.book_data.author}
@@ -118,14 +118,14 @@ export default function CreatePostModal({ onClose, onCreate, savedBooks }) {
                 onClick={onClose}
                 className="flex-1"
               >
-                Abbrechen
+                {t('createPost.cancel')}
               </Button>
               <Button
                 type="submit"
                 disabled={loading || !title.trim() || !content.trim()}
                 className="flex-1 bg-amber-600 hover:bg-amber-700 text-white"
               >
-                {loading ? 'Wird veröffentlicht...' : 'Veröffentlichen'}
+                {loading ? t('createPost.publishing') : t('createPost.publish')}
               </Button>
             </div>
           </form>
