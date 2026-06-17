@@ -36,10 +36,10 @@ export default function ChallengesSection() {
         current_progress: 0,
         completed: false,
       });
-      toast.success('Challenge beigetreten!');
+      toast.success(t('challenges.joinedToast'));
       loadChallenges();
     } catch (error) {
-      toast.error('Fehler beim Beitreten');
+      toast.error(t('challenges.joinErrorToast'));
     } finally {
       setIsLoading(false);
     }
@@ -51,11 +51,11 @@ export default function ChallengesSection() {
       const participation = userChallenges.find(uc => uc.challenge_id === challengeId);
       if (participation) {
         await base44.entities.ChallengeParticipant.delete(participation.id);
-        toast.success('Challenge verlassen!');
+        toast.success(t('challenges.leftToast'));
         loadChallenges();
       }
     } catch (error) {
-      toast.error('Fehler beim Verlassen');
+      toast.error(t('challenges.leaveErrorToast'));
     } finally {
       setIsLoading(false);
     }

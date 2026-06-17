@@ -5,13 +5,14 @@ import { base44 } from '@/api/base44Client';
 import CreateEventModal from './CreateEventModal';
 import { useLanguage } from '@/components/language/LanguageContext';
 
-const CATEGORY_LABELS = {
-  lesen: '📖 Buch lesen',
-  challenge: '🏆 Challenge',
-  club: '👥 Buchclub',
-  diskussion: '💬 Diskussion',
-  geschenk: '🎁 Geschenk',
-  sonstiges: '📌 Sonstiges',
+// Keys for i18n – resolved inside component via t()
+const CATEGORY_KEYS = {
+  lesen: 'events.cat.lesen',
+  challenge: 'events.cat.challenge',
+  club: 'events.cat.club',
+  diskussion: 'events.cat.diskussion',
+  geschenk: 'events.cat.geschenk',
+  sonstiges: 'events.cat.sonstiges',
 };
 
 const CATEGORY_COLORS = {
@@ -111,7 +112,7 @@ export default function EventsList() {
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium text-stone-800 dark:text-stone-200 truncate">{event.title}</div>
                 <div className={`text-xs font-medium mt-0.5 ${CATEGORY_COLORS[event.category] || CATEGORY_COLORS.sonstiges}`}>
-                  {CATEGORY_LABELS[event.category] || event.category}
+                  {CATEGORY_KEYS[event.category] ? t(CATEGORY_KEYS[event.category]) : event.category}
                 </div>
                 <div className="flex items-center gap-2 mt-1 text-xs text-stone-400 dark:text-stone-500">
                   <span className={`flex items-center gap-1 ${isToday(event.date) ? 'text-amber-600 dark:text-amber-400 font-medium' : isOverdue(event.date) ? 'text-red-500' : ''}`}>

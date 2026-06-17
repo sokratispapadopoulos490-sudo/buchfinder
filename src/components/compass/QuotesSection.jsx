@@ -36,7 +36,7 @@ export default function QuotesSection() {
       const uploadedFile = await base44.integrations.Core.UploadFile({ file });
       
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: 'Extrahiere den Text aus diesem Bild. Gib NUR den Text zurück, den du siehst, ohne Erklärungen oder Formatierung.',
+        prompt: 'Extract the text from this image. Return ONLY the text you see, without explanations or formatting.',
         file_urls: [uploadedFile.file_url],
       });
 
@@ -44,10 +44,10 @@ export default function QuotesSection() {
         setNewQuote({ ...newQuote, quote_text: result });
         setUseCamera(false);
         setCameraImage(null);
-        toast.success('Text erfolgreich erfasst');
+        toast.success(t('quotes.captureSuccess'));
       }
     } catch (error) {
-      toast.error('Fehler beim Erfassen des Textes');
+      toast.error(t('quotes.captureError'));
     } finally {
       setIsLoading(false);
     }
@@ -56,24 +56,24 @@ export default function QuotesSection() {
   const handleAddQuote = async (e) => {
     e.preventDefault();
     if (!newQuote.quote_text.trim()) {
-      toast.error('Bitte gib ein Zitat ein');
+      toast.error(t('quotes.errorEmpty'));
       return;
     }
 
     setIsLoading(true);
     try {
       await base44.entities.BookQuote.create({
-        book_data: newQuote.book_data || { title: 'Unbekannt', author: 'Unbekannt' },
+        book_data: newQuote.book_data || { title: t('quotes.unknown'), author: t('quotes.unknown') },
         quote_text: newQuote.quote_text,
         page_number: newQuote.page_number ? parseInt(newQuote.page_number) : null,
         is_public: false,
       });
-      toast.success('Zitat hinzugefügt');
+      toast.success(t('quotes.added'));
       setNewQuote({ book_data: null, quote_text: '', page_number: '' });
       setShowAddForm(false);
       loadQuotes();
     } catch (error) {
-      toast.error('Fehler beim Speichern des Zitats');
+      toast.error(t('quotes.saveError'));
     } finally {
       setIsLoading(false);
     }
@@ -185,7 +185,7 @@ export default function QuotesSection() {
             <div key={quote.id} className="p-3 bg-stone-50 dark:bg-[#0a0a0a] rounded-lg border border-stone-200 dark:border-stone-700">
               <p className="text-sm italic text-stone-800 dark:text-stone-200 mb-2">"{quote.quote_text}"</p>
               <div className="flex items-center justify-between text-xs text-stone-500 dark:text-stone-400">
-                <span>{quote.book_data?.title || 'Unbekannt'}</span>
+                <span>{quote.book_data?.title || t('quotes.unknown')}</span>
                 {quote.page_number && <span>{t('quotes.pageAbbrev')} {quote.page_number}</span>}
               </div>
             </div>

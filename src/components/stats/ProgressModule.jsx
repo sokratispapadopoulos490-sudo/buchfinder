@@ -27,17 +27,17 @@ function getWeekDays(readingLogs) {
   return days;
 }
 
-function getMonthWeeks(readingLogs) {
+function getMonthWeeks(readingLogs, weekLabels) {
   const now = new Date();
   const year = now.getFullYear();
   const month = now.getMonth();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
   const weeks = [
-    { label: 'Woche 1', pages: 0, days: '1–7' },
-    { label: 'Woche 2', pages: 0, days: '8–14' },
-    { label: 'Woche 3', pages: 0, days: '15–21' },
-    { label: 'Woche 4+', pages: 0, days: `22–${daysInMonth}` },
+    { label: weekLabels[0], pages: 0, days: '1–7' },
+    { label: weekLabels[1], pages: 0, days: '8–14' },
+    { label: weekLabels[2], pages: 0, days: '15–21' },
+    { label: weekLabels[3], pages: 0, days: `22–${daysInMonth}` },
   ];
 
   readingLogs.forEach(log => {
@@ -51,9 +51,8 @@ function getMonthWeeks(readingLogs) {
   return weeks;
 }
 
-function getYearMonths(readingLogs) {
+function getYearMonths(readingLogs, monthNames) {
   const year = new Date().getFullYear();
-  const monthNames = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
   const months = monthNames.map((label, i) => ({ label, pages: 0, month: i }));
 
   readingLogs.forEach(log => {
@@ -132,9 +131,8 @@ function MiniBar({ label, pages, max, color = 'bg-amber-500', sublabel }) {
 
 // ── Level views ──────────────────────────────────────────────────────────────
 
-function WeekView({ readingLogs, onDrillDown, t }) {
+function WeekView({ readingLogs, onDrillDown, t, dayNames }) {
   const days = useMemo(() => getWeekDays(readingLogs), [readingLogs]);
-  const dayNames = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
   const maxPages = Math.max(...days.map(d => d.pages), 1);
   const total = days.reduce((s, d) => s + d.pages, 0);
   const today = new Date();
@@ -166,8 +164,8 @@ function WeekView({ readingLogs, onDrillDown, t }) {
   );
 }
 
-function MonthView({ readingLogs, onDrillDown, onBack, t }) {
-  const weeks = useMemo(() => getMonthWeeks(readingLogs), [readingLogs]);
+function MonthView({ readingLogs, onDrillDown, onBack, t, weekLabels }) {
+  const weeks = useMemo(() => getMonthWeeks(readingLogs, weekLabels), [readingLogs, weekLabels]);
   const maxPages = Math.max(...weeks.map(w => w.pages), 1);
   const total = weeks.reduce((s, w) => s + w.pages, 0);
   const monthName = new Date().toLocaleString(undefined, { month: 'long' });
@@ -196,8 +194,8 @@ function MonthView({ readingLogs, onDrillDown, onBack, t }) {
   );
 }
 
-function YearView({ readingLogs, onBack, t }) {
-  const months = useMemo(() => getYearMonths(readingLogs), [readingLogs]);
+function YearView({ readingLogs, onBack, t, monthNames }) {
+  const months = useMemo(() => getYearMonths(readingLogs, monthNames), [readingLogs, monthNames]);
   const maxPages = Math.max(...months.map(m => m.pages), 1);
   const total = months.reduce((s, m) => s + m.pages, 0);
   const currentMonth = new Date().getMonth();
@@ -230,6 +228,15 @@ const LEVELS = ['week', 'month', 'year'];
 export default function ProgressModule({ readingLogs, completedBooksCount, savedBooksCount = 0, generatedBooksCount = 0 }) {
   const { t } = useLanguage();
   const LEVEL_LABELS = { week: t('progress.weeklyProgress'), month: t('progress.monthlyProgress'), year: t('progress.yearlyProgress') };
+  const DAY_NAMES = [t('progress.dayMo'), t('progress.dayTu'), t('progress.dayWe'), t('progress.dayTh'), t('progress.dayFr'), t('progress.daySa'), t('progress.daySu')];
+  const WEEK_LABELS = [
+    `${t('progress.week')} 1`, `${t('progress.week')} 2`, `${t('progress.week')} 3`, `${t('progress.week')} 4+`,
+  ];
+  const MONTH_NAMES = [
+    t('progress.month.jan'), t('progress.month.feb'), t('progress.month.mar'), t('progress.month.apr'),
+    t('progress.month.may'), t('progress.month.jun'), t('progress.month.jul'), t('progress.month.aug'),
+    t('progress.month.sep'), t('progress.month.oct'), t('progress.month.nov'), t('progress.month.dec'),
+  ];
   const [showDetail, setShowDetail] = useState(false);
   const [level, setLevel] = useState('week'); // 'week' | 'month' | 'year'
 
@@ -379,13 +386,13 @@ export default function ProgressModule({ readingLogs, completedBooksCount, saved
                   transition={{ duration: 0.18 }}
                 >
                   {level === 'week' && (
-                    <WeekView readingLogs={readingLogs} onDrillDown={drillDown} t={t} />
+                    <WeekView readingLogs={readingLogs} onDrillDown={drillDown} t={t} dayNames={DAY_NAMES} />
                   )}
                   {level === 'month' && (
-                    <MonthView readingLogs={readingLogs} onDrillDown={drillDown} onBack={drillUp} t={t} />
+                    <MonthView readingLogs={readingLogs} onDrillDown={drillDown} onBack={drillUp} t={t} weekLabels={WEEK_LABELS} />
                   )}
                   {level === 'year' && (
-                    <YearView readingLogs={readingLogs} onBack={drillUp} t={t} />
+                    <YearView readingLogs={readingLogs} onBack={drillUp} t={t} monthNames={MONTH_NAMES} />
                   )}
                 </motion.div>
               </AnimatePresence>
@@ -393,7 +400,7 @@ export default function ProgressModule({ readingLogs, completedBooksCount, saved
               {/* Footer stats */}
               <div className="mt-5 pt-4 border-t border-stone-100 dark:border-stone-700 grid grid-cols-3 gap-3 text-center">
                 <div>
-                  <div className="text-xs text-stone-500 dark:text-stone-400 mb-0.5">Streak</div>
+                  <div className="text-xs text-stone-500 dark:text-stone-400 mb-0.5">{t('progress.streak')}</div>
                   <div className="flex items-center justify-center gap-1">
                     {streak > 0 ? (
                       <><Flame className="w-3.5 h-3.5 text-orange-500" /><span className="text-sm font-semibold text-stone-800 dark:text-stone-200">{streak}d</span></>
