@@ -361,7 +361,7 @@ const dict = {
     de: 'Kommentare', en: 'Comments', el: 'Σχόλια', tr: 'Yorumlar', fr: 'Commentaires', es: 'Comentarios', it: 'Commenti',
   },
   'account.notif.likes': {
-    de: 'Likes', en: 'Likes', el: 'Likes', tr: 'Beğeniler', fr: 'J\'aime', es: 'Me gusta', it: 'Mi piace',
+    de: 'Likes', en: 'Likes', el: 'Μου αρέσει', tr: 'Beğeniler', fr: 'J\'aime', es: 'Me gusta', it: 'Mi piace',
   },
   'account.notif.messages': {
     de: 'Nachrichten', en: 'Messages', el: 'Μηνύματα', tr: 'Mesajlar', fr: 'Messages', es: 'Mensajes', it: 'Messaggi',
