@@ -269,8 +269,13 @@ function BookSearchContent() {
     }
   };
 
-  const handleStart = () => {
-    // Primary: direct React state update
+  const handleStart = (e) => {
+    // Prevent any default behavior or event bubbling issues
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    // Direct React state update – the only path into questions phase
     setPhase('questions');
     setCurrentQuestion(0);
   };
@@ -437,63 +442,74 @@ function BookSearchContent() {
       <AnimatePresence mode="wait">
         {/* Start Phase */}
         {phase === 'start' && (
-          <motion.div
-            key="start"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="min-h-screen flex flex-col items-center justify-center px-6 py-12"
-          >
+          <>
             <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-              className="text-center mb-10 max-w-sm"
+              key="start-hero"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="min-h-screen flex flex-col items-center justify-center px-6 pb-8 pt-12"
             >
-              <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-amber-600 flex items-center justify-center shadow-md">
-                <Compass className="w-10 h-10 text-white" />
-              </div>
-              <h1 className="text-3xl md:text-4xl font-light text-stone-800 dark:text-stone-100 mb-4 tracking-tight">
-                {t('booksearch.title')}
-              </h1>
-              <p className="text-stone-500 dark:text-stone-400 text-base font-light leading-relaxed mb-8">
-                {t('booksearch.subtitle')}
-              </p>
+              <motion.div
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+                className="text-center mb-10 max-w-sm"
+              >
+                <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-amber-600 flex items-center justify-center shadow-md">
+                  <Compass className="w-10 h-10 text-white" />
+                </div>
+                <h1 className="text-3xl md:text-4xl font-light text-stone-800 dark:text-stone-100 mb-4 tracking-tight">
+                  {t('booksearch.title')}
+                </h1>
+                <p className="text-stone-500 dark:text-stone-400 text-base font-light leading-relaxed mb-8">
+                  {t('booksearch.subtitle')}
+                </p>
 
-              <div className="flex flex-col gap-3 mb-8">
-                <div className="flex items-center gap-3 text-left">
-                  <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center flex-shrink-0">
-                    <span className="text-amber-600 text-sm">✦</span>
+                <div className="flex flex-col gap-3 mb-6">
+                  <div className="flex items-center gap-3 text-left">
+                    <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center flex-shrink-0">
+                      <span className="text-amber-600 text-sm">✦</span>
+                    </div>
+                    <span className="text-sm text-stone-600 dark:text-stone-300">{t('booksearch.benefitPersonal')}</span>
                   </div>
-                  <span className="text-sm text-stone-600 dark:text-stone-300">{t('booksearch.benefitPersonal')}</span>
-                </div>
-                <div className="flex items-center gap-3 text-left">
-                  <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center flex-shrink-0">
-                    <span className="text-emerald-600 text-sm">✓</span>
+                  <div className="flex items-center gap-3 text-left">
+                    <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center flex-shrink-0">
+                      <span className="text-emerald-600 text-sm">✓</span>
+                    </div>
+                    <span className="text-sm text-stone-600 dark:text-stone-300">{t('booksearch.benefitFree')}</span>
                   </div>
-                  <span className="text-sm text-stone-600 dark:text-stone-300">{t('booksearch.benefitFree')}</span>
-                </div>
-                <div className="flex items-center gap-3 text-left">
-                  <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
-                    <span className="text-blue-600 text-sm">🌐</span>
+                  <div className="flex items-center gap-3 text-left">
+                    <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
+                      <span className="text-blue-600 text-sm">🌐</span>
+                    </div>
+                    <span className="text-sm text-stone-600 dark:text-stone-300">{t('booksearch.benefitLanguages')}</span>
                   </div>
-                  <span className="text-sm text-stone-600 dark:text-stone-300">{t('booksearch.benefitLanguages')}</span>
                 </div>
-              </div>
+              </motion.div>
             </motion.div>
 
-            <div className="flex flex-col items-center gap-3 w-full max-w-xs">
-              <button
-                type="button"
-                onClick={handleStart}
-                className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-amber-600 hover:bg-amber-700 text-white text-base font-medium rounded-xl shadow-sm transition-colors"
-              >
-                {t('btn.startSearch')}
-                <ArrowRight className="w-5 h-5" />
-              </button>
-              <p className="text-xs text-stone-400 dark:text-stone-500">{t('booksearch.betaLabel')}</p>
-            </div>
-          </motion.div>
+            <motion.div
+              key="start-btn"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed bottom-0 left-0 right-0 p-6 pb-8 bg-gradient-to-t from-stone-50 dark:from-[#0a0a0a] via-stone-50/95 dark:via-[#0a0a0a]/95 to-transparent z-10"
+            >
+              <div className="flex flex-col items-center gap-3 w-full max-w-xs mx-auto">
+                <button
+                  type="button"
+                  onClick={handleStart}
+                  onMouseDown={handleStart}
+                  className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white text-base font-medium rounded-xl shadow-sm transition-colors cursor-pointer select-none touch-manipulation"
+                >
+                  {t('btn.startSearch')}
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+                <p className="text-xs text-stone-400 dark:text-stone-500">{t('booksearch.betaLabel')}</p>
+              </div>
+            </motion.div>
+          </>
         )}
 
         {/* Questions Phase */}
