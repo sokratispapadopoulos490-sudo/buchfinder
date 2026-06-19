@@ -310,7 +310,13 @@ const dict = {
     de: 'Kaufregion', en: 'Shopping Region', el: 'Περιοχή αγορών', tr: 'Alışveriş bölgesi', fr: 'Région d\'achat', es: 'Región de compra', it: 'Regione di acquisto',
   },
   'account.shoppingRegionSub': {
-    de: 'Bestimmt Buchläden & lokale Marktplätze', en: 'Determines bookstores & local marketplaces', el: 'Καθορίζει βιβλιοπωλεία & αγορές', tr: 'Kitabevleri ve pazar yerlerini belirler', fr: 'Détermine librairies & marchés locaux', es: 'Determina librerías y mercados locales', it: 'Determina librerie e mercati locali',
+    de: 'Bestimmt Buchläden & Marktplätze; unabhängig von App- und Buchsprache',
+    en: 'Determines bookstores & marketplaces; independent of app & book language',
+    el: 'Καθορίζει βιβλιοπωλεία & αγορές· ανεξάρτητο από γλώσσα εφαρμογής & βιβλίου',
+    tr: 'Kitabevleri & pazar yerlerini belirler; uygulama ve kitap dilinden bağımsız',
+    fr: 'Détermine librairies & marchés; indépendant de la langue de l\'app et du livre',
+    es: 'Determina librerías y mercados; independiente del idioma de la app y del libro',
+    it: 'Determina librerie e mercati; indipendente dalla lingua dell\'app e del libro',
   },
   'account.darkMode': {
     de: 'Dark Mode', en: 'Dark Mode', el: 'Σκοτεινή λειτουργία', tr: 'Karanlık mod', fr: 'Mode sombre', es: 'Modo oscuro', it: 'Modalità scura',

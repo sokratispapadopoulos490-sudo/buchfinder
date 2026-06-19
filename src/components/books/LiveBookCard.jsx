@@ -10,12 +10,10 @@ import { base44 } from '@/api/base44Client';
 import BookCover from './BookCover';
 import ProviderLinks from './ProviderLinks';
 import { useLanguage } from '@/components/language/LanguageContext';
-import { resolveEffectiveRegion } from '@/lib/shoppingRegion';
 
 export default function LiveBookCard({ book, user, shoppingRegion }) {
   const { shoppingRegion: ctxRegion, bookLanguage, t } = useLanguage();
-  const rawRegion = shoppingRegion || ctxRegion || 'DE';
-  const region = resolveEffectiveRegion(rawRegion, bookLanguage || book?.language);
+  const region = shoppingRegion || ctxRegion || 'DE';
   const [isSaved, setIsSaved] = useState(false);
   const [savedId, setSavedId] = useState(null);
   const [saving, setSaving] = useState(false);

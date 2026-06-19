@@ -103,10 +103,10 @@ export const LanguageProvider = ({ children }) => {
 
   const changeShoppingRegion = useCallback((region) => {
     setShoppingRegionState(region);
-    setShoppingRegion(region);
+    setShoppingRegion(region); // explicit=true by default (Nutzerklick)
     try {
       base44.auth.isAuthenticated().then(isAuth => {
-        if (isAuth) base44.auth.updateMe({ shopping_region: region }).catch(() => {});
+        if (isAuth) base44.auth.updateMe({ shopping_region: region, shopping_region_explicit: true }).catch(() => {});
       });
     } catch {}
   }, []);
