@@ -44,14 +44,18 @@ export function setBookLanguage(lang) {
  */
 function detectDefaultRegion() {
   try {
+    const langMap = { de: 'DE', el: 'GR', tr: 'TR', fr: 'FR', es: 'ES', it: 'IT', en: 'UK' };
+
+    // 1. App-Sprache hat Vorrang vor Browser-Locale
+    const appLang = localStorage.getItem('appLanguage');
+    if (appLang && langMap[appLang]) return langMap[appLang];
+
+    // 2. Fallback: Browser-Locale (Land zuerst, dann Sprachcode)
     const locale = navigator.language || 'de-DE';
     const country = locale.split('-')[1]?.toUpperCase();
-    // Unterstützte Regionen
     const supported = ['DE', 'AT', 'CH', 'GR', 'TR', 'FR', 'ES', 'IT', 'UK', 'US'];
     if (supported.includes(country)) return country;
-    // Sprach-Fallback
     const lang = locale.split('-')[0].toLowerCase();
-    const langMap = { de: 'DE', el: 'GR', tr: 'TR', fr: 'FR', es: 'ES', it: 'IT', en: 'UK' };
     return langMap[lang] || 'DE';
   } catch { return 'DE'; }
 }
