@@ -10,18 +10,9 @@ import BookCover, { getCoverUrl } from './BookCover';
 import ProviderLinks from './ProviderLinks';
 import { useLanguage } from '@/components/language/LanguageContext';
 
-import { resolveEffectiveRegion } from '@/lib/shoppingRegion';
-
 export default function BookCard({ book, reasons, index, isContrast, isAuthenticated: isAuthProp, analysisBookLanguage }) {
   const { shoppingRegion, bookLanguage, t } = useLanguage();
-  // analysisBookLanguage (from the current wizard session) always wins over localStorage.
-  // If a language was chosen in the wizard (e.g. 'el'), derive region from it directly,
-  // bypassing hasExplicitShoppingRegion() which would otherwise lock to 'DE'.
   const effectiveLang = analysisBookLanguage || bookLanguage || book?.language;
-  const LANG_TO_REGION = { el: 'GR', tr: 'TR', fr: 'FR', es: 'ES', it: 'IT', en: 'UK', de: 'DE' };
-  const effectiveRegion = analysisBookLanguage && LANG_TO_REGION[analysisBookLanguage]
-    ? LANG_TO_REGION[analysisBookLanguage]
-    : resolveEffectiveRegion(shoppingRegion, effectiveLang);
   const [showBuyOptions, setShowBuyOptions] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [saving, setSaving] = useState(false);
