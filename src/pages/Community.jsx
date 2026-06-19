@@ -150,7 +150,7 @@ function CommunityContent() {
     const { count, key } = getAiUsageToday(userId);
 
     if (count >= AI_DAILY_LIMIT) {
-      alert(`Du hast dein tägliches KI-Limit von ${AI_DAILY_LIMIT} Antworten erreicht. Morgen wieder verfügbar.`);
+      alert(t('ai.limitMessage').replace('{n}', AI_DAILY_LIMIT));
       return;
     }
 
@@ -171,9 +171,7 @@ function CommunityContent() {
       ]);
     } catch (err) {
       const isTimeout = err?.message === 'AI timeout';
-      const msg = isTimeout
-        ? 'Die KI hat leider nicht rechtzeitig geantwortet. Bitte versuche es später.'
-        : 'Die KI-Antwort ist fehlgeschlagen. Bitte versuche es später.';
+      const msg = isTimeout ? t('ai.timeoutMessage') : t('ai.errorMessage');
       // Zähler zurücksetzen bei Fehler (kein Verbrauch wenn kein Ergebnis)
       localStorage.setItem(key, String(count));
       alert(msg);

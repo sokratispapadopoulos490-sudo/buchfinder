@@ -506,6 +506,33 @@ const dict = {
   'ai.limitReached': {
     de: 'Tägliches KI-Limit erreicht', en: 'Daily AI limit reached', el: 'Ημερήσιο όριο ΤΝ', tr: 'Günlük AI limiti', fr: 'Limite IA atteinte', es: 'Límite IA alcanzado', it: 'Limite IA raggiunto',
   },
+  'ai.limitMessage': {
+    de: 'Du hast dein tägliches KI-Limit von {n} Antworten erreicht. Morgen wieder verfügbar.',
+    en: 'You have reached your daily AI limit of {n} responses. Available again tomorrow.',
+    el: 'Έφτασες το ημερήσιο όριο {n} απαντήσεων ΤΝ. Διαθέσιμο ξανά αύριο.',
+    tr: 'Günlük {n} AI yanıt limitine ulaştın. Yarın tekrar kullanılabilir.',
+    fr: 'Vous avez atteint votre limite quotidienne de {n} réponses IA. Disponible demain.',
+    es: 'Has alcanzado tu límite diario de {n} respuestas IA. Disponible mañana.',
+    it: 'Hai raggiunto il limite giornaliero di {n} risposte IA. Disponibile domani.',
+  },
+  'ai.timeoutMessage': {
+    de: 'Die KI hat leider nicht rechtzeitig geantwortet. Bitte versuche es später.',
+    en: 'The AI did not respond in time. Please try again later.',
+    el: 'Η ΤΝ δεν απάντησε εγκαίρως. Δοκίμασε ξανά αργότερα.',
+    tr: 'AI zamanında yanıt vermedi. Lütfen daha sonra tekrar deneyin.',
+    fr: 'L\'IA n\'a pas répondu à temps. Veuillez réessayer plus tard.',
+    es: 'La IA no respondió a tiempo. Inténtalo más tarde.',
+    it: 'L\'IA non ha risposto in tempo. Riprova più tardi.',
+  },
+  'ai.errorMessage': {
+    de: 'Die KI-Antwort ist fehlgeschlagen. Bitte versuche es später.',
+    en: 'AI response failed. Please try again later.',
+    el: 'Η απάντηση ΤΝ απέτυχε. Δοκίμασε ξανά αργότερα.',
+    tr: 'AI yanıtı başarısız oldu. Lütfen daha sonra tekrar deneyin.',
+    fr: 'La réponse IA a échoué. Veuillez réessayer plus tard.',
+    es: 'La respuesta IA falló. Inténtalo más tarde.',
+    it: 'La risposta IA non è riuscita. Riprova più tardi.',
+  },
 
   // ── Compass ───────────────────────────────────────────────────────────────
   'compass.title': {
@@ -1396,6 +1423,50 @@ const dict = {
   'book.buy': {
     de: 'Kaufen', en: 'Buy', el: 'Αγορά',
     tr: 'Satın Al', fr: 'Acheter', es: 'Comprar', it: 'Acquista',
+  },
+  'book.author': {
+    de: 'Autor', en: 'Author', el: 'Συγγραφέας',
+    tr: 'Yazar', fr: 'Auteur', es: 'Autor', it: 'Autore',
+  },
+  'book.year': {
+    de: 'Erscheinungsjahr', en: 'Publication Year', el: 'Έτος έκδοσης',
+    tr: 'Yayın yılı', fr: 'Année de publication', es: 'Año de publicación', it: 'Anno di pubblicazione',
+  },
+  'book.pageCount': {
+    de: 'Seitenzahl', en: 'Page Count', el: 'Αριθμός σελίδων',
+    tr: 'Sayfa sayısı', fr: 'Nombre de pages', es: 'Número de páginas', it: 'Numero pagine',
+  },
+  'book.publisher': {
+    de: 'Verlag', en: 'Publisher', el: 'Εκδότης',
+    tr: 'Yayınevi', fr: 'Éditeur', es: 'Editorial', it: 'Editore',
+  },
+  'book.popularity': {
+    de: 'Popularität', en: 'Popularity', el: 'Δημοτικότητα',
+    tr: 'Popülerlik', fr: 'Popularité', es: 'Popularidad', it: 'Popolarità',
+  },
+  'book.description': {
+    de: 'Beschreibung', en: 'Description', el: 'Περιγραφή',
+    tr: 'Açıklama', fr: 'Description', es: 'Descripción', it: 'Descrizione',
+  },
+  'book.timesRead': {
+    de: '× gelesen', en: '× read', el: '× διαβάστηκε',
+    tr: '× okundu', fr: '× lu', es: '× leído', it: '× letto',
+  },
+  'book.previewMore': {
+    de: 'Leseproben & Mehr', en: 'Previews & More', el: 'Αποσπάσματα & Περισσότερα',
+    tr: 'Önizleme & Daha fazla', fr: 'Extraits & Plus', es: 'Vistas previas & Más', it: 'Anteprime & Altro',
+  },
+  'book.previewGoogle': {
+    de: 'Leseprobe & Details anzeigen', en: 'Preview & show details', el: 'Προεπισκόπηση & λεπτομέρειες',
+    tr: 'Önizleme ve detaylar', fr: 'Aperçu & détails', es: 'Vista previa y detalles', it: 'Anteprima e dettagli',
+  },
+  'book.previewAmazon': {
+    de: '"Blick ins Buch"', en: '"Look Inside"', el: '"Ματιά στο βιβλίο"',
+    tr: '"Kitaba bak"', fr: '"Feuilleter"', es: '"Mirar dentro"', it: '"Guarda dentro"',
+  },
+  'book.close': {
+    de: 'Schließen', en: 'Close', el: 'Κλείσιμο',
+    tr: 'Kapat', fr: 'Fermer', es: 'Cerrar', it: 'Chiudi',
   },
   'book.unknownAuthorFallback': {
     de: 'Unbekannter Autor', en: 'Unknown Author', el: 'Άγνωστος συγγραφέας',

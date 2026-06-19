@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { X, ExternalLink, Book, Users, Loader2 } from 'lucide-react';
-import { cn } from "@/lib/utils";
+import { X, ExternalLink, Book, Users } from 'lucide-react';
 import BookCover from './BookCover';
 import { useLanguage } from '@/components/language/LanguageContext';
-import { base44 } from '@/api/base44Client';
 
 export default function BookDetailModal({ book, readCount, onClose }) {
-  const { language } = useLanguage();
-  const [translatedDescription, setTranslatedDescription] = useState(book?.description || '');
-  const [translating, setTranslating] = useState(false);
+  const { t } = useLanguage();
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
@@ -20,28 +16,6 @@ export default function BookDetailModal({ book, readCount, onClose }) {
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
     return () => observer.disconnect();
   }, []);
-
-  useEffect(() => {
-    if (!book?.description) return;
-    if (language === 'en') {
-      setTranslatedDescription(book.description);
-      return;
-    }
-    const translate = async () => {
-      setTranslating(true);
-      try {
-        const result = await base44.integrations.Core.InvokeLLM({
-          prompt: `Translate the following book description to the language with code "${language}". Return ONLY the translated text, nothing else.\n\n${book.description}`,
-        });
-        setTranslatedDescription(result);
-      } catch {
-        setTranslatedDescription(book.description);
-      } finally {
-        setTranslating(false);
-      }
-    };
-    translate();
-  }, [book?.description, language]);
 
   if (!book) return null;
 
@@ -96,12 +70,12 @@ export default function BookDetailModal({ book, readCount, onClose }) {
               </div>
               <div className="flex-1 space-y-1 pt-1">
                 {book.publishYear && <p className="text-xs" style={{ color: isDark ? '#aaa' : '#78716c' }}>{book.publishYear}</p>}
-                {book.pageCount && <p className="text-xs" style={{ color: isDark ? '#aaa' : '#78716c' }}>{book.pageCount} Seiten</p>}
+                {book.pageCount && <p className="text-xs" style={{ color: isDark ? '#aaa' : '#78716c' }}>{book.pageCount} {t('book.pages')}</p>}
                 {book.publisher && <p className="text-xs" style={{ color: isDark ? '#aaa' : '#78716c' }}>{book.publisher}</p>}
                 {readCount > 0 && (
                   <div className="flex items-center gap-1 text-xs" style={{ color: isDark ? '#aaa' : '#78716c' }}>
                     <Users className="w-3 h-3" />
-                    <span>{readCount}× gelesen</span>
+                    <span>{readCount}{t('book.timesRead')}</span>
                   </div>
                 )}
               </div>
@@ -114,36 +88,29 @@ export default function BookDetailModal({ book, readCount, onClose }) {
               <div className="md:col-span-2 space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <h3 className="text-sm font-medium mb-1" style={{ color: isDark ? '#aaa' : '#78716c' }}>Autor</h3>
+                    <h3 className="text-sm font-medium mb-1" style={{ color: isDark ? '#aaa' : '#78716c' }}>{t('book.author')}</h3>
                     <p style={{ color: isDark ? '#e5e5e5' : '#44403c' }}>{book.author}</p>
                   </div>
-                  {book.publishYear && <div><h3 className="text-sm font-medium mb-1" style={{ color: isDark ? '#aaa' : '#78716c' }}>Erscheinungsjahr</h3><p style={{ color: isDark ? '#e5e5e5' : '#44403c' }}>{book.publishYear}</p></div>}
-                  {book.pageCount && <div><h3 className="text-sm font-medium mb-1" style={{ color: isDark ? '#aaa' : '#78716c' }}>Seitenzahl</h3><p style={{ color: isDark ? '#e5e5e5' : '#44403c' }}>{book.pageCount} Seiten</p></div>}
-                  {book.publisher && <div><h3 className="text-sm font-medium mb-1" style={{ color: isDark ? '#aaa' : '#78716c' }}>Verlag</h3><p style={{ color: isDark ? '#e5e5e5' : '#44403c' }}>{book.publisher}</p></div>}
+                  {book.publishYear && <div><h3 className="text-sm font-medium mb-1" style={{ color: isDark ? '#aaa' : '#78716c' }}>{t('book.year')}</h3><p style={{ color: isDark ? '#e5e5e5' : '#44403c' }}>{book.publishYear}</p></div>}
+                  {book.pageCount && <div><h3 className="text-sm font-medium mb-1" style={{ color: isDark ? '#aaa' : '#78716c' }}>{t('book.pageCount')}</h3><p style={{ color: isDark ? '#e5e5e5' : '#44403c' }}>{book.pageCount} {t('book.pages')}</p></div>}
+                  {book.publisher && <div><h3 className="text-sm font-medium mb-1" style={{ color: isDark ? '#aaa' : '#78716c' }}>{t('book.publisher')}</h3><p style={{ color: isDark ? '#e5e5e5' : '#44403c' }}>{book.publisher}</p></div>}
                   {book.isbn && <div><h3 className="text-sm font-medium mb-1" style={{ color: isDark ? '#aaa' : '#78716c' }}>ISBN</h3><p className="text-sm" style={{ color: isDark ? '#e5e5e5' : '#44403c' }}>{book.isbn}</p></div>}
-                  {readCount > 0 && <div><h3 className="text-sm font-medium mb-1" style={{ color: isDark ? '#aaa' : '#78716c' }}>Popularität</h3><div className="flex items-center gap-2" style={{ color: isDark ? '#e5e5e5' : '#44403c' }}><Users className="w-4 h-4" /><span>{readCount}× gelesen</span></div></div>}
+                  {readCount > 0 && <div><h3 className="text-sm font-medium mb-1" style={{ color: isDark ? '#aaa' : '#78716c' }}>{t('book.popularity')}</h3><div className="flex items-center gap-2" style={{ color: isDark ? '#e5e5e5' : '#44403c' }}><Users className="w-4 h-4" /><span>{readCount}{t('book.timesRead')}</span></div></div>}
                 </div>
               </div>
             </div>
 
             {/* Description - visible on all sizes */}
             <div className="mb-4 md:mb-6">
-              <h3 className="text-sm font-medium mb-2" style={{ color: isDark ? '#aaa' : '#78716c' }}>Beschreibung</h3>
-              {translating ? (
-                <div className="flex items-center gap-2" style={{ color: isDark ? '#888' : '#a8a29e' }}>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span className="text-sm">Wird übersetzt…</span>
-                </div>
-              ) : (
-                <p className="leading-relaxed text-sm md:text-base" style={{ color: isDark ? '#e5e5e5' : '#44403c' }}>{translatedDescription}</p>
-              )}
+              <h3 className="text-sm font-medium mb-2" style={{ color: isDark ? '#aaa' : '#78716c' }}>{t('book.description')}</h3>
+              <p className="leading-relaxed text-sm md:text-base" style={{ color: isDark ? '#e5e5e5' : '#44403c' }}>{book?.description || ''}</p>
             </div>
 
             {/* Leseproben Links */}
             <div className="pt-6" style={{ borderTop: `1px solid ${isDark ? '#333' : '#e7e5e4'}` }}>
               <h3 className="text-lg font-medium mb-4 flex items-center gap-2" style={{ color: isDark ? '#f5f5f5' : '#1c1917' }}>
                 <Book className="w-5 h-5" />
-                Leseproben & Mehr
+                {t('book.previewMore')}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <a
@@ -155,7 +122,7 @@ export default function BookDetailModal({ book, readCount, onClose }) {
                 >
                   <div>
                     <div className="font-medium" style={{ color: isDark ? '#e5e5e5' : '#1c1917' }}>Google Books</div>
-                    <div className="text-xs" style={{ color: isDark ? '#aaa' : '#78716c' }}>Leseprobe & Details anzeigen</div>
+                    <div className="text-xs" style={{ color: isDark ? '#aaa' : '#78716c' }}>{t('book.previewGoogle')}</div>
                   </div>
                   <ExternalLink className="w-4 h-4" style={{ color: isDark ? '#888' : '#a8a29e' }} />
                 </a>
@@ -169,7 +136,7 @@ export default function BookDetailModal({ book, readCount, onClose }) {
                 >
                   <div>
                     <div className="font-medium" style={{ color: isDark ? '#e5e5e5' : '#1c1917' }}>Amazon</div>
-                    <div className="text-xs" style={{ color: isDark ? '#aaa' : '#78716c' }}>"Blick ins Buch" Funktion</div>
+                    <div className="text-xs" style={{ color: isDark ? '#aaa' : '#78716c' }}>{t('book.previewAmazon')}</div>
                   </div>
                   <ExternalLink className="w-4 h-4" style={{ color: isDark ? '#888' : '#a8a29e' }} />
                 </a>
@@ -180,7 +147,7 @@ export default function BookDetailModal({ book, readCount, onClose }) {
           {/* Footer */}
           <div className="p-6 flex justify-end" style={{ borderTop: `1px solid ${isDark ? '#333' : '#e7e5e4'}` }}>
             <Button onClick={onClose} style={{ backgroundColor: isDark ? '#d97706' : '#1c1917', color: isDark ? '#000' : '#fff' }}>
-              Schließen
+              {t('book.close')}
             </Button>
           </div>
         </motion.div>
