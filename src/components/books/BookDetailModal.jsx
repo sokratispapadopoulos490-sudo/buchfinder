@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { X, ExternalLink, Book, Users } from 'lucide-react';
+import { X, Users } from 'lucide-react';
 import BookCover from './BookCover';
+import ProviderLinks from './ProviderLinks';
 import { useLanguage } from '@/components/language/LanguageContext';
 
 export default function BookDetailModal({ book, readCount, onClose }) {
-  const { t } = useLanguage();
+  const { t, shoppingRegion, bookLanguage } = useLanguage();
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
@@ -18,14 +19,6 @@ export default function BookDetailModal({ book, readCount, onClose }) {
   }, []);
 
   if (!book) return null;
-
-  const getGoogleBooksPreviewUrl = () => {
-    return `https://books.google.de/books?isbn=${book.isbn}&hl=de`;
-  };
-
-  const getAmazonPreviewUrl = () => {
-    return `https://www.amazon.de/dp/${book.isbn}`;
-  };
 
   return (
     <AnimatePresence>
@@ -106,41 +99,16 @@ export default function BookDetailModal({ book, readCount, onClose }) {
               <p className="leading-relaxed text-sm md:text-base" style={{ color: isDark ? '#e5e5e5' : '#44403c' }}>{book?.description || ''}</p>
             </div>
 
-            {/* Leseproben Links */}
+            {/* Kauflinks – regional korrekt via ProviderLinks */}
             <div className="pt-6" style={{ borderTop: `1px solid ${isDark ? '#333' : '#e7e5e4'}` }}>
-              <h3 className="text-lg font-medium mb-4 flex items-center gap-2" style={{ color: isDark ? '#f5f5f5' : '#1c1917' }}>
-                <Book className="w-5 h-5" />
-                {t('book.previewMore')}
+              <h3 className="text-sm font-medium mb-3" style={{ color: isDark ? '#aaa' : '#78716c' }}>
+                {t('book.buy')}
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <a
-                  href={getGoogleBooksPreviewUrl()}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-between p-4 rounded-lg transition-all group"
-                  style={{ border: `1px solid ${isDark ? '#444' : '#e7e5e4'}`, backgroundColor: 'transparent' }}
-                >
-                  <div>
-                    <div className="font-medium" style={{ color: isDark ? '#e5e5e5' : '#1c1917' }}>Google Books</div>
-                    <div className="text-xs" style={{ color: isDark ? '#aaa' : '#78716c' }}>{t('book.previewGoogle')}</div>
-                  </div>
-                  <ExternalLink className="w-4 h-4" style={{ color: isDark ? '#888' : '#a8a29e' }} />
-                </a>
-                
-                <a
-                  href={getAmazonPreviewUrl()}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-between p-4 rounded-lg transition-all group"
-                  style={{ border: `1px solid ${isDark ? '#444' : '#e7e5e4'}`, backgroundColor: 'transparent' }}
-                >
-                  <div>
-                    <div className="font-medium" style={{ color: isDark ? '#e5e5e5' : '#1c1917' }}>Amazon</div>
-                    <div className="text-xs" style={{ color: isDark ? '#aaa' : '#78716c' }}>{t('book.previewAmazon')}</div>
-                  </div>
-                  <ExternalLink className="w-4 h-4" style={{ color: isDark ? '#888' : '#a8a29e' }} />
-                </a>
-              </div>
+              <ProviderLinks
+                book={book}
+                shoppingRegion={shoppingRegion || 'DE'}
+                bookLanguage={bookLanguage || book?.language || ''}
+              />
             </div>
           </div>
 
