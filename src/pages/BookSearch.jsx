@@ -8,7 +8,7 @@ import ProfileCard from '@/components/books/ProfileCard';
 import BookCard from '@/components/books/BookCard';
 import { getMatchingBooksFromDB } from '@/lib/bookService';
 import { base44 } from '@/api/base44Client';
-import { useLanguage, LanguageProvider } from '@/components/language/LanguageContext';
+import { useLanguage } from '@/components/language/LanguageContext';
 import { setBookLanguage } from '@/lib/shoppingRegion';
 
 // read_books ist kein normaler Frageschritt – wird separat als Chip-Screen behandelt
@@ -814,11 +814,6 @@ function BookSearchContent() {
   );
 }
 
-// Wrap in LanguageProvider so direct preview (no Layout) never throws from useLanguage()
 export default function BookSearch() {
-  return (
-    <LanguageProvider>
-      <BookSearchContent />
-    </LanguageProvider>
-  );
+  return <BookSearchContent />;
 }

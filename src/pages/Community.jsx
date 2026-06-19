@@ -11,7 +11,7 @@ import ReportModal from '@/components/community/ReportModal';
 import ConversationList from '@/components/messages/ConversationList';
 import ChatWindow from '@/components/messages/ChatWindow';
 import NewMessageModal from '@/components/messages/NewMessageModal';
-import { LanguageProvider, useLanguage } from '@/components/language/LanguageContext';
+import { useLanguage } from '@/components/language/LanguageContext';
 
 /** Rate-Limit-Zähler im localStorage – Modul-Level damit kein Re-Create bei Render */
 function getAiUsageToday(userId) {
@@ -45,7 +45,15 @@ function CommunityContent() {
   const [followingLoaded, setFollowingLoaded] = useState(false);
 
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+
+  // Sprachname für den AI-Prompt (damit die KI in der App-Sprache antwortet)
+  const AI_LANG_NAMES = {
+    de: 'Deutsch', en: 'English', el: 'Ελληνικά', tr: 'Türkçe',
+    fr: 'Français', es: 'Español', it: 'Italiano', pt: 'Português',
+    nl: 'Nederlands', pl: 'Polski', ru: 'Русский', ar: 'العربية',
+    zh: '中文', ja: '日本語', ko: '한국어',
+  };
 
   useEffect(() => { loadData(); }, []);
 
@@ -157,7 +165,8 @@ function CommunityContent() {
     // Zähler erhöhen BEVOR der API-Call – verhindert Doppel-Spend bei Fehler
     localStorage.setItem(key, String(count + 1));
 
-    const prompt = `Du bist der Book Compass KI-Assistent. Ein Nutzer hat folgenden Post geschrieben:\n\nTitel: ${post.title}\n${post.book_title ? `Buch: ${post.book_title}` : ''}\nInhalt: ${post.content}\n\nGib eine hilfreiche, freundliche Antwort (max. 150 Wörter). Sei persönlich und auf Bücher fokussiert.`;
+    const langName = AI_LANG_NAMES[language] || 'Deutsch';
+    const prompt = `Du bist der Book Compass KI-Assistent. Antworte IMMER auf ${langName}.\n\nEin Nutzer hat folgenden Post geschrieben:\n\nTitel: ${post.title}\n${post.book_title ? `Buch: ${post.book_title}` : ''}\nInhalt: ${post.content}\n\nGib eine hilfreiche, freundliche Antwort (max. 150 Wörter). Sei persönlich und auf Bücher fokussiert.`;
 
     // Timeout-Guard: kein Page-Crash bei LLM-Timeout
     let response;
@@ -478,9 +487,5 @@ function CommunityContent() {
 }
 
 export default function Community() {
-  return (
-    <LanguageProvider>
-      <CommunityContent />
-    </LanguageProvider>
-  );
+  return <CommunityContent />;
 }
