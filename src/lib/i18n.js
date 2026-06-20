@@ -1694,6 +1694,42 @@ const dict = {
     it: 'Nota: Meno libri sono indicizzati per greco e turco.',
   },
 
+  // ── Notification texts ───────────────────────────────────────────────────
+  'notif.empty': {
+    de: 'Keine Benachrichtigungen', en: 'No notifications', el: 'Δεν υπάρχουν ειδοποιήσεις',
+    tr: 'Bildirim yok', fr: 'Aucune notification', es: 'Sin notificaciones', it: 'Nessuna notifica',
+  },
+  'notif.markAllRead': {
+    de: 'Alle als gelesen', en: 'Mark all read', el: 'Σήμανση όλων ως αναγνωσμένα',
+    tr: 'Tümünü okundu say', fr: 'Tout marquer lu', es: 'Marcar todo leído', it: 'Segna tutto letto',
+  },
+  'notif.like.title': {
+    de: 'Neuer Like', en: 'New Like', el: 'Νέο Like',
+    tr: 'Yeni Beğeni', fr: 'Nouveau like', es: 'Nuevo like', it: 'Nuovo like',
+  },
+  'notif.like.message': {
+    de: '{actor} hat deinen Post „{postTitle}" geliked',
+    en: '{actor} liked your post "{postTitle}"',
+    el: 'Ο/Η {actor} έκανε like στην ανάρτησή σου „{postTitle}"',
+    tr: '{actor}, "{postTitle}" gönderini beğendi',
+    fr: '{actor} a aimé votre post « {postTitle} »',
+    es: '{actor} le dio like a tu publicación "{postTitle}"',
+    it: '{actor} ha messo like al tuo post "{postTitle}"',
+  },
+  'notif.comment.title': {
+    de: 'Neuer Kommentar', en: 'New Comment', el: 'Νέο σχόλιο',
+    tr: 'Yeni Yorum', fr: 'Nouveau commentaire', es: 'Nuevo comentario', it: 'Nuovo commento',
+  },
+  'notif.comment.message': {
+    de: '{actor} hat deinen Post „{postTitle}" kommentiert',
+    en: '{actor} commented on your post "{postTitle}"',
+    el: 'Ο/Η {actor} σχολίασε την ανάρτησή σου „{postTitle}"',
+    tr: '{actor}, "{postTitle}" gönderini yorumladı',
+    fr: '{actor} a commenté votre post « {postTitle} »',
+    es: '{actor} comentó tu publicación "{postTitle}"',
+    it: '{actor} ha commentato il tuo post "{postTitle}"',
+  },
+
   // ── Community ─────────────────────────────────────────────────────────────
   'community.title': {
     de: 'Community', en: 'Community', el: 'Κοινότητα',

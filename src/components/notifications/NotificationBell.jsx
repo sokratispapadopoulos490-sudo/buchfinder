@@ -3,14 +3,42 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Bell } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { formatDistanceToNow } from 'date-fns';
-import { de } from 'date-fns/locale';
+import { de, enUS, el, tr, fr, es, it } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '@/components/language/LanguageContext';
+import { t as tStatic } from '@/lib/i18n';
+
+const DATE_LOCALES = { de, en: enUS, el, tr, fr, es, it };
+
+const NOTIF_KEY_MAP = {
+  post_like:    { title: 'notif.like.title',    message: 'notif.like.message' },
+  post_comment: { title: 'notif.comment.title', message: 'notif.comment.message' },
+};
+
+/** Ersetzt {actor} und {postTitle} im übersetzten String */
+function interpolate(str, params = {}) {
+  return str.replace(/\{(\w+)\}/g, (_, k) => params[k] ?? `{${k}}`);
+}
+
+/** Gibt lokalisiertes title/message zurück – fällt auf gespeicherte Felder zurück */
+function resolveNotif(notif, lang) {
+  const keys = NOTIF_KEY_MAP[notif.notif_type];
+  if (!keys) return { title: notif.title, message: notif.message };
+  const rawTitle   = tStatic(keys.title,   lang);
+  const rawMessage = tStatic(keys.message, lang);
+  return {
+    title:   interpolate(rawTitle,   notif.params),
+    message: interpolate(rawMessage, notif.params),
+  };
+}
 
 export default function NotificationBell() {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
+  const { language } = useLanguage();
+  const dateLocale = DATE_LOCALES[language] || de;
 
   useEffect(() => {
     loadNotifications();
@@ -84,45 +112,48 @@ export default function NotificationBell() {
               className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-lg border border-stone-200 z-50 max-h-96 overflow-y-auto"
             >
               <div className="sticky top-0 bg-white border-b border-stone-200 p-4 flex items-center justify-between">
-                <h3 className="font-medium text-stone-800">Benachrichtigungen</h3>
+                <h3 className="font-medium text-stone-800">{tStatic('account.notifications', language)}</h3>
                 {unreadCount > 0 && (
                   <button
                     onClick={markAllAsRead}
                     className="text-xs text-amber-600 hover:text-amber-700"
                   >
-                    Alle als gelesen
+                    {tStatic('notif.markAllRead', language, 'Alle als gelesen')}
                   </button>
                 )}
               </div>
 
               {notifications.length === 0 ? (
                 <div className="p-8 text-center text-stone-500 text-sm">
-                  Keine Benachrichtigungen
+                  {tStatic('notif.empty', language, 'Keine Benachrichtigungen')}
                 </div>
               ) : (
                 <div className="divide-y divide-stone-100">
-                  {notifications.map((notif) => (
-                    <button
-                      key={notif.id}
-                      onClick={() => handleNotificationClick(notif)}
-                      className={`w-full p-4 text-left hover:bg-stone-50 transition-colors ${
-                        !notif.is_read ? 'bg-amber-50/50' : ''
-                      }`}
-                    >
-                      <div className="flex items-start gap-3">
-                        {!notif.is_read && (
-                          <div className="w-2 h-2 bg-amber-600 rounded-full mt-2 flex-shrink-0" />
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-stone-800 text-sm">{notif.title}</p>
-                          <p className="text-stone-600 text-xs mt-1">{notif.message}</p>
-                          <p className="text-stone-400 text-xs mt-1">
-                            {formatDistanceToNow(new Date(notif.created_date), { addSuffix: true, locale: de })}
-                          </p>
+                  {notifications.map((notif) => {
+                    const { title, message } = resolveNotif(notif, language);
+                    return (
+                      <button
+                        key={notif.id}
+                        onClick={() => handleNotificationClick(notif)}
+                        className={`w-full p-4 text-left hover:bg-stone-50 transition-colors ${
+                          !notif.is_read ? 'bg-amber-50/50' : ''
+                        }`}
+                      >
+                        <div className="flex items-start gap-3">
+                          {!notif.is_read && (
+                            <div className="w-2 h-2 bg-amber-600 rounded-full mt-2 flex-shrink-0" />
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-stone-800 text-sm">{title}</p>
+                            <p className="text-stone-600 text-xs mt-1">{message}</p>
+                            <p className="text-stone-400 text-xs mt-1">
+                              {formatDistanceToNow(new Date(notif.created_date), { addSuffix: true, locale: dateLocale })}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    </button>
-                  ))}
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </motion.div>

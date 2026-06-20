@@ -125,8 +125,11 @@ function CommunityContent() {
       await base44.entities.CommunityPost.update(postId, { likes_count: (post.likes_count || 0) + 1 });
       if (post && post.created_by !== user.email) {
         await base44.entities.Notification.create({
-          type: 'like', title: 'Neuer Like',
-          message: `${user.full_name} hat deinen Post "${post.title}" geliked`,
+          type: 'like',
+          title: 'Neuer Like',                          // Fallback für alte Clients
+          message: `${user.full_name} hat deinen Post "${post.title}" geliked`, // Fallback
+          notif_type: 'post_like',
+          params: { actor: user.full_name, postTitle: post.title },
           link: '/Community', from_user_email: user.email, created_by: post.created_by
         });
       }
@@ -140,8 +143,11 @@ function CommunityContent() {
     await base44.entities.CommunityPost.update(postId, { comments_count: (post.comments_count || 0) + 1 });
     if (post && post.created_by !== user.email && !isAI) {
       await base44.entities.Notification.create({
-        type: 'comment', title: 'Neuer Kommentar',
-        message: `${user.full_name} hat deinen Post "${post.title}" kommentiert`,
+        type: 'comment',
+        title: 'Neuer Kommentar',                       // Fallback für alte Clients
+        message: `${user.full_name} hat deinen Post "${post.title}" kommentiert`, // Fallback
+        notif_type: 'post_comment',
+        params: { actor: user.full_name, postTitle: post.title },
         link: '/Community', from_user_email: user.email, created_by: post.created_by
       });
     }
