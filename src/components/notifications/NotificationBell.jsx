@@ -13,6 +13,7 @@ const DATE_LOCALES = { de, en: enUS, el, tr, fr, es, it };
 const NOTIF_KEY_MAP = {
   post_like:    { title: 'notif.like.title',    message: 'notif.like.message' },
   post_comment: { title: 'notif.comment.title', message: 'notif.comment.message' },
+  user_follow:  { title: 'notif.follow.title',  message: 'notif.follow.message' },
 };
 
 /** Ersetzt {actor} und {postTitle} im übersetzten String */

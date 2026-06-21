@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { cn } from "@/lib/utils";
 import { useLanguage } from '@/components/language/LanguageContext';
 
-export default function PostCard({ post, onLike, onComment, isLiked, currentUser, onReport, onDelete }) {
+export default function PostCard({ post, onLike, onComment, isLiked, currentUser, onReport, onDelete, authorName }) {
   const [showComments, setShowComments] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ export default function PostCard({ post, onLike, onComment, isLiked, currentUser
   const isAdmin = currentUser?.role === 'admin';
   
   const handleSendMessage = () => {
-    navigate('/Account?tab=messages&user=' + post.created_by);
+    navigate('/Community?tab=messages&to=' + encodeURIComponent(post.created_by));
   };
 
   const categoryColors = {
@@ -52,15 +52,17 @@ export default function PostCard({ post, onLike, onComment, isLiked, currentUser
             onClick={() => !isAuthor && navigate(`/PublicProfile?email=${post.created_by}`)}
             className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center text-white font-medium hover:scale-105 transition-transform"
           >
-            {post.created_by?.charAt(0).toUpperCase() || 'U'}
+            {isAuthor
+              ? (currentUser?.full_name || currentUser?.username || '?').charAt(0).toUpperCase()
+              : (authorName || '?').charAt(0).toUpperCase()}
           </button>
           <div>
             <div className="flex items-center gap-2">
               <button
-                onClick={() => !isAuthor && navigate(`/PublicProfile?email=${post.created_by}`)}
+                onClick={() => !isAuthor && navigate(`/PublicProfile?email=${encodeURIComponent(post.created_by)}`)}
                 className="font-medium text-stone-800 hover:text-amber-600 transition-colors"
               >
-                {isAuthor ? t('post.you') : post.created_by?.split('@')[0] || t('post.anon')}
+                {isAuthor ? t('post.you') : (authorName || t('post.anon'))}
               </button>
               {isPremium && <Crown className="w-3 h-3 text-amber-600" />}
             </div>

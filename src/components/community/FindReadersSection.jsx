@@ -1,37 +1,56 @@
 /**
  * FindReadersSection – Leser finden und folgen.
  *
- * Ansatz (V1, datenschutzfreundlich):
- * - Lädt alle User via User.list() (Base44 schützt sensitive Felder automatisch)
- * - Suche nach Anzeigename/Username/E-Mail-Präfix
- * - Filter nach Genres
- * - Fallback: Zeigt aktive Community-Autoren wenn Suche leer
- * - Eigene Person wird nie angezeigt
- * - E-Mail wird NUR als technischer Key verwendet, nicht als Anzeige
+ * Datenschutz: E-Mail nur intern als Key, nie sichtbar.
+ * Anzeige: full_name → username → anonymes "Leser"-Fallback.
+ * Filter: Genre UND Lesesprache kombinierbar.
+ * Private Profile werden als privat angezeigt (kein Detail-Leak).
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/components/language/LanguageContext';
-import { Search, UserPlus, UserCheck, Users } from 'lucide-react';
+import { Search, UserPlus, UserCheck, Users, Lock } from 'lucide-react';
 
 const GENRE_FILTERS = [
   "Fantasy", "Thriller", "Romance", "Sachbuch", "Philosophie",
   "Krimi", "Science-Fiction", "Biografie", "Selbstentwicklung"
 ];
 
+const LANG_FILTERS = [
+  { code: 'de', flag: '🇩🇪' },
+  { code: 'en', flag: '🇬🇧' },
+  { code: 'el', flag: '🇬🇷' },
+  { code: 'tr', flag: '🇹🇷' },
+  { code: 'fr', flag: '🇫🇷' },
+  { code: 'es', flag: '🇪🇸' },
+  { code: 'it', flag: '🇮🇹' },
+];
+
+/** Sicherer Anzeigename – nie E-Mail */
+function safeDisplayName(user) {
+  return user?.full_name || user?.username || null;
+}
+
+/** Sicherer Handle – nur @username, kein E-Mail-Präfix */
+function safeHandle(user) {
+  if (user?.username) return `@${user.username}`;
+  return null;
+}
+
 export default function FindReadersSection() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const navigate = useNavigate();
 
   const [allUsers, setAllUsers] = useState([]);
-  const [myFollows, setMyFollows] = useState([]); // following_email[] die ich folge
-  const [communityAuthors, setCommunityAuthors] = useState([]); // Fallback
+  const [myFollows, setMyFollows] = useState([]);
+  const [communityAuthors, setCommunityAuthors] = useState([]);
   const [query, setQuery] = useState('');
   const [selectedGenres, setSelectedGenres] = useState([]);
+  const [selectedLangs, setSelectedLangs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [followLoading, setFollowLoading] = useState({}); // email → bool
+  const [followLoading, setFollowLoading] = useState({});
   const [me, setMe] = useState(null);
 
   useEffect(() => { load(); }, []);
@@ -46,19 +65,21 @@ export default function FindReadersSection() {
       ]);
       setMe(currentUser);
 
-      // Nur Nutzer mit Profil und nicht ich selbst
-      const others = users.filter(u => u.email !== currentUser.email);
+      // Nur andere Nutzer
+      const others = users.filter(u => u.email !== currentUser?.email);
       setAllUsers(others);
 
       // Meine aktuellen Follows
       const iFollow = follows
-        .filter(f => f.created_by === currentUser.email)
+        .filter(f => f.created_by === currentUser?.email)
         .map(f => f.following_email);
       setMyFollows(iFollow);
 
-      // Fallback: aktive Post-Autoren
+      // Fallback: aktive Post-Autoren (nur öffentliche Profile)
       const authorEmails = [...new Set(posts.map(p => p.created_by).filter(Boolean))];
-      const activeAuthors = others.filter(u => authorEmails.includes(u.email)).slice(0, 10);
+      const activeAuthors = others
+        .filter(u => authorEmails.includes(u.email) && u.profile_is_public === true)
+        .slice(0, 10);
       setCommunityAuthors(activeAuthors);
     } catch (err) {
       console.error('FindReadersSection load error:', err);
@@ -67,13 +88,14 @@ export default function FindReadersSection() {
     }
   };
 
-  // Gefilterte Nutzerliste
+  // Gefilterte Nutzerliste – nur öffentliche Profile
   const filtered = useMemo(() => {
-    if (!query && selectedGenres.length === 0) return [];
+    if (!query && selectedGenres.length === 0 && selectedLangs.length === 0) return [];
 
     return allUsers.filter(u => {
-      const displayName = u.full_name || u.username || u.email?.split('@')[0] || '';
-      const handle = u.username || u.email?.split('@')[0] || '';
+      // Private Profile: bei aktiver Suche zeigen (minimal), ohne Details
+      const displayName = safeDisplayName(u) || '';
+      const handle = u.username || '';
 
       const matchesQuery = !query ||
         displayName.toLowerCase().includes(query.toLowerCase()) ||
@@ -82,33 +104,54 @@ export default function FindReadersSection() {
       const matchesGenres = selectedGenres.length === 0 ||
         selectedGenres.every(g => u.favorite_genres?.includes(g));
 
-      return matchesQuery && matchesGenres;
+      const matchesLangs = selectedLangs.length === 0 ||
+        selectedLangs.some(l => u.reading_languages?.includes(l));
+
+      return matchesQuery && matchesGenres && matchesLangs;
     }).slice(0, 20);
-  }, [query, selectedGenres, allUsers]);
+  }, [query, selectedGenres, selectedLangs, allUsers]);
 
   const handleFollowToggle = async (targetEmail) => {
     if (!me) { base44.auth.redirectToLogin(); return; }
+    if (targetEmail === me.email) return; // nie sich selbst folgen
+
     setFollowLoading(prev => ({ ...prev, [targetEmail]: true }));
     try {
       if (myFollows.includes(targetEmail)) {
+        // Unfollow – sicher: alle doppelten Records löschen
         const follows = await base44.entities.UserFollow.filter({
           created_by: me.email,
           following_email: targetEmail,
         });
-        if (follows.length > 0) await base44.entities.UserFollow.delete(follows[0].id);
+        await Promise.all(follows.map(f => base44.entities.UserFollow.delete(f.id)));
         setMyFollows(prev => prev.filter(e => e !== targetEmail));
       } else {
-        await base44.entities.UserFollow.create({ following_email: targetEmail });
-        try {
-          await base44.entities.Notification.create({
-            type: 'follow',
-            title: t('notif.follow.title'),
-            message: `${me.full_name || me.email?.split('@')[0]} ${t('notif.follow.action')}`,
-            link: `/PublicProfile?email=${encodeURIComponent(me.email)}`,
-            from_user_email: me.email,
-            created_by: targetEmail,
-          });
-        } catch {}
+        // Follow – erst prüfen ob schon vorhanden (doppelte Records verhindern)
+        const existing = await base44.entities.UserFollow.filter({
+          created_by: me.email,
+          following_email: targetEmail,
+        });
+        if (existing.length === 0) {
+          await base44.entities.UserFollow.create({ following_email: targetEmail });
+          // Follow-Notification strukturiert speichern
+          const actorName = me.full_name || me.username || null;
+          try {
+            await base44.entities.Notification.create({
+              notif_type: 'user_follow',
+              type: 'mention', // Fallback-Icon für alte Bell
+              title: null,     // wird per i18n aufgelöst
+              message: null,
+              params: {
+                actor: actorName || me.email?.split('@')[0] || '?',
+              },
+              link: me.username
+                ? `/PublicProfile?username=${encodeURIComponent(me.username)}`
+                : `/PublicProfile?email=${encodeURIComponent(me.email)}`,
+              from_user_email: me.email,
+              created_by: targetEmail,
+            });
+          } catch {}
+        }
         setMyFollows(prev => [...prev, targetEmail]);
       }
     } catch (err) {
@@ -118,18 +161,43 @@ export default function FindReadersSection() {
     }
   };
 
-  const displayList = (query || selectedGenres.length > 0) ? filtered : communityAuthors;
-  const showFallback = !query && selectedGenres.length === 0;
+  const toggleGenre = (g) =>
+    setSelectedGenres(prev => prev.includes(g) ? prev.filter(x => x !== g) : [...prev, g]);
+  const toggleLang = (l) =>
+    setSelectedLangs(prev => prev.includes(l) ? prev.filter(x => x !== l) : [...prev, l]);
+
+  const displayList = (query || selectedGenres.length > 0 || selectedLangs.length > 0)
+    ? filtered
+    : communityAuthors;
+  const showFallback = !query && selectedGenres.length === 0 && selectedLangs.length === 0;
+  const hasFilter = query || selectedGenres.length > 0 || selectedLangs.length > 0;
 
   const UserRow = ({ user }) => {
     const isFollowing = myFollows.includes(user.email);
     const isLoading = followLoading[user.email];
-    const displayName = user.full_name || user.username || user.email?.split('@')[0] || '?';
-    const handle = user.username ? `@${user.username}` : `@${user.email?.split('@')[0]}`;
+    const isPrivate = user.profile_is_public !== true;
+    const displayName = safeDisplayName(user);
+    const handle = safeHandle(user);
+
+    // Private Profile – minimale Card ohne Details
+    if (isPrivate) {
+      return (
+        <div className="flex items-center gap-3 p-3 rounded-xl opacity-60">
+          <div className="w-10 h-10 rounded-full bg-stone-200 dark:bg-stone-700 flex items-center justify-center flex-shrink-0">
+            <Lock className="w-4 h-4 text-stone-400" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-sm text-stone-400 dark:text-stone-500">{t('profile.private')}</div>
+          </div>
+        </div>
+      );
+    }
+
+    // Kein Anzeigename: anonymisiert anzeigen
+    if (!displayName) return null;
 
     return (
       <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-stone-50 dark:hover:bg-stone-800/50 transition-colors">
-        {/* Avatar */}
         <button
           onClick={() => navigate(`/PublicProfile?email=${encodeURIComponent(user.email)}`)}
           className="flex-shrink-0"
@@ -141,23 +209,23 @@ export default function FindReadersSection() {
           </div>
         </button>
 
-        {/* Info */}
         <button
           onClick={() => navigate(`/PublicProfile?email=${encodeURIComponent(user.email)}`)}
           className="flex-1 min-w-0 text-left"
         >
           <div className="text-sm font-medium text-stone-800 dark:text-stone-200 truncate">{displayName}</div>
-          <div className="text-xs text-stone-400 truncate">{handle}</div>
-          {user.favorite_genres?.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-0.5">
-              {user.favorite_genres.slice(0, 3).map((g, i) => (
-                <span key={i} className="text-xs bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 px-1.5 py-0.5 rounded">{g}</span>
-              ))}
-            </div>
-          )}
+          {handle && <div className="text-xs text-stone-400 truncate">{handle}</div>}
+          <div className="flex flex-wrap gap-1 mt-0.5">
+            {user.favorite_genres?.slice(0, 2).map((g, i) => (
+              <span key={i} className="text-xs bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 px-1.5 py-0.5 rounded">{g}</span>
+            ))}
+            {user.reading_languages?.slice(0, 3).map(l => {
+              const lf = LANG_FILTERS.find(x => x.code === l);
+              return lf ? <span key={l} className="text-xs">{lf.flag}</span> : null;
+            })}
+          </div>
         </button>
 
-        {/* Follow-Button */}
         <button
           onClick={() => handleFollowToggle(user.email)}
           disabled={isLoading}
@@ -180,14 +248,11 @@ export default function FindReadersSection() {
   };
 
   if (loading) {
-    return (
-      <div className="text-center py-8 text-stone-400 text-sm">{t('status.loading')}</div>
-    );
+    return <div className="text-center py-8 text-stone-400 text-sm">{t('status.loading')}</div>;
   }
 
   return (
-    <div className="space-y-4">
-
+    <div className="space-y-3">
       {/* Suche */}
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
@@ -201,20 +266,35 @@ export default function FindReadersSection() {
       </div>
 
       {/* Genre-Filter */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-1.5">
         {GENRE_FILTERS.map(g => (
           <button
             key={g}
-            onClick={() => setSelectedGenres(prev =>
-              prev.includes(g) ? prev.filter(x => x !== g) : [...prev, g]
-            )}
-            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors border ${
+            onClick={() => toggleGenre(g)}
+            className={`px-2.5 py-1 rounded-full text-xs font-medium transition-colors border ${
               selectedGenres.includes(g)
                 ? 'bg-amber-600 border-amber-600 text-white'
                 : 'border-stone-200 dark:border-stone-600 text-stone-500 dark:text-stone-400 hover:border-amber-400'
             }`}
           >
             {g}
+          </button>
+        ))}
+      </div>
+
+      {/* Lesesprachen-Filter */}
+      <div className="flex flex-wrap gap-1.5">
+        {LANG_FILTERS.map(({ code, flag }) => (
+          <button
+            key={code}
+            onClick={() => toggleLang(code)}
+            className={`px-2.5 py-1 rounded-full text-xs font-medium transition-colors border flex items-center gap-1 ${
+              selectedLangs.includes(code)
+                ? 'bg-blue-600 border-blue-600 text-white'
+                : 'border-stone-200 dark:border-stone-600 text-stone-500 dark:text-stone-400 hover:border-blue-400'
+            }`}
+          >
+            {flag} {code.toUpperCase()}
           </button>
         ))}
       </div>
@@ -230,11 +310,11 @@ export default function FindReadersSection() {
       {/* Ergebnisse */}
       {displayList.length > 0 ? (
         <div className="space-y-1">
-          {displayList.map(u => <UserRow key={u.id} user={u} />)}
+          {displayList.map(u => <UserRow key={u.id || u.email} user={u} />)}
         </div>
       ) : (
         <div className="text-center py-6 text-stone-400 dark:text-stone-500 text-sm">
-          {query || selectedGenres.length > 0 ? t('findReaders.noResults') : t('findReaders.empty')}
+          {hasFilter ? t('findReaders.noResults') : t('findReaders.empty')}
         </div>
       )}
     </div>

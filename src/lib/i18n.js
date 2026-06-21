@@ -1839,6 +1839,10 @@ const dict = {
     de: 'folgt dir jetzt', en: 'is now following you', el: 'σε ακολουθεί τώρα',
     tr: 'seni takip ediyor', fr: 'vous suit maintenant', es: 'te está siguiendo ahora', it: 'ti sta seguendo ora',
   },
+  'notif.follow.message': {
+    de: '{actor} folgt dir jetzt', en: '{actor} is now following you', el: 'Ο/Η {actor} σε ακολουθεί τώρα',
+    tr: '{actor} seni takip ediyor', fr: '{actor} vous suit maintenant', es: '{actor} te está siguiendo ahora', it: '{actor} ti sta seguendo ora',
+  },
 
   // ── Notification texts ───────────────────────────────────────────────────
   'notif.empty': {

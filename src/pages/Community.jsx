@@ -44,6 +44,7 @@ function CommunityContent() {
   const [following, setFollowing] = useState([]);
   const [followers, setFollowers] = useState([]);
   const [followingLoaded, setFollowingLoaded] = useState(false);
+  const [userMap, setUserMap] = useState({});
 
   const navigate = useNavigate();
   const { t, language } = useLanguage();
@@ -72,14 +73,19 @@ function CommunityContent() {
     try {
       const currentUser = await base44.auth.me();
       setUser(currentUser);
-      const [postsData, booksData, likesData] = await Promise.all([
+      const [postsData, booksData, likesData, allUsers] = await Promise.all([
         base44.entities.CommunityPost.list('-created_date'),
-        base44.entities.SavedBook.list('-created_date', 50), // base44 API scopet auf currentUser
-        base44.entities.CommunityLike.list() // base44 API scopet auf currentUser
+        base44.entities.SavedBook.list('-created_date', 50),
+        base44.entities.CommunityLike.list(),
+        base44.entities.User.list(),
       ]);
       setPosts(postsData);
       setSavedBooks(booksData);
       setUserLikes(likesData);
+      // UserMap für sichere Anzeigenamen (nie E-Mail zeigen)
+      const uMap = {};
+      allUsers.forEach(u => { uMap[u.email] = u; });
+      setUserMap(uMap);
     } catch (err) {
       // Nur bei echten Auth-Fehlern weiterleiten, nicht bei Netzwerkfehlern
       const isAuthErr = err?.status === 401 || err?.status === 403 ||
@@ -349,7 +355,10 @@ function CommunityContent() {
                   <p className="text-stone-500">{categoryFilter === 'alle' ? t('community.empty.all') : t('community.empty.category')}</p>
                 </div>
               ) : (
-                filteredPosts.map((post) => (
+                filteredPosts.map((post) => {
+                  const author = userMap[post.created_by];
+                  const authorName = author?.full_name || author?.username || null;
+                  return (
                   <div key={post.id}>
                     <PostCard
                       post={post}
@@ -359,6 +368,7 @@ function CommunityContent() {
                       currentUser={user}
                       onReport={setPostToReport}
                       onDelete={handleDeletePost}
+                      authorName={authorName}
                     />
                     {selectedPost?.id === post.id && (
                       <motion.div
@@ -377,13 +387,14 @@ function CommunityContent() {
                       </motion.div>
                     )}
                   </div>
-                ))
-              )}
-            </div>
-          </div>
-        )}
+                );
+                })
+                )}
+                </div>
+                </div>
+                )}
 
-        {/* Tab: Nachrichten */}
+                {/* Tab: Nachrichten */}
         {activeTab === 'messages' && (
           <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 overflow-hidden">
             <div className="p-4 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between">
@@ -439,8 +450,8 @@ function CommunityContent() {
                 <div className="space-y-2">
                   {following.map((f) => {
                     if (!f.user) return null;
-                    const name = f.user.full_name || f.user.username || f.user.email?.split('@')[0] || '?';
-                    const handle = f.user.username ? `@${f.user.username}` : `@${f.user.email?.split('@')[0]}`;
+                    const name = f.user.full_name || f.user.username || '?';
+                    const handle = f.user.username ? `@${f.user.username}` : null;
                     return (
                       <div key={f.id} className="flex items-center justify-between p-3 rounded-xl hover:bg-stone-50 dark:hover:bg-stone-800/50 transition-colors">
                         <button
@@ -454,7 +465,7 @@ function CommunityContent() {
                           </div>
                           <div className="min-w-0">
                             <div className="text-sm font-medium text-stone-800 dark:text-stone-200 truncate">{name}</div>
-                            <div className="text-xs text-stone-400 truncate">{handle}</div>
+                            {handle && <div className="text-xs text-stone-400 truncate">{handle}</div>}
                           </div>
                         </button>
                         <Button size="sm" variant="outline" className="flex-shrink-0 text-xs dark:border-stone-600 dark:text-stone-400" onClick={async () => {
@@ -481,8 +492,8 @@ function CommunityContent() {
                 <div className="space-y-2">
                   {followers.map((f) => {
                     if (!f.user) return null;
-                    const name = f.user.full_name || f.user.username || f.user.email?.split('@')[0] || '?';
-                    const handle = f.user.username ? `@${f.user.username}` : `@${f.user.email?.split('@')[0]}`;
+                    const name = f.user.full_name || f.user.username || '?';
+                    const handle = f.user.username ? `@${f.user.username}` : null;
                     return (
                       <button
                         key={f.id}
@@ -496,9 +507,9 @@ function CommunityContent() {
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="text-sm font-medium text-stone-800 dark:text-stone-200 truncate">{name}</div>
-                          <div className="text-xs text-stone-400 truncate">{handle}</div>
-                        </div>
-                        <ChevronRight className="w-4 h-4 text-stone-300 flex-shrink-0" />
+                          {handle && <div className="text-xs text-stone-400 truncate">{handle}</div>}
+                          </div>
+                          <ChevronRight className="w-4 h-4 text-stone-300 flex-shrink-0" />
                       </button>
                     );
                   })}
