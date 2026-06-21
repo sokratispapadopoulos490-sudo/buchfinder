@@ -1787,6 +1787,50 @@ const dict = {
     el: 'Αναζήτηση αναγνωστών ή φιλτράρισμα ανά είδος.', tr: 'Okuyucu ara veya türe göre filtrele.',
     fr: 'Cherchez des lecteurs ou filtrez par genre.', es: 'Busca lectores o filtra por género.', it: 'Cerca lettori o filtra per genere.',
   },
+  'profile.readingLanguages': {
+    de: 'Lesesprachen', en: 'Reading Languages', el: 'Γλώσσες ανάγνωσης',
+    tr: 'Okuma dilleri', fr: 'Langues de lecture', es: 'Idiomas de lectura', it: 'Lingue di lettura',
+  },
+  'profile.readingLanguagesHint': {
+    de: 'In welchen Sprachen liest du Bücher?', en: 'Which languages do you read books in?',
+    el: 'Σε ποιες γλώσσες διαβάζεις βιβλία;', tr: 'Hangi dillerde kitap okuyorsun?',
+    fr: 'Dans quelles langues lisez-vous des livres ?', es: '¿En qué idiomas lees libros?', it: 'In quali lingue leggi libri?',
+  },
+  'profile.profileVisibility': {
+    de: 'Profil-Sichtbarkeit', en: 'Profile Visibility', el: 'Ορατότητα προφίλ',
+    tr: 'Profil görünürlüğü', fr: 'Visibilité du profil', es: 'Visibilidad del perfil', it: 'Visibilità del profilo',
+  },
+  'profile.profilePublic': {
+    de: 'Profil öffentlich', en: 'Profile public', el: 'Προφίλ δημόσιο',
+    tr: 'Profil herkese açık', fr: 'Profil public', es: 'Perfil público', it: 'Profilo pubblico',
+  },
+  'profile.profilePrivate': {
+    de: 'Profil privat', en: 'Profile private', el: 'Προφίλ ιδιωτικό',
+    tr: 'Profil gizli', fr: 'Profil privé', es: 'Perfil privado', it: 'Profilo privato',
+  },
+  'profile.profileVisibilityHint': {
+    de: 'Wenn privat: Andere Nutzer sehen nur, dass das Profil existiert, aber keine Details.',
+    en: 'If private: Other users only see that the profile exists, but no details.',
+    el: 'Αν ιδιωτικό: Άλλοι χρήστες βλέπουν μόνο ότι το προφίλ υπάρχει, χωρίς λεπτομέρειες.',
+    tr: 'Gizliyse: Diğer kullanıcılar yalnızca profilin var olduğunu görür, ayrıntıları değil.',
+    fr: 'Si privé : les autres voient seulement que le profil existe, sans les détails.',
+    es: 'Si privado: otros solo ven que el perfil existe, sin detalles.',
+    it: 'Se privato: gli altri vedono solo che il profilo esiste, ma non i dettagli.',
+  },
+  'profile.noEmail': {
+    de: 'Kein Profil ausgewählt.', en: 'No profile selected.',
+    el: 'Δεν έχει επιλεγεί προφίλ.', tr: 'Hiçbir profil seçilmedi.',
+    fr: 'Aucun profil sélectionné.', es: 'Ningún perfil seleccionado.', it: 'Nessun profilo selezionato.',
+  },
+  'profile.noEmailHint': {
+    de: 'Bitte öffne ein Profil über die Community oder die Follower-Liste.',
+    en: 'Please open a profile via the Community or follower list.',
+    el: 'Άνοιξε ένα προφίλ μέσω της Κοινότητας ή της λίστας ακόλουθων.',
+    tr: 'Lütfen bir profili Topluluk veya takipçi listesi üzerinden aç.',
+    fr: 'Veuillez ouvrir un profil via la Communauté ou la liste de followers.',
+    es: 'Por favor abre un perfil desde la Comunidad o la lista de seguidores.',
+    it: 'Apri un profilo dalla Community o dalla lista dei follower.',
+  },
   'notif.follow.title': {
     de: 'Neuer Follower', en: 'New Follower', el: 'Νέος ακόλουθος',
     tr: 'Yeni takipçi', fr: 'Nouveau follower', es: 'Nuevo seguidor', it: 'Nuovo follower',

@@ -17,14 +17,33 @@ const GENRES = [
   "Selbstentwicklung", "Business", "Humor", "Horror", "Mystery"
 ];
 
+const READING_LANGUAGES = [
+  { code: 'de', flag: '🇩🇪', label: { de: 'Deutsch', en: 'German', el: 'Γερμανικά', tr: 'Almanca', fr: 'Allemand', es: 'Alemán', it: 'Tedesco' } },
+  { code: 'en', flag: '🇬🇧', label: { de: 'Englisch', en: 'English', el: 'Αγγλικά', tr: 'İngilizce', fr: 'Anglais', es: 'Inglés', it: 'Inglese' } },
+  { code: 'el', flag: '🇬🇷', label: { de: 'Griechisch', en: 'Greek', el: 'Ελληνικά', tr: 'Yunanca', fr: 'Grec', es: 'Griego', it: 'Greco' } },
+  { code: 'tr', flag: '🇹🇷', label: { de: 'Türkisch', en: 'Turkish', el: 'Τουρκικά', tr: 'Türkçe', fr: 'Turc', es: 'Turco', it: 'Turco' } },
+  { code: 'fr', flag: '🇫🇷', label: { de: 'Französisch', en: 'French', el: 'Γαλλικά', tr: 'Fransızca', fr: 'Français', es: 'Francés', it: 'Francese' } },
+  { code: 'es', flag: '🇪🇸', label: { de: 'Spanisch', en: 'Spanish', el: 'Ισπανικά', tr: 'İspanyolca', fr: 'Espagnol', es: 'Español', it: 'Spagnolo' } },
+  { code: 'it', flag: '🇮🇹', label: { de: 'Italienisch', en: 'Italian', el: 'Ιταλικά', tr: 'İtalyanca', fr: 'Italiano', es: 'Italiano', it: 'Italiano' } },
+];
+
 export default function ProfileEditModal({ user, onClose, onUpdate }) {
-  const { t } = useLanguage();
-  const [username, setUsername]           = useState(user?.username || '');
-  const [bio, setBio]                     = useState(user?.bio || '');
+  const { t, language } = useLanguage();
+  const [username, setUsername]             = useState(user?.username || '');
+  const [bio, setBio]                       = useState(user?.bio || '');
   const [favoriteGenres, setFavoriteGenres] = useState(user?.favorite_genres || []);
-  const [readingGoal, setReadingGoal]     = useState(user?.weekly_reading_goal || user?.reading_goal_pages || 0);
-  const [saving, setSaving]               = useState(false);
-  const [usernameError, setUsernameError] = useState('');
+  const [readingGoal, setReadingGoal]       = useState(user?.weekly_reading_goal || user?.reading_goal_pages || 0);
+  const [readingLangs, setReadingLangs]     = useState(user?.reading_languages || []);
+  // Datenschutz-sicherer Default: wenn Feld fehlt → false (privat), wenn explizit true → öffentlich
+  const [profileIsPublic, setProfileIsPublic] = useState(user?.profile_is_public === true);
+  const [saving, setSaving]                 = useState(false);
+  const [usernameError, setUsernameError]   = useState('');
+
+  const toggleReadingLang = (code) => {
+    setReadingLangs(prev =>
+      prev.includes(code) ? prev.filter(c => c !== code) : [...prev, code]
+    );
+  };
 
   const toggleGenre = (genre) => {
     setFavoriteGenres(prev =>
@@ -49,7 +68,9 @@ export default function ProfileEditModal({ user, onClose, onUpdate }) {
         username: username.trim() || null,
         bio,
         favorite_genres: favoriteGenres,
-        weekly_reading_goal: readingGoal
+        weekly_reading_goal: readingGoal,
+        reading_languages: readingLangs,
+        profile_is_public: profileIsPublic,
       });
       onUpdate();
       onClose();
@@ -136,6 +157,57 @@ export default function ProfileEditModal({ user, onClose, onUpdate }) {
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Lesesprachen */}
+          <div>
+            <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">
+              {t('profile.readingLanguages')}
+            </label>
+            <p className="text-xs text-stone-400 mb-2">{t('profile.readingLanguagesHint')}</p>
+            <div className="flex flex-wrap gap-2">
+              {READING_LANGUAGES.map(({ code, flag, label }) => (
+                <button
+                  key={code}
+                  type="button"
+                  onClick={() => toggleReadingLang(code)}
+                  className={`px-3 py-1.5 rounded-full text-sm transition-all border flex items-center gap-1.5 ${
+                    readingLangs.includes(code)
+                      ? 'bg-amber-600 border-amber-600 text-white'
+                      : 'border-stone-200 dark:border-stone-600 text-stone-600 dark:text-stone-400 hover:border-amber-400'
+                  }`}
+                >
+                  <span>{flag}</span>
+                  <span>{label[language] || label['de']}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Profil-Sichtbarkeit */}
+          <div className="border border-stone-200 dark:border-stone-700 rounded-xl p-4">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-sm font-medium text-stone-700 dark:text-stone-300">
+                {t('profile.profileVisibility')}
+              </span>
+              <button
+                type="button"
+                onClick={() => setProfileIsPublic(prev => !prev)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
+                  profileIsPublic ? 'bg-amber-600' : 'bg-stone-300 dark:bg-stone-600'
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
+                    profileIsPublic ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+            </div>
+            <p className="text-xs font-medium mb-1 text-stone-500 dark:text-stone-400">
+              {profileIsPublic ? `✅ ${t('profile.profilePublic')}` : `🔒 ${t('profile.profilePrivate')}`}
+            </p>
+            <p className="text-xs text-stone-400">{t('profile.profileVisibilityHint')}</p>
           </div>
 
           {/* Reading Goal */}

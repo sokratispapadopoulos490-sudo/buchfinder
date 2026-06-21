@@ -12,7 +12,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, UserPlus, UserCheck, MessageSquare, Users, BookOpen, Lock } from 'lucide-react';
+import { ArrowLeft, UserPlus, UserCheck, MessageSquare, Users, BookOpen, Lock, UserSearch } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/components/language/LanguageContext';
@@ -34,7 +34,7 @@ export default function PublicProfile() {
   const userEmail = urlParams.get('email') || urlParams.get('user');
 
   useEffect(() => {
-    if (!userEmail) { navigate(-1); return; }
+    if (!userEmail) { setLoading(false); return; }
     loadProfile();
   }, [userEmail]);
 
@@ -107,6 +107,20 @@ export default function PublicProfile() {
       console.error('Follow toggle error:', err);
     }
   };
+
+  // ── Kein Email-Parameter ─────────────────────────────────────────────────
+  if (!userEmail && !loading) {
+    return (
+      <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] flex flex-col items-center justify-center gap-4 px-4">
+        <UserSearch className="w-12 h-12 text-stone-300 dark:text-stone-600" />
+        <p className="text-stone-600 dark:text-stone-400 text-sm font-medium">{t('profile.noEmail')}</p>
+        <p className="text-stone-400 dark:text-stone-500 text-xs text-center max-w-xs">{t('profile.noEmailHint')}</p>
+        <Button variant="outline" onClick={() => navigate('/Community')} className="gap-2 mt-2">
+          <ArrowLeft className="w-4 h-4" /> {t('nav.community')}
+        </Button>
+      </div>
+    );
+  }
 
   // ── Loading ──────────────────────────────────────────────────────────────
   if (loading) {

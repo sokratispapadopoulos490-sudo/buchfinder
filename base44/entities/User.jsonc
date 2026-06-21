@@ -29,6 +29,13 @@
       },
       "description": "Lieblingsgenres"
     },
+    "reading_languages": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Sprachen, in denen der Nutzer B\u00fccher liest (ISO 639-1, z.B. ['de','en'])"
+    },
     "weekly_reading_goal": {
       "type": "integer",
       "description": "W\u00f6chentliches Leseziel in Seiten"
@@ -68,8 +75,8 @@
     },
     "profile_is_public": {
       "type": "boolean",
-      "default": true,
-      "description": "Profil \u00f6ffentlich sichtbar"
+      "default": false,
+      "description": "Profil \u00f6ffentlich sichtbar \u2013 Default false (datenschutzfreundlich)"
     }
   },
   "required": [
