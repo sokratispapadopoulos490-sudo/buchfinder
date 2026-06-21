@@ -108,19 +108,19 @@ export async function syncPreferencesToProfile(base44) {
  * Lädt gespeicherte Präferenzen aus dem User-Profil und schreibt sie in localStorage.
  * Wird nach me()-Call aufgerufen.
  */
-export function loadPreferencesFromProfile(user) {
+export function loadPreferencesFromProfile(user, force = false) {
   if (!user) return;
   try {
     if (user.book_language !== undefined && user.book_language !== null) {
       const current = localStorage.getItem(BOOK_LANG_KEY);
-      if (!current) {
+      if (!current || force) {
         localStorage.setItem(BOOK_LANG_KEY, user.book_language);
         window.dispatchEvent(new CustomEvent('bc:book_lang', { detail: { key: BOOK_LANG_KEY, newValue: user.book_language } }));
       }
     }
     if (user.shopping_region) {
       const current = localStorage.getItem(SHOP_REGION_KEY);
-      if (!current) {
+      if (!current || force) {
         localStorage.setItem(SHOP_REGION_KEY, user.shopping_region);
         // Nur als explizit markieren, wenn das Profil es ausdrücklich sagt.
         // Falls shopping_region_explicit im Profil nicht existiert (undefined),

@@ -38,9 +38,16 @@ export function clearAllAuthStorage() {
   try {
     localStorage.removeItem(LS_AUTH_KEY);
     localStorage.removeItem('appLanguage');
+    // Shopping/book preferences
     localStorage.removeItem('bc_book_lang');
     localStorage.removeItem('bc_shop_region');
+    localStorage.removeItem('bc_shop_region_explicit');
+    // Compass snapshot (enthält SavedBooks/ReadingLogs des eingeloggten Users)
+    localStorage.removeItem('compassSnap_v1');
+    // Dark mode (nutzerbezogen, aus Profil)
+    localStorage.removeItem('darkMode');
     // Legacy keys aus früheren Versionen
+    localStorage.removeItem('bc_current_user_id');
     localStorage.removeItem('isAuthenticated');
     localStorage.removeItem('authCtx_v1');
     sessionStorage.removeItem('auth_fetch');
@@ -49,7 +56,12 @@ export function clearAllAuthStorage() {
     const keysToRemove = [];
     for (let i = 0; i < localStorage.length; i++) {
       const k = localStorage.key(i);
-      if (k && k.startsWith('ai_limit_')) keysToRemove.push(k);
+      if (k && (
+        k.startsWith('ai_limit_') ||
+        k.startsWith('bc_rec_') ||
+        k.startsWith('bc_search_') ||
+        k.startsWith('bc_analysis_')
+      )) keysToRemove.push(k);
     }
     keysToRemove.forEach(k => localStorage.removeItem(k));
   } catch {}
@@ -57,10 +69,22 @@ export function clearAllAuthStorage() {
   try { cacheClear(); } catch {}
 }
 
+/** Liest stabil gespeicherte User-ID aus dem Cache. */
+function getCachedUserId() {
+  try { return readCache()?.user?.id ?? null; } catch { return null; }
+}
+
 /** Teilt LanguageContext im selben Tab mit, dass sich die Sprache geändert hat. */
 function dispatchLanguageChange(lang) {
   try {
     window.dispatchEvent(new CustomEvent('bc:language', { detail: { language: lang } }));
+  } catch {}
+}
+
+/** Signalisiert allen Komponenten, dass der User gewechselt hat → Caches leeren. */
+function dispatchUserChanged() {
+  try {
+    window.dispatchEvent(new CustomEvent('bc:user_changed'));
   } catch {}
 }
 
@@ -83,9 +107,21 @@ export const AuthProvider = ({ children }) => {
 
     base44.auth.me()
       .then(currentUser => {
+        // ── User-Wechsel-Erkennung ──────────────────────────────────────────
+        // Wenn ein anderer Nutzer als im Cache → alles nutzerbezogene leeren
+        // BEVOR neue Daten geschrieben werden
+        const prevUserId = getCachedUserId();
+        const isUserSwitch = !!(prevUserId && currentUser?.id && prevUserId !== currentUser.id);
+        if (isUserSwitch) {
+          clearAllAuthStorage();
+          dispatchUserChanged();
+        }
+
         setUser(currentUser);
         setIsAuthenticated(true);
         writeCache({ user: currentUser, isAuthenticated: true });
+        // Aktuelle User-ID für spätere Wechsel-Erkennung speichern
+        try { localStorage.setItem('bc_current_user_id', currentUser.id); } catch {}
 
         // Dark Mode aus Profil
         if (currentUser?.dark_mode === true) {
@@ -102,8 +138,9 @@ export const AuthProvider = ({ children }) => {
           dispatchLanguageChange(currentUser.language);
         }
 
-        // bookLanguage + shoppingRegion aus Profil laden (nur wenn localStorage noch leer)
-        loadPreferencesFromProfile(currentUser);
+        // bookLanguage + shoppingRegion: bei User-Wechsel immer aus Profil (force),
+        // sonst nur wenn localStorage noch leer
+        loadPreferencesFromProfile(currentUser, isUserSwitch);
       })
       .catch((err) => {
         const hadCachedAuth = !!readCache()?.isAuthenticated;

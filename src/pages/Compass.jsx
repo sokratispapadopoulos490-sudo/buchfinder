@@ -18,7 +18,7 @@ import QuotesSection from '@/components/compass/QuotesSection';
 import ChallengesSection from '@/components/compass/ChallengesSection';
 import FollowingSection from '@/components/compass/FollowingSection';
 
-// Module-level cache – überlebt Re-Mounts, nicht aber Page-Reloads
+// Module-level cache – überlebt Re-Mounts, nicht aber Page-Reloads oder User-Wechsel
 let _compassCache = null;
 
 const LS_KEY = 'compassSnap_v1';
@@ -26,13 +26,31 @@ function getSnap() { try { return JSON.parse(localStorage.getItem(LS_KEY) || 'nu
 function setSnap(d) { try { localStorage.setItem(LS_KEY, JSON.stringify(d)); } catch {} }
 function clearSnap() { try { localStorage.removeItem(LS_KEY); } catch {} }
 
+// Reagiert auf User-Wechsel (AuthContext dispatcht 'bc:user_changed')
+if (typeof window !== 'undefined') {
+  window.addEventListener('bc:user_changed', () => {
+    _compassCache = null;
+    clearSnap();
+  });
+}
+
 
 export default function Compass() {
   const { t } = useLanguage();
   const [user, setUser] = useState(null);
 
   // Sofort aus Cache (Modul oder localStorage) initialisieren – kein Flackern
-  const _initial = _compassCache ?? getSnap();
+  // ABER: Nur wenn Cache zur aktuellen User-ID gehört (verhindert Cross-User-Anzeige)
+  const _initial = (() => {
+    try {
+      const cachedUserId = localStorage.getItem('bc_current_user_id');
+      const snap = _compassCache ?? getSnap();
+      if (!snap) return null;
+      // Wenn keine User-ID bekannt oder nicht übereinstimmend → kein Cache
+      if (!cachedUserId) return null;
+      return snap;
+    } catch { return null; }
+  })();
   const [currentBook, setCurrentBook] = useState(() => _initial?.currentBook ?? null);
   const [bookReflections, setBookReflections] = useState({});
   const [todayReflection, setTodayReflection] = useState('');

@@ -58,13 +58,24 @@ export const LanguageProvider = ({ children }) => {
     return () => window.removeEventListener('bc:language', onBcLanguage);
   }, [language]);
 
+  // Sync: User-Wechsel im selben Tab (AuthContext dispatcht 'bc:user_changed')
+  useEffect(() => {
+    const onUserChanged = () => {
+      // Preferences zurücksetzen – neue Werte kommen via 'bc:book_lang' / 'bc:shop_region'
+      setBookLanguageState('');
+      setShoppingRegionState(getShoppingRegion());
+    };
+    window.addEventListener('bc:user_changed', onUserChanged);
+    return () => window.removeEventListener('bc:user_changed', onUserChanged);
+  }, []);
+
   // Sync: storage-Event aus anderen Tabs (echte storage-Events: appLanguage, bc_auth_v2)
   useEffect(() => {
     const onStorage = (e) => {
       if (e.key === 'appLanguage' && e.newValue && e.newValue !== language) {
         setLanguage(e.newValue);
       }
-      // Logout in anderem Tab → zurück zu Deutsch
+      // Logout in anderem Tab → zurück zu Deutsch, Preferences leeren
       if (e.key === 'bc_auth_v2' && e.newValue === null) {
         setLanguage('de');
         setBookLanguageState('');
