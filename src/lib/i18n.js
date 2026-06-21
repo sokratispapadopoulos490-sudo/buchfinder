@@ -327,6 +327,24 @@ const dict = {
   'account.history': {
     de: 'Empfehlungsverlauf', en: 'Recommendation History', el: 'Ιστορικό προτάσεων', tr: 'Öneri geçmişi', fr: 'Historique des recommandations', es: 'Historial de recomendaciones', it: 'Cronologia consigli',
   },
+  'premium.betaTitle': {
+    de: 'Alles kostenlos in der Beta',
+    en: 'Everything free in Beta',
+    el: 'Όλα δωρεάν στη Beta',
+    tr: 'Beta\'da her şey ücretsiz',
+    fr: 'Tout gratuit en Beta',
+    es: 'Todo gratis en Beta',
+    it: 'Tutto gratuito in Beta',
+  },
+  'premium.betaDesc': {
+    de: 'Book Compass ist aktuell vollständig kostenlos. Alle Funktionen stehen dir offen – keine Kreditkarte, kein Abo, kein Haken.',
+    en: 'Book Compass is currently completely free. All features are open to you – no credit card, no subscription, no catch.',
+    el: 'Το Book Compass είναι επί του παρόντος εντελώς δωρεάν. Όλες οι λειτουργίες είναι ανοιχτές.',
+    tr: 'Book Compass şu an tamamen ücretsiz. Tüm özellikler açık – kredi kartı yok, abonelik yok.',
+    fr: 'Book Compass est actuellement entièrement gratuit. Toutes les fonctionnalités sont ouvertes.',
+    es: 'Book Compass es actualmente completamente gratuito. Todas las funciones están disponibles.',
+    it: 'Book Compass è attualmente completamente gratuito. Tutte le funzionalità sono aperte.',
+  },
   'account.noUsername': {
     de: 'Kein Username – Profil nicht öffentlich auffindbar',
     en: 'No username – profile not publicly discoverable',

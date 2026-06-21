@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { Compass, Crown, Clock, Search, Trash2, Globe, Edit, Download, ChevronDown, ChevronRight, Camera, Bell, Lock, LogOut } from 'lucide-react';
+import { Compass, Clock, Search, Trash2, Globe, Edit, Download, ChevronDown, ChevronRight, Camera, Bell, Lock, LogOut } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
@@ -11,7 +11,7 @@ import ProfileEditModal from '@/components/profile/ProfileEditModal';
 import NotificationBell from '@/components/notifications/NotificationBell';
 import GlobalSearch from '@/components/search/GlobalSearch';
 import DarkModeToggle from '@/components/settings/DarkModeToggle';
-import ReadingJourneyTeaser from '@/components/premium/ReadingJourneyTeaser';
+
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 function AccountContent() {
@@ -169,23 +169,11 @@ function AccountContent() {
               <ChevronRight className="w-4 h-4 text-stone-400" />
             </button>
 
-            {!isPremium && (
-              <Button
-                onClick={() => navigate('/Premium')}
-                className="w-full mt-3 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white gap-2"
-              >
-                <Crown className="w-4 h-4" /> {t('account.upgradePremium')}
-              </Button>
-            )}
+            {/* Premium-Upgrade wird in der Beta nicht angezeigt */}
           </div>
         </div>
 
-        {/* Premium Teaser */}
-        {!isPremium && completedBooks.length >= 2 && (
-          <div className="mb-4">
-            <ReadingJourneyTeaser completedBooksCount={completedBooks.length} recentBooks={completedBooks.slice(0, 3)} />
-          </div>
-        )}
+        {/* Premium Teaser – in Beta deaktiviert */}
 
         {/* Collapsible: Empfehlungsverlauf */}
         <Collapsible open={historyOpen} onOpenChange={setHistoryOpen} className="mb-3">
@@ -209,7 +197,7 @@ function AccountContent() {
                 </div>
               ) : (
                 <>
-                  {recommendations.slice(0, isPremium ? undefined : freeLimit).map((rec) => (
+                  {recommendations.map((rec) => (
                     <div key={rec.id} className="border border-stone-200 dark:border-stone-700 rounded-xl p-4">
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-xs text-stone-400 flex items-center gap-1">
@@ -230,14 +218,7 @@ function AccountContent() {
                       </div>
                     </div>
                   ))}
-                  {!isPremium && recommendations.length > freeLimit && (
-                    <div className="border-2 border-dashed border-stone-200 dark:border-stone-700 rounded-xl p-4 text-center">
-                      <p className="text-stone-500 text-sm mb-2">{recommendations.length - freeLimit} {t('account.moreAvailable')}</p>
-                      <Button onClick={() => navigate('/Premium')} size="sm" variant="outline" className="gap-1">
-                        <Crown className="w-3 h-3" /> {t('account.showWithPremium')}
-                      </Button>
-                    </div>
-                  )}
+                  {/* Alle Empfehlungen in Beta sichtbar */}
                 </>
               )}
             </div>
