@@ -1025,23 +1025,23 @@ const dict = {
   'challenges.leftToast':     { de: 'Challenge verlassen!', en: 'Left challenge!', el: 'Αποχώρησες από την πρόκληση!', tr: 'Meydan okumadan ayrıldın!', fr: 'Défi quitté !', es: '¡Abandonaste el reto!', it: 'Sfida abbandonata!' },
   'challenges.leaveErrorToast':{ de: 'Fehler beim Verlassen', en: 'Error leaving', el: 'Σφάλμα αποχώρησης', tr: 'Ayrılma hatası', fr: 'Erreur de départ', es: 'Error al abandonar', it: 'Errore nell\'uscita' },
   'challenges.title': {
-    de: 'Reading Challenges', en: 'Reading Challenges', el: 'Προκλήσεις ανάγνωσης',
+    de: 'Lese-Challenges', en: 'Reading Challenges', el: 'Προκλήσεις ανάγνωσης',
     tr: 'Okuma meydan okumaları', fr: 'Défis lecture', es: 'Retos de lectura', it: 'Sfide lettura',
   },
   'challenges.active': {
-    de: 'Deine aktiven Challenges:', en: 'Your active challenges:', el: 'Οι ενεργές προκλήσεις σου:',
+    de: 'Deine aktiven Lese-Challenges:', en: 'Your active challenges:', el: 'Οι ενεργές προκλήσεις σου:',
     tr: 'Aktif meydan okumalarım:', fr: 'Vos défis actifs :', es: 'Tus retos activos:', it: 'Le tue sfide attive:',
   },
   'challenges.more': {
-    de: 'Weitere Challenges', en: 'More Challenges', el: 'Περισσότερες προκλήσεις',
+    de: 'Weitere Lese-Challenges', en: 'More Challenges', el: 'Περισσότερες προκλήσεις',
     tr: 'Daha fazla meydan okuma', fr: 'Plus de défis', es: 'Más retos', it: 'Altre sfide',
   },
   'challenges.none': {
-    de: 'Keine Challenges verfügbar', en: 'No challenges available', el: 'Δεν υπάρχουν διαθέσιμες προκλήσεις',
+    de: 'Keine Lese-Challenges verfügbar', en: 'No challenges available', el: 'Δεν υπάρχουν διαθέσιμες προκλήσεις',
     tr: 'Mevcut meydan okuma yok', fr: 'Aucun défi disponible', es: 'No hay retos disponibles', it: 'Nessuna sfida disponibile',
   },
   'challenges.allJoined': {
-    de: 'Du hast an allen Challenges teilgenommen 🎉', en: 'You\'ve joined all challenges 🎉',
+    de: 'Du nimmst bereits an allen Lese-Challenges teil 🎉', en: 'You\'ve joined all challenges 🎉',
     el: 'Συμμετέχεις σε όλες τις προκλήσεις 🎉', tr: 'Tüm meydan okumalara katıldın 🎉',
     fr: 'Vous avez rejoint tous les défis 🎉', es: '¡Participas en todos los retos! 🎉', it: 'Hai partecipato a tutte le sfide 🎉',
   },
