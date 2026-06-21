@@ -38,6 +38,7 @@ export default function ProfileEditModal({ user, onClose, onUpdate }) {
   const [profileIsPublic, setProfileIsPublic] = useState(user?.profile_is_public === true);
   const [saving, setSaving]                 = useState(false);
   const [usernameError, setUsernameError]   = useState('');
+  const [publicWarning, setPublicWarning]   = useState('');
 
   const toggleReadingLang = (code) => {
     setReadingLangs(prev =>
@@ -51,10 +52,12 @@ export default function ProfileEditModal({ user, onClose, onUpdate }) {
     );
   };
 
-  const validateUsername = (val) => {
-    const normalized = val?.toLowerCase() || '';
+  const normalizeUsername = (val) => val?.trim().toLowerCase() || '';
+
+  const validateUsernameFormat = (val) => {
+    const normalized = normalizeUsername(val);
     if (normalized && !/^[a-z0-9_]{2,30}$/.test(normalized)) {
-      setUsernameError(t('profile.usernameError'));
+      setUsernameError(t('profile.usernameInvalid'));
       return false;
     }
     setUsernameError('');
@@ -62,11 +65,35 @@ export default function ProfileEditModal({ user, onClose, onUpdate }) {
   };
 
   const handleSave = async () => {
-    if (!validateUsername(username)) return;
+    const normalized = normalizeUsername(username);
+
+    // Format-Validierung
+    if (!validateUsernameFormat(username)) return;
+
+    // Warnung: öffentlich ohne Username
+    if (profileIsPublic && !normalized) {
+      setPublicWarning(t('profile.usernamePublicRequired'));
+      return;
+    }
+    setPublicWarning('');
+
     setSaving(true);
     try {
+      // Duplicate-Check nur wenn ein Username gesetzt wird
+      if (normalized) {
+        const allUsers = await base44.entities.User.list();
+        const conflict = allUsers.find(
+          u => u.username?.toLowerCase() === normalized && u.id !== user?.id && u.email !== user?.email
+        );
+        if (conflict) {
+          setUsernameError(t('profile.usernameTaken'));
+          setSaving(false);
+          return;
+        }
+      }
+
       await base44.auth.updateMe({
-        username: username.trim().toLowerCase() || null,
+        username: normalized || null,
         bio,
         favorite_genres: favoriteGenres,
         weekly_reading_goal: readingGoal,
@@ -109,7 +136,7 @@ export default function ProfileEditModal({ user, onClose, onUpdate }) {
               <input
                 type="text"
                 value={username}
-                onChange={(e) => { setUsername(e.target.value); validateUsername(e.target.value); }}
+                onChange={(e) => { setUsername(e.target.value); validateUsernameFormat(e.target.value); }}
                 placeholder={t('profile.usernamePlaceholder')}
                 className="w-full pl-7 pr-4 py-2.5 border border-stone-200 dark:border-stone-600 bg-white dark:bg-[#111] text-stone-800 dark:text-stone-100 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
                 maxLength={30}
@@ -122,6 +149,7 @@ export default function ProfileEditModal({ user, onClose, onUpdate }) {
                 ⚠️ {t('profile.usernameRequiredHint')}
               </p>
             )}
+            {publicWarning && <p className="text-xs text-red-500 mt-1 font-medium">⚠️ {publicWarning}</p>}
           </div>
 
           {/* Bio */}

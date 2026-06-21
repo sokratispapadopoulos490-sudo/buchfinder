@@ -57,12 +57,19 @@ export default function PublicProfile() {
       let profile = null;
       if (usernameParam) {
         const lower = usernameParam.toLowerCase();
-        profile = allUsers.find(u => u.username?.toLowerCase() === lower);
-        if (!profile) {
+        const matches = allUsers.filter(u => u.username?.toLowerCase() === lower);
+        if (matches.length === 0) {
           setNotFound(true);
           setLoading(false);
           return;
         }
+        // Bei Duplikaten (Altdaten): keinen blinden Treffer anzeigen, sondern sicheren Zustand
+        if (matches.length > 1) {
+          setNotFound(true); // ambiguous – sicherer als falsches Profil zeigen
+          setLoading(false);
+          return;
+        }
+        profile = matches[0];
       } else {
         profile = allUsers.find(u => u.email === emailParam);
         if (!profile) {
