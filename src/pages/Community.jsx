@@ -11,6 +11,7 @@ import ReportModal from '@/components/community/ReportModal';
 import ConversationList from '@/components/messages/ConversationList';
 import ChatWindow from '@/components/messages/ChatWindow';
 import NewMessageModal from '@/components/messages/NewMessageModal';
+import FindReadersSection from '@/components/community/FindReadersSection';
 import { useLanguage } from '@/components/language/LanguageContext';
 
 /** Rate-Limit-Zähler im localStorage – Modul-Level damit kein Re-Create bei Render */
@@ -418,60 +419,89 @@ function CommunityContent() {
         {/* Tab: Following */}
         {activeTab === 'following' && (
           <div className="space-y-5">
-            <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-5">
-              <h2 className="text-base font-semibold text-stone-800 dark:text-stone-200 mb-4">{t('community.following.iFollow')} ({following.length})</h2>
+
+            {/* Leser finden */}
+            <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-5 shadow-sm">
+              <h2 className="text-sm font-semibold text-stone-600 dark:text-stone-400 uppercase tracking-wider mb-4">
+                {t('findReaders.title')}
+              </h2>
+              <FindReadersSection />
+            </div>
+
+            {/* Wen ich folge */}
+            <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-5 shadow-sm">
+              <h2 className="text-sm font-semibold text-stone-600 dark:text-stone-400 uppercase tracking-wider mb-4">
+                {t('community.following.iFollow')} ({following.length})
+              </h2>
               {following.length === 0 ? (
-                <p className="text-stone-500 text-sm text-center py-6">{t('community.following.noFollowing')}</p>
+                <p className="text-stone-400 dark:text-stone-500 text-sm text-center py-4">{t('community.following.noFollowing')}</p>
               ) : (
                 <div className="space-y-2">
-                  {following.map((f) => f.user && (
-                    <div key={f.id} className="flex items-center justify-between p-3 border border-stone-200 dark:border-stone-700 rounded-xl hover:border-stone-300 transition-colors">
-                      <button
-                        onClick={() => navigate(`/PublicProfile?user=${f.user.email}`)}
-                        className="flex items-center gap-3 flex-1 text-left"
-                      >
-                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center text-white font-medium text-sm">
-                          {f.user.full_name?.charAt(0) || 'U'}
-                        </div>
-                        <div>
-                          <div className="text-sm font-medium text-stone-800 dark:text-stone-200">{f.user.full_name}</div>
-                          <div className="text-xs text-stone-500">{f.user.email}</div>
-                        </div>
-                      </button>
-                      <Button size="sm" variant="outline" onClick={async () => {
-                        await base44.entities.UserFollow.delete(f.id);
-                        await loadFollowing();
-                      }}>
-                        {t('community.following.unfollow')}
-                      </Button>
-                    </div>
-                  ))}
+                  {following.map((f) => {
+                    if (!f.user) return null;
+                    const name = f.user.full_name || f.user.username || f.user.email?.split('@')[0] || '?';
+                    const handle = f.user.username ? `@${f.user.username}` : `@${f.user.email?.split('@')[0]}`;
+                    return (
+                      <div key={f.id} className="flex items-center justify-between p-3 rounded-xl hover:bg-stone-50 dark:hover:bg-stone-800/50 transition-colors">
+                        <button
+                          onClick={() => navigate(`/PublicProfile?email=${encodeURIComponent(f.user.email)}`)}
+                          className="flex items-center gap-3 flex-1 text-left min-w-0"
+                        >
+                          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-white font-medium text-sm flex-shrink-0 overflow-hidden">
+                            {f.user.profile_picture_url
+                              ? <img src={f.user.profile_picture_url} alt="" className="w-full h-full object-cover" />
+                              : name.charAt(0).toUpperCase()}
+                          </div>
+                          <div className="min-w-0">
+                            <div className="text-sm font-medium text-stone-800 dark:text-stone-200 truncate">{name}</div>
+                            <div className="text-xs text-stone-400 truncate">{handle}</div>
+                          </div>
+                        </button>
+                        <Button size="sm" variant="outline" className="flex-shrink-0 text-xs dark:border-stone-600 dark:text-stone-400" onClick={async () => {
+                          await base44.entities.UserFollow.delete(f.id);
+                          await loadFollowing();
+                        }}>
+                          {t('community.following.unfollow')}
+                        </Button>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>
 
-            <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-5">
-              <h2 className="text-base font-semibold text-stone-800 dark:text-stone-200 mb-4">{t('community.following.myFollowers')} ({followers.length})</h2>
+            {/* Meine Follower */}
+            <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-5 shadow-sm">
+              <h2 className="text-sm font-semibold text-stone-600 dark:text-stone-400 uppercase tracking-wider mb-4">
+                {t('community.following.myFollowers')} ({followers.length})
+              </h2>
               {followers.length === 0 ? (
-                <p className="text-stone-500 text-sm text-center py-6">{t('community.following.noFollowers')}</p>
+                <p className="text-stone-400 dark:text-stone-500 text-sm text-center py-4">{t('community.following.noFollowers')}</p>
               ) : (
                 <div className="space-y-2">
-                  {followers.map((f) => f.user && (
-                    <button
-                      key={f.id}
-                      onClick={() => navigate(`/PublicProfile?user=${f.user.email}`)}
-                      className="w-full flex items-center gap-3 p-3 border border-stone-200 dark:border-stone-700 rounded-xl hover:border-stone-300 transition-colors text-left"
-                    >
-                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center text-white font-medium text-sm">
-                        {f.user.full_name?.charAt(0) || 'U'}
-                      </div>
-                      <div>
-                        <div className="text-sm font-medium text-stone-800 dark:text-stone-200">{f.user.full_name}</div>
-                        <div className="text-xs text-stone-500">{f.user.email}</div>
-                      </div>
-                      <ChevronRight className="w-4 h-4 text-stone-400 ml-auto" />
-                    </button>
-                  ))}
+                  {followers.map((f) => {
+                    if (!f.user) return null;
+                    const name = f.user.full_name || f.user.username || f.user.email?.split('@')[0] || '?';
+                    const handle = f.user.username ? `@${f.user.username}` : `@${f.user.email?.split('@')[0]}`;
+                    return (
+                      <button
+                        key={f.id}
+                        onClick={() => navigate(`/PublicProfile?email=${encodeURIComponent(f.user.email)}`)}
+                        className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-stone-50 dark:hover:bg-stone-800/50 transition-colors text-left"
+                      >
+                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-white font-medium text-sm flex-shrink-0 overflow-hidden">
+                          {f.user.profile_picture_url
+                            ? <img src={f.user.profile_picture_url} alt="" className="w-full h-full object-cover" />
+                            : name.charAt(0).toUpperCase()}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="text-sm font-medium text-stone-800 dark:text-stone-200 truncate">{name}</div>
+                          <div className="text-xs text-stone-400 truncate">{handle}</div>
+                        </div>
+                        <ChevronRight className="w-4 h-4 text-stone-300 flex-shrink-0" />
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </div>

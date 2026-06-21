@@ -1694,6 +1694,108 @@ const dict = {
     it: 'Nota: Meno libri sono indicizzati per greco e turco.',
   },
 
+  // ── Public Profile / Find Readers ────────────────────────────────────────
+  'profile.follow': {
+    de: 'Folgen', en: 'Follow', el: 'Ακολούθησε',
+    tr: 'Takip et', fr: 'Suivre', es: 'Seguir', it: 'Segui',
+  },
+  'profile.private': {
+    de: 'Dieses Profil ist privat.', en: 'This profile is private.',
+    el: 'Αυτό το προφίλ είναι ιδιωτικό.', tr: 'Bu profil gizlidir.',
+    fr: 'Ce profil est privé.', es: 'Este perfil es privado.', it: 'Questo profilo è privato.',
+  },
+  'profile.noPosts': {
+    de: 'Noch keine öffentlichen Beiträge.', en: 'No public posts yet.',
+    el: 'Δεν υπάρχουν δημόσιες αναρτήσεις.', tr: 'Henüz herkese açık gönderi yok.',
+    fr: 'Pas encore de publications publiques.', es: 'Aún no hay publicaciones públicas.', it: 'Ancora nessun post pubblico.',
+  },
+  'profile.username': {
+    de: 'Username', en: 'Username', el: 'Όνομα χρήστη',
+    tr: 'Kullanıcı adı', fr: 'Nom d\'utilisateur', es: 'Nombre de usuario', it: 'Nome utente',
+  },
+  'profile.usernamePlaceholder': {
+    de: 'dein_name', en: 'your_name', el: 'το_ονομα_σου',
+    tr: 'kullanici_adin', fr: 'ton_nom', es: 'tu_nombre', it: 'il_tuo_nome',
+  },
+  'profile.usernameHint': {
+    de: 'Buchstaben, Zahlen, Unterstriche. 2–30 Zeichen.',
+    en: 'Letters, numbers, underscores. 2–30 characters.',
+    el: 'Γράμματα, αριθμοί, underscores. 2–30 χαρακτήρες.',
+    tr: 'Harfler, rakamlar, alt çizgi. 2–30 karakter.',
+    fr: 'Lettres, chiffres, tirets bas. 2–30 caractères.',
+    es: 'Letras, números, guiones bajos. 2–30 caracteres.',
+    it: 'Lettere, numeri, trattini bassi. 2–30 caratteri.',
+  },
+  'profile.usernameError': {
+    de: 'Nur Buchstaben, Zahlen und _ erlaubt (2–30 Zeichen).',
+    en: 'Only letters, numbers and _ allowed (2–30 chars).',
+    el: 'Μόνο γράμματα, αριθμοί και _ (2–30 χαρακτήρες).',
+    tr: 'Sadece harf, rakam ve _ kullanılabilir (2–30 karakter).',
+    fr: 'Uniquement lettres, chiffres et _ (2–30 caractères).',
+    es: 'Solo letras, números y _ (2–30 caracteres).',
+    it: 'Solo lettere, numeri e _ (2–30 caratteri).',
+  },
+  'profile.bio': {
+    de: 'Über mich', en: 'About me', el: 'Σχετικά με μένα',
+    tr: 'Hakkımda', fr: 'À propos de moi', es: 'Sobre mí', it: 'Su di me',
+  },
+  'profile.bioPlaceholder': {
+    de: 'Kurz über dich und deine Lesevorlieben...', en: 'A bit about you and your reading preferences...',
+    el: 'Λίγα λόγια για σένα και τις προτιμήσεις σου...', tr: 'Kendin ve okuma tercihlerinle ilgili...',
+    fr: 'Un peu sur vous et vos préférences de lecture...', es: 'Algo sobre ti y tus preferencias de lectura...', it: 'Un po\' su di te e le tue preferenze...',
+  },
+  'profile.favoriteGenres': {
+    de: 'Lieblingsgenres', en: 'Favorite Genres', el: 'Αγαπημένα είδη',
+    tr: 'Sevdiğim türler', fr: 'Genres préférés', es: 'Géneros favoritos', it: 'Generi preferiti',
+  },
+  'profile.maxGenres': {
+    de: 'max. 5', en: 'max. 5', el: 'μέγ. 5', tr: 'maks. 5', fr: 'max. 5', es: 'máx. 5', it: 'max. 5',
+  },
+  'profile.readingGoal': {
+    de: 'Wöchentliches Leseziel (Seiten)', en: 'Weekly reading goal (pages)', el: 'Εβδομαδιαίος στόχος ανάγνωσης (σελίδες)',
+    tr: 'Haftalık okuma hedefi (sayfa)', fr: 'Objectif lecture hebdomadaire (pages)', es: 'Objetivo semanal de lectura (páginas)', it: 'Obiettivo lettura settimanale (pagine)',
+  },
+  'profile.readingGoalHint': {
+    de: 'Setze dir ein realistisches Ziel', en: 'Set a realistic goal', el: 'Θέσε έναν ρεαλιστικό στόχο',
+    tr: 'Gerçekçi bir hedef belirle', fr: 'Fixez-vous un objectif réaliste', es: 'Establece un objetivo realista', it: 'Stabilisci un obiettivo realistico',
+  },
+  'profile.saving': {
+    de: 'Wird gespeichert...', en: 'Saving...', el: 'Αποθήκευση...',
+    tr: 'Kaydediliyor...', fr: 'Enregistrement...', es: 'Guardando...', it: 'Salvataggio...',
+  },
+  'findReaders.title': {
+    de: 'Leser finden', en: 'Find Readers', el: 'Βρες αναγνώστες',
+    tr: 'Okuyucu bul', fr: 'Trouver des lecteurs', es: 'Encontrar lectores', it: 'Trova lettori',
+  },
+  'findReaders.searchPlaceholder': {
+    de: 'Name oder Username suchen...', en: 'Search name or username...',
+    el: 'Αναζήτηση ονόματος ή username...', tr: 'İsim veya kullanıcı adı ara...',
+    fr: 'Rechercher nom ou pseudo...', es: 'Buscar nombre o usuario...', it: 'Cerca nome o username...',
+  },
+  'findReaders.activeReaders': {
+    de: 'Aktive Community-Autoren', en: 'Active community readers',
+    el: 'Ενεργοί αναγνώστες κοινότητας', tr: 'Aktif topluluk okuyucuları',
+    fr: 'Lecteurs actifs de la communauté', es: 'Lectores activos de la comunidad', it: 'Lettori attivi della community',
+  },
+  'findReaders.noResults': {
+    de: 'Keine Leser gefunden.', en: 'No readers found.',
+    el: 'Δεν βρέθηκαν αναγνώστες.', tr: 'Okuyucu bulunamadı.',
+    fr: 'Aucun lecteur trouvé.', es: 'No se encontraron lectores.', it: 'Nessun lettore trovato.',
+  },
+  'findReaders.empty': {
+    de: 'Suche nach Lesern oder filtere nach Genre.', en: 'Search for readers or filter by genre.',
+    el: 'Αναζήτηση αναγνωστών ή φιλτράρισμα ανά είδος.', tr: 'Okuyucu ara veya türe göre filtrele.',
+    fr: 'Cherchez des lecteurs ou filtrez par genre.', es: 'Busca lectores o filtra por género.', it: 'Cerca lettori o filtra per genere.',
+  },
+  'notif.follow.title': {
+    de: 'Neuer Follower', en: 'New Follower', el: 'Νέος ακόλουθος',
+    tr: 'Yeni takipçi', fr: 'Nouveau follower', es: 'Nuevo seguidor', it: 'Nuovo follower',
+  },
+  'notif.follow.action': {
+    de: 'folgt dir jetzt', en: 'is now following you', el: 'σε ακολουθεί τώρα',
+    tr: 'seni takip ediyor', fr: 'vous suit maintenant', es: 'te está siguiendo ahora', it: 'ti sta seguendo ora',
+  },
+
   // ── Notification texts ───────────────────────────────────────────────────
   'notif.empty': {
     de: 'Keine Benachrichtigungen', en: 'No notifications', el: 'Δεν υπάρχουν ειδοποιήσεις',

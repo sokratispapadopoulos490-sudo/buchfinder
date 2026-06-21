@@ -1,270 +1,279 @@
+/**
+ * PublicProfile – Öffentliches Leseprofil eines Nutzers.
+ *
+ * Datenschutz-Regeln (V1):
+ * - Zeigt NUR: Anzeigename, Username, Bio, Genres, öffentliche Statistiken, öffentliche Posts
+ * - Zeigt NICHT: E-Mail, private SavedBooks, private Notizen, Empfehlungen, Bedarfsanalyse
+ * - Prüft profile_is_public – wenn false → "Profil privat" Meldung
+ * - URL-Parameter: ?email=... (E-Mail des Profil-Inhabers)
+ * - Liest E-Mail NUR für die UserFollow-Abfrage, zeigt sie nie in der UI an
+ */
+
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, UserPlus, UserCheck, Book, MessageSquare, Users, Calendar } from 'lucide-react';
+import { ArrowLeft, UserPlus, UserCheck, MessageSquare, Users, BookOpen, Lock } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '@/components/language/LanguageContext';
 
 export default function PublicProfile() {
+  const { t } = useLanguage();
   const [profileUser, setProfileUser] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
-  const [savedBooks, setSavedBooks] = useState([]);
-  const [quotes, setQuotes] = useState([]);
   const [posts, setPosts] = useState([]);
   const [isFollowing, setIsFollowing] = useState(false);
   const [followerCount, setFollowerCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [isPrivate, setIsPrivate] = useState(false);
   const navigate = useNavigate();
 
+  // URL-Parameter: ?email=... (technisch nötig für Follow-Lookup)
   const urlParams = new URLSearchParams(window.location.search);
-  const userEmail = urlParams.get('user');
+  const userEmail = urlParams.get('email') || urlParams.get('user');
 
   useEffect(() => {
+    if (!userEmail) { navigate(-1); return; }
     loadProfile();
   }, [userEmail]);
 
   const loadProfile = async () => {
     try {
-      const current = await base44.auth.me();
+      const [current, allUsers] = await Promise.all([
+        base44.auth.me(),
+        base44.entities.User.list(),
+      ]);
       setCurrentUser(current);
 
-      const allUsers = await base44.entities.User.list();
       const profile = allUsers.find(u => u.email === userEmail);
-      
-      if (!profile) {
-        navigate('/Community');
-        return;
-      }
+      if (!profile) { navigate(-1); return; }
       setProfileUser(profile);
 
-      const [books, userQuotes, userPosts, follows, followers, following] = await Promise.all([
-        base44.entities.SavedBook.filter({ created_by: userEmail }, '-created_date', 20),
-        base44.entities.BookQuote.filter({ created_by: userEmail, is_public: true }, '-created_date', 10),
+      // Datenschutz: Profil privat?
+      if (profile.profile_is_public === false && profile.email !== current?.email) {
+        setIsPrivate(true);
+        setLoading(false);
+        return;
+      }
+
+      // Parallele Abfragen – NUR öffentliche Daten
+      const [userPosts, myFollows, followers, following] = await Promise.all([
         base44.entities.CommunityPost.filter({ created_by: userEmail }, '-created_date', 10),
-        base44.entities.UserFollow.filter({ created_by: current.email, following_email: userEmail }),
+        current ? base44.entities.UserFollow.filter({ created_by: current.email, following_email: userEmail }) : Promise.resolve([]),
         base44.entities.UserFollow.filter({ following_email: userEmail }),
-        base44.entities.UserFollow.filter({ created_by: userEmail })
+        base44.entities.UserFollow.filter({ created_by: userEmail }),
       ]);
 
-      setSavedBooks(books);
-      setQuotes(userQuotes);
       setPosts(userPosts);
-      setIsFollowing(follows.length > 0);
+      setIsFollowing(myFollows.length > 0);
       setFollowerCount(followers.length);
       setFollowingCount(following.length);
-    } catch (error) {
-      console.error('Error loading profile:', error);
+    } catch (err) {
+      console.error('PublicProfile load error:', err);
     } finally {
       setLoading(false);
     }
   };
 
   const handleFollowToggle = async () => {
+    if (!currentUser) { base44.auth.redirectToLogin(); return; }
     try {
       if (isFollowing) {
         const follows = await base44.entities.UserFollow.filter({
           created_by: currentUser.email,
           following_email: userEmail
         });
-        if (follows.length > 0) {
-          await base44.entities.UserFollow.delete(follows[0].id);
-        }
+        if (follows.length > 0) await base44.entities.UserFollow.delete(follows[0].id);
         setIsFollowing(false);
-        setFollowerCount(prev => prev - 1);
+        setFollowerCount(c => Math.max(0, c - 1));
       } else {
-        await base44.entities.UserFollow.create({
-          following_email: userEmail
-        });
-        
-        await base44.entities.Notification.create({
-          type: 'follow',
-          title: 'Neuer Follower',
-          message: `${currentUser.full_name} folgt dir jetzt`,
-          link: `/PublicProfile?user=${currentUser.email}`,
-          from_user_email: currentUser.email,
-          created_by: userEmail
-        });
-        
+        await base44.entities.UserFollow.create({ following_email: userEmail });
+        // Benachrichtigung für den gefolgten Nutzer
+        try {
+          await base44.entities.Notification.create({
+            type: 'follow',
+            title: t('notif.follow.title'),
+            message: `${currentUser.full_name || currentUser.email?.split('@')[0]} ${t('notif.follow.action')}`,
+            link: `/PublicProfile?email=${encodeURIComponent(currentUser.email)}`,
+            from_user_email: currentUser.email,
+            created_by: userEmail
+          });
+        } catch {}
         setIsFollowing(true);
-        setFollowerCount(prev => prev + 1);
+        setFollowerCount(c => c + 1);
       }
-    } catch (error) {
-      console.error('Error toggling follow:', error);
+    } catch (err) {
+      console.error('Follow toggle error:', err);
     }
   };
 
+  // ── Loading ──────────────────────────────────────────────────────────────
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50 flex items-center justify-center">
-        <div className="text-stone-500">Lädt...</div>
+      <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] flex items-center justify-center">
+        <div className="text-stone-400 text-sm">{t('status.loading')}</div>
       </div>
     );
   }
 
+  // ── Profil privat ────────────────────────────────────────────────────────
+  if (isPrivate) {
+    return (
+      <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] px-4 py-6 flex flex-col items-center justify-center gap-4">
+        <Lock className="w-10 h-10 text-stone-300" />
+        <p className="text-stone-500 dark:text-stone-400 text-sm">{t('profile.private')}</p>
+        <Button variant="outline" onClick={() => navigate(-1)} className="gap-2">
+          <ArrowLeft className="w-4 h-4" /> {t('btn.back')}
+        </Button>
+      </div>
+    );
+  }
+
+  if (!profileUser) return null;
+
   const isOwnProfile = currentUser?.email === userEmail;
+  // Anzeigename: username → full_name → E-Mail-Präfix (nie E-Mail direkt)
+  const displayName = profileUser.full_name || profileUser.username || profileUser.email?.split('@')[0] || '?';
+  const usernameHandle = profileUser.username
+    ? `@${profileUser.username}`
+    : `@${profileUser.email?.split('@')[0] || ''}`;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-amber-50/30 to-stone-50 px-4 py-6 md:px-6 md:py-12">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] px-4 py-6 md:px-6 md:py-10">
+      <div className="max-w-2xl mx-auto">
+
         <button
           onClick={() => navigate(-1)}
-          className="text-stone-500 hover:text-stone-700 transition-colors mb-6"
+          className="flex items-center gap-2 text-stone-500 hover:text-stone-700 dark:hover:text-stone-300 transition-colors mb-6 text-sm"
         >
-          <ArrowLeft className="w-5 h-5 inline mr-2" />
-          Zurück
+          <ArrowLeft className="w-4 h-4" /> {t('btn.back')}
         </button>
 
-        {/* Header */}
-        <div className="bg-white rounded-2xl border border-stone-200 p-8 mb-6">
-          <div className="flex items-start gap-6 mb-6">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center text-white text-3xl font-light shadow-lg flex-shrink-0">
-              {profileUser.full_name?.charAt(0) || 'U'}
+        {/* ── Profil-Header ─────────────────────────────────────────────── */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-6 mb-4 shadow-sm"
+        >
+          <div className="flex items-start gap-4 mb-5">
+            {/* Avatar */}
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-white text-2xl font-light shadow-md flex-shrink-0 overflow-hidden">
+              {profileUser.profile_picture_url ? (
+                <img src={profileUser.profile_picture_url} alt="" className="w-full h-full object-cover" />
+              ) : (
+                displayName.charAt(0).toUpperCase()
+              )}
             </div>
-            <div className="flex-1">
-              <h1 className="text-2xl font-light text-stone-800 mb-1">{profileUser.full_name}</h1>
-              <p className="text-stone-500 mb-4">{profileUser.email}</p>
-              
+
+            {/* Name + Handle + Bio */}
+            <div className="flex-1 min-w-0">
+              <h1 className="text-xl font-semibold text-stone-800 dark:text-stone-100 truncate">{displayName}</h1>
+              <p className="text-sm text-stone-400 dark:text-stone-500 truncate mb-1">{usernameHandle}</p>
               {profileUser.bio && (
-                <p className="text-stone-600 mb-4">{profileUser.bio}</p>
+                <p className="text-sm text-stone-600 dark:text-stone-300 mt-1">{profileUser.bio}</p>
               )}
 
-              {profileUser.favorite_genres && profileUser.favorite_genres.length > 0 && (
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {profileUser.favorite_genres.map((genre, i) => (
-                    <span key={i} className="text-xs bg-amber-100 text-amber-700 px-3 py-1 rounded-full">
-                      {genre}
+              {/* Genres */}
+              {profileUser.favorite_genres?.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  {profileUser.favorite_genres.slice(0, 5).map((g, i) => (
+                    <span key={i} className="text-xs bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-2.5 py-0.5 rounded-full">
+                      {g}
                     </span>
                   ))}
                 </div>
               )}
-
-              <div className="flex items-center gap-6 text-sm text-stone-600">
-                <div className="flex items-center gap-2">
-                  <Book className="w-4 h-4" />
-                  <span>{savedBooks.length} Bücher</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4" />
-                  <span>{followerCount} Follower</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4" />
-                  <span>{followingCount} Folgt</span>
-                </div>
-              </div>
             </div>
           </div>
 
+          {/* Statistiken */}
+          <div className="flex items-center gap-5 text-sm text-stone-500 dark:text-stone-400 mb-5">
+            <div className="flex items-center gap-1.5">
+              <Users className="w-4 h-4" />
+              <span><strong className="text-stone-800 dark:text-stone-200">{followerCount}</strong> {t('network.followMe')}</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Users className="w-4 h-4" />
+              <span><strong className="text-stone-800 dark:text-stone-200">{followingCount}</strong> {t('network.iFollow')}</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <BookOpen className="w-4 h-4" />
+              <span><strong className="text-stone-800 dark:text-stone-200">{posts.length}</strong> {t('community.tab.posts')}</span>
+            </div>
+          </div>
+
+          {/* Aktions-Buttons */}
           {!isOwnProfile && (
             <div className="flex gap-3">
               <Button
                 onClick={handleFollowToggle}
-                className={`flex-1 gap-2 ${
+                className={`flex-1 gap-2 text-sm ${
                   isFollowing
-                    ? 'bg-stone-200 hover:bg-stone-300 text-stone-800'
+                    ? 'bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-300'
                     : 'bg-amber-600 hover:bg-amber-700 text-white'
                 }`}
               >
                 {isFollowing ? (
-                  <>
-                    <UserCheck className="w-4 h-4" />
-                    Folge ich
-                  </>
+                  <><UserCheck className="w-4 h-4" /> {t('community.following.unfollow')}</>
                 ) : (
-                  <>
-                    <UserPlus className="w-4 h-4" />
-                    Folgen
-                  </>
+                  <><UserPlus className="w-4 h-4" /> {t('profile.follow')}</>
                 )}
               </Button>
               <Button
-                onClick={() => {
-                  navigate('/Account?tab=messages');
-                }}
+                onClick={() => navigate(`/Community?tab=messages&to=${encodeURIComponent(userEmail)}`)}
                 variant="outline"
-                className="flex-1 gap-2"
+                className="flex-1 gap-2 text-sm dark:border-stone-600 dark:text-stone-300"
               >
-                <MessageSquare className="w-4 h-4" />
-                Nachricht
+                <MessageSquare className="w-4 h-4" /> {t('post.message')}
               </Button>
             </div>
           )}
-        </div>
 
-        {/* Completed Books */}
-        {savedBooks.filter(b => b.is_completed).length > 0 && (
-          <div className="bg-white rounded-2xl border border-stone-200 p-6 mb-6">
-            <h2 className="text-xl font-light text-stone-800 mb-4">
-              Gelesene Bücher ({savedBooks.filter(b => b.is_completed).length})
-            </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {savedBooks.filter(b => b.is_completed).slice(0, 8).map((book) => (
-                <div key={book.id} className="group">
-                  <div className={`aspect-[2/3] rounded-lg ${book.book_data.coverColor || 'bg-stone-100'} flex items-center justify-center mb-2 group-hover:scale-105 transition-transform`}>
-                    <span className="text-3xl font-serif text-stone-400">
-                      {book.book_data.title.charAt(0)}
-                    </span>
-                  </div>
-                  <h3 className="text-sm font-medium text-stone-800 truncate">{book.book_data.title}</h3>
-                  <p className="text-xs text-stone-500 truncate">{book.book_data.author}</p>
-                  {book.rating && (
-                    <div className="flex items-center gap-1 mt-1">
-                      {Array.from({ length: book.rating }).map((_, i) => (
-                        <span key={i} className="text-amber-500">★</span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+          {isOwnProfile && (
+            <Button
+              onClick={() => navigate('/Account')}
+              variant="outline"
+              className="w-full text-sm dark:border-stone-600 dark:text-stone-300"
+            >
+              {t('account.editProfile')}
+            </Button>
+          )}
+        </motion.div>
 
-        {/* Public Quotes */}
-        {quotes.length > 0 && (
-          <div className="bg-white rounded-2xl border border-stone-200 p-6 mb-6">
-            <h2 className="text-xl font-light text-stone-800 mb-4">Zitate</h2>
-            <div className="space-y-4">
-              {quotes.slice(0, 5).map((quote) => (
-                <motion.div
-                  key={quote.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="border-l-4 border-amber-600 pl-4 py-2"
-                >
-                  <blockquote className="text-stone-700 italic mb-2">
-                    "{quote.quote_text}"
-                  </blockquote>
-                  <p className="text-sm text-stone-500">
-                    — {quote.book_data.title}
-                  </p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Recent Posts */}
+        {/* ── Öffentliche Posts ──────────────────────────────────────────── */}
         {posts.length > 0 && (
-          <div className="bg-white rounded-2xl border border-stone-200 p-6">
-            <h2 className="text-xl font-light text-stone-800 mb-4">Beiträge</h2>
-            <div className="space-y-4">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-5 shadow-sm"
+          >
+            <h2 className="text-sm font-semibold text-stone-600 dark:text-stone-400 uppercase tracking-wider mb-4">
+              {t('community.tab.posts')}
+            </h2>
+            <div className="space-y-3">
               {posts.slice(0, 5).map((post) => (
                 <div
                   key={post.id}
-                  className="border border-stone-200 rounded-lg p-4 hover:border-stone-300 transition-colors cursor-pointer"
                   onClick={() => navigate('/Community')}
+                  className="p-4 border border-stone-100 dark:border-stone-700 rounded-xl hover:border-amber-200 dark:hover:border-amber-800 transition-colors cursor-pointer"
                 >
-                  <h3 className="font-medium text-stone-800 mb-2">{post.title}</h3>
-                  <p className="text-sm text-stone-600 line-clamp-2">{post.content}</p>
-                  <div className="flex items-center gap-4 mt-3 text-xs text-stone-500">
-                    <span>{post.likes_count} Likes</span>
-                    <span>{post.comments_count} Kommentare</span>
+                  <p className="text-sm font-medium text-stone-800 dark:text-stone-200 mb-1 line-clamp-1">{post.title}</p>
+                  <p className="text-xs text-stone-500 dark:text-stone-400 line-clamp-2">{post.content}</p>
+                  <div className="flex gap-4 mt-2 text-xs text-stone-400">
+                    <span>♥ {post.likes_count || 0}</span>
+                    <span>💬 {post.comments_count || 0}</span>
                   </div>
                 </div>
               ))}
             </div>
+          </motion.div>
+        )}
+
+        {posts.length === 0 && (
+          <div className="text-center py-8 text-stone-400 dark:text-stone-500 text-sm">
+            {t('profile.noPosts')}
           </div>
         )}
       </div>
