@@ -24,7 +24,8 @@ export default function ConsentModal({ onAccept }) {
       onAccept();
     } catch (error) {
       console.error('Error accepting terms:', error);
-      alert('Fehler beim Speichern. Bitte versuche es erneut.');
+      // Fehler still ignorieren – Nutzer kann es erneut versuchen
+      console.error('Error accepting terms:', error);
     } finally {
       setAccepting(false);
     }

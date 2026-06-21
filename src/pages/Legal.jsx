@@ -68,11 +68,12 @@ export default function Legal() {
           </section>
 
           <section>
-            <h3 className="text-lg font-medium text-stone-800 mb-3">5. Premium-Funktionen</h3>
+            <h3 className="text-lg font-medium text-stone-800 mb-3">5. Beta-Nutzung</h3>
             <p className="text-stone-600 leading-relaxed">
-              Einige Funktionen der App sind kostenpflichtig (Premium). Die Zahlung erfolgt über Stripe. 
-              Es gelten die jeweiligen Preise und Laufzeiten zum Zeitpunkt des Vertragsabschlusses. 
-              Kündigungen können jederzeit erfolgen.
+              Book Compass befindet sich aktuell in einer geschlossenen, kostenlosen Beta-Phase. 
+              Alle Funktionen sind während der Beta kostenlos nutzbar. Wir behalten uns vor, 
+              nach Ende der Beta-Phase kostenpflichtige Funktionen einzuführen und werden darüber 
+              rechtzeitig informieren.
             </p>
           </section>
 
@@ -128,7 +129,7 @@ export default function Legal() {
               <li><strong>Profildaten:</strong> Biografie, Lieblingsgenres, Leseziele</li>
               <li><strong>Nutzungsdaten:</strong> Gespeicherte Bücher, Bewertungen, Kommentare, Zitate</li>
               <li><strong>Technische Daten:</strong> IP-Adresse, Browser-Typ, Geräteinformationen</li>
-              <li><strong>Zahlungsdaten:</strong> Werden ausschließlich von Stripe verarbeitet</li>
+              <li><strong>Zahlungsdaten:</strong> Werden in der Beta-Phase nicht erhoben</li>
             </ul>
           </section>
 
@@ -140,7 +141,7 @@ export default function Legal() {
               <li>Ihr Nutzerkonto zu verwalten</li>
               <li>Personalisierte Buchempfehlungen zu erstellen (KI-basiert)</li>
               <li>Community-Funktionen zu ermöglichen</li>
-              <li>Premium-Abonnements abzuwickeln</li>
+              <li>Die App weiterzuentwickeln und zu verbessern</li>
               <li>Die Sicherheit der App zu gewährleisten</li>
             </ul>
           </section>
@@ -160,7 +161,7 @@ export default function Legal() {
               Wir geben Ihre Daten nur in folgenden Fällen weiter:
             </p>
             <ul className="list-disc list-inside space-y-1 text-stone-600 ml-4">
-              <li><strong>Stripe:</strong> Zahlungsabwicklung für Premium-Funktionen</li>
+              <li><strong>Zahlungsdienstleister:</strong> Entfällt in der Beta-Phase</li>
               <li><strong>OpenAI/KI-Dienste:</strong> Zur Erstellung personalisierter Empfehlungen (anonymisiert)</li>
               <li><strong>Hosting-Provider:</strong> Zur technischen Bereitstellung der App</li>
               <li><strong>Gesetzliche Verpflichtungen:</strong> Bei behördlichen Anfragen</li>
@@ -286,7 +287,7 @@ export default function Legal() {
           <section>
             <h3 className="text-lg font-medium text-stone-800 mb-3">7. KI-Interaktionen</h3>
             <p className="text-stone-600 leading-relaxed">
-              Premium-Nutzer können die Book Compass KI in Diskussionen einbinden. 
+              Book Compass nutzt KI, um personalisierte Buchempfehlungen zu erstellen und Community-Diskussionen zu unterstützen. 
               Die KI soll konstruktiv und hilfreich sein. Missbrauch der KI-Funktion ist nicht gestattet.
             </p>
           </section>

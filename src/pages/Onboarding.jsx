@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { BookOpen, Search, CheckCircle, Sparkles } from 'lucide-react';
+import { BookOpen, CheckCircle, Sparkles } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '@/components/language/LanguageContext';
 
 export default function Onboarding() {
   const [step, setStep] = useState(0);
@@ -14,17 +15,23 @@ export default function Onboarding() {
   const [currentBook, setCurrentBook] = useState('');
   const [processing, setProcessing] = useState(false);
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const handleUsernameSubmit = async () => {
-    if (!username.trim() || username.trim().length < 3) {
-      setUsernameError('Mindestens 3 Zeichen erforderlich.');
+    // Leeres Feld = Skip
+    if (!username.trim()) {
+      setStep(1);
       return;
     }
-    if (!/^[a-zA-Z0-9_]+$/.test(username.trim())) {
-      setUsernameError('Nur Buchstaben, Zahlen und _ erlaubt.');
+    if (username.trim().length < 2) {
+      setUsernameError(t('profile.usernameInvalid'));
       return;
     }
-    await base44.auth.updateMe({ username: username.trim() });
+    if (!/^[a-z0-9_]+$/.test(username.trim().toLowerCase())) {
+      setUsernameError(t('profile.usernameInvalid'));
+      return;
+    }
+    await base44.auth.updateMe({ username: username.trim().toLowerCase() });
     setStep(1);
   };
 
@@ -49,6 +56,7 @@ export default function Onboarding() {
       await base44.auth.updateMe({
         reading_identity: readingIdentity,
         what_draws_you: whatDrawsYou,
+        current_reading_book: currentBook.trim() || null,
         onboarding_completed: true
       });
 
@@ -77,39 +85,39 @@ export default function Onboarding() {
                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center mx-auto mb-4 shadow-lg">
                   <BookOpen className="w-8 h-8 text-white" />
                 </div>
-                <h1 className="text-2xl font-light text-stone-800 mb-1">Willkommen bei Book Compass</h1>
-                <p className="text-stone-600 text-sm">Wähle zuerst deinen Benutzernamen</p>
+                <h1 className="text-2xl font-light text-stone-800 mb-1">{t('onboarding.welcome')}</h1>
+                <p className="text-stone-600 text-sm">{t('onboarding.usernameSubtitle')}</p>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-stone-700 mb-1 block">Benutzername <span className="text-stone-400 font-normal">(optional)</span></label>
+                  <label className="text-sm font-medium text-stone-700 mb-1 block">{t('onboarding.usernameLabel')} <span className="text-stone-400 font-normal">({t('onboarding.optional')})</span></label>
                   <div className="flex items-center border border-stone-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-amber-500">
                     <span className="pl-4 text-stone-400 text-sm">@</span>
                     <input
                       type="text"
                       value={username}
                       onChange={(e) => { setUsername(e.target.value); setUsernameError(''); }}
-                      placeholder="dein_name"
+                      placeholder={t('profile.usernamePlaceholder')}
                       className="flex-1 px-2 py-3 focus:outline-none text-stone-800 text-sm bg-transparent"
                       onKeyDown={(e) => e.key === 'Enter' && handleUsernameSubmit()}
                     />
                   </div>
                   {usernameError && <p className="text-red-500 text-xs mt-1">{usernameError}</p>}
-                  <p className="text-xs text-stone-400 mt-1">Nur Buchstaben, Zahlen und _ (min. 3 Zeichen)</p>
+                  <p className="text-xs text-stone-400 mt-1">{t('profile.usernameHint')}</p>
                 </div>
 
                 <Button
                   onClick={handleUsernameSubmit}
                   className="w-full bg-amber-600 hover:bg-amber-700 text-white"
                 >
-                  Weiter
+                  {t('q.continueBtn')}
                 </Button>
                 <button
                   onClick={() => setStep(1)}
                   className="w-full text-sm text-stone-400 hover:text-stone-600 transition-colors py-1"
                 >
-                  Überspringen
+                  {t('readBooks.skip')}
                 </button>
               </div>
             </motion.div>
@@ -137,35 +145,22 @@ export default function Onboarding() {
               </div>
 
               <div className="space-y-3">
-                <h2 className="text-sm font-medium text-stone-700 mb-3">Wie würdest du dein Lesen beschreiben?</h2>
+                <h2 className="text-sm font-medium text-stone-700 mb-3">{t('onboarding.identityQuestion')}</h2>
                 
-                <button
-                  onClick={() => handleIdentitySelect('entspannen')}
-                  className="w-full p-4 border-2 border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all text-left"
-                >
-                  <div className="font-medium text-stone-800">Ich lese, um zu entspannen</div>
-                </button>
-
-                <button
-                  onClick={() => handleIdentitySelect('lernen')}
-                  className="w-full p-4 border-2 border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all text-left"
-                >
-                  <div className="font-medium text-stone-800">Ich lese, um zu lernen</div>
-                </button>
-
-                <button
-                  onClick={() => handleIdentitySelect('traeumen')}
-                  className="w-full p-4 border-2 border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all text-left"
-                >
-                  <div className="font-medium text-stone-800">Ich lese, um zu träumen</div>
-                </button>
-
-                <button
-                  onClick={() => handleIdentitySelect('verstehen')}
-                  className="w-full p-4 border-2 border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all text-left"
-                >
-                  <div className="font-medium text-stone-800">Ich lese, um zu verstehen</div>
-                </button>
+                {[
+                  { key: 'entspannen', label: t('onboarding.identity.entspannen') },
+                  { key: 'lernen',     label: t('onboarding.identity.lernen') },
+                  { key: 'traeumen',   label: t('onboarding.identity.traeumen') },
+                  { key: 'verstehen',  label: t('onboarding.identity.verstehen') },
+                ].map(({ key, label }) => (
+                  <button
+                    key={key}
+                    onClick={() => handleIdentitySelect(key)}
+                    className="w-full p-4 border-2 border-stone-200 rounded-xl hover:border-amber-500 hover:bg-amber-50 transition-all text-left"
+                  >
+                    <div className="font-medium text-stone-800">{label}</div>
+                  </button>
+                ))}
               </div>
             </motion.div>
           )}
@@ -179,14 +174,20 @@ export default function Onboarding() {
               className="bg-white rounded-2xl border border-stone-200 p-8 shadow-sm"
             >
               <h2 className="text-xl font-light text-stone-800 mb-2">
-                Was zieht dich in Geschichten?
+                {t('onboarding.drawsQuestion')}
               </h2>
               <p className="text-sm text-stone-600 mb-6">
-                Wähle mehrere aus
+                {t('onboarding.selectMultiple')}
               </p>
 
               <div className="space-y-2 mb-6">
-                {['Charaktere', 'Atmosphäre', 'Ideen', 'Emotionen', 'Handlung'].map((item) => (
+                {[
+                  t('onboarding.draws.characters'),
+                  t('onboarding.draws.atmosphere'),
+                  t('onboarding.draws.ideas'),
+                  t('onboarding.draws.emotions'),
+                  t('onboarding.draws.plot'),
+                ].map((item) => (
                   <button
                     key={item}
                     onClick={() => handleDrawsToggle(item)}
@@ -212,14 +213,14 @@ export default function Onboarding() {
                   variant="outline"
                   className="flex-1"
                 >
-                  Zurück
+                  {t('btn.back')}
                 </Button>
                 <Button
                   onClick={() => setStep(3)}
                   disabled={whatDrawsYou.length === 0}
                   className="flex-1 bg-amber-600 hover:bg-amber-700 text-white"
                 >
-                  Weiter
+                  {t('q.continueBtn')}
                 </Button>
               </div>
             </motion.div>
@@ -234,17 +235,17 @@ export default function Onboarding() {
               className="bg-white rounded-2xl border border-stone-200 p-8 shadow-sm"
             >
               <h2 className="text-xl font-light text-stone-800 mb-2">
-                Welches Buch liest du gerade?
+                {t('onboarding.currentBookQuestion')}
               </h2>
               <p className="text-sm text-stone-600 mb-6">
-                Optional – du kannst auch überspringen
+                {t('onboarding.optional')} – {t('onboarding.canSkip')}
               </p>
 
               <input
                 type="text"
                 value={currentBook}
                 onChange={(e) => setCurrentBook(e.target.value)}
-                placeholder="z.B. Atomic Habits"
+                placeholder={t('onboarding.currentBookPlaceholder')}
                 className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 mb-6"
               />
 
@@ -254,17 +255,17 @@ export default function Onboarding() {
                   variant="outline"
                   className="flex-1"
                 >
-                  Zurück
+                  {t('btn.back')}
                 </Button>
                 <Button
                   onClick={handleComplete}
                   disabled={processing}
                   className="flex-1 bg-amber-600 hover:bg-amber-700 text-white gap-2"
                 >
-                  {processing ? 'Lädt...' : (
+                  {processing ? t('status.loading') : (
                     <>
                       <Sparkles className="w-4 h-4" />
-                      Los geht's
+                      {t('onboarding.letsGo')}
                     </>
                   )}
                 </Button>

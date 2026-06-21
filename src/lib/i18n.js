@@ -327,6 +327,99 @@ const dict = {
   'account.history': {
     de: 'Empfehlungsverlauf', en: 'Recommendation History', el: 'Ιστορικό προτάσεων', tr: 'Öneri geçmişi', fr: 'Historique des recommandations', es: 'Historial de recomendaciones', it: 'Cronologia consigli',
   },
+  // ── Onboarding ────────────────────────────────────────────────────────────
+  'onboarding.welcome': {
+    de: 'Willkommen bei Book Compass', en: 'Welcome to Book Compass',
+    el: 'Καλωσήρθες στο Book Compass', tr: 'Book Compass\'a hoş geldin',
+    fr: 'Bienvenue sur Book Compass', es: 'Bienvenido a Book Compass', it: 'Benvenuto in Book Compass',
+  },
+  'onboarding.usernameSubtitle': {
+    de: 'Wähle zuerst deinen Benutzernamen', en: 'First, choose your username',
+    el: 'Πρώτα, επίλεξε το όνομα χρήστη σου', tr: 'Önce kullanıcı adını seç',
+    fr: 'Choisissez d\'abord votre nom d\'utilisateur', es: 'Primero elige tu nombre de usuario', it: 'Prima scegli il tuo nome utente',
+  },
+  'onboarding.usernameLabel': {
+    de: 'Benutzername', en: 'Username', el: 'Όνομα χρήστη',
+    tr: 'Kullanıcı adı', fr: 'Nom d\'utilisateur', es: 'Nombre de usuario', it: 'Nome utente',
+  },
+  'onboarding.optional': {
+    de: 'optional', en: 'optional', el: 'προαιρετικό',
+    tr: 'isteğe bağlı', fr: 'optionnel', es: 'opcional', it: 'opzionale',
+  },
+  'onboarding.canSkip': {
+    de: 'du kannst auch überspringen', en: 'you can also skip',
+    el: 'μπορείς και να παραλείψεις', tr: 'atlayabilirsin',
+    fr: 'vous pouvez aussi ignorer', es: 'también puedes omitir', it: 'puoi anche saltare',
+  },
+  'onboarding.identityQuestion': {
+    de: 'Wie würdest du dein Lesen beschreiben?', en: 'How would you describe your reading?',
+    el: 'Πώς θα περιέγραφες την ανάγνωσή σου;', tr: 'Okumayı nasıl tanımlarsın?',
+    fr: 'Comment décririez-vous votre lecture ?', es: '¿Cómo describirías tu lectura?', it: 'Come descriveresti la tua lettura?',
+  },
+  'onboarding.identity.entspannen': {
+    de: 'Ich lese, um zu entspannen', en: 'I read to relax',
+    el: 'Διαβάζω για να χαλαρώσω', tr: 'Rahatlamak için okuyorum',
+    fr: 'Je lis pour me détendre', es: 'Leo para relajarme', it: 'Leggo per rilassarmi',
+  },
+  'onboarding.identity.lernen': {
+    de: 'Ich lese, um zu lernen', en: 'I read to learn',
+    el: 'Διαβάζω για να μάθω', tr: 'Öğrenmek için okuyorum',
+    fr: 'Je lis pour apprendre', es: 'Leo para aprender', it: 'Leggo per imparare',
+  },
+  'onboarding.identity.traeumen': {
+    de: 'Ich lese, um zu träumen', en: 'I read to dream',
+    el: 'Διαβάζω για να ονειρεύομαι', tr: 'Hayal kurmak için okuyorum',
+    fr: 'Je lis pour rêver', es: 'Leo para soñar', it: 'Leggo per sognare',
+  },
+  'onboarding.identity.verstehen': {
+    de: 'Ich lese, um zu verstehen', en: 'I read to understand',
+    el: 'Διαβάζω για να καταλάβω', tr: 'Anlamak için okuyorum',
+    fr: 'Je lis pour comprendre', es: 'Leo para entender', it: 'Leggo per capire',
+  },
+  'onboarding.drawsQuestion': {
+    de: 'Was zieht dich in Geschichten?', en: 'What draws you to stories?',
+    el: 'Τι σε τραβάει στις ιστορίες;', tr: 'Hikayelerde seni ne çekiyor?',
+    fr: 'Qu\'est-ce qui vous attire dans les histoires ?', es: '¿Qué te atrae de las historias?', it: 'Cosa ti attrae nelle storie?',
+  },
+  'onboarding.selectMultiple': {
+    de: 'Wähle mehrere aus', en: 'Select multiple',
+    el: 'Επίλεξε πολλά', tr: 'Birden fazla seç',
+    fr: 'Choisissez plusieurs', es: 'Selecciona varios', it: 'Seleziona più opzioni',
+  },
+  'onboarding.draws.characters': {
+    de: 'Charaktere', en: 'Characters', el: 'Χαρακτήρες',
+    tr: 'Karakterler', fr: 'Personnages', es: 'Personajes', it: 'Personaggi',
+  },
+  'onboarding.draws.atmosphere': {
+    de: 'Atmosphäre', en: 'Atmosphere', el: 'Ατμόσφαιρα',
+    tr: 'Atmosfer', fr: 'Atmosphère', es: 'Atmósfera', it: 'Atmosfera',
+  },
+  'onboarding.draws.ideas': {
+    de: 'Ideen', en: 'Ideas', el: 'Ιδέες',
+    tr: 'Fikirler', fr: 'Idées', es: 'Ideas', it: 'Idee',
+  },
+  'onboarding.draws.emotions': {
+    de: 'Emotionen', en: 'Emotions', el: 'Συναισθήματα',
+    tr: 'Duygular', fr: 'Émotions', es: 'Emociones', it: 'Emozioni',
+  },
+  'onboarding.draws.plot': {
+    de: 'Handlung', en: 'Plot', el: 'Πλοκή',
+    tr: 'Konu', fr: 'Intrigue', es: 'Trama', it: 'Trama',
+  },
+  'onboarding.currentBookQuestion': {
+    de: 'Welches Buch liest du gerade?', en: 'Which book are you currently reading?',
+    el: 'Ποιο βιβλίο διαβάζεις τώρα;', tr: 'Şu an hangi kitabı okuyorsun?',
+    fr: 'Quel livre lisez-vous en ce moment ?', es: '¿Qué libro estás leyendo ahora?', it: 'Quale libro stai leggendo adesso?',
+  },
+  'onboarding.currentBookPlaceholder': {
+    de: 'z.B. Atomic Habits', en: 'e.g. Atomic Habits', el: 'π.χ. Atomic Habits',
+    tr: 'örn. Atomic Habits', fr: 'ex. Atomic Habits', es: 'ej. Atomic Habits', it: 'es. Atomic Habits',
+  },
+  'onboarding.letsGo': {
+    de: 'Los geht\'s', en: 'Let\'s go', el: 'Πάμε',
+    tr: 'Hadi gidelim', fr: 'C\'est parti', es: '¡Vamos', it: 'Andiamo',
+  },
+
   'premium.betaTitle': {
     de: 'Alles kostenlos in der Beta',
     en: 'Everything free in Beta',
