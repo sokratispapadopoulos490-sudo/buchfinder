@@ -7,6 +7,15 @@ import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import { de } from 'date-fns/locale';
 
+// Maskiert E-Mail → "s***@domain.tld", gibt username@ zurück wenn vorhanden
+function maskEmail(raw) {
+  if (!raw) return 'Nutzer';
+  if (!raw.includes('@')) return raw; // bereits ein Username
+  const [local, domain] = raw.split('@');
+  const masked = local.charAt(0) + '***';
+  return `${masked}@${domain}`;
+}
+
 export default function Moderation() {
   const [user, setUser] = useState(null);
   const [reports, setReports] = useState([]);
@@ -173,7 +182,7 @@ export default function Moderation() {
                         <div>
                           <p className="font-medium text-stone-800">{reasonLabels[report.reason]}</p>
                           <p className="text-xs text-stone-500">
-                            Gemeldet von {report.created_by} • {formatDistanceToNow(new Date(report.created_date), { addSuffix: true, locale: de })}
+                           Gemeldet von {maskEmail(report.created_by)} • {formatDistanceToNow(new Date(report.created_date), { addSuffix: true, locale: de })}
                           </p>
                         </div>
                       </div>
@@ -196,10 +205,10 @@ export default function Moderation() {
                       <div className="border border-stone-200 rounded-lg p-4 bg-stone-50">
                         <div className="flex items-center gap-2 mb-2">
                           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center text-white text-sm">
-                            {post.created_by?.charAt(0).toUpperCase()}
+                            {maskEmail(post.created_by).charAt(0).toUpperCase()}
                           </div>
                           <span className="text-sm font-medium text-stone-800">
-                            {post.created_by?.split('@')[0]}
+                            {maskEmail(post.created_by)}
                           </span>
                         </div>
                         <h4 className="font-medium text-stone-800 mb-1">{post.title}</h4>
@@ -232,7 +241,7 @@ export default function Moderation() {
 
                     {report.resolved_by && (
                       <p className="text-xs text-stone-500 mt-3">
-                        Bearbeitet von {report.resolved_by}
+                        Bearbeitet von {maskEmail(report.resolved_by)}
                       </p>
                     )}
                   </div>

@@ -327,6 +327,88 @@ const dict = {
   'account.history': {
     de: 'Empfehlungsverlauf', en: 'Recommendation History', el: 'Ιστορικό προτάσεων', tr: 'Öneri geçmişi', fr: 'Historique des recommandations', es: 'Historial de recomendaciones', it: 'Cronologia consigli',
   },
+  // ── Consent Modal ────────────────────────────────────────────────────────
+  'consent.title': {
+    de: 'Willkommen bei Book Compass', en: 'Welcome to Book Compass',
+    el: 'Καλωσήρθες στο Book Compass', tr: 'Book Compass\'a hoş geldin',
+    fr: 'Bienvenue sur Book Compass', es: 'Bienvenido a Book Compass', it: 'Benvenuto in Book Compass',
+  },
+  'consent.subtitle': {
+    de: 'Bevor du die App nutzen kannst, bitten wir dich, unseren rechtlichen Hinweisen zuzustimmen.',
+    en: 'Before you can use the app, please agree to our legal notices.',
+    el: 'Πριν χρησιμοποιήσεις την εφαρμογή, παρακαλούμε να συμφωνήσεις με τις νομικές μας ανακοινώσεις.',
+    tr: 'Uygulamayı kullanmadan önce lütfen yasal bildirimlerimizi kabul et.',
+    fr: 'Avant d\'utiliser l\'application, veuillez accepter nos mentions légales.',
+    es: 'Antes de usar la app, por favor acepta nuestros avisos legales.',
+    it: 'Prima di usare l\'app, accetta le nostre comunicazioni legali.',
+  },
+  'consent.docsHeading': {
+    de: 'Rechtliche Dokumente', en: 'Legal Documents',
+    el: 'Νομικά Έγγραφα', tr: 'Yasal Belgeler',
+    fr: 'Documents légaux', es: 'Documentos legales', it: 'Documenti legali',
+  },
+  'consent.terms': {
+    de: 'Nutzungsbedingungen', en: 'Terms of Use',
+    el: 'Όροι Χρήσης', tr: 'Kullanım Koşulları',
+    fr: 'Conditions d\'utilisation', es: 'Condiciones de uso', it: 'Termini di utilizzo',
+  },
+  'consent.privacy': {
+    de: 'Datenschutzerklärung', en: 'Privacy Policy',
+    el: 'Πολιτική Απορρήτου', tr: 'Gizlilik Politikası',
+    fr: 'Politique de confidentialité', es: 'Política de privacidad', it: 'Informativa sulla privacy',
+  },
+  'consent.community': {
+    de: 'Community-Richtlinien', en: 'Community Guidelines',
+    el: 'Κανόνες Κοινότητας', tr: 'Topluluk Kuralları',
+    fr: 'Règles de la communauté', es: 'Normas de la comunidad', it: 'Linee guida della community',
+  },
+  'consent.imprint': {
+    de: 'Impressum', en: 'Imprint',
+    el: 'Αποτύπωμα', tr: 'Künye',
+    fr: 'Mentions légales', es: 'Aviso legal', it: 'Note legali',
+  },
+  'consent.checkTerms': {
+    de: 'Ich habe die Nutzungsbedingungen gelesen und akzeptiere sie. Ich verstehe, dass ich durch die Nutzung der App diesen Bedingungen zustimme.',
+    en: 'I have read the Terms of Use and accept them. I understand that by using the app I agree to these terms.',
+    el: 'Έχω διαβάσει τους Όρους Χρήσης και τους αποδέχομαι. Καταλαβαίνω ότι χρησιμοποιώντας την εφαρμογή συμφωνώ με αυτούς τους όρους.',
+    tr: 'Kullanım Koşullarını okudum ve kabul ediyorum. Uygulamayı kullanarak bu koşulları kabul ettiğimi anlıyorum.',
+    fr: 'J\'ai lu les Conditions d\'utilisation et je les accepte. Je comprends qu\'en utilisant l\'application, j\'accepte ces conditions.',
+    es: 'He leído las Condiciones de uso y las acepto. Entiendo que al usar la app acepto estas condiciones.',
+    it: 'Ho letto i Termini di utilizzo e li accetto. Capisco che utilizzando l\'app accetto queste condizioni.',
+  },
+  'consent.checkPrivacy': {
+    de: 'Ich habe die Datenschutzerklärung gelesen und verstehe, wie meine Daten verarbeitet werden. Ich stimme der Verarbeitung meiner Daten gemäß der Datenschutzerklärung zu.',
+    en: 'I have read the Privacy Policy and understand how my data is processed. I agree to the processing of my data in accordance with the Privacy Policy.',
+    el: 'Έχω διαβάσει την Πολιτική Απορρήτου και καταλαβαίνω πώς επεξεργάζονται τα δεδομένα μου. Συμφωνώ με την επεξεργασία των δεδομένων μου σύμφωνα με την Πολιτική.',
+    tr: 'Gizlilik Politikasını okudum ve verilerimin nasıl işlendiğini anlıyorum. Verilerimin Gizlilik Politikasına uygun olarak işlenmesini kabul ediyorum.',
+    fr: 'J\'ai lu la Politique de confidentialité et je comprends comment mes données sont traitées. J\'accepte le traitement de mes données conformément à la politique.',
+    es: 'He leído la Política de privacidad y entiendo cómo se procesan mis datos. Acepto el tratamiento de mis datos según la política.',
+    it: 'Ho letto l\'Informativa sulla privacy e capisco come vengono trattati i miei dati. Acconsento al trattamento dei miei dati in conformità con la policy.',
+  },
+  'consent.noteHeading': {
+    de: 'Hinweis:', en: 'Note:', el: 'Σημείωση:', tr: 'Not:',
+    fr: 'Remarque :', es: 'Nota:', it: 'Nota:',
+  },
+  'consent.noteText': {
+    de: 'Du kannst deine Zustimmung jederzeit widerrufen, indem du dein Konto löschst. Die Dokumente sind jederzeit über die App einsehbar.',
+    en: 'You can withdraw your consent at any time by deleting your account. The documents are always accessible within the app.',
+    el: 'Μπορείς να αποσύρεις τη συγκατάθεσή σου ανά πάσα στιγμή διαγράφοντας τον λογαριασμό σου. Τα έγγραφα είναι πάντα προσβάσιμα στην εφαρμογή.',
+    tr: 'Hesabını silerek onayını istediğin zaman geri çekebilirsin. Belgeler her zaman uygulama içinde görüntülenebilir.',
+    fr: 'Vous pouvez retirer votre consentement à tout moment en supprimant votre compte. Les documents sont toujours accessibles dans l\'application.',
+    es: 'Puedes retirar tu consentimiento en cualquier momento eliminando tu cuenta. Los documentos siempre son accesibles en la app.',
+    it: 'Puoi revocare il tuo consenso in qualsiasi momento eliminando il tuo account. I documenti sono sempre accessibili nell\'app.',
+  },
+  'consent.acceptBtn': {
+    de: 'Zustimmen und fortfahren', en: 'Accept and continue',
+    el: 'Αποδοχή και συνέχεια', tr: 'Kabul et ve devam et',
+    fr: 'Accepter et continuer', es: 'Aceptar y continuar', it: 'Accetta e continua',
+  },
+  'consent.saving': {
+    de: 'Wird gespeichert...', en: 'Saving...',
+    el: 'Αποθήκευση...', tr: 'Kaydediliyor...',
+    fr: 'Enregistrement...', es: 'Guardando...', it: 'Salvataggio...',
+  },
+
   // ── Onboarding ────────────────────────────────────────────────────────────
   'onboarding.welcome': {
     de: 'Willkommen bei Book Compass', en: 'Welcome to Book Compass',
