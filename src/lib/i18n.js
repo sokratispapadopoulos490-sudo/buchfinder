@@ -2120,6 +2120,12 @@ const dict = {
   },
 
   // ── Notification texts ───────────────────────────────────────────────────
+  'notif.generic.title': {
+    de: 'Neuigkeit', en: 'Update', el: 'Νέο', tr: 'Güncelleme', fr: 'Nouveauté', es: 'Novedad', it: 'Aggiornamento',
+  },
+  'notif.generic.message': {
+    de: '', en: '', el: '', tr: '', fr: '', es: '', it: '',
+  },
   'notif.empty': {
     de: 'Keine Benachrichtigungen', en: 'No notifications', el: 'Δεν υπάρχουν ειδοποιήσεις',
     tr: 'Bildirim yok', fr: 'Aucune notification', es: 'Sin notificaciones', it: 'Nessuna notifica',

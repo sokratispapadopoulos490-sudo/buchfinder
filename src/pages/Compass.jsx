@@ -21,10 +21,13 @@ import FollowingSection from '@/components/compass/FollowingSection';
 // Module-level cache – überlebt Re-Mounts, nicht aber Page-Reloads oder User-Wechsel
 let _compassCache = null;
 
-const LS_KEY = 'compassSnap_v1';
-function getSnap() { try { return JSON.parse(localStorage.getItem(LS_KEY) || 'null'); } catch { return null; } }
-function setSnap(d) { try { localStorage.setItem(LS_KEY, JSON.stringify(d)); } catch {} }
-function clearSnap() { try { localStorage.removeItem(LS_KEY); } catch {} }
+// Snap-Key enthält User-ID, sodass Nutzerwechsel keinen alten Cache zeigen
+function getSnapKey() {
+  try { return `compassSnap_v2_${localStorage.getItem('bc_current_user_id') || 'anon'}`; } catch { return 'compassSnap_v2_anon'; }
+}
+function getSnap() { try { return JSON.parse(localStorage.getItem(getSnapKey()) || 'null'); } catch { return null; } }
+function setSnap(d) { try { localStorage.setItem(getSnapKey(), JSON.stringify(d)); } catch {} }
+function clearSnap() { try { localStorage.removeItem(getSnapKey()); } catch {} }
 
 // Reagiert auf User-Wechsel (AuthContext dispatcht 'bc:user_changed')
 if (typeof window !== 'undefined') {
@@ -40,15 +43,10 @@ export default function Compass() {
   const [user, setUser] = useState(null);
 
   // Sofort aus Cache (Modul oder localStorage) initialisieren – kein Flackern
-  // ABER: Nur wenn Cache zur aktuellen User-ID gehört (verhindert Cross-User-Anzeige)
+  // Der Snap-Key enthält die User-ID, daher ist Cross-User-Cache strukturell ausgeschlossen.
   const _initial = (() => {
     try {
-      const cachedUserId = localStorage.getItem('bc_current_user_id');
-      const snap = _compassCache ?? getSnap();
-      if (!snap) return null;
-      // Wenn keine User-ID bekannt oder nicht übereinstimmend → kein Cache
-      if (!cachedUserId) return null;
-      return snap;
+      return _compassCache ?? getSnap();
     } catch { return null; }
   })();
   const [currentBook, setCurrentBook] = useState(() => _initial?.currentBook ?? null);

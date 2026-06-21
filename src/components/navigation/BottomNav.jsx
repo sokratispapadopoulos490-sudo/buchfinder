@@ -35,12 +35,13 @@ export default function BottomNav({ isAuthenticated, currentPageName }) {
     } catch { return false; }
   });
 
-  // Dark Mode per MutationObserver – reagiert auf Klassen-Änderungen
+  // Dark Mode per MutationObserver – nur re-rendern wenn sich der Wert tatsächlich ändert
   useEffect(() => {
-    const check = () => setIsDark(
-      document.documentElement.classList.contains('dark')
-      || localStorage.getItem('darkMode') === 'true'
-    );
+    const check = () => {
+      const next = document.documentElement.classList.contains('dark')
+        || localStorage.getItem('darkMode') === 'true';
+      setIsDark(prev => (prev === next ? prev : next));
+    };
     const observer = new MutationObserver(check);
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
     return () => observer.disconnect();

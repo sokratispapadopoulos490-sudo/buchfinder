@@ -42,8 +42,15 @@ export function clearAllAuthStorage() {
     localStorage.removeItem('bc_book_lang');
     localStorage.removeItem('bc_shop_region');
     localStorage.removeItem('bc_shop_region_explicit');
-    // Compass snapshot (enthält SavedBooks/ReadingLogs des eingeloggten Users)
+    // Compass snapshots (nutzerspezifisch – alle Varianten entfernen)
     localStorage.removeItem('compassSnap_v1');
+    // Auch nutzer-ID-basierte Snap-Keys bereinigen (Format: compassSnap_v1_<userId>)
+    const snapKeys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith('compassSnap_')) snapKeys.push(k);
+    }
+    snapKeys.forEach(k => localStorage.removeItem(k));
     // Dark mode (nutzerbezogen, aus Profil)
     localStorage.removeItem('darkMode');
     // Legacy keys aus früheren Versionen
