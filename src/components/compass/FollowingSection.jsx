@@ -94,8 +94,14 @@ export default function FollowingSection() {
             return (
               <button
                 key={idx}
-                onClick={() => navigate(`/PublicProfile?email=${encodeURIComponent(email)}`)}
-                className="w-full flex items-center gap-3 p-2.5 rounded-xl hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors text-left"
+                onClick={() => {
+                  const link = u?.username
+                    ? `/PublicProfile?username=${encodeURIComponent(u.username)}`
+                    : null;
+                  if (link) navigate(link);
+                }}
+                disabled={!u?.username}
+                className={`w-full flex items-center gap-3 p-2.5 rounded-xl hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors text-left ${!u?.username ? 'cursor-default opacity-70' : ''}`}
               >
                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-white text-xs font-medium flex-shrink-0 overflow-hidden">
                   {u?.profile_picture_url

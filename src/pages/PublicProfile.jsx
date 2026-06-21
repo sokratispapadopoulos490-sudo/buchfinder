@@ -1,12 +1,15 @@
 /**
  * PublicProfile – Öffentliches Leseprofil eines Nutzers.
  *
- * Datenschutz-Regeln (V1):
- * - Zeigt NUR: Anzeigename, Username, Bio, Genres, öffentliche Statistiken, öffentliche Posts
- * - Zeigt NICHT: E-Mail, private SavedBooks, private Notizen, Empfehlungen, Bedarfsanalyse
- * - Prüft profile_is_public – wenn false → "Profil privat" Meldung
- * - URL-Parameter: ?email=... (E-Mail des Profil-Inhabers)
- * - Liest E-Mail NUR für die UserFollow-Abfrage, zeigt sie nie in der UI an
+ * Routing-Priorität:
+ *   1. ?username=solos  → User.list() + clientseitiger Match auf username-Feld
+ *   2. ?email=...       → Fallback für alte Links (nie UI-sichtbar)
+ *   3. kein Parameter   → Empty State
+ *
+ * Datenschutz:
+ *   - E-Mail niemals angezeigt
+ *   - profile_is_public !== true → "Profil privat"-Meldung
+ *   - username fehlt → kein Handle angezeigt
  */
 
 import React, { useState, useEffect } from 'react';
@@ -27,16 +30,20 @@ export default function PublicProfile() {
   const [followingCount, setFollowingCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [isPrivate, setIsPrivate] = useState(false);
+  const [notFound, setNotFound] = useState(false);
   const navigate = useNavigate();
 
-  // URL-Parameter: ?email=... (technisch nötig für Follow-Lookup)
   const urlParams = new URLSearchParams(window.location.search);
-  const userEmail = urlParams.get('email') || urlParams.get('user');
+  const usernameParam = urlParams.get('username');
+  const emailParam = urlParams.get('email') || urlParams.get('user');
+
+  // Wir haben einen Parameter wenn entweder username oder email vorhanden
+  const hasParam = !!(usernameParam || emailParam);
 
   useEffect(() => {
-    if (!userEmail) { setLoading(false); return; }
+    if (!hasParam) { setLoading(false); return; }
     loadProfile();
-  }, [userEmail]);
+  }, [usernameParam, emailParam]);
 
   const loadProfile = async () => {
     try {
@@ -46,8 +53,25 @@ export default function PublicProfile() {
       ]);
       setCurrentUser(current);
 
-      const profile = allUsers.find(u => u.email === userEmail);
-      if (!profile) { navigate(-1); return; }
+      // Lookup: username bevorzugt, email als Fallback
+      let profile = null;
+      if (usernameParam) {
+        const lower = usernameParam.toLowerCase();
+        profile = allUsers.find(u => u.username?.toLowerCase() === lower);
+        if (!profile) {
+          setNotFound(true);
+          setLoading(false);
+          return;
+        }
+      } else {
+        profile = allUsers.find(u => u.email === emailParam);
+        if (!profile) {
+          setNotFound(true);
+          setLoading(false);
+          return;
+        }
+      }
+
       setProfileUser(profile);
 
       // Datenschutz: Profil privat?
@@ -57,12 +81,14 @@ export default function PublicProfile() {
         return;
       }
 
+      const profileEmail = profile.email;
+
       // Parallele Abfragen – NUR öffentliche Daten
       const [userPosts, myFollows, followers, following] = await Promise.all([
-        base44.entities.CommunityPost.filter({ created_by: userEmail }, '-created_date', 10),
-        current ? base44.entities.UserFollow.filter({ created_by: current.email, following_email: userEmail }) : Promise.resolve([]),
-        base44.entities.UserFollow.filter({ following_email: userEmail }),
-        base44.entities.UserFollow.filter({ created_by: userEmail }),
+        base44.entities.CommunityPost.filter({ created_by: profileEmail }, '-created_date', 10),
+        current ? base44.entities.UserFollow.filter({ created_by: current.email, following_email: profileEmail }) : Promise.resolve([]),
+        base44.entities.UserFollow.filter({ following_email: profileEmail }),
+        base44.entities.UserFollow.filter({ created_by: profileEmail }),
       ]);
 
       setPosts(userPosts);
@@ -78,26 +104,34 @@ export default function PublicProfile() {
 
   const handleFollowToggle = async () => {
     if (!currentUser) { base44.auth.redirectToLogin(); return; }
+    if (!profileUser) return;
+    const profileEmail = profileUser.email;
     try {
       if (isFollowing) {
         const follows = await base44.entities.UserFollow.filter({
           created_by: currentUser.email,
-          following_email: userEmail
+          following_email: profileEmail
         });
         if (follows.length > 0) await base44.entities.UserFollow.delete(follows[0].id);
         setIsFollowing(false);
         setFollowerCount(c => Math.max(0, c - 1));
       } else {
-        await base44.entities.UserFollow.create({ following_email: userEmail });
-        // Benachrichtigung für den gefolgten Nutzer
+        await base44.entities.UserFollow.create({ following_email: profileEmail });
+        // Notification: Link via username wenn vorhanden, sonst via email (intern)
         try {
+          const actorName = currentUser.full_name || currentUser.username || null;
+          const actorLink = currentUser.username
+            ? `/PublicProfile?username=${encodeURIComponent(currentUser.username)}`
+            : `/PublicProfile?email=${encodeURIComponent(currentUser.email)}`;
           await base44.entities.Notification.create({
-            type: 'follow',
-            title: t('notif.follow.title'),
-            message: `${currentUser.full_name || currentUser.email?.split('@')[0]} ${t('notif.follow.action')}`,
-            link: `/PublicProfile?email=${encodeURIComponent(currentUser.email)}`,
+            notif_type: 'user_follow',
+            type: 'mention',
+            title: null,
+            message: null,
+            params: { actor: actorName || '?' },
+            link: actorLink,
             from_user_email: currentUser.email,
-            created_by: userEmail
+            created_by: profileEmail,
           });
         } catch {}
         setIsFollowing(true);
@@ -108,8 +142,8 @@ export default function PublicProfile() {
     }
   };
 
-  // ── Kein Email-Parameter ─────────────────────────────────────────────────
-  if (!userEmail && !loading) {
+  // ── Kein Parameter ───────────────────────────────────────────────────────
+  if (!hasParam && !loading) {
     return (
       <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] flex flex-col items-center justify-center gap-4 px-4">
         <UserSearch className="w-12 h-12 text-stone-300 dark:text-stone-600" />
@@ -131,6 +165,20 @@ export default function PublicProfile() {
     );
   }
 
+  // ── Nicht gefunden ───────────────────────────────────────────────────────
+  if (notFound) {
+    return (
+      <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] flex flex-col items-center justify-center gap-4 px-4">
+        <UserSearch className="w-12 h-12 text-stone-300 dark:text-stone-600" />
+        <p className="text-stone-600 dark:text-stone-400 text-sm font-medium">{t('profile.notFound')}</p>
+        <p className="text-stone-400 dark:text-stone-500 text-xs text-center max-w-xs">{t('profile.notFoundHint')}</p>
+        <Button variant="outline" onClick={() => navigate('/Community')} className="gap-2 mt-2">
+          <ArrowLeft className="w-4 h-4" /> {t('nav.community')}
+        </Button>
+      </div>
+    );
+  }
+
   // ── Profil privat ────────────────────────────────────────────────────────
   if (isPrivate) {
     return (
@@ -146,12 +194,10 @@ export default function PublicProfile() {
 
   if (!profileUser) return null;
 
-  const isOwnProfile = currentUser?.email === userEmail;
-  // Anzeigename: username → full_name → E-Mail-Präfix (nie E-Mail direkt)
-  const displayName = profileUser.full_name || profileUser.username || profileUser.email?.split('@')[0] || '?';
-  const usernameHandle = profileUser.username
-    ? `@${profileUser.username}`
-    : `@${profileUser.email?.split('@')[0] || ''}`;
+  const isOwnProfile = currentUser?.email === profileUser.email;
+  // Anzeigename: full_name → username → '?' (nie E-Mail)
+  const displayName = profileUser.full_name || profileUser.username || '?';
+  const usernameHandle = profileUser.username ? `@${profileUser.username}` : null;
 
   return (
     <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] px-4 py-6 md:px-6 md:py-10">
@@ -183,7 +229,9 @@ export default function PublicProfile() {
             {/* Name + Handle + Bio */}
             <div className="flex-1 min-w-0">
               <h1 className="text-xl font-semibold text-stone-800 dark:text-stone-100 truncate">{displayName}</h1>
-              <p className="text-sm text-stone-400 dark:text-stone-500 truncate mb-1">{usernameHandle}</p>
+              {usernameHandle && (
+                <p className="text-sm text-stone-400 dark:text-stone-500 truncate mb-1">{usernameHandle}</p>
+              )}
               {profileUser.bio && (
                 <p className="text-sm text-stone-600 dark:text-stone-300 mt-1">{profileUser.bio}</p>
               )}
@@ -235,7 +283,7 @@ export default function PublicProfile() {
                 )}
               </Button>
               <Button
-                onClick={() => navigate(`/Community?tab=messages&to=${encodeURIComponent(userEmail)}`)}
+                onClick={() => navigate(`/Community?tab=messages&to=${encodeURIComponent(profileUser.email)}`)}
                 variant="outline"
                 className="flex-1 gap-2 text-sm dark:border-stone-600 dark:text-stone-300"
               >

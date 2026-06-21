@@ -358,6 +358,7 @@ function CommunityContent() {
                 filteredPosts.map((post) => {
                   const author = userMap[post.created_by];
                   const authorName = author?.full_name || author?.username || null;
+                  const authorUsername = author?.username || null;
                   return (
                   <div key={post.id}>
                     <PostCard
@@ -369,6 +370,7 @@ function CommunityContent() {
                       onReport={setPostToReport}
                       onDelete={handleDeletePost}
                       authorName={authorName}
+                      authorUsername={authorUsername}
                     />
                     {selectedPost?.id === post.id && (
                       <motion.div

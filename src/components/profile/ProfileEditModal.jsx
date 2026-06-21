@@ -52,7 +52,8 @@ export default function ProfileEditModal({ user, onClose, onUpdate }) {
   };
 
   const validateUsername = (val) => {
-    if (val && !/^[a-zA-Z0-9_]{2,30}$/.test(val)) {
+    const normalized = val?.toLowerCase() || '';
+    if (normalized && !/^[a-z0-9_]{2,30}$/.test(normalized)) {
       setUsernameError(t('profile.usernameError'));
       return false;
     }
@@ -65,7 +66,7 @@ export default function ProfileEditModal({ user, onClose, onUpdate }) {
     setSaving(true);
     try {
       await base44.auth.updateMe({
-        username: username.trim() || null,
+        username: username.trim().toLowerCase() || null,
         bio,
         favorite_genres: favoriteGenres,
         weekly_reading_goal: readingGoal,
@@ -116,6 +117,11 @@ export default function ProfileEditModal({ user, onClose, onUpdate }) {
             </div>
             {usernameError && <p className="text-xs text-red-500 mt-1">{usernameError}</p>}
             <p className="text-xs text-stone-400 mt-1">{t('profile.usernameHint')}</p>
+            {!username && (
+              <p className="text-xs text-amber-600 dark:text-amber-400 mt-1 font-medium">
+                ⚠️ {t('profile.usernameRequiredHint')}
+              </p>
+            )}
           </div>
 
           {/* Bio */}

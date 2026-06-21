@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { cn } from "@/lib/utils";
 import { useLanguage } from '@/components/language/LanguageContext';
 
-export default function PostCard({ post, onLike, onComment, isLiked, currentUser, onReport, onDelete, authorName }) {
+export default function PostCard({ post, onLike, onComment, isLiked, currentUser, onReport, onDelete, authorName, authorUsername }) {
   const [showComments, setShowComments] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const navigate = useNavigate();
@@ -21,6 +21,11 @@ export default function PostCard({ post, onLike, onComment, isLiked, currentUser
   const isPremium = currentUser?.is_premium || currentUser?.role === 'admin';
   const isAdmin = currentUser?.role === 'admin';
   
+  // Profil-Link: username bevorzugt, intern email als technischer Fallback
+  const profileLink = authorUsername
+    ? `/PublicProfile?username=${encodeURIComponent(authorUsername)}`
+    : null;
+
   const handleSendMessage = () => {
     navigate('/Community?tab=messages&to=' + encodeURIComponent(post.created_by));
   };
@@ -49,8 +54,8 @@ export default function PostCard({ post, onLike, onComment, isLiked, currentUser
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
           <button
-            onClick={() => !isAuthor && navigate(`/PublicProfile?email=${post.created_by}`)}
-            className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center text-white font-medium hover:scale-105 transition-transform"
+            onClick={() => !isAuthor && profileLink && navigate(profileLink)}
+            className={`w-10 h-10 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center text-white font-medium hover:scale-105 transition-transform ${isAuthor || !profileLink ? 'cursor-default' : ''}`}
           >
             {isAuthor
               ? (currentUser?.full_name || currentUser?.username || '?').charAt(0).toUpperCase()
@@ -59,8 +64,8 @@ export default function PostCard({ post, onLike, onComment, isLiked, currentUser
           <div>
             <div className="flex items-center gap-2">
               <button
-                onClick={() => !isAuthor && navigate(`/PublicProfile?email=${encodeURIComponent(post.created_by)}`)}
-                className="font-medium text-stone-800 hover:text-amber-600 transition-colors"
+                onClick={() => !isAuthor && profileLink && navigate(profileLink)}
+                className={`font-medium text-stone-800 hover:text-amber-600 transition-colors ${isAuthor || !profileLink ? 'cursor-default' : ''}`}
               >
                 {isAuthor ? t('post.you') : (authorName || t('post.anon'))}
               </button>

@@ -196,11 +196,16 @@ export default function FindReadersSection() {
     // Kein Anzeigename: anonymisiert anzeigen
     if (!displayName) return null;
 
+    const profileLink = user.username
+      ? `/PublicProfile?username=${encodeURIComponent(user.username)}`
+      : null; // kein Link wenn kein username
+
     return (
       <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-stone-50 dark:hover:bg-stone-800/50 transition-colors">
         <button
-          onClick={() => navigate(`/PublicProfile?email=${encodeURIComponent(user.email)}`)}
-          className="flex-shrink-0"
+          onClick={() => profileLink && navigate(profileLink)}
+          disabled={!profileLink}
+          className={profileLink ? '' : 'cursor-default'}
         >
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-white text-sm font-medium shadow-sm overflow-hidden">
             {user.profile_picture_url ? (
@@ -210,8 +215,9 @@ export default function FindReadersSection() {
         </button>
 
         <button
-          onClick={() => navigate(`/PublicProfile?email=${encodeURIComponent(user.email)}`)}
-          className="flex-1 min-w-0 text-left"
+          onClick={() => profileLink && navigate(profileLink)}
+          disabled={!profileLink}
+          className={`flex-1 min-w-0 text-left ${!profileLink ? 'cursor-default' : ''}`}
         >
           <div className="text-sm font-medium text-stone-800 dark:text-stone-200 truncate">{displayName}</div>
           {handle && <div className="text-xs text-stone-400 truncate">{handle}</div>}
