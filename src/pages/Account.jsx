@@ -128,9 +128,13 @@ function AccountContent() {
               </div>
               <div className="flex-1 min-w-0">
                 <h1 className="text-xl font-semibold text-stone-800 dark:text-stone-100 truncate">{user.full_name}</h1>
-                <p className="text-stone-500 dark:text-stone-400 text-sm truncate">
-                  @{user.username || user.email?.split('@')[0]}
-                </p>
+                {user.username ? (
+                  <p className="text-stone-500 dark:text-stone-400 text-sm truncate">@{user.username}</p>
+                ) : (
+                  <p className="text-amber-600 dark:text-amber-400 text-xs mt-0.5">
+                    ⚠️ {t('account.noUsername')}
+                  </p>
+                )}
                 {user.bio && (
                   <p className="text-stone-600 dark:text-stone-400 text-sm mt-1 line-clamp-2">{user.bio}</p>
                 )}
@@ -320,13 +324,13 @@ function AccountContent() {
                 </div>
                 <button
                   onClick={async () => {
-                    const newVal = !user.profile_is_public;
+                    const newVal = user.profile_is_public !== true;
                     await base44.auth.updateMe({ profile_is_public: newVal });
                     setUser(prev => ({ ...prev, profile_is_public: newVal }));
                   }}
-                  className={`w-11 h-6 rounded-full transition-colors relative ${user.profile_is_public !== false ? 'bg-amber-600' : 'bg-stone-300 dark:bg-stone-600'}`}
+                  className={`w-11 h-6 rounded-full transition-colors relative ${user.profile_is_public === true ? 'bg-amber-600' : 'bg-stone-300 dark:bg-stone-600'}`}
                 >
-                  <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${user.profile_is_public !== false ? 'translate-x-5' : 'translate-x-0.5'}`} />
+                  <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${user.profile_is_public === true ? 'translate-x-5' : 'translate-x-0.5'}`} />
                 </button>
               </div>
 

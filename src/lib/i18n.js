@@ -327,6 +327,15 @@ const dict = {
   'account.history': {
     de: 'Empfehlungsverlauf', en: 'Recommendation History', el: 'Ιστορικό προτάσεων', tr: 'Öneri geçmişi', fr: 'Historique des recommandations', es: 'Historial de recomendaciones', it: 'Cronologia consigli',
   },
+  'account.noUsername': {
+    de: 'Kein Username – Profil nicht öffentlich auffindbar',
+    en: 'No username – profile not publicly discoverable',
+    el: 'Χωρίς username – το προφίλ δεν είναι δημόσια εντοπίσιμο',
+    tr: 'Kullanıcı adı yok – profil herkese açık değil',
+    fr: 'Pas de nom d\'utilisateur – profil non découvrable publiquement',
+    es: 'Sin nombre de usuario – perfil no encontrable públicamente',
+    it: 'Nessun username – profilo non trovabile pubblicamente',
+  },
   'account.noRecommendations': {
     de: 'Noch keine Empfehlungen erhalten', en: 'No recommendations yet', el: 'Δεν υπάρχουν ακόμα προτάσεις', tr: 'Henüz öneri yok', fr: 'Aucune recommandation encore', es: 'Aún no hay recomendaciones', it: 'Ancora nessun consiglio',
   },

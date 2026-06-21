@@ -24,12 +24,18 @@ function interpolate(str, params = {}) {
 /** Gibt lokalisiertes title/message zurück – fällt auf gespeicherte Felder zurück */
 function resolveNotif(notif, lang) {
   const keys = NOTIF_KEY_MAP[notif.notif_type];
-  if (!keys) return { title: notif.title, message: notif.message };
-  const rawTitle   = tStatic(keys.title,   lang);
-  const rawMessage = tStatic(keys.message, lang);
+  if (keys) {
+    const rawTitle   = tStatic(keys.title,   lang);
+    const rawMessage = tStatic(keys.message, lang);
+    return {
+      title:   interpolate(rawTitle,   notif.params || {}),
+      message: interpolate(rawMessage, notif.params || {}),
+    };
+  }
+  // Fallback: gespeicherte title/message – niemals null zeigen
   return {
-    title:   interpolate(rawTitle,   notif.params),
-    message: interpolate(rawMessage, notif.params),
+    title:   notif.title   || tStatic('notif.generic.title',   lang, '📬'),
+    message: notif.message || tStatic('notif.generic.message', lang, ''),
   };
 }
 
@@ -110,10 +116,10 @@ export default function NotificationBell() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-lg border border-stone-200 z-50 max-h-96 overflow-y-auto"
+              className="absolute right-0 top-full mt-2 w-80 bg-white dark:bg-[#1a1a1a] rounded-xl shadow-lg border border-stone-200 dark:border-stone-700 z-50 max-h-96 overflow-y-auto"
             >
-              <div className="sticky top-0 bg-white border-b border-stone-200 p-4 flex items-center justify-between">
-                <h3 className="font-medium text-stone-800">{tStatic('account.notifications', language)}</h3>
+              <div className="sticky top-0 bg-white dark:bg-[#1a1a1a] border-b border-stone-200 dark:border-stone-700 p-4 flex items-center justify-between">
+                <h3 className="font-medium text-stone-800 dark:text-stone-200">{tStatic('account.notifications', language)}</h3>
                 {unreadCount > 0 && (
                   <button
                     onClick={markAllAsRead}
@@ -125,19 +131,19 @@ export default function NotificationBell() {
               </div>
 
               {notifications.length === 0 ? (
-                <div className="p-8 text-center text-stone-500 text-sm">
+                <div className="p-8 text-center text-stone-500 dark:text-stone-400 text-sm">
                   {tStatic('notif.empty', language, 'Keine Benachrichtigungen')}
                 </div>
               ) : (
-                <div className="divide-y divide-stone-100">
+                <div className="divide-y divide-stone-100 dark:divide-stone-800">
                   {notifications.map((notif) => {
                     const { title, message } = resolveNotif(notif, language);
                     return (
                       <button
                         key={notif.id}
                         onClick={() => handleNotificationClick(notif)}
-                        className={`w-full p-4 text-left hover:bg-stone-50 transition-colors ${
-                          !notif.is_read ? 'bg-amber-50/50' : ''
+                        className={`w-full p-4 text-left hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors ${
+                          !notif.is_read ? 'bg-amber-50/50 dark:bg-amber-900/10' : ''
                         }`}
                       >
                         <div className="flex items-start gap-3">
@@ -145,9 +151,9 @@ export default function NotificationBell() {
                             <div className="w-2 h-2 bg-amber-600 rounded-full mt-2 flex-shrink-0" />
                           )}
                           <div className="flex-1 min-w-0">
-                            <p className="font-medium text-stone-800 text-sm">{title}</p>
-                            <p className="text-stone-600 text-xs mt-1">{message}</p>
-                            <p className="text-stone-400 text-xs mt-1">
+                            {title && <p className="font-medium text-stone-800 dark:text-stone-200 text-sm">{title}</p>}
+                            {message && <p className="text-stone-600 dark:text-stone-400 text-xs mt-1">{message}</p>}
+                            <p className="text-stone-400 dark:text-stone-500 text-xs mt-1">
                               {formatDistanceToNow(new Date(notif.created_date), { addSuffix: true, locale: dateLocale })}
                             </p>
                           </div>
