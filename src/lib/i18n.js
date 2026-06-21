@@ -1814,6 +1814,20 @@ const dict = {
     el: 'Αναζήτηση αναγνωστών ή φιλτράρισμα ανά είδος.', tr: 'Okuyucu ara veya türe göre filtrele.',
     fr: 'Cherchez des lecteurs ou filtrez par genre.', es: 'Busca lectores o filtra por género.', it: 'Cerca lettori o filtra per genere.',
   },
+  'findReaders.zeroState': {
+    de: 'Noch keine öffentlichen Leser gefunden.', en: 'No public readers found yet.',
+    el: 'Δεν βρέθηκαν ακόμα δημόσιοι αναγνώστες.', tr: 'Henüz herkese açık okuyucu bulunamadı.',
+    fr: 'Aucun lecteur public trouvé pour l\'instant.', es: 'Aún no se encontraron lectores públicos.', it: 'Ancora nessun lettore pubblico trovato.',
+  },
+  'findReaders.zeroStateHint': {
+    de: 'Werde sichtbar – lege einen Username fest und setze dein Profil auf öffentlich.',
+    en: 'Become visible – set a username and make your profile public.',
+    el: 'Γίνε ορατός – ορίσου username και κάνε το προφίλ σου δημόσιο.',
+    tr: 'Görünür ol – bir kullanıcı adı belirle ve profilini herkese açık yap.',
+    fr: 'Devenez visible – définissez un nom d\'utilisateur et rendez votre profil public.',
+    es: 'Hazte visible – establece un nombre de usuario y haz tu perfil público.',
+    it: 'Diventa visibile – imposta un nome utente e rendi il tuo profilo pubblico.',
+  },
   'profile.readingLanguages': {
     de: 'Lesesprachen', en: 'Reading Languages', el: 'Γλώσσες ανάγνωσης',
     tr: 'Okuma dilleri', fr: 'Langues de lecture', es: 'Idiomas de lectura', it: 'Lingue di lettura',

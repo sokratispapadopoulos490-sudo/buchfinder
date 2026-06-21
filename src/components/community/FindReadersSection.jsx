@@ -11,7 +11,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/components/language/LanguageContext';
-import { Search, UserPlus, UserCheck, Users, Lock } from 'lucide-react';
+import { Search, UserPlus, UserCheck, Users } from 'lucide-react';
 
 const GENRE_FILTERS = [
   "Fantasy", "Thriller", "Romance", "Sachbuch", "Philosophie",
@@ -75,10 +75,10 @@ export default function FindReadersSection() {
         .map(f => f.following_email);
       setMyFollows(iFollow);
 
-      // Fallback: aktive Post-Autoren (nur öffentliche Profile)
+      // Fallback: aktive Post-Autoren (nur explizit öffentliche Profile mit username)
       const authorEmails = [...new Set(posts.map(p => p.created_by).filter(Boolean))];
       const activeAuthors = others
-        .filter(u => authorEmails.includes(u.email) && u.profile_is_public === true)
+        .filter(u => authorEmails.includes(u.email) && u.profile_is_public === true && u.username)
         .slice(0, 10);
       setCommunityAuthors(activeAuthors);
     } catch (err) {
@@ -92,9 +92,12 @@ export default function FindReadersSection() {
   const filtered = useMemo(() => {
     if (!query && selectedGenres.length === 0 && selectedLangs.length === 0) return [];
 
+    // Nur explizit öffentliche Profile mit Anzeigename in Suchergebnissen zeigen
     return allUsers.filter(u => {
-      // Private Profile: bei aktiver Suche zeigen (minimal), ohne Details
+      if (u.profile_is_public !== true) return false;
       const displayName = safeDisplayName(u) || '';
+      if (!displayName) return false;
+
       const handle = u.username || '';
 
       const matchesQuery = !query ||
@@ -179,22 +182,8 @@ export default function FindReadersSection() {
     const displayName = safeDisplayName(user);
     const handle = safeHandle(user);
 
-    // Private Profile – minimale Card ohne Details
-    if (isPrivate) {
-      return (
-        <div className="flex items-center gap-3 p-3 rounded-xl opacity-60">
-          <div className="w-10 h-10 rounded-full bg-stone-200 dark:bg-stone-700 flex items-center justify-center flex-shrink-0">
-            <Lock className="w-4 h-4 text-stone-400" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-sm text-stone-400 dark:text-stone-500">{t('profile.private')}</div>
-          </div>
-        </div>
-      );
-    }
-
-    // Kein Anzeigename: anonymisiert anzeigen
-    if (!displayName) return null;
+    // Private Profile und Profile ohne Anzeigename: gar nicht rendern (gefiltert in `filtered`)
+    if (isPrivate || !displayName) return null;
 
     const profileLink = user.username
       ? `/PublicProfile?username=${encodeURIComponent(user.username)}`
@@ -318,9 +307,16 @@ export default function FindReadersSection() {
         <div className="space-y-1">
           {displayList.map(u => <UserRow key={u.id || u.email} user={u} />)}
         </div>
+      ) : showFallback ? (
+        // Zero State: noch keine Community-Autoren → CTA
+        <div className="text-center py-8 space-y-2">
+          <Users className="w-8 h-8 text-stone-300 dark:text-stone-600 mx-auto" />
+          <p className="text-stone-500 dark:text-stone-400 text-sm font-medium">{t('findReaders.zeroState')}</p>
+          <p className="text-stone-400 dark:text-stone-500 text-xs max-w-xs mx-auto">{t('findReaders.zeroStateHint')}</p>
+        </div>
       ) : (
         <div className="text-center py-6 text-stone-400 dark:text-stone-500 text-sm">
-          {hasFilter ? t('findReaders.noResults') : t('findReaders.empty')}
+          {t('findReaders.noResults')}
         </div>
       )}
     </div>

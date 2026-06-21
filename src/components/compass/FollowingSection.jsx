@@ -87,10 +87,10 @@ export default function FollowingSection() {
           {list.slice(0, 5).map((follow, idx) => {
             const email = tab === 'following' ? follow.following_email : follow.created_by;
             const u = userMap[email];
-            // Sicherer Anzeigename – nie E-Mail direkt zeigen
+            // Sicherer Anzeigename – nie E-Mail direkt zeigen; gelöschte User → '?'
             const displayName = u?.full_name || u?.username || '?';
             const handle = u?.username ? `@${u.username}` : null;
-            const avatarLetter = displayName !== '?' ? displayName.charAt(0).toUpperCase() : '?';
+            const avatarLetter = (u?.full_name || u?.username || '').charAt(0).toUpperCase() || '?';
             return (
               <button
                 key={idx}

@@ -81,8 +81,8 @@ export default function PublicProfile() {
 
       setProfileUser(profile);
 
-      // Datenschutz: Profil privat?
-      if (profile.profile_is_public === false && profile.email !== current?.email) {
+      // Datenschutz: Profil privat? (undefined = nicht explizit öffentlich → privat behandeln)
+      if (profile.profile_is_public !== true && profile.email !== current?.email) {
         setIsPrivate(true);
         setLoading(false);
         return;
