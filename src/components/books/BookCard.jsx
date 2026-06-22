@@ -67,6 +67,15 @@ export default function BookCard({ book, reasons, index, isContrast, isAuthentic
           setNotes('');
         }
       } else {
+        // Double-check for duplicates before saving (guards against race conditions
+        // and books without a DB id, e.g. source='google_books')
+        const existing = await base44.entities.SavedBook.filter({ book_id: book.id }).catch(() => []);
+        if (existing.length > 0) {
+          setIsSaved(true);
+          setSavedBookId(existing[0].id);
+          setSaving(false);
+          return;
+        }
         // Strip providerLinks from book_data — they are region-specific and must be generated fresh
         // from shoppingRegion at display time. Storing them would permanently bake the wrong region.
         const { providerLinks: _strip, ...bookDataClean } = book;

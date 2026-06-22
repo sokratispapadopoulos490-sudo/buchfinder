@@ -494,7 +494,8 @@ function BookSearchContent() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed bottom-0 left-0 right-0 p-6 pb-8 bg-gradient-to-t from-stone-50 dark:from-[#0a0a0a] via-stone-50/95 dark:via-[#0a0a0a]/95 to-transparent z-10"
+              className="fixed bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-stone-50 dark:from-[#0a0a0a] via-stone-50/95 dark:via-[#0a0a0a]/95 to-transparent z-10"
+              style={{ paddingBottom: 'calc(2rem + env(safe-area-inset-bottom, 0px))' }}
             >
               <div className="flex flex-col items-center gap-3 w-full max-w-xs mx-auto">
                 <button
