@@ -320,7 +320,7 @@ export default function Compass() {
   }
 
   return (
-    <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] px-4 py-8 md:py-12">
+    <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] px-4 py-8 md:py-12" style={{ paddingBottom: 'calc(2rem + env(safe-area-inset-bottom, 0px))' }}>
       <div className="max-w-2xl mx-auto">
         {/* Header mit Logo */}
         <div className="mb-8 flex items-center gap-4">
@@ -348,7 +348,7 @@ export default function Compass() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-8 shadow-sm mb-6"
+          className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-5 sm:p-8 shadow-sm mb-6"
         >
           {/* Buch-Navigation */}
           {allBooks.length > 1 && (
@@ -377,7 +377,7 @@ export default function Compass() {
           <div className="flex items-start gap-4 mb-6">
             <BookCover bookData={currentBook.book_data} width="w-20" height="h-28" textSize="text-3xl" className="shadow-md" placeholderClassName="shadow-md" />
             <div className="flex-1">
-              <h2 className="text-xl font-medium text-stone-800 dark:text-stone-200 mb-1">
+              <h2 className="text-xl font-medium text-stone-800 dark:text-stone-200 mb-1 line-clamp-2">
                 {currentBook.book_data.title}
               </h2>
               <p className="text-stone-600 dark:text-stone-400 mb-3">{currentBook.book_data.author}</p>
@@ -520,27 +520,27 @@ export default function Compass() {
         <div className="grid grid-cols-3 gap-3 mb-6">
           <button
             onClick={() => navigate('/BookSearch')}
-            className="p-4 bg-white dark:bg-[#1a1a1a] border border-stone-200 dark:border-stone-700 rounded-xl hover:border-amber-300 dark:hover:border-amber-700 transition-colors text-left"
+            className="p-3 sm:p-4 bg-white dark:bg-[#1a1a1a] border border-stone-200 dark:border-stone-700 rounded-xl hover:border-amber-300 dark:hover:border-amber-700 transition-colors text-left"
           >
             <Sparkles className="w-5 h-5 text-amber-600 dark:text-amber-500 mb-2" />
-            <div className="text-sm font-medium text-stone-800 dark:text-stone-200 mb-1">{t('compass.recommendations')}</div>
-            <div className="text-xs text-stone-500 dark:text-stone-400">{t('compass.analyzeStart')}</div>
+            <div className="text-[11px] sm:text-sm font-medium text-stone-800 dark:text-stone-200 mb-1 leading-tight">{t('compass.recommendations')}</div>
+            <div className="text-[10px] sm:text-xs text-stone-500 dark:text-stone-400 leading-tight">{t('compass.analyzeStart')}</div>
           </button>
           <button
             onClick={() => setShowScanner(true)}
-            className="p-4 bg-white dark:bg-[#1a1a1a] border border-stone-200 dark:border-stone-700 rounded-xl hover:border-amber-300 dark:hover:border-amber-700 transition-colors text-left"
+            className="p-3 sm:p-4 bg-white dark:bg-[#1a1a1a] border border-stone-200 dark:border-stone-700 rounded-xl hover:border-amber-300 dark:hover:border-amber-700 transition-colors text-left"
           >
             <Camera className="w-5 h-5 text-amber-600 dark:text-amber-500 mb-2" />
-            <div className="text-sm font-medium text-stone-800 dark:text-stone-200 mb-1">{t('compass.scan')}</div>
-            <div className="text-xs text-stone-500 dark:text-stone-400">{t('compass.addBook')}</div>
+            <div className="text-[11px] sm:text-sm font-medium text-stone-800 dark:text-stone-200 mb-1 leading-tight">{t('compass.scan')}</div>
+            <div className="text-[10px] sm:text-xs text-stone-500 dark:text-stone-400 leading-tight">{t('compass.addBook')}</div>
           </button>
           <button
             onClick={() => setShowLibrary(v => !v)}
-            className="p-4 bg-white dark:bg-[#1a1a1a] border border-stone-200 dark:border-stone-700 rounded-xl hover:border-amber-300 dark:hover:border-amber-700 transition-colors text-left"
+            className="p-3 sm:p-4 bg-white dark:bg-[#1a1a1a] border border-stone-200 dark:border-stone-700 rounded-xl hover:border-amber-300 dark:hover:border-amber-700 transition-colors text-left"
           >
             <BookMarked className="w-5 h-5 text-amber-600 dark:text-amber-500 mb-2" />
-            <div className="text-sm font-medium text-stone-800 dark:text-stone-200 mb-1">{t('compass.library')}</div>
-            <div className="text-xs text-stone-500 dark:text-stone-400">{t('compass.allBooks')}</div>
+            <div className="text-[11px] sm:text-sm font-medium text-stone-800 dark:text-stone-200 mb-1 leading-tight">{t('compass.library')}</div>
+            <div className="text-[10px] sm:text-xs text-stone-500 dark:text-stone-400 leading-tight">{t('compass.allBooks')}</div>
           </button>
         </div>
 
