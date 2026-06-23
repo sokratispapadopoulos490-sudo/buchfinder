@@ -470,14 +470,13 @@ function BookSearchContent() {
       <AnimatePresence mode="wait">
         {/* Start Phase */}
         {phase === 'start' && (
-          <>
-            <motion.div
-              key="start-hero"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="min-h-screen flex flex-col items-center justify-center px-6 pb-8 pt-12"
-            >
+          <motion.div
+            key="start"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <div className="min-h-screen flex flex-col items-center justify-center px-6 pb-8 pt-12">
               <motion.div
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -515,16 +514,10 @@ function BookSearchContent() {
                   </div>
                 </div>
               </motion.div>
-            </motion.div>
+            </div>
 
             {/* Library capture section */}
-            <motion.div
-              key="start-library"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="mx-6 mb-4 max-w-sm mx-auto"
-            >
+            <div className="mx-6 mb-4 max-w-sm mx-auto">
               <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/50 rounded-2xl p-4">
                 <div className="flex items-center gap-2 mb-1">
                   <BookOpen className="w-4 h-4 text-amber-600 flex-shrink-0" />
@@ -561,13 +554,9 @@ function BookSearchContent() {
                   </button>
                 </div>
               </div>
-            </motion.div>
+            </div>
 
-            <motion.div
-              key="start-btn"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <div
               className="fixed bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-stone-50 dark:from-[#0a0a0a] via-stone-50/95 dark:via-[#0a0a0a]/95 to-transparent z-10"
               style={{ paddingBottom: 'calc(2rem + env(safe-area-inset-bottom, 0px))' }}
             >
@@ -583,8 +572,8 @@ function BookSearchContent() {
                 </button>
                 <p className="text-xs text-stone-400 dark:text-stone-500">{t('booksearch.betaLabel')}</p>
               </div>
-            </motion.div>
-          </>
+            </div>
+          </motion.div>
         )}
 
         {/* Questions Phase */}
