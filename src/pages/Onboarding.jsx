@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { BookOpen, CheckCircle, Sparkles } from 'lucide-react';
+import { BookOpen, CheckCircle, Sparkles, ScanLine, Search } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/components/language/LanguageContext';
+import LibraryCapture from '@/components/books/LibraryCapture';
+import { libraryDict } from '@/lib/i18n-library';
 
 export default function Onboarding() {
   const [step, setStep] = useState(0);
@@ -15,7 +17,16 @@ export default function Onboarding() {
   const [currentBook, setCurrentBook] = useState('');
   const [processing, setProcessing] = useState(false);
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+
+  const tLib = (key, fb) => {
+    const entry = libraryDict[key];
+    if (entry) return entry[language] || entry['de'] || fb || key;
+    return fb || key;
+  };
+
+  const [showLibraryCapture, setShowLibraryCapture] = useState(false);
+  const [captureConfig, setCaptureConfig] = useState({ tab: 'search', scan: false });
 
   const handleUsernameSubmit = async () => {
     // Leeres Feld = Skip
@@ -258,22 +269,78 @@ export default function Onboarding() {
                   {t('btn.back')}
                 </Button>
                 <Button
-                  onClick={handleComplete}
-                  disabled={processing}
+                  onClick={() => setStep(4)}
                   className="flex-1 bg-amber-600 hover:bg-amber-700 text-white gap-2"
                 >
-                  {processing ? t('status.loading') : (
-                    <>
-                      <Sparkles className="w-4 h-4" />
-                      {t('onboarding.letsGo')}
-                    </>
-                  )}
+                  {t('q.continueBtn')}
                 </Button>
               </div>
             </motion.div>
           )}
+
+          {step === 4 && (
+            <motion.div
+              key="step4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="bg-white rounded-2xl border border-stone-200 p-8 shadow-sm text-center"
+            >
+              <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-6">
+                <BookOpen className="w-8 h-8 text-amber-600" />
+              </div>
+              
+              <h2 className="text-xl font-medium text-stone-800 mb-2">
+                {tLib('lib.onboarding.title', 'Physische Bibliothek erfassen')}
+              </h2>
+              <p className="text-sm text-stone-600 mb-8">
+                {tLib('lib.onboarding.subtitle', 'Möchtest du Bücher, die du bereits besitzt, deiner Bibliothek hinzufügen?')}
+              </p>
+
+              <div className="space-y-3 mb-8">
+                <Button
+                  onClick={() => {
+                    setCaptureConfig({ tab: 'search', scan: true });
+                    setShowLibraryCapture(true);
+                  }}
+                  className="w-full bg-amber-600 hover:bg-amber-700 text-white gap-2 py-6 text-base"
+                >
+                  <ScanLine className="w-5 h-5" />
+                  {tLib('lib.onboarding.scanNow', 'Jetzt scannen')}
+                </Button>
+                <Button
+                  onClick={() => {
+                    setCaptureConfig({ tab: 'search', scan: false });
+                    setShowLibraryCapture(true);
+                  }}
+                  variant="outline"
+                  className="w-full gap-2 py-6 text-base border-stone-200"
+                >
+                  <Search className="w-5 h-5" />
+                  {tLib('lib.onboarding.enterManual', 'Titel eingeben')}
+                </Button>
+              </div>
+
+              <button
+                onClick={handleComplete}
+                disabled={processing}
+                className="text-stone-400 hover:text-stone-600 text-sm font-medium transition-colors"
+              >
+                {processing ? t('status.loading') : tLib('lib.onboarding.doLater', 'Später machen')}
+              </button>
+            </motion.div>
+          )}
         </AnimatePresence>
       </div>
+
+      {showLibraryCapture && (
+        <LibraryCapture
+          initialTab={captureConfig.tab}
+          autoStartScan={captureConfig.scan}
+          onDone={handleComplete}
+          onSkip={handleComplete}
+        />
+      )}
     </div>
   );
 }

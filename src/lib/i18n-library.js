@@ -203,4 +203,24 @@ export const libraryDict = {
     es: 'Un gran complemento para tu colección',
     it: 'Un ottimo complemento alla tua collezione',
   },
+  'lib.onboarding.title': {
+    de: 'Physische Bibliothek erfassen',
+    en: 'Capture physical library',
+  },
+  'lib.onboarding.subtitle': {
+    de: 'Möchtest du Bücher, die du bereits besitzt, deiner Bibliothek hinzufügen?',
+    en: 'Would you like to add books you already own to your library?',
+  },
+  'lib.onboarding.scanNow': {
+    de: 'Jetzt scannen',
+    en: 'Scan now',
+  },
+  'lib.onboarding.enterManual': {
+    de: 'Titel eingeben',
+    en: 'Enter manually',
+  },
+  'lib.onboarding.doLater': {
+    de: 'Später machen',
+    en: 'Do later',
+  },
 };

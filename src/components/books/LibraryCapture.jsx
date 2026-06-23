@@ -37,11 +37,11 @@ function stableKey(book) {
   return `title:${(book.title || '').toLowerCase().replace(/\s+/g, ' ').trim()}`;
 }
 
-export default function LibraryCapture({ onDone, onSkip }) {
+export default function LibraryCapture({ onDone, onSkip, initialTab = 'search', autoStartScan = false }) {
   const { language } = useLanguage();
   const t = (key, fb) => tLib(key, language, fb);
 
-  const [tab, setTab] = useState('search'); // 'search' | 'isbn'
+  const [tab, setTab] = useState(initialTab); // 'search' | 'isbn'
   const [searchInput, setSearchInput] = useState('');
   const [isbnInput, setIsbnInput] = useState('');
   const [selectedBook, setSelectedBook] = useState(null);
@@ -130,6 +130,12 @@ export default function LibraryCapture({ onDone, onSkip }) {
       stopScan();
     }
   }, [scanSupported, stopScan, searchByISBN, t]);
+
+  useEffect(() => {
+    if (autoStartScan && scanSupported === true && !scanning) {
+      startScan();
+    }
+  }, [autoStartScan, scanSupported, startScan]);
 
   const handleSave = useCallback(async (book) => {
     const key = stableKey(book);
