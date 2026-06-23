@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { Compass, Clock, Search, Trash2, Globe, Edit, Download, ChevronDown, ChevronRight, Camera, Bell, Lock, LogOut } from 'lucide-react';
+import { Compass, Clock, Search, Trash2, Globe, Edit, Download, ChevronDown, ChevronRight, Camera, Bell, Lock, LogOut, BookMarked } from 'lucide-react';
+import LibraryCapture from '@/components/books/LibraryCapture';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
@@ -22,6 +23,7 @@ function AccountContent() {
   const [loading, setLoading] = useState(true);
   const [showProfileEdit, setShowProfileEdit] = useState(false);
   const [showGlobalSearch, setShowGlobalSearch] = useState(false);
+  const [showLibraryCapture, setShowLibraryCapture] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
@@ -153,6 +155,21 @@ function AccountContent() {
                 </span>
               </div>
             </div>
+
+            {/* Meine Bibliothek */}
+            <button
+              onClick={() => setShowLibraryCapture(true)}
+              className="w-full flex items-center justify-between p-3.5 border border-stone-200 dark:border-stone-600 rounded-xl hover:border-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/10 transition-colors mb-2"
+            >
+              <div className="flex items-center gap-3">
+                <BookMarked className="w-4 h-4 text-amber-600" />
+                <div className="text-left">
+                  <div className="text-sm font-medium text-stone-800 dark:text-stone-200">{t('lib.account.myLibrary', 'Meine Bibliothek')}</div>
+                  <div className="text-xs text-stone-500">{t('lib.account.myLibrarySub', 'Physische Bücher erfassen & verwalten')}</div>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-stone-400" />
+            </button>
 
             {/* Profil bearbeiten */}
             <button
@@ -396,6 +413,13 @@ function AccountContent() {
       <AnimatePresence>
         {showGlobalSearch && <GlobalSearch onClose={() => setShowGlobalSearch(false)} />}
       </AnimatePresence>
+
+      {showLibraryCapture && (
+        <LibraryCapture
+          onDone={() => setShowLibraryCapture(false)}
+          onSkip={() => setShowLibraryCapture(false)}
+        />
+      )}
     </div>
   );
 }
