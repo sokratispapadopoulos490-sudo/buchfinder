@@ -556,22 +556,19 @@ function BookSearchContent() {
               </div>
             </div>
 
-            <div
-              className="fixed bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-stone-50 dark:from-[#0a0a0a] via-stone-50/95 dark:via-[#0a0a0a]/95 to-transparent z-10"
+            {/* CTA im normalen Dokumentfluss – nicht fixed */}
+            <div className="flex flex-col items-center gap-3 w-full max-w-sm mx-auto px-6 mt-5"
               style={{ paddingBottom: 'calc(2rem + env(safe-area-inset-bottom, 0px))' }}
             >
-              <div className="flex flex-col items-center gap-3 w-full max-w-xs mx-auto">
-                <button
-                  type="button"
-                  onClick={handleStart}
-                  onMouseDown={handleStart}
-                  className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white text-base font-medium rounded-xl shadow-sm transition-colors cursor-pointer select-none touch-manipulation"
-                >
-                  {t('btn.startSearch')}
-                  <ArrowRight className="w-5 h-5" />
-                </button>
-                <p className="text-xs text-stone-400 dark:text-stone-500">{t('booksearch.betaLabel')}</p>
-              </div>
+              <button
+                type="button"
+                onClick={handleStart}
+                className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white text-base font-medium rounded-xl shadow-sm transition-colors cursor-pointer select-none touch-manipulation"
+              >
+                {t('btn.startSearch')}
+                <ArrowRight className="w-5 h-5" />
+              </button>
+              <p className="text-xs text-stone-400 dark:text-stone-500">{t('booksearch.betaLabel')}</p>
             </div>
           </motion.div>
         )}
