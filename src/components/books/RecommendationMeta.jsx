@@ -51,28 +51,34 @@ export default function RecommendationMeta({ reasons }) {
 
   return (
     <div className="mt-2 mb-1">
-      {/* Score-Badge + Toggle */}
-      <div className="flex items-center gap-2 flex-wrap">
-        {hasScore && (
-          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold ring-1 ${col.bg} ${col.text} ${col.ring}`}>
-            <span className="opacity-70">{tMeta('meta.matchScore', lang)}</span>
-            <span>{score}%</span>
-          </span>
+      {/* Score-Badge + Toggle – gestapelt auf schmalen Breiten */}
+      <div className="flex flex-col gap-1">
+        {/* Badges-Zeile */}
+        {(hasScore || isOwned || isWrongLang) && (
+          <div className="flex items-center gap-2 flex-wrap">
+            {hasScore && (
+              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold ring-1 ${col.bg} ${col.text} ${col.ring}`}>
+                <span className="opacity-70">{tMeta('meta.matchScore', lang)}</span>
+                <span>{score}%</span>
+              </span>
+            )}
+            {isOwned && (
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-700">
+                {tMeta('meta.owned', lang)}
+              </span>
+            )}
+            {isWrongLang && (
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-300 ring-1 ring-orange-200 dark:ring-orange-700">
+                {tMeta('meta.wrongLang', lang)}
+              </span>
+            )}
+          </div>
         )}
-        {isOwned && (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-700">
-            {tMeta('meta.owned', lang)}
-          </span>
-        )}
-        {isWrongLang && (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-300 ring-1 ring-orange-200 dark:ring-orange-700">
-            {tMeta('meta.wrongLang', lang)}
-          </span>
-        )}
+        {/* Toggle-Button – eigene Zeile, nie abgeschnitten */}
         <button
           type="button"
           onClick={() => setOpen(o => !o)}
-          className="flex items-center gap-0.5 text-[11px] text-stone-400 hover:text-stone-600 dark:text-stone-500 dark:hover:text-stone-300 transition-colors ml-auto"
+          className="self-start flex items-center gap-0.5 text-[11px] text-stone-400 hover:text-stone-600 dark:text-stone-500 dark:hover:text-stone-300 transition-colors"
         >
           {open ? tMeta('meta.hideWhy', lang) : tMeta('meta.showWhy', lang)}
           {open ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
