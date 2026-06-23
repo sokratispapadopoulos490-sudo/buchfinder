@@ -377,7 +377,45 @@ export async function getMatchingBooksFromDB(profile) {
 
   if (!pool) pool = [];
 
-  // Early return if no books found for this language
+  // Google Books fallback: when local/DB pool is too small for the requested language
+  if (bookLanguage && bookLanguage !== 'any' && pool.length < 5) {
+    try {
+      // Build a topic-aware query from profile topics
+      const topicQuery = (mainTopics || []).length > 0
+        ? mainTopics.slice(0, 2).join(' OR ')
+        : 'bestseller';
+      // Map internal topic keys to search-friendly terms
+      const topicMap = {
+        persoenliche_entwicklung: 'personal development',
+        fokus_produktivitaet: 'productivity',
+        business_finanzen: 'business',
+        lernen_wissen: 'learning',
+        gesellschaft: 'society',
+        selbstfindung: 'self discovery',
+        abenteuer: 'adventure',
+        humor: 'humor',
+        romance: 'romance',
+        fantasy_scifi: 'fantasy',
+        geschichte: 'history',
+      };
+      const searchTerm = (mainTopics || []).map(t => topicMap[t] || t).join(' ') || 'popular books';
+      const gbResult = await searchGoogleBooks(searchTerm, {
+        maxResults: 20,
+        langRestrict: bookLanguage,
+      });
+      const gbBooks = (gbResult.items || []).filter(b => b.title && b.title !== 'Unbekannter Titel');
+      if (gbBooks.length > 0) {
+        languageFallbackUsed = pool.length > 0; // only flag as fallback if we're supplementing
+        pool = [...pool, ...gbBooks.filter(gb =>
+          !pool.some(pb => pb.isbn13 && pb.isbn13 === gb.isbn13)
+        )];
+      }
+    } catch {
+      // Google Books unavailable — continue with what we have
+    }
+  }
+
+  // Early return if no books found at all
   if (pool.length === 0) {
     const empty = [];
     empty._meta = { languageFallbackUsed, bookLanguage, count: 0 };
