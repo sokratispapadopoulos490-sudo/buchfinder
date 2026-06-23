@@ -71,8 +71,8 @@ export default function Onboarding() {
         onboarding_completed: true
       });
 
-      // Direkt zu Compass (neuer Hauptpfad)
-      navigate('/Compass');
+      // Nach Onboarding direkt zur Bedarfsanalyse (BookSearch)
+      navigate('/BookSearch');
     } catch (error) {
       console.error('Error completing onboarding:', error);
     } finally {

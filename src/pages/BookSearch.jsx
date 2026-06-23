@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { Compass, ArrowRight, ChevronLeft } from 'lucide-react';
+import { Compass, ArrowRight, ChevronLeft, ScanLine, Search, BookOpen } from 'lucide-react';
 import QuestionCard from '@/components/books/QuestionCard';
 import ReadBooksInput from '@/components/books/ReadBooksInput';
 import ProfileCard from '@/components/books/ProfileCard';
 import BookCard from '@/components/books/BookCard';
+import LibraryCapture from '@/components/books/LibraryCapture';
 import { getMatchingBooksFromDB } from '@/lib/bookService';
 import { base44 } from '@/api/base44Client';
 import { useLanguage } from '@/components/language/LanguageContext';
 import { setBookLanguage } from '@/lib/shoppingRegion';
+import { libraryDict } from '@/lib/i18n-library';
 
 // read_books ist kein normaler Frageschritt – wird separat als Chip-Screen behandelt
 const readBooksStep = { id: 'read_books', isReadBooksInput: true };
@@ -226,11 +228,20 @@ function BookSearchContent() {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showLibraryCapture, setShowLibraryCapture] = useState(false);
+  const [libraryCaptureConfig, setLibraryCaptureConfig] = useState({ scan: false });
 
   // Always call hooks at top level – no try/catch around hooks (React rules)
   const langCtx = useLanguage();
   const t = langCtx?.t || ((k) => k);
+  const language = langCtx?.language || 'de';
   const contextBookLanguage = langCtx?.bookLanguage || null;
+
+  const tLib = (key, fb) => {
+    const entry = libraryDict[key];
+    if (entry) return entry[language] || entry['de'] || fb || key;
+    return fb || key;
+  };
 
   // Rebuild question sets whenever language changes
   const questionSets = buildQuestionSets(t);
@@ -487,6 +498,52 @@ function BookSearchContent() {
                   </div>
                 </div>
               </motion.div>
+            </motion.div>
+
+            {/* Library capture section */}
+            <motion.div
+              key="start-library"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="mx-6 mb-4 max-w-sm mx-auto"
+            >
+              <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/50 rounded-2xl p-4">
+                <div className="flex items-center gap-2 mb-1">
+                  <BookOpen className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                  <h3 className="text-sm font-semibold text-amber-800 dark:text-amber-300">
+                    {tLib('lib.booksearch.libraryTitle', 'Hast du Bücher zuhause?')}
+                  </h3>
+                </div>
+                <p className="text-xs text-amber-700 dark:text-amber-400 mb-3 ml-6">
+                  {tLib('lib.booksearch.librarySubtitle', 'Du kannst dein Regal jetzt erfassen oder später nachholen.')}
+                </p>
+                <div className="flex gap-2 ml-6">
+                  <button
+                    type="button"
+                    onClick={() => { setLibraryCaptureConfig({ scan: true }); setShowLibraryCapture(true); }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-medium rounded-lg transition-colors"
+                  >
+                    <ScanLine className="w-3.5 h-3.5" />
+                    {tLib('lib.booksearch.scanBtn', 'Bücher scannen')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setLibraryCaptureConfig({ scan: false }); setShowLibraryCapture(true); }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-stone-800 border border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-300 text-xs font-medium rounded-lg transition-colors hover:bg-amber-50"
+                  >
+                    <Search className="w-3.5 h-3.5" />
+                    {tLib('lib.booksearch.enterBtn', 'Titel eingeben')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleStart}
+                    className="px-3 py-1.5 text-amber-600 dark:text-amber-400 text-xs font-medium hover:underline"
+                  >
+                    {tLib('lib.booksearch.skipBtn', 'Später machen')}
+                  </button>
+                </div>
+              </div>
             </motion.div>
 
             <motion.div
@@ -811,6 +868,15 @@ function BookSearchContent() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {showLibraryCapture && (
+        <LibraryCapture
+          initialTab="search"
+          autoStartScan={libraryCaptureConfig.scan}
+          onDone={() => setShowLibraryCapture(false)}
+          onSkip={() => setShowLibraryCapture(false)}
+        />
+      )}
     </div>
   );
 }

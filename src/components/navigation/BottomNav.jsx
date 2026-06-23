@@ -15,6 +15,7 @@ import { Compass, Users, User, Search } from 'lucide-react';
 import { useLanguage } from '@/components/language/LanguageContext';
 
 const PAGES_WITHOUT_NAV = ['onboarding', 'legal'];
+const PAGES_WITHOUT_NAV_FIRST_RUN = ['booksearch'];
 
 const NAV_PATHS = [
   { icon: Users,   key: 'nav.community', path: '/Community' },
@@ -23,7 +24,7 @@ const NAV_PATHS = [
   { icon: User,    key: 'nav.account',   path: '/Account' },
 ];
 
-export default function BottomNav({ isAuthenticated, currentPageName }) {
+export default function BottomNav({ isAuthenticated, currentPageName, isFirstRun }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useLanguage();
@@ -49,7 +50,8 @@ export default function BottomNav({ isAuthenticated, currentPageName }) {
 
   const pageLower = (currentPageName || location.pathname.slice(1) || '').toLowerCase();
   const onExcludedPage = PAGES_WITHOUT_NAV.some(p => pageLower.includes(p));
-  const visible = isAuthenticated && !onExcludedPage;
+  const onFirstRunExcludedPage = isFirstRun && PAGES_WITHOUT_NAV_FIRST_RUN.some(p => pageLower.includes(p));
+  const visible = isAuthenticated && !onExcludedPage && !onFirstRunExcludedPage;
 
   const bg       = isDark ? '#1a1a1a' : '#ffffff';
   const border   = isDark ? '#333333' : '#e5e7eb';

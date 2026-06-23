@@ -93,7 +93,7 @@ export default function Layout({ children, currentPageName }) {
         )}
       </div>
       {createPortal(
-        <BottomNav isAuthenticated={isAuthenticated} currentPageName={currentPageName} />,
+        <BottomNav isAuthenticated={isAuthenticated} currentPageName={currentPageName} isFirstRun={!!(user && !user.onboarding_completed)} />,
         document.body
       )}
     </LanguageProvider>
