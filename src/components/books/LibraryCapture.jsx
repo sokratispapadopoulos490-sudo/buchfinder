@@ -41,6 +41,7 @@ export default function LibraryCapture({ onDone, onSkip }) {
   const t = (key, fb) => tLib(key, language, fb);
 
   const [tab, setTab] = useState('search'); // 'search' | 'isbn'
+  const [searchInput, setSearchInput] = useState('');
   const [isbnInput, setIsbnInput] = useState('');
   const [selectedBook, setSelectedBook] = useState(null);
   const [physical, setPhysical] = useState(true);
@@ -179,7 +180,7 @@ export default function LibraryCapture({ onDone, onSkip }) {
         {/* Tab switcher */}
         <div className="flex border-b border-stone-200 dark:border-stone-700 flex-shrink-0">
           <button
-            onClick={() => { setTab('search'); reset(); setScanError(''); }}
+            onClick={() => { setTab('search'); reset(); setSearchInput(''); setScanError(''); }}
             className={`flex-1 py-2.5 text-sm font-medium transition-colors ${tab === 'search' ? 'text-amber-600 border-b-2 border-amber-600' : 'text-stone-500'}`}
           >
             <Search className="w-4 h-4 inline mr-1.5" />
@@ -202,9 +203,15 @@ export default function LibraryCapture({ onDone, onSkip }) {
             <>
               <input
                 type="text"
+                value={searchInput}
                 placeholder={t('lib.capture.searchPlaceholder')}
                 className="w-full border border-stone-200 dark:border-stone-700 rounded-xl px-4 py-3 text-sm bg-white dark:bg-stone-900 text-stone-800 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-amber-400"
-                onChange={(e) => search(e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setSearchInput(val);
+                  if (val.trim().length >= 2) search(val.trim());
+                  else reset();
+                }}
                 autoFocus
               />
               {/* Barcode scan button – only if supported */}
@@ -260,7 +267,10 @@ export default function LibraryCapture({ onDone, onSkip }) {
             </div>
           )}
 
-          {!searching && results.length === 0 && (tab === 'isbn' && isbnInput || tab === 'search') && (
+          {!searching && results.length === 0 && (
+            (tab === 'isbn' && isbnInput.trim()) ||
+            (tab === 'search' && searchInput.trim().length >= 2)
+          ) && (
             <p className="text-center text-stone-400 text-sm py-4">{t('lib.capture.noResults')}</p>
           )}
 
