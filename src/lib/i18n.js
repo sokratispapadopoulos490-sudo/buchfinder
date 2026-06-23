@@ -971,6 +971,15 @@ const dict = {
     de: 'Zu BookDiscover →', en: 'Go to BookDiscover →', el: 'Στο BookDiscover →',
     tr: 'BookDiscover\'a git →', fr: 'Aller à BookDiscover →', es: 'Ir a BookDiscover →', it: 'Vai a BookDiscover →',
   },
+  'booksearch.langFallbackNotice': {
+    de: 'Wenige Bücher in dieser Sprache gefunden – Ergebnisse wurden um andere Sprachen erweitert.',
+    en: 'Few books found in this language – results were expanded to include other languages.',
+    el: 'Λίγα βιβλία βρέθηκαν σε αυτή τη γλώσσα – τα αποτελέσματα επεκτάθηκαν.',
+    tr: 'Bu dilde az kitap bulundu – sonuçlar diğer dillerle genişletildi.',
+    fr: 'Peu de livres trouvés dans cette langue – les résultats ont été étendus.',
+    es: 'Pocos libros encontrados en este idioma – los resultados fueron ampliados.',
+    it: 'Pochi libri trovati in questa lingua – i risultati sono stati ampliati.',
+  },
   'booksearch.buchsprachePill': {
     de: 'Buchsprache', en: 'Book language', el: 'Γλώσσα βιβλίου',
     tr: 'Kitap dili', fr: 'Langue du livre', es: 'Idioma del libro', it: 'Lingua del libro',

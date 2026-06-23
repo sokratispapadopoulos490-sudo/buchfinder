@@ -7,7 +7,10 @@ import ReadBooksInput from '@/components/books/ReadBooksInput';
 import ProfileCard from '@/components/books/ProfileCard';
 import BookCard from '@/components/books/BookCard';
 import LibraryCapture from '@/components/books/LibraryCapture';
+import RecommendationMeta from '@/components/books/RecommendationMeta';
+import ReadingPath from '@/components/books/ReadingPath';
 import { getMatchingBooksFromDB } from '@/lib/bookService';
+import { scoreBook, generateRichReason, buildReadingPath } from '@/lib/bookScoring';
 import { base44 } from '@/api/base44Client';
 import { useLanguage } from '@/components/language/LanguageContext';
 import { setBookLanguage } from '@/lib/shoppingRegion';
@@ -195,27 +198,8 @@ function buildQuestionSets(t) {
 
 
 
-const generateReasons = (book, profile, t) => {
-  const bookTags = book.tags || book.categories || [];
-  const bookStyle = book.style || book.reading_style || [];
-  const topicMatch = (profile.mainTopics || []).find(topic => bookTags.includes(topic));
-  const styleMatch = (profile.style || []).find(s => bookStyle.includes(s));
-
-  const bookSpecificReason = book.description;
-
-  return {
-    mainReason: book.isContrast
-      ? t('reason.contrast')
-          .replace('{title}', book.title)
-          .replace('{author}', book.author || (book.authors || [])[0] || '')
-      : bookSpecificReason,
-    bullets: [
-      topicMatch ? t(`reason.topic.${topicMatch}`) || t('reason.fallback.topic') : t('reason.fallback.topic'),
-      styleMatch ? t(`reason.style.${styleMatch}`) || t('reason.fallback.style') : t('reason.fallback.style'),
-      topicMatch ? t(`reason.topic.${topicMatch}`) || t('reason.fallback.gain') : t('reason.fallback.gain'),
-    ]
-  };
-};
+// generateReasons is now a thin wrapper around generateRichReason from bookScoring.js
+// kept for backwards compatibility with BookCard's existing props interface.
 
 function BookSearchContent() {
   const [phase, setPhase] = useState('start');
@@ -230,6 +214,9 @@ function BookSearchContent() {
   const [loading, setLoading] = useState(false);
   const [showLibraryCapture, setShowLibraryCapture] = useState(false);
   const [libraryCaptureConfig, setLibraryCaptureConfig] = useState({ scan: false });
+  const [ownedBookTitles, setOwnedBookTitles] = useState([]);
+  const [readingPath, setReadingPath] = useState(null);
+  const [languageFallbackUsed, setLanguageFallbackUsed] = useState(false);
 
   // Always call hooks at top level – no try/catch around hooks (React rules)
   const langCtx = useLanguage();
@@ -384,16 +371,22 @@ function BookSearchContent() {
   const handleShowBooks = async () => {
     setLoading(true);
 
-    // Populate savedBookIds so already-saved books are excluded from results
+    // Load saved books & owned library titles for scoring
     let savedBookIds = [];
+    let ownedTitles = [];
     if (isAuthenticated) {
       try {
         const saved = await base44.entities.SavedBook.list();
         savedBookIds = saved.map(s => s.book_id).filter(Boolean);
+        // Owned library: books with physical_copy=true or ownership_status in [owned, read]
+        ownedTitles = saved
+          .filter(s => s.ownership_status === 'owned' || s.ownership_status === 'read' || s.physical_copy)
+          .map(s => (s.book_data?.title || '')).filter(Boolean);
       } catch {
         savedBookIds = [];
       }
     }
+    setOwnedBookTitles(ownedTitles);
 
     const profileWithSaved = { ...profile, savedBookIds };
     let results;
@@ -406,14 +399,35 @@ function BookSearchContent() {
 
     if (!Array.isArray(results)) results = [];
 
-    setRecommendations(results);
+    // Enrich each book with a rich score
+    const enriched = results.map(book => ({
+      ...book,
+      _matchScore: scoreBook(book, profile, ownedTitles),
+    }));
+
+    // Re-sort main books by enriched score (keep isContrast flag for horizon section)
+    const mainEnriched = enriched
+      .filter(b => !b.isContrast)
+      .sort((a, b) => b._matchScore - a._matchScore);
+    const horizonEnriched = enriched.filter(b => b.isContrast);
+    const finalResults = [...mainEnriched, ...horizonEnriched];
+
+    // Language fallback metadata
+    const meta = results._meta || {};
+    setLanguageFallbackUsed(!!(meta.languageFallbackUsed));
+
+    // Build reading path
+    const path = buildReadingPath(mainEnriched, horizonEnriched, profile, language);
+    setReadingPath(path);
+
+    setRecommendations(finalResults);
     setPhase('results');
     setLoading(false);
 
-    // Fire-and-forget: persist recommendation (non-blocking, never delays/blocks results)
-    if (isAuthenticated && results.length > 0) {
+    // Fire-and-forget: persist recommendation (non-blocking)
+    if (isAuthenticated && finalResults.length > 0) {
       base44.entities.Recommendation.create({
-        books: results,
+        books: finalResults,
         profile: profileWithSaved,
       }).catch(() => {});
     }
@@ -446,6 +460,9 @@ function BookSearchContent() {
     setProfile(null);
     setRecommendations(null);
     setAgeGroup('erwachsene');
+    setReadingPath(null);
+    setLanguageFallbackUsed(false);
+    setOwnedBookTitles([]);
   };
 
   return (
@@ -775,10 +792,20 @@ function BookSearchContent() {
                   );
                 }
 
+                // Language fallback notice
+                const langFallbackNotice = languageFallbackUsed && profile?.bookLanguage && profile.bookLanguage !== 'any';
+
                 const top3 = mainBooks.slice(0, 3);
                 const rest7 = mainBooks.slice(3);
                 return (
                   <>
+                    {/* Language fallback notice */}
+                    {langFallbackNotice && (
+                      <div className="mb-6 px-4 py-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-700 rounded-xl text-sm text-orange-700 dark:text-orange-300">
+                        ⚠ {t('booksearch.langFallbackNotice') || `Wenige Bücher auf ${t(`bookLang.${profile.bookLanguage}`) || profile.bookLanguage} gefunden – Ergebnisse wurden erweitert.`}
+                      </div>
+                    )}
+
                     {/* Sektion 1: Top 3 */}
                     <div className="mb-12">
                       <div className="flex items-center gap-3 mb-5">
@@ -793,6 +820,7 @@ function BookSearchContent() {
                       <div className="space-y-5">
                         {top3.map((book, idx) => {
                           const labels = [t('booksearch.rank1'), t('booksearch.rank2'), t('booksearch.rank3')];
+                          const richReason = generateRichReason(book, profile, book._matchScore || 0, language, ownedBookTitles, t);
                           return (
                             <div key={book.id || book.isbn13 || idx}>
                               <div className="flex items-center gap-2 mb-1.5">
@@ -801,7 +829,8 @@ function BookSearchContent() {
                                 </span>
                                 {idx === 0 && <span className="h-px flex-1 bg-amber-200 dark:bg-amber-800" />}
                               </div>
-                              <BookCard book={book} reasons={generateReasons(book, profile, t)} index={idx} isContrast={false} isAuthenticated={isAuthenticated} analysisBookLanguage={profile?.bookLanguage} />
+                              <BookCard book={book} reasons={richReason} index={idx} isContrast={false} isAuthenticated={isAuthenticated} analysisBookLanguage={profile?.bookLanguage} />
+                              <RecommendationMeta reasons={richReason} />
                             </div>
                           );
                         })}
@@ -817,11 +846,15 @@ function BookSearchContent() {
                           </h3>
                         </div>
                         <div className="space-y-3">
-                          {rest7.map((book, idx) => (
-                            <div key={book.id || book.isbn13 || `r-${idx}`}>
-                              <BookCard book={book} reasons={generateReasons(book, profile, t)} index={Math.min(3 + idx, 5)} isContrast={false} isAuthenticated={isAuthenticated} analysisBookLanguage={profile?.bookLanguage} />
-                            </div>
-                          ))}
+                          {rest7.map((book, idx) => {
+                            const richReason = generateRichReason(book, profile, book._matchScore || 0, language, ownedBookTitles, t);
+                            return (
+                              <div key={book.id || book.isbn13 || `r-${idx}`}>
+                                <BookCard book={book} reasons={richReason} index={Math.min(3 + idx, 5)} isContrast={false} isAuthenticated={isAuthenticated} analysisBookLanguage={profile?.bookLanguage} />
+                                <RecommendationMeta reasons={richReason} />
+                              </div>
+                            );
+                          })}
                         </div>
                       </div>
                     )}
@@ -839,14 +872,21 @@ function BookSearchContent() {
                             <p className="text-[11px] text-stone-400 dark:text-stone-500 ml-8">{t('booksearch.horizonSub')}</p>
                         </div>
                         <div className="space-y-4 opacity-90">
-                          {horizonBooks.map((book, idx) => (
-                            <div key={book.id || book.isbn13 || `h-${idx}`}>
-                              <BookCard book={book} reasons={generateReasons(book, profile, t)} index={Math.min(5 + idx, 7)} isContrast={true} isAuthenticated={isAuthenticated} analysisBookLanguage={profile?.bookLanguage} />
-                            </div>
-                          ))}
+                          {horizonBooks.map((book, idx) => {
+                            const richReason = generateRichReason(book, profile, book._matchScore || 0, language, ownedBookTitles, t);
+                            return (
+                              <div key={book.id || book.isbn13 || `h-${idx}`}>
+                                <BookCard book={book} reasons={richReason} index={Math.min(5 + idx, 7)} isContrast={true} isAuthenticated={isAuthenticated} analysisBookLanguage={profile?.bookLanguage} />
+                                <RecommendationMeta reasons={richReason} />
+                              </div>
+                            );
+                          })}
                         </div>
                       </div>
                     )}
+
+                    {/* Lesepfad */}
+                    <ReadingPath phases={readingPath} />
                   </>
                 );
               })()}
