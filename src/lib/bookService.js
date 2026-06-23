@@ -54,6 +54,44 @@ export function normalizeLocalBook(localBook) {
   };
 }
 
+// Normalizes any language tag from Google Books / Open Library to ISO-639-1 (de/en/el/tr/fr/es/it)
+// Google Books uses "ger"/"deu"/"GER", Open Library uses "ger"/"fre" etc.
+function normalizeLanguageCode(raw) {
+  if (!raw) return '';
+  const l = raw.toLowerCase().trim();
+  const MAP = {
+    // German
+    de: 'de', ger: 'de', deu: 'de', deutsch: 'de',
+    // English
+    en: 'en', eng: 'en', english: 'en',
+    // Greek
+    el: 'el', gre: 'el', ell: 'el', greek: 'el',
+    // Turkish
+    tr: 'tr', tur: 'tr', turkish: 'tr',
+    // French
+    fr: 'fr', fre: 'fr', fra: 'fr', french: 'fr',
+    // Spanish
+    es: 'es', spa: 'es', spanish: 'es',
+    // Italian
+    it: 'it', ita: 'it', italian: 'it', italiano: 'it',
+    // Portuguese
+    pt: 'pt', por: 'pt',
+    // Dutch
+    nl: 'nl', dut: 'nl', nld: 'nl',
+    // Russian
+    ru: 'ru', rus: 'ru',
+    // Arabic
+    ar: 'ar', ara: 'ar',
+    // Chinese
+    zh: 'zh', chi: 'zh', zho: 'zh',
+    // Japanese
+    ja: 'ja', jpn: 'ja',
+    // Korean
+    ko: 'ko', kor: 'ko',
+  };
+  return MAP[l] || l;
+}
+
 export function normalizeGoogleBook(volume) {
   const info = volume.volumeInfo || {};
   const ids = info.industryIdentifiers || [];
@@ -78,7 +116,7 @@ export function normalizeGoogleBook(volume) {
     publisher: info.publisher || null,
     published_date: info.publishedDate || null,
     page_count: info.pageCount || null,
-    language: info.language || '',
+    language: normalizeLanguageCode(info.language),
     categories: info.categories || [],
     tags: info.categories || [],
     age_group: 'erwachsene',
@@ -214,7 +252,7 @@ function normalizeOpenLibraryBook(doc) {
     publisher: (doc.publisher || [])[0] || null,
     published_date: doc.first_publish_year ? String(doc.first_publish_year) : null,
     page_count: doc.number_of_pages_median || null,
-    language: (doc.language || [])[0] || 'de',
+    language: normalizeLanguageCode((doc.language || [])[0] || ''),
     categories: (doc.subject || []).slice(0, 5),
     tags: (doc.subject || []).slice(0, 5),
     age_group: 'erwachsene',
@@ -379,36 +417,43 @@ export async function getMatchingBooksFromDB(profile) {
 
   // Google Books fallback: when local/DB pool is too small for the requested language
   if (bookLanguage && bookLanguage !== 'any' && pool.length < 5) {
+    const topicMap = {
+      persoenliche_entwicklung: 'personal development',
+      fokus_produktivitaet: 'productivity',
+      business_finanzen: 'business',
+      lernen_wissen: 'learning',
+      gesellschaft: 'society',
+      selbstfindung: 'self discovery',
+      abenteuer: 'adventure',
+      humor: 'humor',
+      romance: 'romance',
+      fantasy_scifi: 'fantasy',
+      geschichte: 'history',
+    };
+    const searchTerm = (mainTopics || []).map(t => topicMap[t] || t).join(' ') || 'popular books';
     try {
-      // Build a topic-aware query from profile topics
-      const topicQuery = (mainTopics || []).length > 0
-        ? mainTopics.slice(0, 2).join(' OR ')
-        : 'bestseller';
-      // Map internal topic keys to search-friendly terms
-      const topicMap = {
-        persoenliche_entwicklung: 'personal development',
-        fokus_produktivitaet: 'productivity',
-        business_finanzen: 'business',
-        lernen_wissen: 'learning',
-        gesellschaft: 'society',
-        selbstfindung: 'self discovery',
-        abenteuer: 'adventure',
-        humor: 'humor',
-        romance: 'romance',
-        fantasy_scifi: 'fantasy',
-        geschichte: 'history',
-      };
-      const searchTerm = (mainTopics || []).map(t => topicMap[t] || t).join(' ') || 'popular books';
       const gbResult = await searchGoogleBooks(searchTerm, {
-        maxResults: 20,
+        maxResults: 40,
         langRestrict: bookLanguage,
       });
-      const gbBooks = (gbResult.items || []).filter(b => b.title && b.title !== 'Unbekannter Titel');
-      if (gbBooks.length > 0) {
-        languageFallbackUsed = pool.length > 0; // only flag as fallback if we're supplementing
-        pool = [...pool, ...gbBooks.filter(gb =>
-          !pool.some(pb => pb.isbn13 && pb.isbn13 === gb.isbn13)
-        )];
+      const gbAll = (gbResult.items || []).filter(b => b.title && b.title !== 'Unbekannter Titel');
+
+      // Split: correct language first, wrong language only as last-resort supplements
+      const gbCorrect = gbAll.filter(b => normalizeLanguageCode(b.language) === bookLanguage);
+      const gbOther   = gbAll.filter(b => normalizeLanguageCode(b.language) !== bookLanguage)
+                             .map(b => ({ ...b, _langMismatch: true }));
+
+      const dedup = (books) => books.filter(gb =>
+        !pool.some(pb => pb.isbn13 && pb.isbn13 === gb.isbn13)
+      );
+
+      if (gbCorrect.length > 0) {
+        pool = [...pool, ...dedup(gbCorrect)];
+      }
+      // Only add wrong-language books if we still have fewer than 5 results
+      if (pool.length < 5 && gbOther.length > 0) {
+        languageFallbackUsed = true;
+        pool = [...pool, ...dedup(gbOther).slice(0, 10)];
       }
     } catch {
       // Google Books unavailable — continue with what we have
@@ -444,6 +489,12 @@ export async function getMatchingBooksFromDB(profile) {
     if (book.difficulty === difficulty) score += 4;
     if ((difficulty === 'fortgeschritten' && book.difficulty === 'einsteiger') ||
         (difficulty === 'einsteiger' && book.difficulty === 'fortgeschritten')) score -= 2;
+    // Hard language bonus/penalty so wrong-language books never float to top
+    if (bookLanguage && bookLanguage !== 'any') {
+      const bookLang = normalizeLanguageCode(book.language);
+      if (bookLang === bookLanguage) score += 20;
+      else score -= 30;
+    }
     return { ...book, score };
   }).sort((a, b) => b.score - a.score);
 
