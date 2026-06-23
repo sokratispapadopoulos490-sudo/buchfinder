@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { Sparkles, ShoppingCart, Bookmark, BookmarkCheck, MessageSquare, Info } from 'lucide-react';
+import { Sparkles, ShoppingCart, Bookmark, BookmarkCheck, MessageSquare, Info, BookOpen, Library } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { base44 } from '@/api/base44Client';
 import StarRating from './StarRating';
@@ -9,10 +9,19 @@ import BookDetailModal from './BookDetailModal';
 import BookCover, { getCoverUrl } from './BookCover';
 import ProviderLinks from './ProviderLinks';
 import { useLanguage } from '@/components/language/LanguageContext';
+import { useOwnedLibrary } from '@/lib/ownedLibrary';
+import { libraryDict } from '@/lib/i18n-library';
+
+function tLib(key, lang) {
+  const entry = libraryDict[key];
+  return entry ? (entry[lang] || entry['de'] || key) : key;
+}
 
 export default function BookCard({ book, reasons, index, isContrast, isAuthenticated: isAuthProp, analysisBookLanguage }) {
-  const { shoppingRegion, bookLanguage, t } = useLanguage();
+  const { shoppingRegion, bookLanguage, t, language } = useLanguage();
   const effectiveLang = analysisBookLanguage || bookLanguage || book?.language;
+  const { checkOwned, hasOwned } = useOwnedLibrary();
+  const isOwned = checkOwned(book);
   const [showBuyOptions, setShowBuyOptions] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -129,14 +138,28 @@ export default function BookCard({ book, reasons, index, isContrast, isAuthentic
         isContrast ? "border-violet-100 dark:border-violet-900/20" : "border-stone-100 dark:border-stone-700"
       )}
     >
-      {isContrast && (
-      <div className="bg-violet-50/50 dark:bg-violet-900/10 px-5 py-2 border-b border-violet-100 dark:border-violet-900/20">
-      <div className="flex items-center gap-1.5 text-violet-600 dark:text-violet-400 text-xs">
-        <Sparkles className="w-3 h-3" />
-        <span className="font-medium">{t('booksearch.horizonBadge')}</span>
-      </div>
-      </div>
-      )}
+      {isOwned ? (
+        <div className="bg-emerald-50 dark:bg-emerald-900/20 px-5 py-2 border-b border-emerald-100 dark:border-emerald-900/30">
+          <div className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 text-xs font-medium">
+            <Library className="w-3.5 h-3.5" />
+            <span>{tLib('lib.owned.badge', language)}</span>
+          </div>
+        </div>
+      ) : isContrast ? (
+        <div className="bg-violet-50/50 dark:bg-violet-900/10 px-5 py-2 border-b border-violet-100 dark:border-violet-900/20">
+          <div className="flex items-center gap-1.5 text-violet-600 dark:text-violet-400 text-xs">
+            <Sparkles className="w-3 h-3" />
+            <span className="font-medium">{t('booksearch.horizonBadge')}</span>
+          </div>
+        </div>
+      ) : hasOwned ? (
+        <div className="bg-stone-50 dark:bg-stone-800/40 px-5 py-2 border-b border-stone-100 dark:border-stone-700">
+          <div className="flex items-center gap-1.5 text-stone-400 dark:text-stone-500 text-xs">
+            <BookOpen className="w-3 h-3" />
+            <span>{tLib('lib.owned.complement', language)}</span>
+          </div>
+        </div>
+      ) : null}
       
       <div className="p-6 md:p-8">
         <div className="flex gap-6">
@@ -294,45 +317,72 @@ export default function BookCard({ book, reasons, index, isContrast, isAuthentic
               </>
             )}
 
-            <div className="flex gap-3">
-              <Button
-                onClick={handleSaveBook}
-                disabled={saving}
-                variant={isSaved ? "default" : "outline"}
-                className={cn(
-                  "flex-1 gap-2",
-                  isSaved && "bg-amber-600 hover:bg-amber-700 text-white"
+            {isOwned ? (
+              /* Owned: primärer CTA = aus Regal lesen, Kauflinks nachrangig */
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg px-4 py-2.5 text-sm font-medium">
+                  <BookOpen className="w-4 h-4 flex-shrink-0" />
+                  <span>{tLib('lib.owned.cta', language)}</span>
+                </div>
+                <button
+                  onClick={() => setShowBuyOptions(!showBuyOptions)}
+                  className="w-full text-xs text-stone-400 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-300 underline underline-offset-2 text-center transition-colors"
+                >
+                  {tLib('lib.owned.altEdition', language)}
+                </button>
+                {showBuyOptions && (
+                  <ProviderLinks
+                    book={book}
+                    shoppingRegion={shoppingRegion}
+                    bookLanguage={effectiveLang}
+                    className="mt-1"
+                  />
                 )}
-              >
-                {isSaved ? (
-                  <>
-                    <BookmarkCheck className="w-4 h-4" />
-                    {t('btn.saved')}
-                  </>
-                ) : (
-                  <>
-                    <Bookmark className="w-4 h-4" />
-                    {t('btn.save')}
-                  </>
+              </div>
+            ) : (
+              /* Normal: Speichern + Kaufen */
+              <>
+                <div className="flex gap-3">
+                  <Button
+                    onClick={handleSaveBook}
+                    disabled={saving}
+                    variant={isSaved ? "default" : "outline"}
+                    className={cn(
+                      "flex-1 gap-2",
+                      isSaved && "bg-amber-600 hover:bg-amber-700 text-white"
+                    )}
+                  >
+                    {isSaved ? (
+                      <>
+                        <BookmarkCheck className="w-4 h-4" />
+                        {t('btn.saved')}
+                      </>
+                    ) : (
+                      <>
+                        <Bookmark className="w-4 h-4" />
+                        {t('btn.save')}
+                      </>
+                    )}
+                  </Button>
+
+                  <Button
+                    onClick={() => setShowBuyOptions(!showBuyOptions)}
+                    className="flex-1 gap-2 bg-stone-800 hover:bg-stone-700 dark:bg-amber-600 dark:hover:bg-amber-700 dark:text-white"
+                  >
+                    <ShoppingCart className="w-4 h-4" />
+                    {t('book.buy')}
+                  </Button>
+                </div>
+
+                {showBuyOptions && (
+                  <ProviderLinks
+                    book={book}
+                    shoppingRegion={shoppingRegion}
+                    bookLanguage={effectiveLang}
+                    className="mt-1"
+                  />
                 )}
-              </Button>
-
-              <Button 
-                onClick={() => setShowBuyOptions(!showBuyOptions)}
-                className="flex-1 gap-2 bg-stone-800 hover:bg-stone-700 dark:bg-amber-600 dark:hover:bg-amber-700 dark:text-white"
-              >
-                <ShoppingCart className="w-4 h-4" />
-                {t('book.buy')}
-              </Button>
-            </div>
-
-            {showBuyOptions && (
-              <ProviderLinks
-                book={book}
-                shoppingRegion={shoppingRegion}
-                bookLanguage={effectiveLang}
-                className="mt-1"
-              />
+              </>
             )}
           </div>
         </div>

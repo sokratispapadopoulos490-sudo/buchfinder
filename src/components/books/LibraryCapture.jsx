@@ -18,6 +18,7 @@ import { useLanguage } from '@/components/language/LanguageContext';
 import { useGoogleBooks } from '@/hooks/useGoogleBooks';
 import { libraryDict } from '@/lib/i18n-library';
 import { t as _t } from '@/lib/i18n';
+import { invalidateOwnedCache } from '@/lib/ownedLibrary';
 
 // i18n: sucht zuerst in libraryDict, dann Hauptdict
 function tLib(key, lang, fb) {
@@ -147,6 +148,7 @@ export default function LibraryCapture({ onDone, onSkip }) {
       });
       setSavedKeys(prev => new Set([...prev, key]));
       setExistingKeys(prev => new Set([...prev, key]));
+      invalidateOwnedCache();
       setSelectedBook(null);
     } catch (err) {
       console.error('Save failed:', err);
