@@ -103,15 +103,20 @@ export default function ProviderLinks({ book, shoppingRegion = 'DE', bookLanguag
     const shoppingLinksRaw = getProviderLinksForBook(book, shoppingRegion, { types: ['new', 'marketplace'], limit: 4 });
     const shownIds = new Set(langLinks.map(l => l.providerId));
     const shopLinks = shoppingLinksRaw.filter(l => !shownIds.has(l.providerId)).slice(0, 3);
-    // Group 3: Used from both regions, deduplicated
+    // Group 3: Used from both regions + global AbeBooks, deduplicated
     const usedLang = getProviderLinksForBook(book, langRegion, { types: ['used'], limit: 3 });
     const usedShop = getProviderLinksForBook(book, shoppingRegion, { types: ['used'], limit: 3 });
-    const usedLinks = dedup([...usedLang, ...usedShop]);
+    const usedGlobal = getProviderLinksForBook(book, 'global', { types: ['used'], limit: 1 });
+    const usedLinks = dedup([...usedLang, ...usedShop, ...usedGlobal]);
+    // Group 4: International fallbacks (global new/discovery) for cases like it+GR
+    const allShownIds = new Set([...langLinks, ...shopLinks, ...usedLinks].map(l => l.providerId));
+    const intlLinks = getProviderLinksForBook(book, 'global', { types: ['new', 'discovery'], limit: 3 })
+      .filter(l => !allShownIds.has(l.providerId));
 
     const FLAG_MAP = { GR: '🇬🇷', DE: '🇩🇪', AT: '🇦🇹', CH: '🇨🇭', TR: '🇹🇷', FR: '🇫🇷', ES: '🇪🇸', IT: '🇮🇹', UK: '🇬🇧', US: '🇺🇸' };
     const LANG_LABEL = { el: t('bookLang.el'), tr: t('bookLang.tr'), fr: t('bookLang.fr'), es: t('bookLang.es'), it: t('bookLang.it'), en: t('bookLang.en'), de: t('bookLang.de') };
 
-    const hasAnyContent = langLinks.length > 0 || shopLinks.length > 0 || usedLinks.length > 0 || hasAudio;
+    const hasAnyContent = langLinks.length > 0 || shopLinks.length > 0 || usedLinks.length > 0 || intlLinks.length > 0 || hasAudio;
     if (!hasAnyContent) return null;
 
     return (
@@ -161,6 +166,19 @@ export default function ProviderLinks({ book, shoppingRegion = 'DE', bookLanguag
                 {usedLinks.map(link => <ProviderButton key={link.providerId + link.url} link={link} t={t} />)}
               </div>
             )}
+          </>
+        )}
+
+        {/* Group 4: International fallbacks (e.g. it + GR) */}
+        {intlLinks.length > 0 && (
+          <>
+            <SectionHeader
+              title={`🌐 ${t('provider.intlTitle', 'Internationale Optionen')}`}
+              subtitle={t('provider.intlSub', 'Weltweit verfügbar – Suchlinks ohne Preisangabe')}
+            />
+            <div className="space-y-2">
+              {intlLinks.map(link => <ProviderButton key={link.providerId + link.url} link={link} t={t} />)}
+            </div>
           </>
         )}
 

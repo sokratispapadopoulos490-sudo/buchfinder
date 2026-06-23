@@ -1894,6 +1894,16 @@ const dict = {
     de: 'Gebraucht & Marktplatz', en: 'Used & Marketplace', el: 'Μεταχειρισμένα & Αγορά',
     tr: 'İkinci el & Pazar yeri', fr: 'Occasion & Marketplace', es: 'Usado & Mercado', it: 'Usato & Marketplace',
   },
+  'provider.intlTitle': {
+    de: 'Internationale Optionen', en: 'International Options', el: 'Διεθνείς επιλογές',
+    tr: 'Uluslararası seçenekler', fr: 'Options internationales', es: 'Opciones internacionales', it: 'Opzioni internazionali',
+  },
+  'provider.intlSub': {
+    de: 'Weltweit verfügbar – Suchlinks ohne Preisangabe', en: 'Available worldwide – search links without prices',
+    el: 'Διαθέσιμο παγκοσμίως – αναζήτηση χωρίς τιμές', tr: 'Dünya genelinde erişilebilir – fiyatsız arama linkleri',
+    fr: 'Disponible mondialement – liens de recherche sans prix', es: 'Disponible mundialmente – enlaces de búsqueda sin precios',
+    it: 'Disponibile mondialmente – link di ricerca senza prezzi',
+  },
 
   'discover.bookLangHint': {
     de: 'Hinweis: Für Griechisch und Türkisch sind weniger Bücher indexiert.',

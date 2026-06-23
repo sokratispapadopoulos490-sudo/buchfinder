@@ -172,8 +172,8 @@ export default function LiveBookCard({ book, user, shoppingRegion }) {
           )}
         </div>
 
-        {/* Kauf-Links via Provider-Registry – nutzt shoppingRegion */}
-        {showBuy && <ProviderLinks book={book} shoppingRegion={region} className="mt-3" />}
+        {/* Kauf-Links via Provider-Registry – nutzt shoppingRegion + bookLanguage getrennt */}
+        {showBuy && <ProviderLinks book={book} shoppingRegion={region} bookLanguage={bookLanguage || ''} className="mt-3" />}
       </div>
     </div>
   );

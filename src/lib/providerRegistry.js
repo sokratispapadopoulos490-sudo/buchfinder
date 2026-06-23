@@ -230,52 +230,112 @@ const PROVIDER_DEFS = {
     buildLink: (book) => ({ url: amazonUrl('de', book, 'amazon_de'), availability: 'unknown' }),
   },
 
-  // ── Türkei ────────────────────────────────────────────────────────────────
+  // ── Türkei – Neu + Used ───────────────────────────────────────────────────
   kitapyurdu: {
     providerId: 'kitapyurdu', providerName: 'Kitapyurdu',
-    type: 'new', region: 'TR', currency: 'TRY', priority: 2,
+    type: 'new', region: 'TR', currency: 'TRY', priority: 1,
     buildLink: (book) => ({ url: `https://www.kitapyurdu.com/index.php?route=product/search&filter_name=${isbnOrTitle(book)}`, availability: 'unknown' }),
   },
   dr_tr: {
     providerId: 'dr_tr', providerName: 'D&R',
-    type: 'new', region: 'TR', currency: 'TRY', priority: 3,
+    type: 'new', region: 'TR', currency: 'TRY', priority: 2,
     buildLink: (book) => ({ url: `https://www.dr.com.tr/search?q=${isbnOrTitle(book)}`, availability: 'unknown' }),
   },
+  bkm_tr: {
+    providerId: 'bkm_tr', providerName: 'BKM Kitap',
+    type: 'new', region: 'TR', currency: 'TRY', priority: 3,
+    buildLink: (book) => ({ url: `https://www.bkmkitap.com/arama?q=${isbnOrTitle(book)}`, availability: 'unknown' }),
+  },
+  nadirkitap: {
+    providerId: 'nadirkitap', providerName: 'Nadir Kitap',
+    type: 'used', region: 'TR', currency: 'TRY', priority: 5,
+    buildLink: (book) => {
+      const id = isbn(book);
+      return { url: id ? `https://www.nadirkitap.com/kitap-ara.php?isbn=${id}` : `https://www.nadirkitap.com/kitap-ara.php?q=${q(book)}`, availability: 'unknown' };
+    },
+  },
 
-  // ── Frankreich ────────────────────────────────────────────────────────────
+  // ── Frankreich – Neu + Used ───────────────────────────────────────────────
   amazon_fr: {
     providerId: 'amazon_fr', providerName: 'Amazon.fr',
-    type: 'new', region: 'FR', currency: 'EUR', priority: 2,
+    type: 'new', region: 'FR', currency: 'EUR', priority: 1,
     buildLink: (book) => ({ url: amazonUrl('fr', book, 'amazon_fr'), availability: 'unknown' }),
   },
   fnac_fr: {
     providerId: 'fnac_fr', providerName: 'Fnac',
-    type: 'new', region: 'FR', currency: 'EUR', priority: 3,
+    type: 'new', region: 'FR', currency: 'EUR', priority: 2,
     buildLink: (book) => ({ url: `https://www.fnac.com/SearchResult/ResultList.aspx?SCat=0%211&Search=${isbnOrTitle(book)}`, availability: 'unknown' }),
   },
+  decitre_fr: {
+    providerId: 'decitre_fr', providerName: 'Decitre',
+    type: 'new', region: 'FR', currency: 'EUR', priority: 3,
+    buildLink: (book) => {
+      const id = isbn(book);
+      return { url: id ? `https://www.decitre.fr/rechercher/result/?q=${id}` : `https://www.decitre.fr/rechercher/result/?q=${q(book)}`, availability: 'unknown' };
+    },
+  },
+  recyclivre_fr: {
+    providerId: 'recyclivre_fr', providerName: 'Recyclivre',
+    type: 'used', region: 'FR', currency: 'EUR', priority: 5,
+    buildLink: (book) => ({ url: `https://www.recyclivre.com/products/search?q=${isbnOrTitle(book)}`, availability: 'unknown' }),
+  },
 
-  // ── Spanien ───────────────────────────────────────────────────────────────
+  // ── Spanien – Neu + Used ──────────────────────────────────────────────────
   amazon_es: {
     providerId: 'amazon_es', providerName: 'Amazon.es',
-    type: 'new', region: 'ES', currency: 'EUR', priority: 2,
+    type: 'new', region: 'ES', currency: 'EUR', priority: 1,
     buildLink: (book) => ({ url: amazonUrl('es', book, 'amazon_es'), availability: 'unknown' }),
   },
   casa_del_libro: {
     providerId: 'casa_del_libro', providerName: 'Casa del Libro',
-    type: 'new', region: 'ES', currency: 'EUR', priority: 3,
+    type: 'new', region: 'ES', currency: 'EUR', priority: 2,
     buildLink: (book) => ({ url: `https://www.casadellibro.com/busqueda-generica?q=${isbnOrTitle(book)}`, availability: 'unknown' }),
   },
+  fnac_es: {
+    providerId: 'fnac_es', providerName: 'Fnac ES',
+    type: 'new', region: 'ES', currency: 'EUR', priority: 3,
+    buildLink: (book) => ({ url: `https://www.fnac.es/SearchResult/ResultList.aspx?SCat=0%211&Search=${isbnOrTitle(book)}`, availability: 'unknown' }),
+  },
+  iberlibro_es: {
+    providerId: 'iberlibro_es', providerName: 'IberLibro',
+    type: 'used', region: 'ES', currency: 'EUR', priority: 5,
+    buildLink: (book) => {
+      const id = isbn(book);
+      return { url: id ? `https://www.iberlibro.com/servlet/SearchResults?isbn=${id}` : `https://www.iberlibro.com/servlet/SearchResults?title=${q(book)}`, availability: 'unknown' };
+    },
+  },
 
-  // ── Italien ───────────────────────────────────────────────────────────────
+  // ── Italien – Neu + Used ──────────────────────────────────────────────────
   amazon_it: {
     providerId: 'amazon_it', providerName: 'Amazon.it',
-    type: 'new', region: 'IT', currency: 'EUR', priority: 2,
+    type: 'new', region: 'IT', currency: 'EUR', priority: 1,
     buildLink: (book) => ({ url: amazonUrl('it', book, 'amazon_it'), availability: 'unknown' }),
   },
   ibs_it: {
     providerId: 'ibs_it', providerName: 'IBS',
-    type: 'new', region: 'IT', currency: 'EUR', priority: 3,
+    type: 'new', region: 'IT', currency: 'EUR', priority: 2,
     buildLink: (book) => ({ url: `https://www.ibs.it/search/?ts=as&query=${isbnOrTitle(book)}`, availability: 'unknown' }),
+  },
+  feltrinelli_it: {
+    providerId: 'feltrinelli_it', providerName: 'Feltrinelli',
+    type: 'new', region: 'IT', currency: 'EUR', priority: 3,
+    buildLink: (book) => {
+      const id = isbn(book);
+      return { url: id ? `https://www.lafeltrinelli.it/ricerca/libri?q=${id}` : `https://www.lafeltrinelli.it/ricerca/libri?q=${q(book)}`, availability: 'unknown' };
+    },
+  },
+  mondadori_it: {
+    providerId: 'mondadori_it', providerName: 'Mondadori',
+    type: 'new', region: 'IT', currency: 'EUR', priority: 4,
+    buildLink: (book) => ({ url: `https://www.mondadoristore.it/libri/?q=${isbnOrTitle(book)}`, availability: 'unknown' }),
+  },
+  libraccio_it: {
+    providerId: 'libraccio_it', providerName: 'Libraccio',
+    type: 'used', region: 'IT', currency: 'EUR', priority: 5,
+    buildLink: (book) => {
+      const id = isbn(book);
+      return { url: id ? `https://www.libraccio.it/ricerca?isbn=${id}` : `https://www.libraccio.it/ricerca?q=${q(book)}`, availability: 'unknown' };
+    },
   },
 
   // ── UK – Neu + Used ───────────────────────────────────────────────────────
@@ -342,6 +402,30 @@ const PROVIDER_DEFS = {
       return { url, availability: 'unknown' };
     },
   },
+  bookshop_intl: {
+    providerId: 'bookshop_intl', providerName: 'Bookshop.org',
+    type: 'new', region: 'global', currency: null, priority: 7,
+    buildLink: (book) => {
+      const id = isbn(book);
+      return { url: id ? `https://bookshop.org/books/${id}` : `https://bookshop.org/books?keywords=${q(book)}`, availability: 'unknown' };
+    },
+  },
+  worldcat: {
+    providerId: 'worldcat', providerName: 'WorldCat',
+    type: 'discovery', region: 'global', currency: null, priority: 9,
+    buildLink: (book) => {
+      const id = isbn(book);
+      return { url: id ? `https://www.worldcat.org/isbn/${id}` : `https://www.worldcat.org/search?q=${q(book)}`, availability: 'unknown' };
+    },
+  },
+  openlibrary: {
+    providerId: 'openlibrary', providerName: 'Open Library',
+    type: 'discovery', region: 'global', currency: null, priority: 10,
+    buildLink: (book) => {
+      const id = isbn(book);
+      return { url: id ? `https://openlibrary.org/isbn/${id}` : `https://openlibrary.org/search?q=${q(book)}`, availability: 'unknown' };
+    },
+  },
 
   // ── Audiobook (Architektur-ready) ─────────────────────────────────────────
   // Keine ASIN/Spotify-ID – nur sichere Suchseiten-URLs, availability immer 'unknown'
@@ -396,16 +480,16 @@ const PROVIDER_DEFS = {
  * Used-Provider sind bewusst in der Liste – werden bei Bedarf per Typ gefiltert.
  */
 export const REGION_REGISTRY = {
-  global: ['google_books', 'abebooks', 'spotify_audiobooks'],
+  global: ['bookshop_intl', 'abebooks', 'worldcat', 'openlibrary', 'google_books', 'spotify_audiobooks'],
   DE:     ['amazon_de', 'thalia', 'hugendubel', 'medimops', 'booklooker', 'zvab', 'audible_de', 'storytel_de'],
   AT:     ['amazon_de', 'thalia_at', 'medimops', 'audible_de'],
   CH:     ['exlibris', 'orellfuessli'],
   // GR: griechische Provider zuerst, Amazon.de ganz hinten
   GR:     ['politeia_gr', 'protoporia_gr', 'ianos_gr', 'evripidis_gr', 'metabook_gr', 'skroutz_gr', 'amazon_de_gr'],
-  TR:     ['kitapyurdu', 'dr_tr'],
-  FR:     ['amazon_fr', 'fnac_fr'],
-  ES:     ['amazon_es', 'casa_del_libro'],
-  IT:     ['amazon_it', 'ibs_it'],
+  TR:     ['kitapyurdu', 'dr_tr', 'bkm_tr', 'nadirkitap'],
+  FR:     ['amazon_fr', 'fnac_fr', 'decitre_fr', 'recyclivre_fr'],
+  ES:     ['amazon_es', 'casa_del_libro', 'fnac_es', 'iberlibro_es'],
+  IT:     ['amazon_it', 'ibs_it', 'feltrinelli_it', 'mondadori_it', 'libraccio_it'],
   UK:     ['amazon_uk', 'bookshop_uk', 'world_of_books', 'audible_uk'],
   US:     ['amazon_us', 'bookshop_us', 'thriftbooks', 'audible_us'],
 };
