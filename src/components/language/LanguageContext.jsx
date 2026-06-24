@@ -98,13 +98,12 @@ export const LanguageProvider = ({ children }) => {
     };
   }, []);
 
-  const changeLanguage = useCallback(async (newLanguage) => {
+  const changeLanguage = useCallback((newLanguage) => {
+    // Sofort synchron setzen – kein await, kein async State-Seiteneffekt
     setLanguage(newLanguage);
     try { localStorage.setItem('appLanguage', newLanguage); } catch {}
-    try {
-      const isAuth = await base44.auth.isAuthenticated();
-      if (isAuth) base44.auth.updateMe({ language: newLanguage }).catch(() => {});
-    } catch {}
+    // Profil still im Hintergrund speichern – Fehler ignorieren, keine Navigation
+    base44.auth.updateMe({ language: newLanguage }).catch(() => {});
   }, []);
 
   const changeBookLanguage = useCallback((lang) => {

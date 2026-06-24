@@ -194,13 +194,15 @@ function AccountContent() {
 
         {/* Collapsible: Empfehlungsverlauf */}
         <Collapsible open={historyOpen} onOpenChange={setHistoryOpen} className="mb-3">
-          <CollapsibleTrigger className="w-full flex items-center justify-between p-4 bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 hover:border-amber-300 transition-colors shadow-sm">
+          <CollapsibleTrigger asChild>
+            <button type="button" className="w-full flex items-center justify-between p-4 bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 hover:border-amber-300 transition-colors shadow-sm">
             <div className="flex items-center gap-3">
               <Clock className="w-5 h-5 text-amber-600" />
               <span className="font-medium text-stone-800 dark:text-stone-200">{t('account.history')}</span>
               <span className="text-xs text-stone-400 bg-stone-100 dark:bg-stone-800 px-2 py-0.5 rounded-full">{recommendations.length}</span>
             </div>
             <ChevronDown className={`w-4 h-4 text-stone-400 transition-transform ${historyOpen ? 'rotate-180' : ''}`} />
+            </button>
           </CollapsibleTrigger>
           <CollapsibleContent>
             <div className="bg-white dark:bg-[#1a1a1a] border border-t-0 border-stone-200 dark:border-stone-700 rounded-b-2xl p-4 space-y-3">
@@ -243,13 +245,15 @@ function AccountContent() {
         </Collapsible>
 
         {/* Collapsible: Einstellungen */}
-        <Collapsible open={settingsOpen} onOpenChange={setSettingsOpen} className="mb-6 overflow-visible">
-          <CollapsibleTrigger className="w-full flex items-center justify-between p-4 bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 hover:border-amber-300 transition-colors shadow-sm">
+        <Collapsible open={settingsOpen} onOpenChange={setSettingsOpen} className="mb-6">
+          <CollapsibleTrigger asChild>
+            <button type="button" className="w-full flex items-center justify-between p-4 bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 hover:border-amber-300 transition-colors shadow-sm">
             <div className="flex items-center gap-3">
               <Globe className="w-5 h-5 text-amber-600" />
               <span className="font-medium text-stone-800 dark:text-stone-200">{t('account.settings')}</span>
             </div>
             <ChevronDown className={`w-4 h-4 text-stone-400 transition-transform ${settingsOpen ? 'rotate-180' : ''}`} />
+            </button>
           </CollapsibleTrigger>
           <CollapsibleContent>
             <div className="bg-white dark:bg-[#1a1a1a] border border-t-0 border-stone-200 dark:border-stone-700 rounded-b-2xl p-4 space-y-3">
@@ -267,7 +271,8 @@ function AccountContent() {
                   {UI_LANGUAGES.map((lang) => (
                     <button
                       key={lang.code}
-                      onClick={() => changeLanguage(lang.code)}
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); changeLanguage(lang.code); }}
                       className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium border-2 transition-all ${
                         language === lang.code
                           ? 'border-amber-500 bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300'
