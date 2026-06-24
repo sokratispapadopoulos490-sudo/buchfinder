@@ -48,15 +48,22 @@ export const LanguageProvider = ({ children }) => {
   const [bookLanguage, setBookLanguageState] = useState(getBookLanguage);
   const [shoppingRegion, setShoppingRegionState] = useState(getShoppingRegion);
 
-  // Sync: CustomEvent vom selben Tab (AuthContext nach me()-Call)
+  // Sync: CustomEvent vom selben Tab (AuthContext nach me()-Call beim Start)
+  // Wir lesen localStorage als Source of Truth – wenn der User gerade manuell
+  // die Sprache gewechselt hat, steht der neue Wert schon im localStorage
+  // und wir ignorieren veraltete Profil-Events.
   useEffect(() => {
     const onBcLanguage = (e) => {
       const lang = e.detail?.language;
-      if (lang && lang !== language) setLanguage(lang);
+      if (!lang) return;
+      // localStorage ist Source of Truth für manuell gesetzte Sprache
+      const lsLang = readLanguage();
+      if (lang !== lsLang) return; // localStorage hat neueren Wert → ignorieren
+      setLanguage(lang);
     };
     window.addEventListener('bc:language', onBcLanguage);
     return () => window.removeEventListener('bc:language', onBcLanguage);
-  }, [language]);
+  }, []);
 
   // Sync: User-Wechsel im selben Tab (AuthContext dispatcht 'bc:user_changed')
   useEffect(() => {
@@ -70,9 +77,10 @@ export const LanguageProvider = ({ children }) => {
   }, []);
 
   // Sync: storage-Event aus anderen Tabs (echte storage-Events: appLanguage, bc_auth_v2)
+  // WICHTIG: window 'storage' feuert NUR in anderen Tabs (nie im selben Tab) – daher sicher.
   useEffect(() => {
     const onStorage = (e) => {
-      if (e.key === 'appLanguage' && e.newValue && e.newValue !== language) {
+      if (e.key === 'appLanguage' && e.newValue) {
         setLanguage(e.newValue);
       }
       // Logout in anderem Tab → zurück zu Deutsch, Preferences leeren
@@ -84,7 +92,7 @@ export const LanguageProvider = ({ children }) => {
     };
     window.addEventListener('storage', onStorage);
     return () => window.removeEventListener('storage', onStorage);
-  }, [language]);
+  }, []);
 
   // Sync: CustomEvents aus demselben Tab (shoppingRegion.js dispatcht CustomEvents)
   useEffect(() => {
@@ -99,10 +107,12 @@ export const LanguageProvider = ({ children }) => {
   }, []);
 
   const changeLanguage = useCallback((newLanguage) => {
-    // Sofort synchron setzen – kein await, kein async State-Seiteneffekt
+    // 1. Sofort lokal setzen
     setLanguage(newLanguage);
+    // 2. localStorage zuerst setzen – muss VOR updateMe sein, damit der bc:language-Handler
+    //    (der localStorage liest) den neuen Wert sieht und nicht zurückspringt
     try { localStorage.setItem('appLanguage', newLanguage); } catch {}
-    // Profil still im Hintergrund speichern – Fehler ignorieren, keine Navigation
+    // 3. User-Profil still im Hintergrund speichern – kein await, kein Fehler-Propagation
     base44.auth.updateMe({ language: newLanguage }).catch(() => {});
   }, []);
 

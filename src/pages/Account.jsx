@@ -56,7 +56,7 @@ function AccountContent() {
       setSavedBooks(books);
       setReadingLogs(logs);
     } catch {
-      base44.auth.redirectToLogin();
+      // Kein redirect – Nutzer bleibt auf /Account; Auth-Fehler werden still ignoriert
     } finally {
       setLoading(false);
     }
