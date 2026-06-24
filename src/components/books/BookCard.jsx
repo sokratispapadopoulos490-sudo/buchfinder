@@ -325,7 +325,8 @@ export default function BookCard({ book, reasons, index, isContrast, isAuthentic
                   <span>{tLib('lib.owned.cta', language)}</span>
                 </div>
                 <button
-                  onClick={() => setShowBuyOptions(!showBuyOptions)}
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); setShowBuyOptions(prev => !prev); }}
                   className="w-full text-xs text-stone-400 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-300 underline underline-offset-2 text-center transition-colors"
                 >
                   {tLib('lib.owned.altEdition', language)}
@@ -344,7 +345,8 @@ export default function BookCard({ book, reasons, index, isContrast, isAuthentic
               <>
                 <div className="flex gap-3">
                   <Button
-                    onClick={handleSaveBook}
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); handleSaveBook(); }}
                     disabled={saving}
                     variant={isSaved ? "default" : "outline"}
                     className={cn(
@@ -366,7 +368,8 @@ export default function BookCard({ book, reasons, index, isContrast, isAuthentic
                   </Button>
 
                   <Button
-                    onClick={() => setShowBuyOptions(!showBuyOptions)}
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); setShowBuyOptions(prev => !prev); }}
                     className="flex-1 gap-2 bg-stone-800 hover:bg-stone-700 dark:bg-amber-600 dark:hover:bg-amber-700 dark:text-white"
                   >
                     <ShoppingCart className="w-4 h-4" />

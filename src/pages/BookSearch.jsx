@@ -466,7 +466,7 @@ function BookSearchContent() {
   };
 
   return (
-    <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] pb-24 relative">
+    <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] pb-32 relative">
       <AnimatePresence mode="wait">
         {/* Start Phase */}
         {phase === 'start' && (
@@ -806,7 +806,7 @@ function BookSearchContent() {
                           const labels = [t('booksearch.rank1'), t('booksearch.rank2'), t('booksearch.rank3')];
                           const richReason = generateRichReason(book, profile, book._matchScore || 0, language, ownedBookTitles, t);
                           return (
-                            <div key={book.id || book.isbn13 || idx}>
+                            <div key={book.id || book.isbn13 || idx} className="relative isolate">
                               <div className="flex items-center gap-2 mb-1.5">
                                 <span className={`text-[11px] font-semibold uppercase tracking-widest ${idx === 0 ? 'text-amber-600' : 'text-stone-400 dark:text-stone-500'}`}>
                                   {labels[idx]}
@@ -833,7 +833,7 @@ function BookSearchContent() {
                           {rest7.map((book, idx) => {
                             const richReason = generateRichReason(book, profile, book._matchScore || 0, language, ownedBookTitles, t);
                             return (
-                              <div key={book.id || book.isbn13 || `r-${idx}`}>
+                              <div key={book.id || book.isbn13 || `r-${idx}`} className="relative isolate">
                                 <BookCard book={book} reasons={richReason} index={Math.min(3 + idx, 5)} isContrast={false} isAuthenticated={isAuthenticated} analysisBookLanguage={profile?.bookLanguage} />
                                 <RecommendationMeta reasons={richReason} />
                               </div>
@@ -859,7 +859,7 @@ function BookSearchContent() {
                           {horizonBooks.map((book, idx) => {
                             const richReason = generateRichReason(book, profile, book._matchScore || 0, language, ownedBookTitles, t);
                             return (
-                              <div key={book.id || book.isbn13 || `h-${idx}`}>
+                              <div key={book.id || book.isbn13 || `h-${idx}`} className="relative isolate">
                                 <BookCard book={book} reasons={richReason} index={Math.min(5 + idx, 7)} isContrast={true} isAuthenticated={isAuthenticated} analysisBookLanguage={profile?.bookLanguage} />
                                 <RecommendationMeta reasons={richReason} />
                               </div>
