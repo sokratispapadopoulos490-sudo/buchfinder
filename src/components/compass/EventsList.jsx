@@ -31,9 +31,14 @@ export default function EventsList() {
   const [loading, setLoading] = useState(true);
 
   const loadEvents = async () => {
-    const data = await base44.entities.ReadingEvent.filter({ is_done: false }, 'date');
-    setEvents(data);
-    setLoading(false);
+    try {
+      const data = await base44.entities.ReadingEvent.filter({ is_done: false }, 'date');
+      setEvents(data);
+    } catch (e) {
+      // Network error – keep empty list, don't crash
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { loadEvents(); }, []);
