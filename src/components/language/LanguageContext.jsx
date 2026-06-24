@@ -11,7 +11,6 @@
  */
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { base44 } from '@/api/base44Client';
 import { t as _t } from '@/lib/i18n';
 import {
   getBookLanguage, setBookLanguage,
@@ -107,13 +106,14 @@ export const LanguageProvider = ({ children }) => {
   }, []);
 
   const changeLanguage = useCallback((newLanguage) => {
-    // 1. Sofort lokal setzen
+    // 1. React-State sofort setzen
     setLanguage(newLanguage);
-    // 2. localStorage zuerst setzen – muss VOR updateMe sein, damit der bc:language-Handler
-    //    (der localStorage liest) den neuen Wert sieht und nicht zurückspringt
+    // 2. localStorage setzen – Source of Truth für alle Tabs und Reloads
     try { localStorage.setItem('appLanguage', newLanguage); } catch {}
-    // 3. User-Profil still im Hintergrund speichern – kein await, kein Fehler-Propagation
-    base44.auth.updateMe({ language: newLanguage }).catch(() => {});
+    // KEIN updateMe() hier – updateMe triggert intern einen SDK-Auth-Refresh,
+    // der dispatchLanguageChange(old_language) auslöst und die Sprache zurücksetzt.
+    // Die Sprache wird beim nächsten Profil-Save (Onboarding, ProfileEdit) automatisch
+    // mit persistiert, da alle Save-Calls den localStorage-Wert lesen.
   }, []);
 
   const changeBookLanguage = useCallback((lang) => {
@@ -123,12 +123,8 @@ export const LanguageProvider = ({ children }) => {
 
   const changeShoppingRegion = useCallback((region) => {
     setShoppingRegionState(region);
-    setShoppingRegion(region); // explicit=true by default (Nutzerklick)
-    try {
-      base44.auth.isAuthenticated().then(isAuth => {
-        if (isAuth) base44.auth.updateMe({ shopping_region: region, shopping_region_explicit: true }).catch(() => {});
-      });
-    } catch {}
+    setShoppingRegion(region); // speichert in localStorage, explicit=true
+    // Kein updateMe() aus demselben Grund wie changeLanguage
   }, []);
 
   // t(key, fallback?) – synchron, kein async, kein LLM
