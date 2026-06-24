@@ -554,21 +554,21 @@ function BookSearchContent() {
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* CTA im normalen Dokumentfluss – nicht fixed */}
-            <div className="flex flex-col items-center gap-3 w-full max-w-sm mx-auto px-6 mt-5"
-              style={{ paddingBottom: 'calc(2rem + env(safe-area-inset-bottom, 0px))' }}
-            >
-              <button
-                type="button"
-                onClick={handleStart}
-                className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white text-base font-medium rounded-xl shadow-sm transition-colors cursor-pointer select-none touch-manipulation"
+              {/* Primärer CTA – direkt im Content-Flow, nach dem Bibliotheksblock */}
+              <div className="w-full max-w-sm mt-5 flex flex-col items-center gap-3"
+                style={{ paddingBottom: 'calc(2rem + env(safe-area-inset-bottom, 0px))' }}
               >
-                {t('btn.startSearch')}
-                <ArrowRight className="w-5 h-5" />
-              </button>
-              <p className="text-xs text-stone-400 dark:text-stone-500">{t('booksearch.betaLabel')}</p>
+                <button
+                  type="button"
+                  onClick={handleStart}
+                  className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white text-base font-medium rounded-xl shadow-sm transition-colors cursor-pointer select-none touch-manipulation"
+                >
+                  {t('btn.startSearch')}
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+                <p className="text-xs text-stone-400 dark:text-stone-500">{t('booksearch.betaLabel')}</p>
+              </div>
             </div>
           </motion.div>
         )}
