@@ -515,8 +515,21 @@ function BookSearchContent() {
                 </div>
               </motion.div>
 
-              {/* Library capture section – direkt nach Benefits, innerhalb des scrollbaren Containers */}
-              <div className="w-full max-w-sm">
+              {/* Primärer CTA – direkt unter den Benefits, weit weg von der BottomNav */}
+              <div className="w-full max-w-sm flex flex-col items-center gap-3 mb-4">
+                <button
+                  type="button"
+                  onClick={handleStart}
+                  className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white text-base font-medium rounded-xl shadow-sm transition-colors cursor-pointer select-none touch-manipulation"
+                >
+                  {t('btn.startSearch')}
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+                <p className="text-xs text-stone-400 dark:text-stone-500">{t('booksearch.betaLabel')}</p>
+              </div>
+
+              {/* Library capture section – optional, darunter */}
+              <div className="w-full max-w-sm mb-8">
                 <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/50 rounded-2xl p-4">
                   <div className="flex items-center gap-2 mb-1">
                     <BookOpen className="w-4 h-4 text-amber-600 flex-shrink-0" />
@@ -553,21 +566,6 @@ function BookSearchContent() {
                     </button>
                   </div>
                 </div>
-              </div>
-
-              {/* Primärer CTA – direkt im Content-Flow, nach dem Bibliotheksblock */}
-              <div className="w-full max-w-sm mt-5 flex flex-col items-center gap-3"
-                style={{ paddingBottom: 'calc(2rem + env(safe-area-inset-bottom, 0px))' }}
-              >
-                <button
-                  type="button"
-                  onClick={handleStart}
-                  className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-white text-base font-medium rounded-xl shadow-sm transition-colors cursor-pointer select-none touch-manipulation"
-                >
-                  {t('btn.startSearch')}
-                  <ArrowRight className="w-5 h-5" />
-                </button>
-                <p className="text-xs text-stone-400 dark:text-stone-500">{t('booksearch.betaLabel')}</p>
               </div>
             </div>
           </motion.div>
