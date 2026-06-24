@@ -243,7 +243,7 @@ function AccountContent() {
         </Collapsible>
 
         {/* Collapsible: Einstellungen */}
-        <Collapsible open={settingsOpen} onOpenChange={setSettingsOpen} className="mb-6">
+        <Collapsible open={settingsOpen} onOpenChange={setSettingsOpen} className="mb-6 overflow-visible">
           <CollapsibleTrigger className="w-full flex items-center justify-between p-4 bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 hover:border-amber-300 transition-colors shadow-sm">
             <div className="flex items-center gap-3">
               <Globe className="w-5 h-5 text-amber-600" />
@@ -263,12 +263,12 @@ function AccountContent() {
                     <div className="text-xs text-stone-500">{t('account.appLanguageSub')}</div>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="flex flex-wrap gap-2">
                   {UI_LANGUAGES.map((lang) => (
                     <button
                       key={lang.code}
                       onClick={() => changeLanguage(lang.code)}
-                      className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium border-2 transition-all text-left ${
+                      className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium border-2 transition-all ${
                         language === lang.code
                           ? 'border-amber-500 bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300'
                           : 'border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:border-stone-300 dark:hover:border-stone-600'
