@@ -14,8 +14,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Compass, Users, User, Search } from 'lucide-react';
 import { useLanguage } from '@/components/language/LanguageContext';
 
-const PAGES_WITHOUT_NAV = ['onboarding', 'legal'];
-const PAGES_WITHOUT_NAV_FIRST_RUN = ['booksearch'];
+const PAGES_WITHOUT_NAV = ['onboarding', 'legal', 'booksearch'];
+const PAGES_WITHOUT_NAV_FIRST_RUN = []; // booksearch jetzt immer ohne Nav
 
 const NAV_PATHS = [
   { icon: Users,   key: 'nav.community', path: '/Community' },

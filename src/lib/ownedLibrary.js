@@ -100,6 +100,14 @@ export function isBookOwned(book, ownedSet) {
 let _cachedIndex = null;
 let _cachePromise = null;
 
+// Cache bei User-Wechsel/Logout automatisch invalidieren
+if (typeof window !== 'undefined') {
+  window.addEventListener('bc:user_changed', () => {
+    _cachedIndex = null;
+    _cachePromise = null;
+  });
+}
+
 export function useOwnedLibrary() {
   const [ownedSet, setOwnedSet] = useState(_cachedIndex);
   const [hasOwned, setHasOwned] = useState(_cachedIndex ? _cachedIndex.size > 0 : false);
