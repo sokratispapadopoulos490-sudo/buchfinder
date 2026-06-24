@@ -27,13 +27,13 @@ export function scoreBook(book, profile, ownedBookTitles = []) {
     if (bookTags.includes(t)) score += 5;
   });
 
-  // 2. Buchsprache (max 20)
+  // 2. Buchsprache — strikte Priorität, konsistent mit bookService.js
   if (!profile.bookLanguage || profile.bookLanguage === 'any') {
     score += 10; // kein Filter → neutral
   } else if (bookLang === profile.bookLanguage) {
-    score += 20;
+    score += 40; // starker Bonus: richtige Sprache immer vor falscher
   } else {
-    score -= 15; // falsche Sprache hart bestrafen
+    score -= 40; // harte Strafe: falsche Sprache nie in Top 3 wenn korrekte Treffer da
   }
 
   // 3. Stil (max 15)

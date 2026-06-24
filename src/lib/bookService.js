@@ -10,6 +10,7 @@
 import { base44 } from '@/api/base44Client';
 import { books as localBooks } from '@/components/books/BookDatabase';
 import { getProviderLinks } from '@/lib/providerRegistry';
+import { buildLocalizedQueries } from '@/lib/bookQueryBuilder';
 
 // ─── Normalisierung ────────────────────────────────────────────────────────────
 export function normalizeLocalBook(localBook) {
@@ -415,48 +416,60 @@ export async function getMatchingBooksFromDB(profile) {
 
   if (!pool) pool = [];
 
-  // Google Books fallback: when local/DB pool is too small for the requested language
-  if (bookLanguage && bookLanguage !== 'any' && pool.length < 5) {
-    const topicMap = {
-      persoenliche_entwicklung: 'personal development',
-      fokus_produktivitaet: 'productivity',
-      business_finanzen: 'business',
-      lernen_wissen: 'learning',
-      gesellschaft: 'society',
-      selbstfindung: 'self discovery',
-      abenteuer: 'adventure',
-      humor: 'humor',
-      romance: 'romance',
-      fantasy_scifi: 'fantasy',
-      geschichte: 'history',
-    };
-    const searchTerm = (mainTopics || []).map(t => topicMap[t] || t).join(' ') || 'popular books';
-    try {
-      const gbResult = await searchGoogleBooks(searchTerm, {
-        maxResults: 40,
-        langRestrict: bookLanguage,
-      });
-      const gbAll = (gbResult.items || []).filter(b => b.title && b.title !== 'Unbekannter Titel');
+  // Google Books mehrstufige Suche: lokalisierte Queries zuerst, dann Fallbacks
+  if (bookLanguage && bookLanguage !== 'any' && pool.length < 8) {
+    const dedup = (books) => books.filter(gb =>
+      !pool.some(pb => pb.isbn13 && pb.isbn13 === gb.isbn13 && pb.isbn13)
+    );
 
-      // Split: correct language first, wrong language only as last-resort supplements
-      const gbCorrect = gbAll.filter(b => normalizeLanguageCode(b.language) === bookLanguage);
-      const gbOther   = gbAll.filter(b => normalizeLanguageCode(b.language) !== bookLanguage)
-                             .map(b => ({ ...b, _langMismatch: true }));
-
-      const dedup = (books) => books.filter(gb =>
-        !pool.some(pb => pb.isbn13 && pb.isbn13 === gb.isbn13)
-      );
-
-      if (gbCorrect.length > 0) {
+    // Stufe 1: Lokalisierte Queries mit langRestrict — mehrere Begriffe nacheinander
+    const localizedQueries = buildLocalizedQueries(mainTopics, bookLanguage);
+    for (const query of localizedQueries) {
+      if (pool.filter(b => normalizeLanguageCode(b.language) === bookLanguage).length >= 8) break;
+      try {
+        const gbResult = await searchGoogleBooks(query, {
+          maxResults: 20,
+          langRestrict: bookLanguage,
+        });
+        const gbCorrect = (gbResult.items || [])
+          .filter(b => b.title && b.title !== 'Unbekannter Titel')
+          .filter(b => normalizeLanguageCode(b.language) === bookLanguage);
         pool = [...pool, ...dedup(gbCorrect)];
+      } catch { /* weiter */ }
+    }
+
+    // Stufe 2: Englische Fallback-Queries mit langRestrict (für Sprachen mit wenig lokalen Inhalten)
+    if (pool.filter(b => normalizeLanguageCode(b.language) === bookLanguage).length < 5) {
+      const enQueries = buildLocalizedQueries(mainTopics, 'en');
+      for (const query of enQueries.slice(0, 2)) {
+        try {
+          const gbResult = await searchGoogleBooks(query, {
+            maxResults: 20,
+            langRestrict: bookLanguage,
+          });
+          const gbCorrect = (gbResult.items || [])
+            .filter(b => b.title && b.title !== 'Unbekannter Titel')
+            .filter(b => normalizeLanguageCode(b.language) === bookLanguage);
+          pool = [...pool, ...dedup(gbCorrect)];
+        } catch { /* weiter */ }
+        if (pool.filter(b => normalizeLanguageCode(b.language) === bookLanguage).length >= 5) break;
       }
-      // Only add wrong-language books if we still have fewer than 5 results
-      if (pool.length < 5 && gbOther.length > 0) {
-        languageFallbackUsed = true;
-        pool = [...pool, ...dedup(gbOther).slice(0, 10)];
-      }
-    } catch {
-      // Google Books unavailable — continue with what we have
+    }
+
+    // Stufe 3: Nur wenn immer noch < 3 korrekte Sprach-Treffer → fremdsprachige als markierte Fallbacks
+    const correctLangCount = pool.filter(b => normalizeLanguageCode(b.language) === bookLanguage).length;
+    if (correctLangCount < 3) {
+      languageFallbackUsed = true;
+      // Fremdsprachige Treffer (bevorzugt EN/DE als bekannteste Übersetzungssprachen) hinzufügen
+      const fallbackQuery = buildLocalizedQueries(mainTopics, 'en')[0] || 'popular books';
+      try {
+        const gbFallback = await searchGoogleBooks(fallbackQuery, { maxResults: 20 });
+        const gbOther = (gbFallback.items || [])
+          .filter(b => b.title && b.title !== 'Unbekannter Titel')
+          .filter(b => normalizeLanguageCode(b.language) !== bookLanguage)
+          .map(b => ({ ...b, _langMismatch: true }));
+        pool = [...pool, ...dedup(gbOther).slice(0, 8)];
+      } catch { /* weiter */ }
     }
   }
 
@@ -489,30 +502,46 @@ export async function getMatchingBooksFromDB(profile) {
     if (book.difficulty === difficulty) score += 4;
     if ((difficulty === 'fortgeschritten' && book.difficulty === 'einsteiger') ||
         (difficulty === 'einsteiger' && book.difficulty === 'fortgeschritten')) score -= 2;
-    // Hard language bonus/penalty so wrong-language books never float to top
+    // Strikte Sprachpriorität: richtige Sprache immer vor falscher
     if (bookLanguage && bookLanguage !== 'any') {
       const bookLang = normalizeLanguageCode(book.language);
-      if (bookLang === bookLanguage) score += 20;
-      else score -= 30;
+      if (bookLang === bookLanguage) score += 50; // starker Bonus
+      else score -= 50; // harte Strafe — falsche Sprache landet nie in Top 3 wenn korrekte Treffer da
     }
     return { ...book, score };
   }).sort((a, b) => b.score - a.score);
 
-  const topBooks = scored.slice(0, 10).map((b, i) => ({ ...b, placement: i + 1, isContrast: false }));
+  // Korrekte und falsch-sprachige Bücher trennen
+  const correctLang = scored.filter(b =>
+    !bookLanguage || bookLanguage === 'any' || normalizeLanguageCode(b.language) === bookLanguage
+  );
+  const wrongLang = scored.filter(b =>
+    bookLanguage && bookLanguage !== 'any' && normalizeLanguageCode(b.language) !== bookLanguage
+  ).map(b => ({ ...b, isContrast: true })); // falsche Sprache → immer als Kontrast markieren
+
+  // Top 10: korrekte Sprache zuerst, dann erst Fallbacks auffüllen wenn nötig
+  const topCorrect = correctLang.slice(0, 10);
+  const topBooks = topCorrect.map((b, i) => ({ ...b, placement: i + 1, isContrast: false }));
+
+  // Kontrast-Bücher: thematisch anders ODER falsche Sprache
   const topIds = new Set(topBooks.map(b => b.id || b.isbn13));
-  const remaining = scored.filter(b => !topIds.has(b.id || b.isbn13));
-  const contrastBooks = remaining
+  const remainingCorrect = correctLang.filter(b => !topIds.has(b.id || b.isbn13));
+  const thematicContrast = remainingCorrect
     .filter(b => !mainTopics.some(t => (b.tags || b.categories || []).includes(t)))
     .slice(0, 3)
     .map((b, i) => ({ ...b, placement: 11 + i, isContrast: true }));
 
-  if (contrastBooks.length < 3) {
+  // Wenn zu wenig korrekte Kontrast-Bücher: mit falscher-Sprache-Büchern auffüllen (klar markiert)
+  const contrastBooks = [...thematicContrast];
+  if (contrastBooks.length < 3 && wrongLang.length > 0) {
     const cIds = new Set(contrastBooks.map(b => b.id || b.isbn13));
-    const filler = remaining.filter(b => !cIds.has(b.id || b.isbn13))
+    const langFiller = wrongLang
+      .filter(b => !cIds.has(b.id || b.isbn13) && !topIds.has(b.id || b.isbn13))
       .slice(0, 3 - contrastBooks.length)
       .map((b, i) => ({ ...b, placement: 11 + contrastBooks.length + i, isContrast: true }));
-    contrastBooks.push(...filler);
+    contrastBooks.push(...langFiller);
   }
+
   const result = [...topBooks, ...contrastBooks];
   result._meta = { languageFallbackUsed, bookLanguage, count: result.length };
   return result;
