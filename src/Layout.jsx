@@ -29,7 +29,7 @@ import { LanguageProvider } from '@/components/language/LanguageContext';
   } catch {}
 })();
 
-const PAGES_WITHOUT_NAV = ['onboarding', 'legal', 'booksearch'];
+const PAGES_WITHOUT_NAV = ['onboarding', 'legal'];
 
 // Routen, die KEIN onboarding_completed benötigen
 const ONBOARDING_FREE_ROUTES = ['onboarding', 'booksearch', 'bookdiscover', 'legal'];

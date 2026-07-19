@@ -71,8 +71,8 @@ export default function Onboarding() {
         onboarding_completed: true
       });
 
-      // Nach Onboarding direkt zur Bedarfsanalyse (BookSearch)
-      navigate('/BookSearch');
+      // Nach Onboarding in den normalen App-Bereich, nicht automatisch in die Bedarfsanalyse
+      navigate('/Compass');
     } catch (error) {
       console.error('Error completing onboarding:', error);
     } finally {
