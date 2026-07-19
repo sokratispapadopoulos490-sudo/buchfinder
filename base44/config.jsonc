@@ -1,5 +1,6 @@
 {
-  "name": "Buchfinder",
+  "name": "Book Compass",
+  "description": "Kostenloser Buch-Kompass für persönliche Empfehlungen, Lesepfade und die eigene Bibliothek.",
   "site": {
     "installCommand": "npm install",
     "buildCommand": "npm run build",
