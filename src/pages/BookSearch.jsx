@@ -214,6 +214,9 @@ function BookSearchContent() {
   const [loading, setLoading] = useState(false);
   const [showLibraryCapture, setShowLibraryCapture] = useState(false);
   const [libraryCaptureConfig, setLibraryCaptureConfig] = useState({ scan: false });
+  const [libraryPromptDismissed, setLibraryPromptDismissed] = useState(
+    () => localStorage.getItem('bc_library_prompt_dismissed') === 'true'
+  );
   const [ownedBookTitles, setOwnedBookTitles] = useState([]);
   const [readingPath, setReadingPath] = useState(null);
   const [languageFallbackUsed, setLanguageFallbackUsed] = useState(false);
@@ -529,44 +532,49 @@ function BookSearchContent() {
               </div>
 
               {/* Library capture section – optional, darunter */}
-              <div className="w-full max-w-sm mb-8">
-                <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/50 rounded-2xl p-4">
-                  <div className="flex items-center gap-2 mb-1">
-                    <BookOpen className="w-4 h-4 text-amber-600 flex-shrink-0" />
-                    <h3 className="text-sm font-semibold text-amber-800 dark:text-amber-300">
-                      {tLib('lib.booksearch.libraryTitle', 'Hast du Bücher zuhause?')}
-                    </h3>
-                  </div>
-                  <p className="text-xs text-amber-700 dark:text-amber-400 mb-3 ml-6">
-                    {tLib('lib.booksearch.librarySubtitle', 'Du kannst dein Regal jetzt erfassen oder später nachholen.')}
-                  </p>
-                  <div className="flex flex-wrap gap-2 ml-6">
-                    <button
-                      type="button"
-                      onClick={() => { setLibraryCaptureConfig({ scan: true }); setShowLibraryCapture(true); }}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-medium rounded-lg transition-colors"
-                    >
-                      <ScanLine className="w-3.5 h-3.5" />
-                      {tLib('lib.booksearch.scanBtn', 'Bücher scannen')}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => { setLibraryCaptureConfig({ scan: false }); setShowLibraryCapture(true); }}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-stone-800 border border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-300 text-xs font-medium rounded-lg transition-colors hover:bg-amber-50"
-                    >
-                      <Search className="w-3.5 h-3.5" />
-                      {tLib('lib.booksearch.enterBtn', 'Titel eingeben')}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleStart}
-                      className="px-3 py-1.5 text-amber-600 dark:text-amber-400 text-xs font-medium hover:underline"
-                    >
-                      {tLib('lib.booksearch.skipBtn', 'Später machen')}
-                    </button>
+              {!libraryPromptDismissed && (
+                <div className="w-full max-w-sm mb-8">
+                  <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/50 rounded-2xl p-4">
+                    <div className="flex items-center gap-2 mb-1">
+                      <BookOpen className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                      <h3 className="text-sm font-semibold text-amber-800 dark:text-amber-300">
+                        {tLib('lib.booksearch.libraryTitle', 'Hast du Bücher zuhause?')}
+                      </h3>
+                    </div>
+                    <p className="text-xs text-amber-700 dark:text-amber-400 mb-3 ml-6">
+                      {tLib('lib.booksearch.librarySubtitle', 'Du kannst dein Regal jetzt erfassen oder später nachholen.')}
+                    </p>
+                    <div className="flex flex-wrap gap-2 ml-6">
+                      <button
+                        type="button"
+                        onClick={() => { setLibraryCaptureConfig({ scan: true }); setShowLibraryCapture(true); }}
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-medium rounded-lg transition-colors"
+                      >
+                        <ScanLine className="w-3.5 h-3.5" />
+                        {tLib('lib.booksearch.scanBtn', 'Bücher scannen')}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => { setLibraryCaptureConfig({ scan: false }); setShowLibraryCapture(true); }}
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-stone-800 border border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-300 text-xs font-medium rounded-lg transition-colors hover:bg-amber-50"
+                      >
+                        <Search className="w-3.5 h-3.5" />
+                        {tLib('lib.booksearch.enterBtn', 'Titel eingeben')}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          localStorage.setItem('bc_library_prompt_dismissed', 'true');
+                          setLibraryPromptDismissed(true);
+                        }}
+                        className="px-3 py-1.5 text-amber-600 dark:text-amber-400 text-xs font-medium hover:underline"
+                      >
+                        {tLib('lib.booksearch.skipBtn', 'Später machen')}
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           </motion.div>
         )}
