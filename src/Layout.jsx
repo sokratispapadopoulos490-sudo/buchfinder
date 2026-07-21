@@ -6,7 +6,7 @@
  * - Kein sessionStorage-Init-Flag mehr (layout_init entfernt)
  * - Kein Vollbild-Spinner (isLoadingAuth/isLoadingPublicSettings sind immer false)
  * - Einmalige Navigation: Home → Compass wenn eingeloggt, → Onboarding wenn nicht
- * - Onboarding-Enforcement: Nutzer ohne onboarding_completed → /Onboarding
+ * - Kein erzwungenes Onboarding-Gate mehr: onboarding_completed blockiert keine Navigation
  * - ConsentModal für Nutzer ohne AGB-Akzeptanz
  * - BottomNav via createPortal – immer gemountet, nur per CSS sichtbar/versteckt
  * - Dark Mode wird in AuthContext gesetzt, hier nur beim Start aus localStorage gelesen
@@ -31,9 +31,6 @@ import { LanguageProvider } from '@/components/language/LanguageContext';
 
 const PAGES_WITHOUT_NAV = ['onboarding', 'legal'];
 
-// Routen, die KEIN onboarding_completed benötigen
-const ONBOARDING_FREE_ROUTES = ['onboarding', 'booksearch', 'bookdiscover', 'legal'];
-
 export default function Layout({ children, currentPageName }) {
   const { isAuthenticated, user } = useAuth();
   const [showConsent, setShowConsent] = useState(false);
@@ -56,17 +53,6 @@ export default function Layout({ children, currentPageName }) {
     })();
     navigate(cachedAuth ? '/Compass' : '/Onboarding', { replace: true });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Onboarding-Enforcement: reagiert auf User-Änderungen aus AuthContext
-  useEffect(() => {
-    if (!user) return;
-    if (user.onboarding_completed) return;
-    const path = locationRef.current.pathname.toLowerCase();
-    const isAllowed = ONBOARDING_FREE_ROUTES.some(r => path.includes(r));
-    if (!isAllowed) {
-      navigate('/Onboarding', { replace: true });
-    }
-  }, [user, navigate]);
 
   // Consent-Check: reagiert auf User-Änderungen
   useEffect(() => {
