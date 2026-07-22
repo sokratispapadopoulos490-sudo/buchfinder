@@ -44,10 +44,70 @@
         "type": "string"
       },
       "description": "IDs der Ordner, in denen das Buch abgelegt ist"
+    },
+    "ownership_status": {
+      "type": "string",
+      "enum": [
+        "owned",
+        "wishlist",
+        "read",
+        "currently_reading",
+        "abandoned"
+      ],
+      "description": "Besitzstatus des Buches (optional, f\u00fcr physische Bibliothek)"
+    },
+    "acquisition_source": {
+      "type": "string",
+      "enum": [
+        "scanned",
+        "manual",
+        "search",
+        "recommendation"
+      ],
+      "description": "Wie das Buch erfasst wurde"
+    },
+    "physical_copy": {
+      "type": "boolean",
+      "description": "Ob ein physisches Exemplar vorhanden ist"
+    },
+    "edition_language": {
+      "type": "string",
+      "description": "Sprache der physischen Ausgabe (de/en/el/tr/fr/es/it/unknown)"
+    },
+    "condition": {
+      "type": "string",
+      "enum": [
+        "new",
+        "good",
+        "used",
+        "damaged",
+        "unknown"
+      ],
+      "description": "Zustand des physischen Exemplars (optional)"
+    },
+    "location": {
+      "type": "string",
+      "description": "Standort des Buches (Regal, Zimmer usw.) \u2013 optional freier Text"
+    },
+    "user_notes": {
+      "type": "string",
+      "description": "Pers\u00f6nliche Notizen zur physischen Ausgabe (getrennt von recommendation notes)"
     }
   },
   "required": [
     "book_id",
     "book_data"
-  ]
+  ],
+  "rls": {
+    "create": true,
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "update": {
+      "created_by": "{{user.email}}"
+    },
+    "delete": {
+      "created_by": "{{user.email}}"
+    }
+  }
 }

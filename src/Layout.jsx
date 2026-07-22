@@ -4,8 +4,9 @@
  * Verantwortlichkeiten:
  * - Liest Auth-State NUR aus AuthContext (kein eigener isAuthenticated-State)
  * - Kein sessionStorage-Init-Flag mehr (layout_init entfernt)
- * - Kein Vollbild-Spinner (isLoadingAuth/isLoadingPublicSettings sind immer false)
- * - Einmalige Navigation: Home → Compass wenn eingeloggt, → Onboarding wenn nicht
+ * - Login-Gate: Nicht eingeloggte Nutzer (authChecked && !isAuthenticated) werden IMMER
+ *   zum Plattform-Login geschickt – nie zur internen Nickname-/Onboarding-Seite
+ * - Einmalige Navigation: Home → Compass wenn eingeloggt
  * - Kein erzwungenes Onboarding-Gate mehr: onboarding_completed blockiert keine Navigation
  * - ConsentModal für Nutzer ohne AGB-Akzeptanz
  * - BottomNav via createPortal – immer gemountet, nur per CSS sichtbar/versteckt
@@ -32,27 +33,31 @@ import { LanguageProvider } from '@/components/language/LanguageContext';
 const PAGES_WITHOUT_NAV = ['onboarding', 'legal'];
 
 export default function Layout({ children, currentPageName }) {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, authChecked, user, navigateToLogin } = useAuth();
   const [showConsent, setShowConsent] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const locationRef = useRef(location);
   locationRef.current = location;
 
-  // Einmalige initiale Navigation (nur beim allerersten Render auf '/')
+  // Login-Gate: sobald der Auth-Status feststeht und der Nutzer NICHT eingeloggt ist,
+  // sofort zum Plattform-Login schicken (App verlangt Anmeldung).
+  useEffect(() => {
+    if (authChecked && !isAuthenticated) {
+      navigateToLogin();
+    }
+  }, [authChecked, isAuthenticated, navigateToLogin]);
+
+  // Einmalige initiale Navigation (nur beim allerersten Render auf '/', nur wenn eingeloggt)
   const didInitRef = useRef(false);
   useEffect(() => {
     if (didInitRef.current) return;
+    if (!isAuthenticated) return;
     didInitRef.current = true;
 
     if (locationRef.current.pathname !== '/') return;
-
-    // Optimistisch aus Cache navigieren – Auth-Validierung läuft in AuthContext
-    const cachedAuth = (() => {
-      try { return JSON.parse(localStorage.getItem('bc_auth_v2') || 'null')?.isAuthenticated; } catch { return false; }
-    })();
-    navigate(cachedAuth ? '/Compass' : '/Onboarding', { replace: true });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    navigate('/Compass', { replace: true });
+  }, [isAuthenticated]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Consent-Check: reagiert auf User-Änderungen
   useEffect(() => {
@@ -66,6 +71,17 @@ export default function Layout({ children, currentPageName }) {
 
   const pageLower = (currentPageName || '').toLowerCase();
   const showNavigation = isAuthenticated && !PAGES_WITHOUT_NAV.some(p => pageLower.includes(p));
+
+  // Solange der Auth-Status nicht geklärt ist ODER der Nutzer nicht eingeloggt ist,
+  // niemals App-Inhalte (inkl. Onboarding/Nickname) rendern – nur ein leichter Platzhalter,
+  // während der Redirect zum Login läuft.
+  if (!authChecked || !isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-stone-50 dark:bg-[#0a0a0a]">
+        <div className="w-8 h-8 border-4 border-stone-200 border-t-amber-600 rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <LanguageProvider>

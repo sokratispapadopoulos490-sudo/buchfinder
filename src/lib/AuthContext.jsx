@@ -101,6 +101,10 @@ export const AuthProvider = ({ children }) => {
   // Optimistischer Initialzustand – sofortiges Render ohne Flackern
   const [user, setUser] = useState(cache?.user ?? null);
   const [isAuthenticated, setIsAuthenticated] = useState(cache?.isAuthenticated ?? false);
+  // authChecked: true sobald wir eine verlässliche Auskunft haben (Cache vorhanden ODER me() beendet).
+  // Wird von Layout.jsx genutzt, um echte Gäste sicher zum Login zu schicken, ohne eingeloggte
+  // Nutzer beim allerersten Laden (noch leerer Cache) fälschlich rauszuwerfen.
+  const [authChecked, setAuthChecked] = useState(!!cache);
 
   // isLoadingAuth ist IMMER false – kein Vollbild-Spinner durch Auth-Refresh
   const isLoadingAuth = false;
@@ -165,16 +169,20 @@ export const AuthProvider = ({ children }) => {
           setUser(null);
           setIsAuthenticated(false);
           _fetchStarted = false; // Reset damit nach erneutem Login frisch geladen wird
-          const path = window.location.pathname.toLowerCase();
-          if (!path.includes('onboarding') && !path.includes('legal')) {
-            window.location.replace('/Onboarding');
-          }
+          // Kein eigener Redirect mehr hier – Layout.jsx erkennt authChecked+!isAuthenticated
+          // und schickt zuverlässig zum Plattform-Login (statt zu einer internen Seite).
           return;
+        }
+        if (isAuthError && !hadCachedAuth) {
+          // Echter Gast (kein Cache, kein gültiger Login) – Layout.jsx übernimmt den Redirect.
+          setUser(null);
+          setIsAuthenticated(false);
         }
         // Netzwerkfehler → Cache behalten, User bleibt optimistisch eingeloggt
       })
       .finally(() => {
         _fetchStarted = false;
+        setAuthChecked(true);
       });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -194,6 +202,7 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider value={{
       user,
       isAuthenticated,
+      authChecked,
       isLoadingAuth,
       isLoadingPublicSettings,
       authError,

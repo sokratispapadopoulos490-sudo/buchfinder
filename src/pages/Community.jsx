@@ -73,19 +73,24 @@ function CommunityContent() {
     try {
       const currentUser = await base44.auth.me();
       setUser(currentUser);
-      const [postsData, booksData, likesData, allUsers] = await Promise.all([
+      const [postsData, booksData, likesData] = await Promise.all([
         base44.entities.CommunityPost.list('-created_date'),
         base44.entities.SavedBook.list('-created_date', 50),
         base44.entities.CommunityLike.list(),
-        base44.entities.User.list(),
       ]);
       setPosts(postsData);
       setSavedBooks(booksData);
       setUserLikes(likesData);
-      // UserMap für sichere Anzeigenamen (nie E-Mail zeigen)
-      const uMap = {};
-      allUsers.forEach(u => { uMap[u.email] = u; });
-      setUserMap(uMap);
+      // UserMap für sichere Anzeigenamen (nie E-Mail zeigen) – nur best-effort:
+      // nicht-Admin-Nutzer dürfen ggf. nicht alle User auflisten, das ist kein Auth-Fehler.
+      try {
+        const allUsers = await base44.entities.User.list();
+        const uMap = {};
+        allUsers.forEach(u => { uMap[u.email] = u; });
+        setUserMap(uMap);
+      } catch (e) {
+        // Kein Absturz, kein Redirect – Anzeigenamen fallen auf Standardwerte zurück
+      }
     } catch (err) {
       // Nur bei echten Auth-Fehlern weiterleiten, nicht bei Netzwerkfehlern
       const isAuthErr = err?.status === 401 || err?.status === 403 ||
@@ -101,7 +106,12 @@ function CommunityContent() {
     try {
       const myFollowing = await base44.entities.UserFollow.list('-created_date');
       const myFollowers = await base44.entities.UserFollow.filter({ following_email: user.email });
-      const allUsers = await base44.entities.User.list();
+      let allUsers = [];
+      try {
+        allUsers = await base44.entities.User.list();
+      } catch (e) {
+        // Best-effort – ohne Admin-Rechte bleibt die Liste leer, kein Absturz
+      }
       setFollowing(myFollowing.map(f => ({ ...f, user: allUsers.find(u => u.email === f.following_email) })));
       setFollowers(myFollowers.map(f => ({ ...f, user: allUsers.find(u => u.email === f.created_by) })));
       setFollowingLoaded(true);
