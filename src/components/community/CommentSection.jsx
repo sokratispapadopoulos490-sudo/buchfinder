@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { Heart, Sparkles, User, Crown } from 'lucide-react';
+import { Heart, Sparkles, User } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { de, el as elLocale, tr as trLocale, fr, es, it } from 'date-fns/locale';
 import { cn } from "@/lib/utils";
@@ -13,7 +13,6 @@ export default function CommentSection({
   onLikeComment, 
   onAskAI,
   currentUser,
-  isPremium 
 }) {
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(false);
@@ -41,18 +40,16 @@ export default function CommentSection({
 
   return (
     <div className="space-y-4">
-      {/* AI Button für Premium */}
-      {isPremium && (
-        <Button
-          onClick={handleAskAI}
-          disabled={aiLoading}
-          variant="outline"
-          className="w-full gap-2 border-amber-300 hover:bg-amber-50"
-        >
-          <Sparkles className="w-4 h-4 text-amber-600" />
-          {aiLoading ? t('comment.askAILoading') : t('comment.askAI')}
-        </Button>
-      )}
+      {/* Beta-Feature: KI-Antwort, für alle Nutzer verfügbar (mit täglichem Limit) */}
+      <Button
+        onClick={handleAskAI}
+        disabled={aiLoading}
+        variant="outline"
+        className="w-full gap-2 border-amber-300 hover:bg-amber-50"
+      >
+        <Sparkles className="w-4 h-4 text-amber-600" />
+        {aiLoading ? t('comment.askAILoading') : t('comment.askAI')}
+      </Button>
 
       {/* Comment Form */}
       <form onSubmit={handleSubmit} className="flex gap-2">
@@ -77,7 +74,6 @@ export default function CommentSection({
       <div className="space-y-3">
         {comments.map((comment, index) => {
           const isAuthor = currentUser?.email === comment.created_by;
-          const isUserPremium = currentUser?.is_premium || currentUser?.role === 'admin';
 
           return (
             <motion.div
@@ -118,9 +114,6 @@ export default function CommentSection({
                       <span className="px-2 py-0.5 bg-amber-200 text-amber-800 rounded-full text-xs font-medium">
                         {t('comment.aiLabel')}
                       </span>
-                    )}
-                    {!comment.is_ai_response && isUserPremium && (
-                      <Crown className="w-3 h-3 text-amber-600" />
                     )}
                     <span className="text-xs text-stone-500">
                       {formatDistanceToNow(new Date(comment.created_date), { 

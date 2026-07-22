@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { Plus, Users, Crown, Search, Shield, MessageSquare, UserCheck, Mail, ChevronRight, BookOpen } from 'lucide-react';
+import { Plus, Users, Search, Shield, MessageSquare, UserCheck, Mail, ChevronRight, BookOpen } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import PostCard from '@/components/community/PostCard';
@@ -224,7 +224,6 @@ function CommunityContent() {
     await loadData();
   };
 
-  const isPremium = user?.is_premium || user?.role === 'admin';
   const isAdmin = user?.role === 'admin';
 
   const filteredPosts = posts.filter(post => {
@@ -298,22 +297,6 @@ function CommunityContent() {
         {/* Tab: Beiträge */}
         {activeTab === 'posts' && (
           <div>
-            {/* Premium Info */}
-            {!isPremium && (
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-5">
-                <div className="flex items-start gap-3">
-                  <Crown className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm text-amber-800 font-medium mb-1">{t('community.premium.title')}</p>
-                    <p className="text-xs text-amber-700">{t('community.premium.desc')}</p>
-                    <Button onClick={() => navigate('/Premium')} size="sm" className="mt-3 bg-amber-600 hover:bg-amber-700 text-white">
-                      {t('community.premium.upgrade')}
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            )}
-
             <div className="flex justify-end mb-4">
               <Button onClick={() => setShowCreateModal(true)} className="bg-amber-600 hover:bg-amber-700 text-white gap-2">
                 <Plus className="w-4 h-4" /> {t('community.newPost')}
@@ -394,7 +377,6 @@ function CommunityContent() {
                           onLikeComment={() => {}}
                           onAskAI={() => handleAskAI(post)}
                           currentUser={user}
-                          isPremium={isPremium}
                         />
                       </motion.div>
                     )}
