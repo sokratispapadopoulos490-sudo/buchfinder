@@ -15,6 +15,7 @@ import { base44 } from '@/api/base44Client';
 import { useLanguage } from '@/components/language/LanguageContext';
 import { setBookLanguage } from '@/lib/shoppingRegion';
 import { libraryDict } from '@/lib/i18n-library';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 // read_books ist kein normaler Frageschritt – wird separat als Chip-Screen behandelt
 const readBooksStep = { id: 'read_books', isReadBooksInput: true };
@@ -224,6 +225,7 @@ function BookSearchContent() {
   // Always call hooks at top level – no try/catch around hooks (React rules)
   const langCtx = useLanguage();
   const t = langCtx?.t || ((k) => k);
+  useDocumentTitle(t('booksearch.title'));
   const language = langCtx?.language || 'de';
   const contextBookLanguage = langCtx?.bookLanguage || null;
 

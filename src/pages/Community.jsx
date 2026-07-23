@@ -13,6 +13,7 @@ import ChatWindow from '@/components/messages/ChatWindow';
 import NewMessageModal from '@/components/messages/NewMessageModal';
 import FindReadersSection from '@/components/community/FindReadersSection';
 import { useLanguage } from '@/components/language/LanguageContext';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 /** Rate-Limit-Zähler im localStorage – Modul-Level damit kein Re-Create bei Render */
 function getAiUsageToday(userId) {
@@ -48,6 +49,7 @@ function CommunityContent() {
 
   const navigate = useNavigate();
   const { t, language } = useLanguage();
+  useDocumentTitle(t('community.title'));
 
   // Sprachname für den AI-Prompt (damit die KI in der App-Sprache antwortet)
   const AI_LANG_NAMES = {

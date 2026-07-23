@@ -17,6 +17,7 @@ import { base44 } from '@/api/base44Client';
 import { useLanguage } from '@/components/language/LanguageContext';
 import { BOOK_LANGUAGES, SHOPPING_REGIONS } from '@/lib/providerRegistry';
 import { isISBN } from '@/lib/bookQueryBuilder';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 const QUICK_SEARCH_KEYS = [
   { key: 'discover.qs.selfHelp',   query: 'subject:self-help' },
@@ -41,6 +42,7 @@ export default function BookDiscover() {
   const loadMoreRef = useRef(null);
 
   const { t, bookLanguage, changeBookLanguage, shoppingRegion, changeShoppingRegion } = useLanguage();
+  useDocumentTitle(t('discover.title'));
   const { results, loading, error, totalItems, hasMore, usingFallback, query, search, searchByISBN, loadMore, reset } = useGoogleBooks();
 
   useEffect(() => {

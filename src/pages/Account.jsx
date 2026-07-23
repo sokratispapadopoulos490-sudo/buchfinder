@@ -14,6 +14,7 @@ import GlobalSearch from '@/components/search/GlobalSearch';
 import DarkModeToggle from '@/components/settings/DarkModeToggle';
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 function AccountContent() {
   const [user, setUser] = useState(null);
@@ -29,6 +30,7 @@ function AccountContent() {
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const navigate = useNavigate();
   const { language, changeLanguage, shoppingRegion, changeShoppingRegion, t } = useLanguage();
+  useDocumentTitle(t('account.title'));
 
   // Only languages that have full i18n translations
   const UI_LANGUAGES = [

@@ -869,6 +869,22 @@ const dict = {
     de: 'Lädt...', en: 'Loading...', el: 'Φόρτωση...',
     tr: 'Yükleniyor...', fr: 'Chargement...', es: 'Cargando...', it: 'Caricamento...',
   },
+  'compass.noRecommendations': {
+    de: 'Noch keine Empfehlungen', en: 'No recommendations yet', el: 'Δεν υπάρχουν ακόμα προτάσεις',
+    tr: 'Henüz öneri yok', fr: 'Aucune recommandation encore', es: 'Aún no hay recomendaciones', it: 'Ancora nessun consiglio',
+  },
+  'compass.step1': {
+    de: 'Bedarf klären', en: 'Clarify your needs', el: 'Διευκρίνισε τις ανάγκες σου',
+    tr: 'İhtiyacını belirle', fr: 'Clarifier vos besoins', es: 'Aclarar tus necesidades', it: 'Chiarisci le tue esigenze',
+  },
+  'compass.step2': {
+    de: 'Bücher finden', en: 'Find books', el: 'Βρες βιβλία',
+    tr: 'Kitap bul', fr: 'Trouver des livres', es: 'Encontrar libros', it: 'Trova libri',
+  },
+  'compass.step3': {
+    de: 'Lesepfad speichern', en: 'Save your reading path', el: 'Αποθήκευσε τη διαδρομή ανάγνωσης',
+    tr: 'Okuma yolunu kaydet', fr: 'Enregistrer le parcours', es: 'Guardar tu ruta de lectura', it: 'Salva il percorso di lettura',
+  },
 
   // ── BookSearch – Questions & Options ─────────────────────────────────────
   'booksearch.betaLabel': {

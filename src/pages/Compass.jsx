@@ -17,6 +17,7 @@ import LibraryView from '@/components/library/LibraryView';
 import QuotesSection from '@/components/compass/QuotesSection';
 import ChallengesSection from '@/components/compass/ChallengesSection';
 import FollowingSection from '@/components/compass/FollowingSection';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 // Module-level cache – überlebt Re-Mounts, nicht aber Page-Reloads oder User-Wechsel
 let _compassCache = null;
@@ -40,6 +41,7 @@ if (typeof window !== 'undefined') {
 
 export default function Compass() {
   const { t } = useLanguage();
+  useDocumentTitle(t('compass.title'));
   const [user, setUser] = useState(null);
 
   // Sofort aus Cache (Modul oder localStorage) initialisieren – kein Flackern
@@ -87,6 +89,7 @@ export default function Compass() {
   const loadCompassData = async (silent = false) => {
     if (!silent) setLoading(true);
     try {
+      const currentUser = await base44.auth.me();
       const [savedBooks, allLogs] = await Promise.all([
         base44.entities.SavedBook.list('-created_date', 50),
         base44.entities.ReadingLog.list('-reading_date', 1000),
@@ -111,18 +114,20 @@ export default function Compass() {
 
       generateReflectionQuestion();
 
-      // Empfehlungen im Hintergrund laden
-      let recs = [];
+      // Empfehlungen im Hintergrund laden – nur eindeutig eigene Datensätze anzeigen
+      let ownRecs = [];
       let totalGenerated = 0;
       try {
-        recs = await base44.entities.Recommendation.list('-created_date', 1);
-        if (recs.length > 0 && recs[0].books) {
-          setLastRecommendations(recs[0].books.slice(0, 3));
-        }
-        totalGenerated = recs.reduce((sum, rec) => sum + (rec.books ? rec.books.length : 0), 0);
+        const recs = await base44.entities.Recommendation.list('-created_date', 5);
+        // Defensiver Zusatz-Check über RLS hinaus: nur Datensätze, die eindeutig dem
+        // aktuellen Nutzer gehören (created_by === eigene E-Mail), sonst nicht anzeigen.
+        ownRecs = (recs || []).filter(r => r.created_by && currentUser?.email && r.created_by === currentUser.email);
+        setLastRecommendations(ownRecs.length > 0 && ownRecs[0].books ? ownRecs[0].books.slice(0, 3) : []);
+        totalGenerated = ownRecs.reduce((sum, rec) => sum + (rec.books ? rec.books.length : 0), 0);
         setGeneratedBooksCount(totalGenerated);
       } catch (e) {
         console.error('Background recommendation load failed:', e);
+        setLastRecommendations([]);
       }
 
       // Cache persistieren (Modul + localStorage)
@@ -132,7 +137,7 @@ export default function Compass() {
         allReadingLogs: allLogs,
         streak: 0,
         progress: activeProgress,
-        lastRecommendations: recs.length > 0 && recs[0].books ? recs[0].books.slice(0, 3) : [],
+        lastRecommendations: ownRecs.length > 0 && ownRecs[0].books ? ownRecs[0].books.slice(0, 3) : [],
         generatedBooksCount: totalGenerated,
       };
       _compassCache = snap;
@@ -251,26 +256,68 @@ export default function Compass() {
     );
   }
 
+  // Gemeinsame Empfehlungs-Karte: zeigt echte, eigene Empfehlungen oder einen
+  // neutralen leeren Zustand mit CTA – nie fremde/veraltete Daten.
+  const recommendationsCard = (
+    <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-5 shadow-sm">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-sm font-medium text-stone-700 dark:text-stone-300">{t('compass.lastRecommendations')}</h3>
+        {lastRecommendations.length > 0 && (
+          <button
+            onClick={() => navigate('/BookSearch')}
+            className="text-xs text-amber-600 dark:text-amber-500 hover:underline"
+          >
+            {t('compass.newAnalysis')}
+          </button>
+        )}
+      </div>
+      {lastRecommendations.length > 0 ? (
+        <div className="space-y-3">
+          {lastRecommendations.map((book, idx) => (
+            <div key={idx} className="flex items-center gap-3">
+              <BookCover bookData={book} width="w-10" height="h-14" textSize="text-lg" />
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-medium text-stone-800 dark:text-stone-200 truncate">{book.title}</div>
+                <div className="text-xs text-stone-500 dark:text-stone-400 truncate">{book.author}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-6">
+          <Sparkles className="w-8 h-8 text-stone-300 mx-auto mb-3" />
+          <p className="text-sm text-stone-500 dark:text-stone-400 mb-3">{t('compass.noRecommendations')}</p>
+          <Button onClick={() => navigate('/BookSearch')} size="sm" className="bg-amber-600 hover:bg-amber-700 text-white">
+            {t('compass.startRecommendation')}
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+
   if (!currentBook) {
     return (
       <div className="min-h-screen bg-stone-50 dark:bg-[#0a0a0a] px-4 py-12 pb-32">
         <div className="max-w-xl mx-auto">
-          <div className="mb-8">
+          <div className="mb-6 flex items-center justify-between">
             <h1 className="text-2xl font-light text-stone-800 dark:text-stone-200">{t('compass.title')}</h1>
+            <span className="text-xs font-medium text-amber-700 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/30 px-2.5 py-1 rounded-full flex-shrink-0">
+              {t('account.betaBadge')}
+            </span>
           </div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-12 text-center mb-6"
+            className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-8 sm:p-10 text-center mb-6"
           >
-            <BookOpen className="w-16 h-16 text-amber-600 dark:text-amber-500 mx-auto mb-6" />
-            <h1 className="text-2xl font-light text-stone-800 dark:text-stone-200 mb-4">
+            <BookOpen className="w-14 h-14 text-amber-600 dark:text-amber-500 mx-auto mb-5" />
+            <h1 className="text-xl sm:text-2xl font-light text-stone-800 dark:text-stone-200 mb-3">
               {t('compass.readReady')}
             </h1>
-            <p className="text-stone-600 dark:text-stone-400 mb-8">
+            <p className="text-stone-600 dark:text-stone-400 mb-7">
               {t('compass.readReadySub')}
             </p>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 mb-8">
               <Button
                 onClick={() => navigate('/BookSearch')}
                 className="bg-amber-600 hover:bg-amber-700 text-white gap-2"
@@ -284,36 +331,24 @@ export default function Compass() {
                 className="gap-2 border-amber-300 text-amber-800"
               >
                 <Camera className="w-4 h-4" />
-                 {t('compass.scanBook')}
+                 {t('compass.scanBook')} / {t('compass.addBook')}
               </Button>
+            </div>
+
+            {/* 3 kompakte Schritte */}
+            <div className="grid grid-cols-3 gap-3 text-left border-t border-stone-100 dark:border-stone-700 pt-6">
+              {[t('compass.step1'), t('compass.step2'), t('compass.step3')].map((label, idx) => (
+                <div key={idx}>
+                  <div className="w-6 h-6 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 flex items-center justify-center text-xs font-semibold mb-2">
+                    {idx + 1}
+                  </div>
+                  <p className="text-[11px] sm:text-xs text-stone-500 dark:text-stone-400 leading-snug">{label}</p>
+                </div>
+              ))}
             </div>
           </motion.div>
 
-          {/* Letzte Empfehlungen auch ohne aktuelles Buch anzeigen */}
-          {lastRecommendations.length > 0 && (
-            <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-5 shadow-sm">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-medium text-stone-700 dark:text-stone-300">{t('compass.lastRecommendations')}</h3>
-                <button
-                  onClick={() => navigate('/BookSearch')}
-                  className="text-xs text-amber-600 dark:text-amber-500 hover:underline"
-                >
-                  {t('compass.newAnalysis')}
-                </button>
-              </div>
-              <div className="space-y-3">
-                {lastRecommendations.map((book, idx) => (
-                  <div key={idx} className="flex items-center gap-3">
-                    <BookCover bookData={book} width="w-10" height="h-14" textSize="text-lg" />
-                    <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium text-stone-800 dark:text-stone-200 truncate">{book.title}</div>
-                      <div className="text-xs text-stone-500 dark:text-stone-400 truncate">{book.author}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          {recommendationsCard}
         </div>
       </div>
     );
@@ -568,30 +603,7 @@ export default function Compass() {
         )}
 
         {/* Letzte Empfehlungen */}
-        {lastRecommendations.length > 0 && (
-          <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-5 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-medium text-stone-700 dark:text-stone-300">{t('compass.lastRecommendations')}</h3>
-              <button
-                onClick={() => navigate('/BookSearch')}
-                className="text-xs text-amber-600 dark:text-amber-500 hover:underline"
-              >
-                {t('compass.newAnalysis')}
-              </button>
-            </div>
-            <div className="space-y-3">
-              {lastRecommendations.map((book, idx) => (
-                <div key={idx} className="flex items-center gap-3">
-                  <BookCover bookData={book} width="w-10" height="h-14" textSize="text-lg" />
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium text-stone-800 dark:text-stone-200 truncate">{book.title}</div>
-                    <div className="text-xs text-stone-500 dark:text-stone-400 truncate">{book.author}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        {recommendationsCard}
       </div>
 
       {/* Scanner Modal */}
