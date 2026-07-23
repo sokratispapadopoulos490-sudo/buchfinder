@@ -348,7 +348,17 @@ export default function Compass() {
             </div>
           </motion.div>
 
-          {recommendationsCard}
+          {/* First-User-State: nie alte Recommendation-Historie zeigen, nur leere Karte + CTA */}
+          <div className="bg-white dark:bg-[#1a1a1a] rounded-2xl border border-stone-200 dark:border-stone-700 p-5 shadow-sm">
+            <h3 className="text-sm font-medium text-stone-700 dark:text-stone-300 mb-4">{t('compass.lastRecommendations')}</h3>
+            <div className="text-center py-6">
+              <Sparkles className="w-8 h-8 text-stone-300 mx-auto mb-3" />
+              <p className="text-sm text-stone-500 dark:text-stone-400 mb-3">{t('compass.noRecommendations')}</p>
+              <Button onClick={() => navigate('/BookSearch')} size="sm" className="bg-amber-600 hover:bg-amber-700 text-white">
+                {t('compass.startRecommendation')}
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     );
