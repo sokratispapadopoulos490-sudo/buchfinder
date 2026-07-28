@@ -10,6 +10,7 @@ import { base44 } from '@/api/base44Client';
 import BookCover from './BookCover';
 import ProviderLinks from './ProviderLinks';
 import { useLanguage } from '@/components/language/LanguageContext';
+import { getStableBookId } from '@/lib/bookService';
 
 export default function LiveBookCard({ book, user, shoppingRegion }) {
   const { shoppingRegion: ctxRegion, bookLanguage, t } = useLanguage();
@@ -24,14 +25,8 @@ export default function LiveBookCard({ book, user, shoppingRegion }) {
   const shortDesc = description.length > 160 ? description.slice(0, 160) + '…' : description;
   const hasLongDesc = description.length > 160;
 
-  // Stabiler Key: bevorzugt source_id (Google volumeId), dann isbn13, dann Entitäts-ID
-  const stableBookId = book.source_id
-    ? `src_${book.source_id}`
-    : book.isbn13
-      ? `isbn_${book.isbn13}`
-      : book.id
-        ? String(book.id)
-        : null;
+  // Stabiler Key – quellenunabhängig, gemeinsam mit BookCard.jsx (bookService.getStableBookId)
+  const stableBookId = getStableBookId(book);
 
   useEffect(() => {
     if (!user?.id && !user?.email) return;
@@ -53,8 +48,9 @@ export default function LiveBookCard({ book, user, shoppingRegion }) {
         setIsSaved(false); setSavedId(null);
       } else {
         const created = await base44.entities.SavedBook.create({
-          // book_id: Entitäts-ID wenn vorhanden, sonst 0 (Pflichtfeld bleibt befüllt)
-          book_id: book.id || 0,
+          book_id: stableBookId,
+          ownership_status: 'wishlist',
+          acquisition_source: 'search',
           book_data: {
             stableId: stableBookId,      // Kollisionsfreier Lookup-Key
             source_id: book.source_id,   // Google volumeId

@@ -3,8 +3,8 @@
   "type": "object",
   "properties": {
     "book_id": {
-      "type": "integer",
-      "description": "Die ID des Buches aus der Buchdatenbank"
+      "type": "string",
+      "description": "Stabile Buch-ID (isbn_, src_, id_ oder t_ Pr\u00e4fix) \u2013 quellenunabh\u00e4ngig, immer ein String"
     },
     "book_data": {
       "type": "object",

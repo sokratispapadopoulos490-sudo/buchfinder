@@ -3,8 +3,8 @@
   "type": "object",
   "properties": {
     "book_id": {
-      "type": "integer",
-      "description": "Die ID des Buches aus der Buchdatenbank"
+      "type": "string",
+      "description": "Stabile Buch-ID \u2013 muss mit SavedBook.book_id \u00fcbereinstimmen"
     },
     "saved_book_id": {
       "type": "string",

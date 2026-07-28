@@ -605,7 +605,7 @@ export default function Compass() {
                 savedBooks={allBooks}
                 onToggleComplete={handleToggleCompleted}
                 onDelete={handleDeleteSavedBook}
-                onProgressClick={(saved) => setSelectedBookForProgress({ book: saved.book_data, savedBookId: saved.id })}
+                onProgressClick={(saved) => setSelectedBookForProgress({ book: saved.book_data, savedBookId: saved.id, bookId: saved.book_id })}
                 onRefresh={loadCompassData}
               />
             )}
@@ -629,6 +629,7 @@ export default function Compass() {
         <ReadingProgressModal
           book={currentBook.book_data}
           savedBookId={currentBook.id}
+          bookId={currentBook.book_id}
           onClose={() => setShowProgressModal(false)}
           onUpdate={() => { _compassCache = null; clearSnap(); loadCompassData(); }}
         />
@@ -639,6 +640,7 @@ export default function Compass() {
         <ReadingProgressModal
           book={selectedBookForProgress.book}
           savedBookId={selectedBookForProgress.savedBookId}
+          bookId={selectedBookForProgress.bookId}
           onClose={() => setSelectedBookForProgress(null)}
           onUpdate={() => { _compassCache = null; clearSnap(); loadCompassData(); }}
         />

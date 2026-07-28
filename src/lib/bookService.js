@@ -12,6 +12,24 @@ import { books as localBooks } from '@/components/books/BookDatabase';
 import { getProviderLinks } from '@/lib/providerRegistry';
 import { buildLocalizedQueries } from '@/lib/bookQueryBuilder';
 
+// ─── Stabile Buch-ID ───────────────────────────────────────────────────────────
+/**
+ * Erzeugt eine quellenunabhängige, stabile String-ID für ein Buch.
+ * Wird für SavedBook.book_id / ReadingLog.book_id verwendet, damit Bücher aus
+ * der Book-Entität (string id), Google Books/Open Library (numerische id) und
+ * lokalen Büchern (kleine numerische id) konsistent gespeichert und wiedergefunden werden.
+ */
+export function getStableBookId(book) {
+  if (!book) return null;
+  if (book.isbn13) return `isbn_${String(book.isbn13).replace(/[-\s]/g, '')}`;
+  if (book.isbn10) return `isbn_${String(book.isbn10).replace(/[-\s]/g, '')}`;
+  if (book.source_id) return `src_${book.source_id}`;
+  if (book.id !== undefined && book.id !== null && book.id !== '') return `id_${String(book.id)}`;
+  const title = (book.title || '').toLowerCase().trim();
+  const author = (book.author || (book.authors || [])[0] || '').toLowerCase().trim();
+  return `t_${title}|${author}`;
+}
+
 // ─── Normalisierung ────────────────────────────────────────────────────────────
 export function normalizeLocalBook(localBook) {
   return {
@@ -368,11 +386,19 @@ export async function getMatchingBooksFromDB(profile) {
   let languageFallbackUsed = false;
 
   try {
+    // WICHTIG: Book.language ist in der DB oft als ISO 639-2 Code gespeichert
+    // (z.B. "ger", "gre", "eng"), während bookLanguage aus dem Profil ISO 639-1
+    // ist (z.B. "de", "el", "en"). Ein exakter DB-Filter auf "language" würde hier
+    // fast immer 0 Treffer liefern. Daher: nur age_group/is_active in der Query,
+    // Sprachfilterung client-seitig über normalizeLanguageCode().
     const filter = { age_group: ageGroup, is_active: true };
-    if (bookLanguage) filter.language = bookLanguage;
-    const dbBooks = await base44.entities.Book.filter(filter, '-rating', 200);
+    const rawDbBooks = await base44.entities.Book.filter(filter, '-rating', 300);
+    const wantsSpecificLanguage = !!bookLanguage && bookLanguage !== 'any';
+    const dbBooks = wantsSpecificLanguage
+      ? rawDbBooks.filter(b => normalizeLanguageCode(b.language) === bookLanguage)
+      : rawDbBooks;
 
-    if (dbBooks.length === 0 && bookLanguage) {
+    if (dbBooks.length === 0 && wantsSpecificLanguage) {
       // DB has no books for this language — fall through to local
       pool = null;
     } else {
@@ -480,7 +506,7 @@ export async function getMatchingBooksFromDB(profile) {
     return empty;
   }
 
-  pool = pool.filter(b => !savedBookIds.includes(b.id));
+  pool = pool.filter(b => !savedBookIds.includes(getStableBookId(b)));
   if (readBooks.length > 0) {
     pool = pool.filter(book => {
       const tl = book.title.toLowerCase();

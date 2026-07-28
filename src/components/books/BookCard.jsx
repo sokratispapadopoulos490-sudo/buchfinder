@@ -11,6 +11,7 @@ import ProviderLinks from './ProviderLinks';
 import { useLanguage } from '@/components/language/LanguageContext';
 import { useOwnedLibrary } from '@/lib/ownedLibrary';
 import { libraryDict } from '@/lib/i18n-library';
+import { getStableBookId } from '@/lib/bookService';
 
 function tLib(key, lang) {
   const entry = libraryDict[key];
@@ -34,10 +35,11 @@ export default function BookCard({ book, reasons, index, isContrast, isAuthentic
   const [comment, setComment] = useState('');
   const [editingReview, setEditingReview] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
+  const stableBookId = getStableBookId(book);
 
   useEffect(() => {
     checkIfSaved();
-  }, [book.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [stableBookId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const checkIfSaved = async () => {
     try {
@@ -46,7 +48,7 @@ export default function BookCard({ book, reasons, index, isContrast, isAuthentic
       if (isAuthProp === undefined) setIsAuthenticated(isAuth);
       
       if (isAuth) {
-        const saved = await base44.entities.SavedBook.filter({ book_id: book.id });
+        const saved = await base44.entities.SavedBook.filter({ book_id: stableBookId });
         if (saved.length > 0) {
           setIsSaved(true);
           setSavedBookId(saved[0].id);
@@ -78,7 +80,7 @@ export default function BookCard({ book, reasons, index, isContrast, isAuthentic
       } else {
         // Double-check for duplicates before saving (guards against race conditions
         // and books without a DB id, e.g. source='google_books')
-        const existing = await base44.entities.SavedBook.filter({ book_id: book.id }).catch(() => []);
+        const existing = await base44.entities.SavedBook.filter({ book_id: stableBookId }).catch(() => []);
         if (existing.length > 0) {
           setIsSaved(true);
           setSavedBookId(existing[0].id);
@@ -89,12 +91,14 @@ export default function BookCard({ book, reasons, index, isContrast, isAuthentic
         // from shoppingRegion at display time. Storing them would permanently bake the wrong region.
         const { providerLinks: _strip, ...bookDataClean } = book;
         const created = await base44.entities.SavedBook.create({
-          book_id: book.id,
+          book_id: stableBookId,
           book_data: bookDataClean,
           recommendation_reason: reasons,
           notes: notes,
           rating: rating,
-          comment: comment
+          comment: comment,
+          ownership_status: 'wishlist',
+          acquisition_source: 'recommendation',
         });
         setIsSaved(true);
         setSavedBookId(created.id);

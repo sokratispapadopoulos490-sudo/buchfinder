@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { X, BookOpen, CheckCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
-export default function ReadingProgressModal({ book, savedBookId, onClose, onUpdate }) {
+export default function ReadingProgressModal({ book, savedBookId, bookId, onClose, onUpdate }) {
   const [pagesRead, setPagesRead] = useState('');
   const [sessionNotes, setSessionNotes] = useState('');
   const [markAsCompleted, setMarkAsCompleted] = useState(false);
@@ -18,7 +18,7 @@ export default function ReadingProgressModal({ book, savedBookId, onClose, onUpd
     try {
       // Speichere Lesefortschritt
       await base44.entities.ReadingLog.create({
-        book_id: book.id,
+        book_id: bookId || book.id,
         saved_book_id: savedBookId,
         pages_read: parseInt(pagesRead),
         reading_date: new Date().toISOString().split('T')[0],
