@@ -11,6 +11,7 @@ import { base44 } from '@/api/base44Client';
 import { books as localBooks } from '@/components/books/BookDatabase';
 import { getProviderLinks } from '@/lib/providerRegistry';
 import { buildLocalizedQueries } from '@/lib/bookQueryBuilder';
+import { scoreBook } from '@/lib/bookScoring';
 
 // ─── Stabile Buch-ID ───────────────────────────────────────────────────────────
 /**
@@ -183,6 +184,8 @@ const THROTTLE_MS = 300;
 
 let _lastRequestTime = 0;
 
+const FETCH_TIMEOUT_MS = 8000;
+
 async function throttledFetch(url) {
   const now = Date.now();
   const wait = THROTTLE_MS - (now - _lastRequestTime);
@@ -190,17 +193,28 @@ async function throttledFetch(url) {
   _lastRequestTime = Date.now();
 
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
-    const res = await fetch(url, { 
-      method: 'GET',
-      headers: { 'Accept': 'application/json' },
-      mode: 'cors',
-    });
-    if (res.status === 429) {
-      await new Promise(r => setTimeout(r, 1000 * Math.pow(2, attempt)));
-      continue;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+    try {
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' },
+        mode: 'cors',
+        signal: controller.signal,
+      });
+      clearTimeout(timeoutId);
+      if (res.status === 429) {
+        await new Promise(r => setTimeout(r, 1000 * Math.pow(2, attempt)));
+        continue;
+      }
+      if (!res.ok) throw new Error(`Google Books API error: ${res.status}`);
+      return res.json();
+    } catch (err) {
+      clearTimeout(timeoutId);
+      if (err.name === 'AbortError') throw new Error('Google Books API: timeout');
+      if (attempt < MAX_RETRIES) continue;
+      throw err;
     }
-    if (!res.ok) throw new Error(`Google Books API error: ${res.status}`);
-    return res.json();
   }
   throw new Error('Google Books API: max retries exceeded');
 }
@@ -375,6 +389,52 @@ export function getAffiliateLinks(book, countryCode = 'DE') {
   return Object.fromEntries(links.map(l => [l.providerId, l.url]));
 }
 
+// ─── Script-Mismatch-Erkennung ─────────────────────────────────────────────────
+// Erkennt Bücher, deren Titel-Zeichenset nicht zur Buchsprache passt.
+// Z.B. griechische Buchstaben in französischen Ergebnissen, kyrillisch in türkischen.
+const SCRIPT_RANGES = {
+  greek: /[\u0370-\u03FF\u1F00-\u1FFF]/,
+  cyrillic: /[\u0400-\u04FF]/,
+  arabic: /[\u0600-\u06FF\u0750-\u077F]/,
+  cjk: /[\u4E00-\u9FFF\u3040-\u30FF]/,
+  hebrew: /[\u0590-\u05FF]/,
+  devanagari: /[\u0900-\u097F]/,
+};
+const LATIN_LANGS = new Set(['de','en','fr','es','it','pt','nl','pl']);
+
+function hasScript(text, scriptName) {
+  const re = SCRIPT_RANGES[scriptName];
+  return re && re.test(text);
+}
+
+/**
+ * Prüft ob ein Buchtitel Zeichen enthält, die nicht zur erwarteten Sprache passen.
+ * Z.B. kyrillische Buchstaben in einem französischen Buch = Transliteration/OCR-Fehler.
+ */
+function hasScriptMismatch(book, expectedLang) {
+  const title = book.title || '';
+  if (!title) return false;
+  // Lateinische Sprachen sollten keine nicht-lateinischen Schriftzeichen haben
+  if (LATIN_LANGS.has(expectedLang)) {
+    for (const script of ['greek','cyrillic','arabic','cjk','hebrew','devanagari']) {
+      if (hasScript(title, script)) return true;
+    }
+  }
+  // Griechisch sollte nur griechische Schrift haben (kein kyrillisch/arabisch)
+  if (expectedLang === 'el') {
+    return hasScript(title, 'cyrillic') || hasScript(title, 'arabic') || hasScript(title, 'cjk');
+  }
+  // Türkisch sollte lateinisch sein (kein arabisch)
+  if (expectedLang === 'tr') {
+    return hasScript(title, 'arabic') || hasScript(title, 'greek') || hasScript(title, 'cyrillic');
+  }
+  // Arabisch sollte arabische Schrift haben, nicht lateinisch
+  if (expectedLang === 'ar') {
+    return !hasScript(title, 'arabic') && /[a-zA-Z]{5,}/.test(title);
+  }
+  return false;
+}
+
 // ─── Matching-Engine ───────────────────────────────────────────────────────────
 /**
  * Async: DB-first, Fallback auf lokale Bücher.
@@ -454,25 +514,32 @@ export async function getMatchingBooksFromDB(profile) {
   if (!pool) pool = [];
 
   // Google Books mehrstufige Suche: lokalisierte Queries zuerst, dann Fallbacks
+  // Globaler Timeout: verhindert endloses Laden (besonders bei Sprachen mit wenig Google-Books-Inhalt)
   if (bookLanguage && bookLanguage !== 'any' && pool.length < 8) {
     const dedup = (books) => books.filter(gb =>
       !pool.some(pb => pb.isbn13 && pb.isbn13 === gb.isbn13 && pb.isbn13)
     );
+
+    const withTimeout = (promise, ms = 12000) =>
+      Promise.race([
+        promise,
+        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), ms)),
+      ]);
 
     // Stufe 1: Lokalisierte Queries mit langRestrict — thema + ziel + stil kombiniert
     const localizedQueries = buildLocalizedQueries(mainTopics, bookLanguage, { readingGoal: profile.readingGoal, style });
     for (const query of localizedQueries) {
       if (pool.filter(b => normalizeLanguageCode(b.language) === bookLanguage).length >= 8) break;
       try {
-        const gbResult = await searchGoogleBooks(query, {
+        const gbResult = await withTimeout(searchGoogleBooks(query, {
           maxResults: 20,
           langRestrict: bookLanguage,
-        });
+        }));
         const gbCorrect = (gbResult.items || [])
           .filter(b => b.title && b.title !== 'Unbekannter Titel')
           .filter(b => normalizeLanguageCode(b.language) === bookLanguage);
         pool = [...pool, ...dedup(gbCorrect)];
-      } catch { /* weiter */ }
+      } catch { /* timeout oder API-Fehler — weiter */ }
     }
 
     // Stufe 2: Englische Fallback-Queries mit langRestrict (für Sprachen mit wenig lokalen Inhalten)
@@ -480,15 +547,15 @@ export async function getMatchingBooksFromDB(profile) {
       const enQueries = buildLocalizedQueries(mainTopics, 'en');
       for (const query of enQueries.slice(0, 2)) {
         try {
-          const gbResult = await searchGoogleBooks(query, {
+          const gbResult = await withTimeout(searchGoogleBooks(query, {
             maxResults: 20,
             langRestrict: bookLanguage,
-          });
+          }));
           const gbCorrect = (gbResult.items || [])
             .filter(b => b.title && b.title !== 'Unbekannter Titel')
             .filter(b => normalizeLanguageCode(b.language) === bookLanguage);
           pool = [...pool, ...dedup(gbCorrect)];
-        } catch { /* weiter */ }
+        } catch { /* timeout oder API-Fehler — weiter */ }
         if (pool.filter(b => normalizeLanguageCode(b.language) === bookLanguage).length >= 5) break;
       }
     }
@@ -500,13 +567,13 @@ export async function getMatchingBooksFromDB(profile) {
       // Fremdsprachige Treffer (bevorzugt EN/DE als bekannteste Übersetzungssprachen) hinzufügen
       const fallbackQuery = buildLocalizedQueries(mainTopics, 'en')[0] || 'popular books';
       try {
-        const gbFallback = await searchGoogleBooks(fallbackQuery, { maxResults: 20 });
+        const gbFallback = await withTimeout(searchGoogleBooks(fallbackQuery, { maxResults: 20 }));
         const gbOther = (gbFallback.items || [])
           .filter(b => b.title && b.title !== 'Unbekannter Titel')
           .filter(b => normalizeLanguageCode(b.language) !== bookLanguage)
           .map(b => ({ ...b, _langMismatch: true }));
         pool = [...pool, ...dedup(gbOther).slice(0, 8)];
-      } catch { /* weiter */ }
+      } catch { /* timeout oder API-Fehler — weiter */ }
     }
   }
 
@@ -553,21 +620,12 @@ export async function getMatchingBooksFromDB(profile) {
   }
   pool = dedupedPool;
 
+  // Scoring via zentrale scoreBook-Funktion (mit Fuzzy-Topic-Matching, Sprachpriorität, etc.)
   const scored = pool.map(book => {
-    let score = 0;
-    const bookTags = book.tags || book.categories || [];
-    const bookStyle = book.style || book.reading_style || [];
-    mainTopics.forEach(t => { if (bookTags.includes(t)) score += 5; });
-    secondaryTopics.forEach(t => { if (bookTags.includes(t)) score += 2; });
-    style.forEach(s => { if (bookStyle.includes(s)) score += 3; });
-    if (book.difficulty === difficulty) score += 4;
-    if ((difficulty === 'fortgeschritten' && book.difficulty === 'einsteiger') ||
-        (difficulty === 'einsteiger' && book.difficulty === 'fortgeschritten')) score -= 2;
-    // Strikte Sprachpriorität: richtige Sprache immer vor falscher
-    if (bookLanguage && bookLanguage !== 'any') {
-      const bookLang = normalizeLanguageCode(book.language);
-      if (bookLang === bookLanguage) score += 50; // starker Bonus
-      else score -= 50; // harte Strafe — falsche Sprache landet nie in Top 3 wenn korrekte Treffer da
+    let score = scoreBook(book, profile, []);
+    // Script-Mismatch: transliterierte/falsch klassifizierte Bücher stark abwerten
+    if (bookLanguage && bookLanguage !== 'any' && hasScriptMismatch(book, bookLanguage)) {
+      score -= 35;
     }
     return { ...book, score };
   }).sort((a, b) => b.score - a.score);
@@ -578,11 +636,20 @@ export async function getMatchingBooksFromDB(profile) {
   );
   const wrongLang = scored.filter(b =>
     bookLanguage && bookLanguage !== 'any' && normalizeLanguageCode(b.language) !== bookLanguage
-  ).map(b => ({ ...b, isContrast: true })); // falsche Sprache → immer als Kontrast markieren
+  ).map(b => ({ ...b, isContrast: true }));
 
-  // Top 10: korrekte Sprache zuerst, dann erst Fallbacks auffüllen wenn nötig
-  const topCorrect = correctLang.slice(0, 10);
+  // Qualitäts-Gate: Top 3 nur bei ausreichendem Score (Sprache + Thema/Ziel passen)
+  const MIN_QUALITY_SCORE = 30;
+  const highQuality = correctLang.filter(b => b.score >= MIN_QUALITY_SCORE);
+
+  // Top 10: hochwertige Bücher zuerst, dann Rest nur auffüllen wenn nötig
+  const topCorrect = (highQuality.length >= 3 ? highQuality : correctLang).slice(0, 10);
   const topBooks = topCorrect.map((b, i) => ({ ...b, placement: i + 1, isContrast: false }));
+
+  // Wenn weniger als 3 hochwertige Treffer: languageFallbackUsed setzen
+  if (bookLanguage && bookLanguage !== 'any' && highQuality.length < 3) {
+    languageFallbackUsed = true;
+  }
 
   // Kontrast-Bücher: thematisch anders ODER falsche Sprache
   const topIds = new Set(topBooks.map(b => b.id || b.isbn13));
@@ -604,7 +671,7 @@ export async function getMatchingBooksFromDB(profile) {
   }
 
   const result = [...topBooks, ...contrastBooks];
-  result._meta = { languageFallbackUsed, bookLanguage, count: result.length };
+  result._meta = { languageFallbackUsed, bookLanguage, count: result.length, highQualityCount: highQuality.length };
   return result;
 }
 
