@@ -4,6 +4,29 @@
  * Kein LLM, keine KI-Kosten. Alle Logik ist deterministisch.
  */
 
+// Normalisiert ISO 639-2/3 Codes (z.B. "ger") auf ISO 639-1 ("de"),
+// damit DB-Bücher mit language="ger" korrekt gegen profile.bookLanguage="de" gematcht werden.
+const _LANG_MAP = {
+  de: 'de', ger: 'de', deu: 'de', deutsch: 'de',
+  en: 'en', eng: 'en', english: 'en',
+  el: 'el', gre: 'el', ell: 'el', greek: 'el',
+  tr: 'tr', tur: 'tr', turkish: 'tr',
+  fr: 'fr', fre: 'fr', fra: 'fr', french: 'fr',
+  es: 'es', spa: 'es', spanish: 'es',
+  it: 'it', ita: 'it', italian: 'it', italiano: 'it',
+  pt: 'pt', por: 'pt',
+  nl: 'nl', dut: 'nl', nld: 'nl',
+  ru: 'ru', rus: 'ru',
+  ar: 'ar', ara: 'ar',
+  zh: 'zh', chi: 'zh', zho: 'zh',
+  ja: 'ja', jpn: 'ja',
+  ko: 'ko', kor: 'ko',
+};
+function normalizeLang(raw) {
+  if (!raw) return '';
+  return _LANG_MAP[String(raw).toLowerCase().trim()] || String(raw).toLowerCase().trim();
+}
+
 // ─── Score 0–100 ──────────────────────────────────────────────────────────────
 
 /**
@@ -14,7 +37,7 @@ export function scoreBook(book, profile, ownedBookTitles = []) {
 
   const bookTags   = book.tags || book.categories || [];
   const bookStyle  = book.style || book.reading_style || [];
-  const bookLang   = (book.language || '').toLowerCase();
+  const bookLang   = normalizeLang(book.language);
   const bookDiff   = book.difficulty || 'einsteiger';
   const bookTime   = book.time_effort || book.timeEffort || 'mittel';
   const bookPages  = book.page_count || book.pageCount || null;
@@ -97,7 +120,7 @@ export function scoreBook(book, profile, ownedBookTitles = []) {
 export function generateRichReason(book, profile, score, lang = 'de', ownedBookTitles = [], t) {
   const bookTags  = book.tags || book.categories || [];
   const bookStyle = book.style || book.reading_style || [];
-  const bookLang  = (book.language || '').toLowerCase();
+  const bookLang  = normalizeLang(book.language);
   const bookDiff  = book.difficulty || 'einsteiger';
   const bookTime  = book.time_effort || book.timeEffort || 'mittel';
   const bookPages = book.page_count || book.pageCount || null;
@@ -183,7 +206,7 @@ export function generateRichReason(book, profile, score, lang = 'de', ownedBookT
       return titleLower.includes(otl) || otl.includes(titleLower);
     });
 
-  // Sprachwarnung (Buch nicht in gewünschter Sprache)
+  // Sprachwarnung (Buch nicht in gewünschter Sprache) — bookLang ist bereits normalisiert
   const isWrongLang = profile.bookLanguage &&
     profile.bookLanguage !== 'any' &&
     bookLang &&

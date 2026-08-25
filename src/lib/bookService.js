@@ -416,7 +416,7 @@ export async function getMatchingBooksFromDB(profile) {
   if (!pool) {
     // Language-filter local books
     if (bookLanguage && bookLanguage !== 'any') {
-      const langLocal = localPool.filter(b => b.language === bookLanguage);
+      const langLocal = localPool.filter(b => normalizeLanguageCode(b.language) === bookLanguage);
       if (langLocal.length >= 3) {
         pool = langLocal;
       } else {
@@ -428,13 +428,13 @@ export async function getMatchingBooksFromDB(profile) {
       pool = localPool;
     }
   } else if (bookLanguage && bookLanguage !== 'any') {
-    // DB pool: apply client-side language filter
-    const langFiltered = pool.filter(b => b.language === bookLanguage);
+    // DB pool: apply client-side language filter (normalized — DB stores ISO 639-2 like "ger")
+    const langFiltered = pool.filter(b => normalizeLanguageCode(b.language) === bookLanguage);
     if (langFiltered.length >= 3) {
       pool = langFiltered;
     } else {
       // Supplement with local books of the same language
-      const langLocal = localPool.filter(b => b.language === bookLanguage);
+      const langLocal = localPool.filter(b => normalizeLanguageCode(b.language) === bookLanguage);
       const combined = [...pool, ...langLocal.filter(lb => !pool.some(pb => pb.id === lb.id))];
       pool = combined.length >= 3 ? combined : combined;
     }
