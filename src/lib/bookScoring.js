@@ -27,6 +27,37 @@ function normalizeLang(raw) {
   return _LANG_MAP[String(raw).toLowerCase().trim()] || String(raw).toLowerCase().trim();
 }
 
+/**
+ * Topic-Keyword-Mapping: Interne Topic-Keys → Fuzzy-Suchbegriffe für Google-Books-Kategorien.
+ * Erlaubt Topic-Matching auch bei Büchern, deren tags/categories aus Google Books stammen
+ * (z.B. "Self-Help", "Psychology", "Personal Growth" statt "persoenliche_entwicklung").
+ */
+const TOPIC_KEYWORDS = {
+  persoenliche_entwicklung: ['selbst', 'entwicklung', 'growth', 'self-help', 'self improvement', 'self-actualization', 'self actualization', 'mentaltraining', 'veränderung', 'verbesserung', 'bewusstsein'],
+  fokus_produktivitaet: ['produktiv', 'fokus', 'zeitmanagement', 'gewohnheit', 'habit', 'leistung', 'effizienz', 'erfolg', 'ziele', 'ziel'],
+  stress_ruhe: ['stress', 'achtsamkeit', 'mindfulness', 'entspannung', 'ruhe', 'meditation', 'angst', 'burnout', 'resilienz'],
+  beziehung_kommunikation: ['beziehung', 'kommunikation', 'liebe', 'partnerschaft', 'emotionale', 'empathie', 'konflikt', 'bindung'],
+  sinn_philosophie: ['sinn', 'philosophie', 'philosoph', 'existenz', 'ethik', 'weitere', 'bewusstsein', 'stoa', 'stoic'],
+  glaube_spiritualitaet: ['glaube', 'spirituell', 'religion', 'gott', 'beten', 'seele', 'spiritualität'],
+  kreativitaet: ['kreativ', 'creativ', 'kunst', 'schreiben', 'inspiration', 'muse', 'künstler'],
+  lernen_wissen: ['lernen', 'wissen', 'bildung', 'wissenschaft', 'education', 'gehirn', 'gedächtnis', 'denken'],
+  koerper_gesundheit: ['gesundheit', 'körper', 'ernährung', 'sport', 'fitness', 'schlaf', 'medizin'],
+  fantasy_scifi: ['fantasy', 'science fiction', 'scifi', 'sci-fi', 'zukunft', 'magie', 'welt'],
+  thriller_krimi: ['thriller', 'krimi', 'mord', 'kriminal', 'detektiv', 'spannung', 'suspense'],
+  romance: ['roman', 'liebe', 'liebesgesch', 'romance', 'heart', 'herz'],
+  historisch: ['geschichte', 'historisch', 'history', 'vergangenheit', 'epoche'],
+  literatur: ['literatur', 'roman', 'klassik', 'poesie', 'lyrik'],
+  humor: ['humor', 'komödie', 'satire', 'witzig', 'lustig'],
+  abenteuer: ['abenteuer', 'adventure', 'reise', 'expedition'],
+  freundschaft: ['freundschaft', 'freund', 'connection', 'gemeinschaft'],
+  selbstfindung: ['selbstfindung', 'identität', 'selbst', 'identity', 'sinn'],
+  liebe: ['liebe', 'love', 'herz', 'roman'],
+  magie: ['magie', 'magic', 'zauber'],
+  schule: ['schule', 'education', 'lernen', 'unterricht'],
+  tiere: ['tier', 'animal', 'hund', 'katze', 'pferd'],
+  gesellschaft: ['gesellschaft', 'society', 'soziologie', 'politik', 'social'],
+};
+
 // ─── Score 0–100 ──────────────────────────────────────────────────────────────
 
 /**
@@ -35,79 +66,106 @@ function normalizeLang(raw) {
 export function scoreBook(book, profile, ownedBookTitles = []) {
   let score = 0;
 
-  const bookTags   = book.tags || book.categories || [];
-  const bookStyle  = book.style || book.reading_style || [];
+  const bookTags   = (book.tags || book.categories || []).map(t => String(t).toLowerCase());
+  const bookStyle  = (book.style || book.reading_style || []).map(s => String(s).toLowerCase());
   const bookLang   = normalizeLang(book.language);
   const bookDiff   = book.difficulty || 'einsteiger';
   const bookTime   = book.time_effort || book.timeEffort || 'mittel';
   const bookPages  = book.page_count || book.pageCount || null;
+  const bookDesc   = (book.description || '').toLowerCase();
+  const bookTitle  = (book.title || '');
 
-  // 1. Thema / Interessen (max 30)
-  (profile.mainTopics || []).forEach(t => {
-    if (bookTags.includes(t)) score += 20;
+  // 1. Thema / Interessen — Haupttreiber, mit Fuzzy-Matching gegen Google-Books-Kategorien
+  // Interne Topic-Keys (z.B. "persoenliche_entwicklung") matchen gegen normalisierte Buch-Tags
+  const topicMatched = (profile.mainTopics || []).filter(topic => {
+    if (bookTags.includes(topic)) return true;
+    // Fuzzy: Topic-Keywords gegen alle Buch-Tags + Beschreibung
+    return TOPIC_KEYWORDS[topic]?.some(kw =>
+      bookTags.some(t => t.includes(kw) || kw.includes(t)) || bookDesc.includes(kw)
+    );
   });
-  (profile.secondaryTopics || []).forEach(t => {
-    if (bookTags.includes(t)) score += 5;
-  });
+  score += topicMatched.length * 25; // 25 pro Hauptthema → max 50
 
-  // 2. Buchsprache — strikte Priorität, konsistent mit bookService.js
+  const secMatched = (profile.secondaryTopics || []).filter(topic => {
+    if (bookTags.includes(topic)) return true;
+    return TOPIC_KEYWORDS[topic]?.some(kw =>
+      bookTags.some(t => t.includes(kw) || kw.includes(t)) || bookDesc.includes(kw)
+    );
+  });
+  score += secMatched.length * 8; // 8 pro Sekundärthema
+
+  // 2. Buchsprache — Pflicht-Filter: falsche Sprache stark abwerten
   if (!profile.bookLanguage || profile.bookLanguage === 'any') {
-    score += 10; // kein Filter → neutral
+    score += 5;
   } else if (bookLang === profile.bookLanguage) {
-    score += 40; // starker Bonus: richtige Sprache immer vor falscher
+    score += 30;
   } else {
-    score -= 40; // harte Strafe: falsche Sprache nie in Top 3 wenn korrekte Treffer da
+    score -= 60; // falsche Sprache → nie in Top 3 wenn korrekte Treffer existieren
   }
 
-  // 3. Stil (max 15)
+  // 3. Leseziel — thematisch passend zum Ziel
+  if (profile.readingGoal === 'wachstum') {
+    const growthKw = ['selbst', 'growth', 'entwicklung', 'produktiv', 'fokus', 'psycholog', 'mindset', 'habit', 'gewohnheit', 'bewusst', 'achtsam', 'achmtsamkeit'];
+    const relaxKw = ['humor', 'romance', 'liebe', 'fantasy', 'abenteuer', 'thriller', 'krimi', 'unterhaltung'];
+    if (growthKw.some(kw => bookTags.some(t => t.includes(kw)) || bookDesc.includes(kw))) score += 12;
+    if (relaxKw.some(kw => bookTags.some(t => t.includes(kw)) || bookDesc.includes(kw))) score -= 8;
+  } else if (profile.readingGoal === 'entspannung') {
+    const relaxKw = ['humor', 'romance', 'liebe', 'fantasy', 'abenteuer', 'thriller', 'krimi', 'unterhaltung', 'entspannung', 'ruhe'];
+    if (relaxKw.some(kw => bookTags.some(t => t.includes(kw)) || bookDesc.includes(kw))) score += 12;
+    const growthKw = ['selbstverbesserung', 'produktivität', 'zeitmanagement', 'mentaltraining'];
+    if (growthKw.some(kw => bookTags.some(t => t.includes(kw)) || bookDesc.includes(kw))) score -= 4;
+  }
+
+  // 4. Stil — präferierter Lesestil
   (profile.style || []).forEach(s => {
-    if (bookStyle.includes(s)) score += 5;
+    if (bookStyle.includes(s)) score += 8;
   });
 
-  // 4. Schwierigkeitsgrad (max 15)
+  // 5. Schwierigkeitsgrad
   const diffOrder = { einsteiger: 0, fortgeschritten: 1, erfahren: 2 };
   const profileDiff = diffOrder[profile.difficulty] ?? 0;
   const bookDiffVal = diffOrder[bookDiff] ?? 0;
   const diffDelta = Math.abs(profileDiff - bookDiffVal);
-  if (diffDelta === 0) score += 15;
-  else if (diffDelta === 1) score += 5;
-  else score -= 5;
+  if (diffDelta === 0) score += 12;
+  else if (diffDelta === 1) score += 4;
+  else score -= 8;
 
-  // 5. Lesezeit / Umfang (max 10)
+  // 6. Lesezeit / Umfang
   const timeMatch = (profile.timeEffort === bookTime) ||
     (profile.timeEffort === 'kurz' && bookTime === 'kurz') ||
     (profile.timeEffort === 'lang' && bookTime === 'lang');
-  if (timeMatch) score += 10;
-  else if (profile.timeEffort && bookTime) score += 3;
+  if (timeMatch) score += 8;
+  else if (profile.timeEffort && bookTime) score += 2;
 
-  // 6. Seiten als Proxy für Lesezeit (Feinabstimmung ±5)
   if (bookPages) {
-    if (profile.timeEffort === 'kurz' && bookPages <= 200) score += 5;
-    else if (profile.timeEffort === 'mittel' && bookPages >= 150 && bookPages <= 350) score += 5;
-    else if (profile.timeEffort === 'lang' && bookPages >= 300) score += 5;
-    else score -= 2;
+    if (profile.timeEffort === 'kurz' && bookPages <= 200) score += 4;
+    else if (profile.timeEffort === 'mittel' && bookPages >= 150 && bookPages <= 350) score += 4;
+    else if (profile.timeEffort === 'lang' && bookPages >= 300) score += 4;
+    else score -= 3;
   }
 
-  // 7. Leseziel (max 5)
-  if (profile.readingGoal === 'entspannung') {
-    const entertainTags = ['humor', 'romance', 'fantasy_scifi', 'abenteuer', 'thriller_krimi'];
-    if (bookTags.some(t => entertainTags.includes(t))) score += 5;
-  } else if (profile.readingGoal === 'wachstum') {
-    const growthTags = ['persoenliche_entwicklung', 'fokus_produktivitaet', 'lernen_wissen', 'sinn_philosophie'];
-    if (bookTags.some(t => growthTags.includes(t))) score += 5;
-  }
+  // 7. Metadaten-Qualität — kaputte Zeichen / OCR-Artefakte / fehlende Daten abwerten
+  const hasOCRArtifacts = /[�]|[\x00-\x08\x0e-\x1f]|·\s·|¿/.test(bookTitle);
+  if (hasOCRArtifacts) score -= 20;
+  if (!book.description || book.description.length < 20) score -= 8;
+  if (!book.cover_front_url && !book.coverUrl && !book.coverUrl) score -= 5;
 
-  // 8. In der eigenen Bibliothek vorhanden (−10)
+  // 8. Sehr alte / obskure akademische Werke abwerten (außer sie passen explizit zum Profil)
+  const pubYear = book.publishYear || (book.published_date ? parseInt(String(book.published_date).slice(0,4)) : null);
+  const isOldAcademic = pubYear && pubYear < 1950;
+  const isTopicRelevant = topicMatched.length > 0;
+  if (isOldAcademic && !isTopicRelevant) score -= 15;
+
+  // 9. In der eigenen Bibliothek vorhanden (−12)
   if (ownedBookTitles.length > 0) {
-    const titleLower = (book.title || '').toLowerCase();
+    const titleLower = bookTitle.toLowerCase();
     const isOwned = ownedBookTitles.some(t => {
       const tl = t.toLowerCase();
       return titleLower.includes(tl) || tl.includes(titleLower);
     });
-    if (isOwned) score -= 10; // schon gelesen/besessen – weniger Priorität
+    if (isOwned) score -= 12;
   }
 
-  // Normalisieren auf 0–100
   return Math.max(0, Math.min(100, score));
 }
 
@@ -125,8 +183,14 @@ export function generateRichReason(book, profile, score, lang = 'de', ownedBookT
   const bookTime  = book.time_effort || book.timeEffort || 'mittel';
   const bookPages = book.page_count || book.pageCount || null;
 
-  // Warum passt dieses Buch?
-  const topicMatch = (profile.mainTopics || []).find(t => bookTags.includes(t));
+  // Warum passt dieses Buch? — mit Fuzzy-Topic-Matching
+  const topicMatch = (profile.mainTopics || []).find(topic => {
+    if (bookTags.includes(topic)) return true;
+    return TOPIC_KEYWORDS[topic]?.some(kw =>
+      bookTags.some(t => String(t).toLowerCase().includes(kw) || kw.includes(String(t).toLowerCase())) ||
+      (book.description || '').toLowerCase().includes(kw)
+    );
+  });
   const styleMatch = (profile.style || []).find(s => bookStyle.includes(s));
   const whyFit = book.isContrast
     ? tKey('reason.contrast', lang, t)

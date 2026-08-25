@@ -408,7 +408,9 @@ export async function getMatchingBooksFromDB(profile) {
     pool = null;
   }
 
-  // Always try local books as a language-aware pool
+  // Local books haben korrekte interne Topic-Tags (z.B. "persoenliche_entwicklung")
+  // und werden IMMER in den Pool gemergt — DB-Bücher haben meist nur Google-Books-Kategorien,
+  // die bei Topic-Matching nicht greifen. Ohne Merge würden gute Empfehlungen fehlen.
   const localPool = localBooks
     .map(normalizeLocalBook)
     .filter(b => b.age_group === ageGroup);
@@ -438,6 +440,15 @@ export async function getMatchingBooksFromDB(profile) {
       const combined = [...pool, ...langLocal.filter(lb => !pool.some(pb => pb.id === lb.id))];
       pool = combined.length >= 3 ? combined : combined;
     }
+    // MERGE: Local books (mit korrekten Tags) zum DB-Pool hinzufügen — sie werden
+    // durch scoreBook höher gerankt, da Topic-Matching greift. Dedup über isbn13/id.
+    const langLocal = localPool.filter(b => normalizeLanguageCode(b.language) === bookLanguage);
+    const existingKeys = new Set(pool.map(b => b.isbn13 || b.id));
+    pool = [...pool, ...langLocal.filter(lb => !existingKeys.has(lb.isbn13 || lb.id))];
+  } else {
+    // No language filter: merge local into DB pool
+    const existingKeys = new Set(pool.map(b => b.isbn13 || b.id));
+    pool = [...pool, ...localPool.filter(lb => !existingKeys.has(lb.isbn13 || lb.id))];
   }
 
   if (!pool) pool = [];
@@ -448,8 +459,8 @@ export async function getMatchingBooksFromDB(profile) {
       !pool.some(pb => pb.isbn13 && pb.isbn13 === gb.isbn13 && pb.isbn13)
     );
 
-    // Stufe 1: Lokalisierte Queries mit langRestrict — mehrere Begriffe nacheinander
-    const localizedQueries = buildLocalizedQueries(mainTopics, bookLanguage);
+    // Stufe 1: Lokalisierte Queries mit langRestrict — thema + ziel + stil kombiniert
+    const localizedQueries = buildLocalizedQueries(mainTopics, bookLanguage, { readingGoal: profile.readingGoal, style });
     for (const query of localizedQueries) {
       if (pool.filter(b => normalizeLanguageCode(b.language) === bookLanguage).length >= 8) break;
       try {
@@ -517,6 +528,30 @@ export async function getMatchingBooksFromDB(profile) {
       });
     });
   }
+
+  // Dedup: ähnliche Titel/Autoren entfernen — behält das beste Exemplar (höchstes Rating)
+  const seen = new Map();
+  const dedupedPool = [];
+  for (const book of pool) {
+    const titleKey = (book.title || '').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 40);
+    const authorKey = (book.authors?.[0] || book.author || '').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 20);
+    const dedupKey = `${titleKey}|${authorKey}`;
+    if (seen.has(dedupKey)) {
+      // Behalte das Buch mit höherem Rating oder mehr Metadaten
+      const existing = seen.get(dedupKey);
+      const existingScore = (existing.rating || 0) + (existing.description?.length > 20 ? 1 : 0);
+      const bookScore = (book.rating || 0) + (book.description?.length > 20 ? 1 : 0);
+      if (bookScore > existingScore) {
+        const idx = dedupedPool.indexOf(existing);
+        dedupedPool[idx] = book;
+        seen.set(dedupKey, book);
+      }
+    } else {
+      seen.set(dedupKey, book);
+      dedupedPool.push(book);
+    }
+  }
+  pool = dedupedPool;
 
   const scored = pool.map(book => {
     let score = 0;

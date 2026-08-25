@@ -221,12 +221,27 @@ export function getLocalizedTopicQueries(topic, lang) {
 /**
  * Baut mehrere lokalisierte Query-Strings für mehrstufige Google-Books-Suche.
  * Gibt ein Array von Query-Strings zurück (priorisiert: sprachspezifisch zuerst).
+ * Verbessert: kombiniert Thema + Ziel + Stil für präzisere Treffer.
  */
-export function buildLocalizedQueries(mainTopics, lang) {
+export function buildLocalizedQueries(mainTopics, lang, opts = {}) {
+  const { readingGoal, style } = opts;
   const queries = new Set();
   for (const topic of (mainTopics || [])) {
     const terms = getLocalizedTopicQueries(topic, lang);
     terms.slice(0, 2).forEach(t => queries.add(t)); // max 2 Begriffe pro Thema
+  }
+  // Wenn Leseziel "wachstum": zusätzliche zielgerichtete Queries
+  if (readingGoal === 'wachstum') {
+    const growthQueries = {
+      de: ['selbstentwicklung sachbuch', 'psychologie ratgeber', 'persönliches wachstum'],
+      en: ['self help books', 'personal growth psychology', 'self improvement'],
+      el: ['αυτοβελτίωση', 'ψυχολογία αυτοβοήθεια'],
+      tr: ['kişisel gelişim psikoloji', 'öz gelişim'],
+      fr: ['développement personnel psychologie', 'croissance personnelle'],
+      es: ['desarrollo personal psicología', 'crecimiento personal'],
+      it: ['crescita personale psicologia', 'sviluppo personale'],
+    };
+    (growthQueries[lang] || growthQueries['en']).forEach(q => queries.add(q));
   }
   if (queries.size === 0) {
     // Allgemeine Fallbacks je Sprache
