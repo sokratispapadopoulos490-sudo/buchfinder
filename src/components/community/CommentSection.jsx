@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { Heart, Sparkles, User } from 'lucide-react';
+import { Heart, Sparkles } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { de, el as elLocale, tr as trLocale, fr, es, it } from 'date-fns/locale';
 import { cn } from "@/lib/utils";

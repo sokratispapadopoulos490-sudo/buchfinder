@@ -6,6 +6,8 @@ import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import { de } from 'date-fns/locale';
+import { useLanguage } from '@/components/language/LanguageContext';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 // Maskiert E-Mail → "s***@domain.tld", gibt username@ zurück wenn vorhanden
 function maskEmail(raw) {
@@ -17,6 +19,8 @@ function maskEmail(raw) {
 }
 
 export default function Moderation() {
+  const { t } = useLanguage();
+  useDocumentTitle(t('moderation.title'));
   const [user, setUser] = useState(null);
   const [reports, setReports] = useState([]);
   const [posts, setPosts] = useState({});

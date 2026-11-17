@@ -5,6 +5,7 @@ import { BookOpen } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/components/language/LanguageContext';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 /**
  * Onboarding – Kurzes, NICHT blockierendes Willkommens-Setup nach dem Login.
@@ -17,6 +18,7 @@ export default function Onboarding() {
   const [processing, setProcessing] = useState(false);
   const navigate = useNavigate();
   const { t } = useLanguage();
+  useDocumentTitle(t('onboarding.welcome'));
 
   const handleContinue = async () => {
     const trimmed = username.trim();

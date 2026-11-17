@@ -19,9 +19,11 @@ import { ArrowLeft, UserPlus, UserCheck, MessageSquare, Users, BookOpen, Lock, U
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/components/language/LanguageContext';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 export default function PublicProfile() {
   const { t } = useLanguage();
+  useDocumentTitle(t('profile.title'));
   const [profileUser, setProfileUser] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [posts, setPosts] = useState([]);

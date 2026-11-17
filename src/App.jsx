@@ -7,7 +7,6 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
-import BookDiscover from '@/pages/BookDiscover';
 import AffiliateAnalytics from '@/pages/AffiliateAnalytics';
 
 const { Pages, Layout, mainPage } = pagesConfig;
@@ -46,11 +45,6 @@ const AuthenticatedApp = () => {
           }
         />
       ))}
-      <Route path="/BookDiscover" element={
-        <LayoutWrapper currentPageName="BookDiscover">
-          <BookDiscover />
-        </LayoutWrapper>
-      } />
       <Route path="/AffiliateAnalytics" element={
         <LayoutWrapper currentPageName="AffiliateAnalytics">
           <AffiliateAnalytics />

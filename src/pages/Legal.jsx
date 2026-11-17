@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from "@/components/ui/button";
 import { ArrowLeft, FileText, Shield, Users, Building } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '@/components/language/LanguageContext';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 export default function Legal() {
+  const { t } = useLanguage();
+  useDocumentTitle(t('legal.title'));
   const [activeSection, setActiveSection] = useState('terms');
   const navigate = useNavigate();
 

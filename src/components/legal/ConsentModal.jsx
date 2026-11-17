@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { Shield, FileText, Users, ExternalLink } from 'lucide-react';
+import { Shield, FileText, ExternalLink } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useLanguage } from '@/components/language/LanguageContext';
 

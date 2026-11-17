@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { Heart, MessageSquare, BookOpen, User, Crown, Mail, AlertTriangle, Trash2 } from 'lucide-react';
+import { Heart, MessageSquare, BookOpen, Crown, Mail, AlertTriangle, Trash2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { de, el as elLocale, tr as trLocale, fr, es, it } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';

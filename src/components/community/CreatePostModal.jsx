@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { X, Sparkles } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useLanguage } from '@/components/language/LanguageContext';
 
 export default function CreatePostModal({ onClose, onCreate, savedBooks }) {

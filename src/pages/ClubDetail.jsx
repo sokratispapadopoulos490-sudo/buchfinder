@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Users, BookOpen, MessageSquare, Settings, Plus, Crown } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { cn } from "@/lib/utils";
+import { useLanguage } from '@/components/language/LanguageContext';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 export default function ClubDetail() {
+  const { t } = useLanguage();
+  useDocumentTitle(t('clubs.detail'));
   const [user, setUser] = useState(null);
   const [club, setClub] = useState(null);
   const [members, setMembers] = useState([]);

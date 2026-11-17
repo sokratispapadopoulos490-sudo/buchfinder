@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { X, Quote, BookOpen, Globe, Lock } from 'lucide-react';
+import { X, Quote, Globe, Lock } from 'lucide-react';
 import { cn } from "@/lib/utils";
 
 export default function AddQuoteModal({ quote, savedBooks, onClose, onSave }) {

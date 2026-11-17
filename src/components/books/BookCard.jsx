@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { base44 } from '@/api/base44Client';
 import StarRating from './StarRating';
 import BookDetailModal from './BookDetailModal';
-import BookCover, { getCoverUrl } from './BookCover';
+import BookCover from './BookCover';
 import ProviderLinks from './ProviderLinks';
 import { useLanguage } from '@/components/language/LanguageContext';
 import { useOwnedLibrary } from '@/lib/ownedLibrary';

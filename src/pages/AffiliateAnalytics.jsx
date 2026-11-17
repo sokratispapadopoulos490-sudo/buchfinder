@@ -10,10 +10,14 @@ import { getClickAnalytics } from '@/lib/affiliateService';
 import { isMonetized } from '@/lib/affiliateConfig';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { TrendingUp, Globe, ShoppingBag, BookOpen, AlertCircle } from 'lucide-react';
+import { useLanguage } from '@/components/language/LanguageContext';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 const COLORS = ['#d97706', '#92400e', '#b45309', '#78350f', '#fbbf24', '#f59e0b', '#fcd34d'];
 
 export default function AffiliateAnalytics() {
+  const { t } = useLanguage();
+  useDocumentTitle(t('affiliate.title'));
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [authChecked, setAuthChecked] = useState(false);

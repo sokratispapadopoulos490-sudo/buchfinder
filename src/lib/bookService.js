@@ -674,37 +674,3 @@ export async function getMatchingBooksFromDB(profile) {
   result._meta = { languageFallbackUsed, bookLanguage, count: result.length, highQualityCount: highQuality.length };
   return result;
 }
-
-/** Synchroner Legacy-Fallback */
-export function getMatchingBooksSync(profile) {
-  const { mainTopics, secondaryTopics, style, difficulty, ageGroup, readBooks = [], savedBookIds = [] } = profile;
-  let pool = localBooks.map(normalizeLocalBook).filter(b => b.age_group === ageGroup);
-  pool = pool.filter(b => !savedBookIds.includes(b.id));
-  if (readBooks.length > 0) {
-    pool = pool.filter(book => {
-      const tl = book.title.toLowerCase();
-      const al = (book.authors?.[0] || '').toLowerCase();
-      return !readBooks.some(rb => {
-        const rbl = rb.toLowerCase();
-        return tl.includes(rbl) || rbl.includes(tl) || al.includes(rbl);
-      });
-    });
-  }
-  const scored = pool.map(book => {
-    let score = 0;
-    mainTopics.forEach(t => { if ((book.tags || []).includes(t)) score += 5; });
-    secondaryTopics.forEach(t => { if ((book.tags || []).includes(t)) score += 2; });
-    style.forEach(s => { if ((book.style || []).includes(s)) score += 3; });
-    if (book.difficulty === difficulty) score += 4;
-    return { ...book, score };
-  }).sort((a, b) => b.score - a.score);
-
-  const topBooks = scored.slice(0, 10).map((b, i) => ({ ...b, placement: i + 1, isContrast: false }));
-  const topIds = new Set(topBooks.map(b => b.id));
-  const remaining = scored.filter(b => !topIds.has(b.id));
-  const contrastBooks = remaining
-    .filter(b => !mainTopics.some(t => (b.tags || []).includes(t)))
-    .slice(0, 3)
-    .map((b, i) => ({ ...b, placement: 11 + i, isContrast: true }));
-  return [...topBooks, ...contrastBooks];
-}

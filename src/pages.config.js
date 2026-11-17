@@ -55,7 +55,6 @@ import ClubDetail from './pages/ClubDetail';
 import Clubs from './pages/Clubs';
 import Community from './pages/Community';
 import Compass from './pages/Compass';
-import Home from './pages/Home';
 import Legal from './pages/Legal';
 import Moderation from './pages/Moderation';
 import Onboarding from './pages/Onboarding';
@@ -73,7 +72,6 @@ export const PAGES = {
     "Clubs": Clubs,
     "Community": Community,
     "Compass": Compass,
-    "Home": Home,
     "Legal": Legal,
     "Moderation": Moderation,
     "Onboarding": Onboarding,
@@ -82,7 +80,7 @@ export const PAGES = {
 }
 
 export const pagesConfig = {
-    mainPage: "Home",
+    mainPage: "Compass",
     Pages: PAGES,
     Layout: __Layout,
 };

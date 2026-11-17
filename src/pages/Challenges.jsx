@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { Target, Plus, ArrowLeft, Users, Trophy, Calendar, BookOpen } from 'lucide-react';
+import { Target, Plus, ArrowLeft } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
-import { formatDistanceToNow, differenceInDays, format } from 'date-fns';
-import { de } from 'date-fns/locale';
 import CreateChallengeModal from '@/components/challenges/CreateChallengeModal';
 import ChallengeCard from '@/components/challenges/ChallengeCard';
+import { useLanguage } from '@/components/language/LanguageContext';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 
 export default function Challenges() {
+  const { t } = useLanguage();
+  useDocumentTitle(t('challenges.title'));
   const [user, setUser] = useState(null);
   const [challenges, setChallenges] = useState([]);
   const [myParticipations, setMyParticipations] = useState([]);

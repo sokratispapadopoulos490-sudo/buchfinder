@@ -15,11 +15,16 @@ import { t as _t } from '@/lib/i18n';
 import {
   getBookLanguage, setBookLanguage,
   getShoppingRegion, setShoppingRegion,
-  loadPreferencesFromProfile,
 } from '@/lib/shoppingRegion';
 
 const LanguageContext = createContext();
 
+/**
+ * UI-Sprachen – genau die Sprachen, für die i18n.js vollständige
+ * Übersetzungen enthält. Andere Sprachen würden auf Deutsch zurückfallen,
+ * darum werden sie hier nicht angeboten.
+ * (Buchsprachen für die Suche stehen separat in providerRegistry.BOOK_LANGUAGES.)
+ */
 export const SUPPORTED_LANGUAGES = [
   { code: 'de', name: 'Deutsch',    flag: '🇩🇪' },
   { code: 'en', name: 'English',    flag: '🇬🇧' },
@@ -28,14 +33,6 @@ export const SUPPORTED_LANGUAGES = [
   { code: 'fr', name: 'Français',  flag: '🇫🇷' },
   { code: 'es', name: 'Español',   flag: '🇪🇸' },
   { code: 'it', name: 'Italiano',  flag: '🇮🇹' },
-  { code: 'pt', name: 'Português', flag: '🇧🇷' },
-  { code: 'nl', name: 'Nederlands',flag: '🇳🇱' },
-  { code: 'pl', name: 'Polski',    flag: '🇵🇱' },
-  { code: 'ru', name: 'Русский',   flag: '🇷🇺' },
-  { code: 'ar', name: 'العربية',   flag: '🇸🇦' },
-  { code: 'zh', name: '中文',       flag: '🇨🇳' },
-  { code: 'ja', name: '日本語',     flag: '🇯🇵' },
-  { code: 'ko', name: '한국어',     flag: '🇰🇷' },
 ];
 
 function readLanguage() {

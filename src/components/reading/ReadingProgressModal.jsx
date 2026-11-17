@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
-import { X, BookOpen, CheckCircle } from 'lucide-react';
+import { X, CheckCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 export default function ReadingProgressModal({ book, savedBookId, bookId, onClose, onUpdate }) {

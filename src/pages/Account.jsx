@@ -29,19 +29,11 @@ function AccountContent() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const navigate = useNavigate();
-  const { language, changeLanguage, shoppingRegion, changeShoppingRegion, t } = useLanguage();
+  const { language, changeLanguage, shoppingRegion, changeShoppingRegion, supportedLanguages, t } = useLanguage();
   useDocumentTitle(t('account.title'));
 
-  // Only languages that have full i18n translations
-  const UI_LANGUAGES = [
-    { code: 'de', name: 'Deutsch',    flag: '🇩🇪' },
-    { code: 'en', name: 'English',    flag: '🇬🇧' },
-    { code: 'el', name: 'Ελληνικά',  flag: '🇬🇷' },
-    { code: 'tr', name: 'Türkçe',    flag: '🇹🇷' },
-    { code: 'fr', name: 'Français',  flag: '🇫🇷' },
-    { code: 'es', name: 'Español',   flag: '🇪🇸' },
-    { code: 'it', name: 'Italiano',  flag: '🇮🇹' },
-  ];
+  // Nur Sprachen mit vollständigen i18n-Übersetzungen (zentral in LanguageContext)
+  const UI_LANGUAGES = supportedLanguages;
 
   useEffect(() => { loadAccountData(); }, []);
 
@@ -402,7 +394,7 @@ function AccountContent() {
 
         {/* Bottom actions */}
         <div className="space-y-3">
-          <Button onClick={() => navigate('/Home')} className="w-full bg-amber-600 hover:bg-amber-700 text-white gap-2">
+          <Button onClick={() => navigate('/Compass')} className="w-full bg-amber-600 hover:bg-amber-700 text-white gap-2">
             <Compass className="w-4 h-4" /> {t('account.goHome')}
           </Button>
           <div className="text-center">

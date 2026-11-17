@@ -13,6 +13,8 @@
  *   t('nav.community')         // → automatisch aktuelle Sprache
  */
 
+import extraDict from '@/lib/i18n-extra';
+
 const dict = {
   // ── Navigation ────────────────────────────────────────────────────────────
   'nav.community': {
@@ -2475,6 +2477,11 @@ const dict = {
     tr: 'Başka sebep', fr: 'Autre raison', es: 'Otro motivo', it: 'Altro motivo',
   },
 };
+
+// Ergänzende Keys aus i18n-extra.js einmischen (überschreibt keine bestehenden)
+Object.keys(extraDict).forEach((key) => {
+  if (!dict[key]) dict[key] = extraDict[key];
+});
 
 /**
  * t(key, lang, fallback?)

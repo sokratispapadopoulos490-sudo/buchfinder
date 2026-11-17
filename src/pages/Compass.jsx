@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
@@ -6,8 +6,6 @@ import { BookOpen, Sparkles, Target, MessageCircle, Plus, BookMarked, ChevronLef
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/components/language/LanguageContext';
-import { formatDistanceToNow } from 'date-fns';
-import { de } from 'date-fns/locale';
 import BookScannerModal from '@/components/books/BookScannerModal';
 import BookCover from '@/components/books/BookCover';
 import ProgressModule from '@/components/stats/ProgressModule';
